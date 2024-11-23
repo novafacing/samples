@@ -21,30 +21,31 @@
  *
  */
 
-#include <libcgc.h>
-#include <stdlib.h>
 #include "error.h"
 
-void _error(int x, char *file, int line)
-{
+#include <libcgc.h>
+#include <stdlib.h>
+
+void _error(int x, char *file, int line) {
   switch (x) {
-  case EALLOC:
-    fdprintf(STDERR, "%s:%d - allocation error\n", file, line);
-    break;
-  case ETREE:
-    fdprintf(STDERR, "%s:%d - something broke with the tree\n", file, line);
-    break;
-  case ELIST:
-    fdprintf(STDERR, "%s:%d - something broke with the list\n", file, line);
-    break;
-  case ECMD:
-    fdprintf(STDERR, "%s:%d - something broke with commands\n", file, line);
-    break;
-  case ERAND:
-    fdprintf(STDERR, "%s:%d - random failed, getting out of here.\n", file, line);
-    break;
-  default:
-    fdprintf(STDERR, "%s:%d - unknown error\n", file, line);
+    case EALLOC:
+      fdprintf(STDERR, "%s:%d - allocation error\n", file, line);
+      break;
+    case ETREE:
+      fdprintf(STDERR, "%s:%d - something broke with the tree\n", file, line);
+      break;
+    case ELIST:
+      fdprintf(STDERR, "%s:%d - something broke with the list\n", file, line);
+      break;
+    case ECMD:
+      fdprintf(STDERR, "%s:%d - something broke with commands\n", file, line);
+      break;
+    case ERAND:
+      fdprintf(STDERR, "%s:%d - random failed, getting out of here.\n", file,
+               line);
+      break;
+    default:
+      fdprintf(STDERR, "%s:%d - unknown error\n", file, line);
   }
 
   exit(1);

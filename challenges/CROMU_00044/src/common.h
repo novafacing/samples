@@ -27,9 +27,9 @@ THE SOFTWARE.
 #define __COMMON_H__
 
 extern "C" {
-#include <stdlib.h>
 #include <libcgc.h>
 #include <stdint.h>
+#include <stdlib.h>
 }
 
 #ifdef NULL
@@ -40,10 +40,10 @@ extern "C" {
 #include <string.h>
 
 #include "doublequeue.h"
-#include "usermessage.h"
 #include "userdatabase.h"
 #include "usermanager.h"
+#include "usermessage.h"
 
-void ReadLine( String &sLine );
+void ReadLine(String &sLine);
 
-#endif // __COMMON_H___
+#endif  // __COMMON_H___

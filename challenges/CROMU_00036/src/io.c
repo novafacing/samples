@@ -24,20 +24,23 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
 #include "io.h"
 
-// Transmit the entire contents of a buffer to STDOUT 
-// Returns 0 for success, -1 for failure 
+#include <libcgc.h>
+
+#include "stdint.h"
+#include "stdlib.h"
+
+// Transmit the entire contents of a buffer to STDOUT
+// Returns 0 for success, -1 for failure
 int SendAll(const void *buffer, size_t length) {
   size_t tx_count;
   size_t bytes_sent = 0;
   int return_value;
 
   while (bytes_sent < length) {
-    return_value = transmit( STDOUT, buffer + bytes_sent, length - bytes_sent, &tx_count ); 
+    return_value =
+        transmit(STDOUT, buffer + bytes_sent, length - bytes_sent, &tx_count);
     if (return_value != 0 || tx_count == 0) {
       return -1;
     }
@@ -47,7 +50,7 @@ int SendAll(const void *buffer, size_t length) {
 }
 
 // Transmit null bytes to STDOUT
-// Returns 0 for success, -1 for failure 
+// Returns 0 for success, -1 for failure
 int SendNull(size_t length) {
   char null_byte = '\0';
   size_t bytes_sent = 0;
@@ -65,14 +68,15 @@ int SendNull(size_t length) {
 }
 
 // Receive a fixed length buffer from STDIN
-// Returns 0 for success, -1 for failure 
+// Returns 0 for success, -1 for failure
 int ReceiveAll(void *buffer, size_t length) {
   size_t total_bytes_read = 0;
   size_t bytes_read;
   int return_value;
-  
+
   while (total_bytes_read < length) {
-    return_value = receive(STDIN, buffer + total_bytes_read, length - total_bytes_read, &bytes_read);
+    return_value = receive(STDIN, buffer + total_bytes_read,
+                           length - total_bytes_read, &bytes_read);
     if (return_value != 0 || bytes_read == 0) {
       return -1;
     }
@@ -80,5 +84,3 @@ int ReceiveAll(void *buffer, size_t length) {
   }
   return 0;
 }
-
-

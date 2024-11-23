@@ -24,72 +24,63 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
 
+#include <libcgc.h>
 
-Recipe_Type *recipe_book=0;
+#include "stdlib.h"
+
+Recipe_Type *recipe_book = 0;
 
 int main(void) {
-    
-size_t size;
-char buffer[10];
-int command;
-char buffer1[100];
-char buffer2[100];
+  size_t size;
+  char buffer[10];
+  int command;
+  char buffer1[100];
+  char buffer2[100];
 
+  // loop forever receiving command strings from STDIN.
+  while (1) {
+    print_main_menu();
 
-    // loop forever receiving command strings from STDIN.
-    while (1) {
+    size = getline(buffer, sizeof(buffer));
 
-        print_main_menu();
+    // ignore that a blank line was entered
+    if (size == 0) continue;
 
-        size=getline(buffer, sizeof(buffer));
+    command = atoi(buffer);
 
-        // ignore that a blank line was entered
-        if (size==0)
-            continue;
+    switch (command) {
+      case 1:
 
-        command=atoi(buffer);
+        new_recipe(&recipe_book);
+        break;
 
-        switch (command) {
+      case 2:
 
+        find_recipe(recipe_book);
+        break;
 
-            case 1:
+      case 3:
 
-                new_recipe(&recipe_book);
-                break;
+        print_all_tagged(recipe_book);
+        break;
 
-            case 2:
+      case 4:
 
-                find_recipe(recipe_book);
-                break;
+        print_shopping_list(recipe_book);
+        break;
+      case 5:
 
-            case 3:
+        _terminate(0);
+        break;
 
-                print_all_tagged(recipe_book);
-                break;
+      default:
 
-            case 4:
+        printf("Invalid command\n");
 
-                print_shopping_list(recipe_book);
-                break;
-            case 5:
+    }  // switch
 
-                _terminate(0);
-                break;
+  }  // while(1)
 
-            default:
-
-                printf("Invalid command\n");
-
-
-        } // switch
-
-      
-    }  // while(1)
-
- 
-}  // main  
-
+}  // main

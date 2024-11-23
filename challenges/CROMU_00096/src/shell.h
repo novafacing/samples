@@ -29,19 +29,19 @@ THE SOFTWARE.
 #define DELIM '\n'
 
 // Possible Commands
-#define UPLOAD_A_FILE   'u'
-#define READ_A_FILE     'r'
-#define DELETE_A_FILE   'd'
-#define LIST_FILES      'l'
+#define UPLOAD_A_FILE 'u'
+#define READ_A_FILE 'r'
+#define DELETE_A_FILE 'd'
+#define LIST_FILES 'l'
 #define LIST_FILES_LONG 'g'
-#define CREATE_DIR      'c'
-#define PWD             'w'
-#define CHANGE_DIR      'h'
-#define EXIT_CMD        'x'
+#define CREATE_DIR 'c'
+#define PWD 'w'
+#define CHANGE_DIR 'h'
+#define EXIT_CMD 'x'
 
 #define SHORTCUT_MAGIC 0x4c494e4b
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 typedef struct ShortcutFileHeader_s {
   uint32_t size;
   uint32_t magic;
@@ -52,7 +52,8 @@ typedef struct ShortcutFileHeader_s {
 
 void ListFilesRecurse(FileNode *file, int level);
 void ListFilesLong(FileNode *parent);
-void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, ExecutableInMemory **flavorSL, int *index);
+void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent,
+                            ExecutableInMemory **flavorSL, int *index);
 ExecutableInMemory *VerifyAndLoadFlavorFile(char *name, FileNode *parent);
 char ReceiveCommand();
 

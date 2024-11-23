@@ -18,43 +18,40 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
+#include "comms.h"
 #include "libc.h"
 #include "restaurant.h"
-#include "comms.h"
-
 
 /**
  * Send resulting status of command processing to client
  *
  * @param status_code  The 2 status code bytes to send.
  */
- void send_status(char *status_code) {
-    SEND(STDOUT, status_code, 2);
-}
+void send_status(char *status_code) { SEND(STDOUT, status_code, 2); }
 
 int main(void) {
+  short ret = 0;
+  DBG("STARTING.\n");
 
-    short ret = 0;
-    DBG("STARTING.\n");
+  while (TRUE) {
+    ret = process_cmd();
 
-    while (TRUE) {
-        ret = process_cmd();
-
-        if (0 == ret) {
-            DBG("status ok\n");
-        	send_status((char *)STATUS_OK);
-        } else if (-1 == ret) {
-            DBG("status err\n");
-        	send_status((char *)STATUS_ERR);
-        } else {
-            DBG("status quit\n");
-	        send_status((char *)STATUS_QUIT);
-	        break;
-        }
+    if (0 == ret) {
+      DBG("status ok\n");
+      send_status((char *)STATUS_OK);
+    } else if (-1 == ret) {
+      DBG("status err\n");
+      send_status((char *)STATUS_ERR);
+    } else {
+      DBG("status quit\n");
+      send_status((char *)STATUS_QUIT);
+      break;
     }
+  }
 
-    return 0;
+  return 0;
 }

@@ -23,13 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "canvas.h"
-#include "paint.h"
-#include "io.h"
 #include "pmp.h"
+
+#include <libcgc.h>
+
+#include "canvas.h"
+#include "io.h"
+#include "paint.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 int PMPGenerate(PMP_File *pmp, Canvas *c) {
   int row_pad = 0;
@@ -41,7 +43,8 @@ int PMPGenerate(PMP_File *pmp, Canvas *c) {
   pmp->header.magic = 0x4d50;
   pmp->header.reserved = 0;
   pmp->header.header_size = sizeof(PMP_Info) + sizeof(PMP_Header);
-  pmp->header.filesize = pmp->header.header_size + c->y_size * (c->x_size * 3 + row_pad);
+  pmp->header.filesize =
+      pmp->header.header_size + c->y_size * (c->x_size * 3 + row_pad);
 
   int file_pad = 0;
   odd_bytes = pmp->header.filesize % 4;
@@ -53,8 +56,8 @@ int PMPGenerate(PMP_File *pmp, Canvas *c) {
   pmp->data_size = c->y_size * (c->x_size * 3 + row_pad) + file_pad;
   if (allocate(pmp->data_size, 0, (void **)&pmp->data) != 0) {
     _terminate(-1);
-  } 
-  memset(pmp->data, 0, pmp->data_size); 
+  }
+  memset(pmp->data, 0, pmp->data_size);
 
   pmp->info.size = sizeof(PMP_Info);
   pmp->info.y_size = c->y_size;
@@ -80,7 +83,7 @@ int PMPGenerate(PMP_File *pmp, Canvas *c) {
   return 0;
 }
 
-// Transmit the PMP file 
+// Transmit the PMP file
 // returns 0 for success, -1 for failure
 int PMPTransmit(PMP_File *pmp) {
   if (SendAll(&pmp->header, sizeof(PMP_Header)) != 0) {
@@ -94,7 +97,6 @@ int PMPTransmit(PMP_File *pmp) {
   }
   return 0;
 }
-
 
 // Deallocate the memory used within the PMP_File structure
 void PMPDeallocate(PMP_File *pmp) {

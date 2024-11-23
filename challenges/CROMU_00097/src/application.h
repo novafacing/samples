@@ -26,12 +26,12 @@ THE SOFTWARE.
 #ifndef MSLS_APPLICATION_H
 #define MSLS_APPLICATION_H
 
-#define APPLICATION_TYPE_LIST_BOARD     0xa0
-#define APPLICATION_TYPE_POST_MESSAGE   0xa1
+#define APPLICATION_TYPE_LIST_BOARD 0xa0
+#define APPLICATION_TYPE_POST_MESSAGE 0xa1
 #define APPLICATION_TYPE_DELETE_MESSAGE 0xa2
-#define APPLICATION_TYPE_CLEAR_BOARD    0xa3
-#define APPLICATION_TYPE_READ_MESSAGE   0xa4 
-#define APPLICATION_TYPE_RESPONSE       0xaa
+#define APPLICATION_TYPE_CLEAR_BOARD 0xa3
+#define APPLICATION_TYPE_READ_MESSAGE 0xa4
+#define APPLICATION_TYPE_RESPONSE 0xaa
 
 #define APPLICATION_MSG_LENGTH 128
 #define APPLICATION_MAX_MESSAGES 64
@@ -50,11 +50,12 @@ typedef struct ApplicationPostMsg_s {
 } APPLICATION_POST_MSG;
 
 typedef struct ApplicationResponseMsg_s {
-  uint8_t  message[128];
+  uint8_t message[128];
 } APPLICATION_RESPONSE_MSG;
 #pragma pack(pop)
 
-void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection,  SLS_MESSAGE *msg);
+void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection,
+                             SLS_MESSAGE *msg);
 int post_new_message(uint8_t *message);
 int delete_message(uint8_t msg_num);
 void clear_message_board();

@@ -27,9 +27,9 @@ THE SOFTWARE.
 #define __COMMON_H__
 
 extern "C" {
-#include <stdlib.h>
 #include <libcgc.h>
 #include <stdint.h>
+#include <stdlib.h>
 }
 
 #ifdef NULL
@@ -41,19 +41,18 @@ extern "C" {
 // #define DEBUG_MESSAGES      1
 
 // Maximum number of bytes that will can be received
-#define MAX_BYTES_RECEIVED      (64000)
+#define MAX_BYTES_RECEIVED (64000)
 
 // Size of the list for past fragments during reassembly of fragmented messages
-#define MESSAGE_FRAGMENT_LIST_MAX  (64)
+#define MESSAGE_FRAGMENT_LIST_MAX (64)
 
 // Maximum possible message fragments
-#define MAX_MESSAGE_FRAGMENTS   (16)
+#define MAX_MESSAGE_FRAGMENTS (16)
 
 #include "datastream.h"
-#include "messagepacket.h"
 #include "doublelist.h"
 #include "messagehandler.h"
+#include "messagepacket.h"
 #include "messagerenderer.h"
 
-
-#endif // __COMMON_H___
+#endif  // __COMMON_H___

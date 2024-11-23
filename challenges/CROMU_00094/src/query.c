@@ -24,27 +24,24 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "malloc.h"
-#include "string.h"
-#include "stdlib.h"
-#include "service.h"
 
-query *DestroyQuery(query *pQuery) 
-{
-  if (pQuery == NULL) 
-  {
+#include "malloc.h"
+#include "service.h"
+#include "stdlib.h"
+#include "string.h"
+
+query *DestroyQuery(query *pQuery) {
+  if (pQuery == NULL) {
     return NULL;
   }
-  if(pQuery->data != NULL) 
-  {
+  if (pQuery->data != NULL) {
     free(pQuery->data);
   }
   free(pQuery);
   return NULL;
 }
 
-query *ParseQuery(char *inputBuffer)
-{
+query *ParseQuery(char *inputBuffer) {
   if (inputBuffer == NULL) {
     return NULL;
   }

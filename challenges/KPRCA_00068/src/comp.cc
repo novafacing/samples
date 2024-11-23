@@ -21,22 +21,17 @@
  *
  */
 #include "comp.h"
+
 #include "comp32.h"
-#include "compfour.h"
 #include "compeight.h"
+#include "compfour.h"
 
-Compression::~Compression()
-{
-}
+Compression::~Compression() {}
 
-Compression *Compression::fromId(unsigned int id)
-{
-    if (id == COMPRESSION_32)
-        return new Compression32();
-    if (id == COMPRESSION_4)
-        return new CompressionFour();
-    if (id == COMPRESSION_8)
-        return new CompressionEight();
+Compression *Compression::fromId(unsigned int id) {
+  if (id == COMPRESSION_32) return new Compression32();
+  if (id == COMPRESSION_4) return new CompressionFour();
+  if (id == COMPRESSION_8) return new CompressionEight();
 
-    return NULL;
+  return NULL;
 }

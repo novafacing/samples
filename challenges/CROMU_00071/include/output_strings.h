@@ -28,7 +28,6 @@ THE SOFTWARE.
 #ifndef OUTPUTSTRINGS_H
 #define OUTPUTSTRINGS_H
 
-
 extern char Tool_Title[];
 extern char Prod_Title[];
 extern char Prod_ID[];
@@ -41,5 +40,3 @@ extern char SBI_Entry[];
 extern char List_Products[];
 
 #endif
-
-

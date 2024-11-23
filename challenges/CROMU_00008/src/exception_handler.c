@@ -23,62 +23,57 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
 #include "exception_handler.h"
+
+#include <libcgc.h>
+
 #include "mem_global.h"
 
 extern tGlobalMemoryLayout g_memoryGlobal;
 
 uint8_t g_exceptionFrameCur = 0;
 
-void init_exception_handler( void )
-{
-    uint32_t i;
+void init_exception_handler(void) {
+  uint32_t i;
 
-    // Reset the stack position
-    g_exceptionFrameCur = 0;
+  // Reset the stack position
+  g_exceptionFrameCur = 0;
 
-    // Set the mem_resrve section to nulls
-    for ( i = 0; i < MEM_RESERVE_SIZE; i++ )
-        g_memoryGlobal.mem_reserve[i] = 0;
+  // Set the mem_resrve section to nulls
+  for (i = 0; i < MEM_RESERVE_SIZE; i++) g_memoryGlobal.mem_reserve[i] = 0;
 }
 
-tExceptionFrame *get_next_exception_frame( void )
-{
-    tExceptionFrame *pCur;
+tExceptionFrame *get_next_exception_frame(void) {
+  tExceptionFrame *pCur;
 
-    if ( g_exceptionFrameCur < MAX_EXCEPTION_FRAME_SIZE )
-        pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur++]);
-    else
-        pCur = NULL;
+  if (g_exceptionFrameCur < MAX_EXCEPTION_FRAME_SIZE)
+    pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur++]);
+  else
+    pCur = NULL;
 
-    // Return the newly allocated object
-    return (pCur);
+  // Return the newly allocated object
+  return (pCur);
 }
 
-tExceptionFrame *get_current_exception_frame( void )
-{
-    tExceptionFrame *pCur;
+tExceptionFrame *get_current_exception_frame(void) {
+  tExceptionFrame *pCur;
 
-    if ( g_exceptionFrameCur > 0 )
-        pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur-1]);
-    else
-        pCur = NULL;
+  if (g_exceptionFrameCur > 0)
+    pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur - 1]);
+  else
+    pCur = NULL;
 
-    return (pCur);
+  return (pCur);
 }
 
-tExceptionFrame *pop_exception_frame( void )
-{
-    tExceptionFrame *pCur;
+tExceptionFrame *pop_exception_frame(void) {
+  tExceptionFrame *pCur;
 
-    if ( g_exceptionFrameCur > 0 )
-    {
-        g_exceptionFrameCur--;
-        pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur]);
-    }
-    else
-        pCur = NULL;
+  if (g_exceptionFrameCur > 0) {
+    g_exceptionFrameCur--;
+    pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur]);
+  } else
+    pCur = NULL;
 
-    return (pCur);
+  return (pCur);
 }

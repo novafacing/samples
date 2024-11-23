@@ -25,23 +25,21 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
-// a simple routine to sum all the bytes of the magic page to use as a simple checksum test
+// a simple routine to sum all the bytes of the magic page to use as a simple
+// checksum test
 unsigned int check_db() {
+  int i;
+  unsigned int total;
 
-int i;
-unsigned int total;
+  total = 0;
 
+  for (i = 0; i < INIT_DATA_LEN; ++i) {
+    total += ((unsigned char *)INITIALIZATION_DATA)[i];
+  }
 
-	total = 0;
-
-	for (i=0; i < INIT_DATA_LEN; ++i)  {
-
-	 	total += ((unsigned char *)INITIALIZATION_DATA)[i];
-
-	}
-
-	return total;
+  return total;
 }

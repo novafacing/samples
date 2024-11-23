@@ -21,76 +21,60 @@
  *
  */
 #include "num_gen.h"
+
 #include <cstdio.h>
 
-NumGen::NumGen(unsigned char *pool)
-{
-    rand_pool_ = pool;
-    rand_idx_ = 0;
-    cache_len_ = 0;
-    nums_available_ = NUM_CELLS;
-    for (int i = 0; i < NUM_CELLS; i++)
-        numbers_[i] = UNUSED;
+NumGen::NumGen(unsigned char *pool) {
+  rand_pool_ = pool;
+  rand_idx_ = 0;
+  cache_len_ = 0;
+  nums_available_ = NUM_CELLS;
+  for (int i = 0; i < NUM_CELLS; i++) numbers_[i] = UNUSED;
 }
 
-int NumGen::GetRandomNumber()
-{
-    if (!nums_available_)
-        return 0;
+int NumGen::GetRandomNumber() {
+  if (!nums_available_) return 0;
 
-    unsigned char rand = rand_pool_[rand_idx_++] % NUM_CELLS;
-    rand_idx_ %= POOL_SIZE;
+  unsigned char rand = rand_pool_[rand_idx_++] % NUM_CELLS;
+  rand_idx_ %= POOL_SIZE;
 
-    for (int i = 0; i < NUM_CELLS; i++)
-    {
-        int idx = (rand + i) % NUM_CELLS;
-        if (numbers_[idx] == UNUSED)
-        {
-            numbers_[idx] = USED;
-            --nums_available_;
-            return idx+1;
-        }
+  for (int i = 0; i < NUM_CELLS; i++) {
+    int idx = (rand + i) % NUM_CELLS;
+    if (numbers_[idx] == UNUSED) {
+      numbers_[idx] = USED;
+      --nums_available_;
+      return idx + 1;
     }
+  }
 
-    return 0;
+  return 0;
 }
 
-bool NumGen::ReinstateNumber(int number)
-{
-    --number;
-    if (numbers_[number] == USED)
-    {
-        numbers_[number] = UNUSED;
-        ++nums_available_;
-        return true;
-    }
-    return false;
+bool NumGen::ReinstateNumber(int number) {
+  --number;
+  if (numbers_[number] == USED) {
+    numbers_[number] = UNUSED;
+    ++nums_available_;
+    return true;
+  }
+  return false;
 }
 
-void NumGen::CacheNumber(int number)
-{
-    cached_numbers_[cache_len_++] = number;
+void NumGen::CacheNumber(int number) { cached_numbers_[cache_len_++] = number; }
+
+void NumGen::FlushCache(int flush_count) {
+  flush_count = flush_count > cache_len_ ? cache_len_ : flush_count;
+
+  for (int i = 1; i <= flush_count; i++)
+    ReinstateNumber(cached_numbers_[cache_len_ - i]);
+
+  cache_len_ -= flush_count;
 }
 
-void NumGen::FlushCache(int flush_count)
-{
-    flush_count = flush_count > cache_len_ ? cache_len_ : flush_count;
-
-    for (int i = 1; i <= flush_count; i++)
-        ReinstateNumber(cached_numbers_[cache_len_ - i]);
-
-    cache_len_ -= flush_count;
+void NumGen::Reset() {
+  cache_len_ = 0;
+  nums_available_ = NUM_CELLS;
+  for (int i = 0; i < NUM_CELLS; i++) numbers_[i] = UNUSED;
 }
 
-void NumGen::Reset()
-{
-    cache_len_ = 0;
-    nums_available_ = NUM_CELLS;
-    for (int i = 0; i < NUM_CELLS; i++)
-        numbers_[i] = UNUSED;
-}
-
-int NumGen::AvailableNumbers()
-{
-    return nums_available_;
-}
+int NumGen::AvailableNumbers() { return nums_available_; }

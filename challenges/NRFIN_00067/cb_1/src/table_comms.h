@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef TABLE_COMMS_H
 #define TABLE_COMMS_H 1
 
@@ -26,17 +26,17 @@
 
 #define TABLE_CNT 9
 #define MASTER_TID 0
-#define T_READ_FD(t_id) 	(((t_id * 2) + 3) + 1)
-#define T_WRITE_FD(t_id) 	((t_id * 2) + 3)
+#define T_READ_FD(t_id) (((t_id * 2) + 3) + 1)
+#define T_WRITE_FD(t_id) ((t_id * 2) + 3)
 
 // CMD values for table cbs
-static const char T_CMD_SEAT_CUST[4] 			= {'\x5E','\xEE','\x5E','\xEE'};
-static const char T_CMD_TAKE_ORDER[4] 			= {'\x04','\xDE','\x40','\x01'};
-static const char T_CMD_DELIVER_ORDER[4] 		= {'\xDE','\x11','\x4E','\x40'};
-static const char T_CMD_TABLE_SIZE[4] 			= {'\x51','\x4E','\x51','\x4E'};
-static const char T_CMD_TABLE_STATUS[4] 		= {'\x51','\x3E','\x51','\x3E'};
-static const char T_CMD_TABLE_CLEAN_SET[4]		= {'\xC1','\xEA','\x45','\x37'};
-static const char T_CMD_QUIT[4] 				= {'\x0F','\xF0','\xFF','\x0F'};
+static const char T_CMD_SEAT_CUST[4] = {'\x5E', '\xEE', '\x5E', '\xEE'};
+static const char T_CMD_TAKE_ORDER[4] = {'\x04', '\xDE', '\x40', '\x01'};
+static const char T_CMD_DELIVER_ORDER[4] = {'\xDE', '\x11', '\x4E', '\x40'};
+static const char T_CMD_TABLE_SIZE[4] = {'\x51', '\x4E', '\x51', '\x4E'};
+static const char T_CMD_TABLE_STATUS[4] = {'\x51', '\x3E', '\x51', '\x3E'};
+static const char T_CMD_TABLE_CLEAN_SET[4] = {'\xC1', '\xEA', '\x45', '\x37'};
+static const char T_CMD_QUIT[4] = {'\x0F', '\xF0', '\xFF', '\x0F'};
 
 /**
  * Find the next vacant table
@@ -61,7 +61,8 @@ char get_seat_count_at_table(unsigned int table_id);
  * @param c 		Pointer to a linked list of Customer's
  * @return SUCCESS if seated, -1 if all seats are full
  */
-char seat_customers_at_table(unsigned int table_id, unsigned char qty, Customer **c);
+char seat_customers_at_table(unsigned int table_id, unsigned char qty,
+                             Customer **c);
 
 /**
  * Close out the table and stop servicing it (quit)
@@ -106,5 +107,3 @@ char deliver_orders_to_table(unsigned int table_id, Order **o_list);
 char clean_and_set_table(unsigned int table_id);
 
 #endif
-
-

@@ -28,42 +28,43 @@ THE SOFTWARE.
 
 #include <string.h>
 
-class DiverInfo
-{
-public:
-    DiverInfo() { };
-    ~DiverInfo() { };
+class DiverInfo {
+ public:
+  DiverInfo() {};
+  ~DiverInfo() {};
 
-    void SetFirstName( const String& sName ) { m_firstName = sName; };
-    void SetLastName( const String& sName ) { m_lastName = sName; };
-    void SetStreet( const String& sStreet ) { m_street = sStreet; };
-    void SetCity( const String& sCity ) { m_city = sCity; };
-    void SetState( const String& sState ) { m_state = sState; };
-    void SetZipCode( const String& sZipCode ) { m_zipcode = sZipCode; };
-    void SetPhoneNumber( const String& sPhoneNumber ) { m_phoneNumber = sPhoneNumber; };
-    void SetPadiNumber( const String& sPadiNumber ) { m_padiNumber = sPadiNumber; };
-    void SetPadiDate( const String& sPadiDate ) { m_padiDate = sPadiDate; };
+  void SetFirstName(const String& sName) { m_firstName = sName; };
+  void SetLastName(const String& sName) { m_lastName = sName; };
+  void SetStreet(const String& sStreet) { m_street = sStreet; };
+  void SetCity(const String& sCity) { m_city = sCity; };
+  void SetState(const String& sState) { m_state = sState; };
+  void SetZipCode(const String& sZipCode) { m_zipcode = sZipCode; };
+  void SetPhoneNumber(const String& sPhoneNumber) {
+    m_phoneNumber = sPhoneNumber;
+  };
+  void SetPadiNumber(const String& sPadiNumber) { m_padiNumber = sPadiNumber; };
+  void SetPadiDate(const String& sPadiDate) { m_padiDate = sPadiDate; };
 
-    const String& GetFirstName( void ) const { return m_firstName; };
-    const String& GetLastName( void ) const { return m_lastName; };
-    const String& GetStreet( void ) const { return m_street; };
-    const String& GetCity( void ) const { return m_city; };
-    const String& GetState( void ) const { return m_state; };
-    const String& GetZipCode( void ) const { return m_zipcode; };
-    const String& GetPhoneNumber( void ) const { return m_phoneNumber; };
-    const String& GetPadiNumber( void ) const { return m_padiNumber; };
-    const String& GetPadiDate( void ) const { return m_padiDate; };
+  const String& GetFirstName(void) const { return m_firstName; };
+  const String& GetLastName(void) const { return m_lastName; };
+  const String& GetStreet(void) const { return m_street; };
+  const String& GetCity(void) const { return m_city; };
+  const String& GetState(void) const { return m_state; };
+  const String& GetZipCode(void) const { return m_zipcode; };
+  const String& GetPhoneNumber(void) const { return m_phoneNumber; };
+  const String& GetPadiNumber(void) const { return m_padiNumber; };
+  const String& GetPadiDate(void) const { return m_padiDate; };
 
-private:
-    String m_firstName;
-    String m_lastName;
-    String m_street;
-    String m_city;
-    String m_state;
-    String m_zipcode;
-    String m_phoneNumber;
-    String m_padiNumber;
-    String m_padiDate;
+ private:
+  String m_firstName;
+  String m_lastName;
+  String m_street;
+  String m_city;
+  String m_state;
+  String m_zipcode;
+  String m_phoneNumber;
+  String m_padiNumber;
+  String m_padiDate;
 };
 
-#endif // __DIVER_INFO_H___
+#endif  // __DIVER_INFO_H___

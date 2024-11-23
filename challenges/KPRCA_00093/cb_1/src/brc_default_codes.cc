@@ -45,15 +45,19 @@ const char eom_[] = EOM;
 const char ok_[] = OK;
 BrcResponse *success_resp_ = new BrcResponse(OK_ID, (char *)ok_, sizeof(ok_));
 const char user_exists_[] = USER_EXISTS;
-BrcResponse *user_exists_resp_ = new BrcResponse(USER_EXISTS_ID, (char *)user_exists_, sizeof(user_exists_));
+BrcResponse *user_exists_resp_ =
+    new BrcResponse(USER_EXISTS_ID, (char *)user_exists_, sizeof(user_exists_));
 const char failure_[] = FAILURE;
-BrcResponse *failure_resp_ = new BrcResponse(FAILURE_ID, (char *)failure_, sizeof(failure_));
+BrcResponse *failure_resp_ =
+    new BrcResponse(FAILURE_ID, (char *)failure_, sizeof(failure_));
 const char malformed_[] = MALFORMED_DATA;
-BrcResponse *malformed_resp_ = new BrcResponse(MALFORMED_DATA_ID, (char *)malformed_, sizeof(malformed_));
+BrcResponse *malformed_resp_ =
+    new BrcResponse(MALFORMED_DATA_ID, (char *)malformed_, sizeof(malformed_));
 const char exit_server_[] = EXIT_SERVER;
-BrcResponse *exit_server_resp_ = new BrcResponse(EXIT_SERVER_ID, (char *)exit_server_, sizeof(exit_server_));
+BrcResponse *exit_server_resp_ =
+    new BrcResponse(EXIT_SERVER_ID, (char *)exit_server_, sizeof(exit_server_));
 
-}
+}  // namespace
 
 namespace BrcGlobals {
 
@@ -72,7 +76,9 @@ const char *user_chat_code() { return user_chat_code_; }
 const char *ping_code() { return ping_code_; }
 const char *pong_code() { return pong_code_; }
 const char *server_exit_code() { return server_exit_code_; }
-const char *remote_admin_token_request_code() { return remote_admin_token_request_code_; }
+const char *remote_admin_token_request_code() {
+  return remote_admin_token_request_code_;
+}
 
 const char *eom() { return eom_; }
 unsigned short eom_length() { return sizeof(eom_); }
@@ -82,10 +88,9 @@ const char *failure() { return failure_; };
 const char *malformed() { return malformed_; }
 const char *exit_server() { return exit_server_; }
 BrcResponse *success_resp() { return success_resp_; }
-BrcResponse *user_exists_resp() { return  user_exists_resp_; }
+BrcResponse *user_exists_resp() { return user_exists_resp_; }
 BrcResponse *failure_resp() { return failure_resp_; }
 BrcResponse *malformed_resp() { return malformed_resp_; }
 BrcResponse *exit_server_resp() { return exit_server_resp_; }
 
-}
-
+}  // namespace BrcGlobals

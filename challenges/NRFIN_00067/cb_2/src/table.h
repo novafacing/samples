@@ -18,38 +18,37 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef TABLE_H
 #define TABLE_H 1
 
-#define TABLE_ID 			 1
-#define MIN_TABLE_SIZE 		 2
-#define MAX_TABLE_SIZE 		10
+#define TABLE_ID 1
+#define MIN_TABLE_SIZE 2
+#define MAX_TABLE_SIZE 10
 
-#include "menu.h"
 #include "customer.h"
+#include "menu.h"
 #include "order.h"
 
-typedef enum{
-	VACANT = 0,
-	APP_RTO = 1,	// RTO => ready to order
-	APP_WAIT = 2,	// wait => waiting for order to be delivered
-	MEAL_RTO = 3,
-	MEAL_WAIT = 4,
-	DES_RTO = 5,
-	DES_WAIT = 6,
-	FINISHED = 7,
-	PHASES = 8,
+typedef enum {
+  VACANT = 0,
+  APP_RTO = 1,   // RTO => ready to order
+  APP_WAIT = 2,  // wait => waiting for order to be delivered
+  MEAL_RTO = 3,
+  MEAL_WAIT = 4,
+  DES_RTO = 5,
+  DES_WAIT = 6,
+  FINISHED = 7,
+  PHASES = 8,
 } TableStatus;
 
 typedef struct {
-	unsigned int id;
-	TableStatus status;
-	unsigned char seats;
-	Customer *customers;
+  unsigned int id;
+  TableStatus status;
+  unsigned char seats;
+  Customer *customers;
 } Table;
-
 
 /**
  * Perform setup of the table.

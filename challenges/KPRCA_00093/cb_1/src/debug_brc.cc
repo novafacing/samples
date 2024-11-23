@@ -21,14 +21,13 @@
  *
  */
 #include "debug_brc.h"
+
 #include <cstdio.h>
 
 void print_byte_array(const char *bytes, const unsigned short length) {
-    for (int i = 0; i < length; i++) {
-        if (i && !(i % 8))
-            _PRINTF("\n");
-        _PRINTF("%3u ", (unsigned char)bytes[i]);
-    }
-    _PRINTF("\n");
+  for (int i = 0; i < length; i++) {
+    if (i && !(i % 8)) _PRINTF("\n");
+    _PRINTF("%3u ", (unsigned char)bytes[i]);
+  }
+  _PRINTF("\n");
 }
-

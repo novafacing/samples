@@ -24,11 +24,10 @@
 
 #include "comp.h"
 
-class CompressionEight : public Compression
-{
-public:
-    unsigned int getId() const;
-    unsigned int getMaxBufferSize(const AudioTrack &track) const;
-    void compress(const AudioTrack &track, uint8_t *dest) const;
-    void decompress(AudioTrack &track, uint8_t *src) const;
+class CompressionEight : public Compression {
+ public:
+  unsigned int getId() const;
+  unsigned int getMaxBufferSize(const AudioTrack &track) const;
+  void compress(const AudioTrack &track, uint8_t *dest) const;
+  void decompress(AudioTrack &track, uint8_t *src) const;
 };

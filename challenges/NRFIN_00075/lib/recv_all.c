@@ -18,11 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "recv_all.h"
+
 #include "read_all.h"
 
 // returns number of bytes received
-size_t recv_all(char *buf, size_t size) {
-    return read_all(STDIN, buf, size);
-}
+size_t recv_all(char *buf, size_t size) { return read_all(STDIN, buf, size); }

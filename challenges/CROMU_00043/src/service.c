@@ -23,16 +23,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
 #include "service.h"
-#include "stdlib.h"
+
+#include <libcgc.h>
+
+#include "io.h"
 #include "packet_analysis.h"
 #include "packet_io.h"
-#include "io.h"
+#include "stdlib.h"
 
 int main() {
   SystemState state;
-  
+
   // Initialize Parser
   if (ReceiveAndVerifyInitializationPacket(&state) != 0) {
     return -1;
@@ -56,7 +58,7 @@ int main() {
     default: {
       break;
     }
-  } 
+  }
 
   // Display statistics
   if (state.display_flags & DISPLAY_STATS) {

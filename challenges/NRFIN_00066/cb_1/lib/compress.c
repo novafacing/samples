@@ -18,27 +18,28 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "libc.h"
 
-
 int get_match_run_length(uint32_t i1, uint32_t i2, uint8_t *num_matching) {
-	DBG("\n");
+  DBG("\n");
 
-	int ret = SUCCESS;
+  int ret = SUCCESS;
 
-	DBG("[D] finding initial matching bit run: 0x%08x vs. 0x%08x\n", i1, i2);
+  DBG("[D] finding initial matching bit run: 0x%08x vs. 0x%08x\n", i1, i2);
 
-	for (size_t i=0; i<NUM_BITS_IN_A_UINT32; i++) {
-		if ((1 & (i1 >> (NUM_BITS_IN_A_UINT32-1-i))) == (1 & (i2 >> (NUM_BITS_IN_A_UINT32-1-i)))) {
-			*num_matching = *num_matching+1;
-		} else {
-			break;
-		}
-	}
+  for (size_t i = 0; i < NUM_BITS_IN_A_UINT32; i++) {
+    if ((1 & (i1 >> (NUM_BITS_IN_A_UINT32 - 1 - i))) ==
+        (1 & (i2 >> (NUM_BITS_IN_A_UINT32 - 1 - i)))) {
+      *num_matching = *num_matching + 1;
+    } else {
+      break;
+    }
+  }
 
-	DBG("[D] 0x%08x & 0x%08x share %d initial matching bits\n", i1, i2, *num_matching);
+  DBG("[D] 0x%08x & 0x%08x share %d initial matching bits\n", i1, i2,
+      *num_matching);
 
 bail:
-	return ret;
+  return ret;
 }

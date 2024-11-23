@@ -20,115 +20,99 @@
  * THE SOFTWARE.
  *
  */
+#include "compare.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "compare.h"
+static char *get_no_ws_line(char *line) {
+  if (line == NULL) return NULL;
 
-static char *get_no_ws_line(char *line)
-{
-    if (line == NULL)
-        return NULL;
+  size_t size = strlen(line) + 1, i;
+  char *nline = NULL, *iter;
+  nline = malloc(size);
+  if (nline == NULL) return NULL;
 
-    size_t size = strlen(line) + 1, i;
-    char *nline = NULL, *iter;
-    nline = malloc(size);
-    if (nline == NULL)
-        return NULL;
+  memset(nline, 0, size);
+  iter = nline;
+  for (i = 0; i < size; i++) {
+    if (strchr(" \t\n", line[i]) == NULL) *iter++ = line[i];
+  }
 
-    memset(nline, 0, size);
-    iter = nline;
-    for (i = 0; i < size; i++) {
-        if (strchr(" \t\n", line[i]) == NULL)
-            *iter++ = line[i];
-    }
-
-    return nline;
-
+  return nline;
 }
 
 static size_t count_words(char *str) {
-    if (!str)
-        return 0;
+  if (!str) return 0;
 
-    int i, len = strlen(str);
-    size_t words = 0;
-    for (i = 0; i < len; i++) {
-        if (strchr(" \t\r\n", str[i]) == NULL)
-            words++;
-    }
+  int i, len = strlen(str);
+  size_t words = 0;
+  for (i = 0; i < len; i++) {
+    if (strchr(" \t\r\n", str[i]) == NULL) words++;
+  }
 
-    words = len ? words+1 : words;
-    return words;
-
+  words = len ? words + 1 : words;
+  return words;
 }
 
-lcll_t *pre_process(SFILE *sfp, size_t *wordc, size_t *linec)
-{
-    char *data = &sfp->data[0], *line = NULL;
-    *wordc = 0, *linec = 1;
+lcll_t *pre_process(SFILE *sfp, size_t *wordc, size_t *linec) {
+  char *data = &sfp->data[0], *line = NULL;
+  *wordc = 0, *linec = 1;
 
-    lc_t *new_lc;
-    lcll_t *head = NULL, *iter, *next;
+  lc_t *new_lc;
+  lcll_t *head = NULL, *iter, *next;
 
+  line = strsep(&data, "\n");
+  while (line && (strlen(line) || (data && strlen(data)))) {
+    next = malloc(sizeof(lcll_t));
+    if (!next) return NULL;
+
+    new_lc = new_linecmp(line);
+    if (new_lc == NULL) {
+      free(next);
+      next = NULL;
+      break;
+    }
+
+    next->lc = new_lc;
+    next->next = NULL;
+
+    if (!head)
+      head = next;
+    else
+      iter->next = next;
+    iter = next;
     line = strsep(&data, "\n");
-    while (line && (strlen(line) || (data && strlen(data)))) {
-        next = malloc(sizeof(lcll_t));
-        if (!next)
-            return NULL;
+    wordc += count_words(line);
+    (*linec)++;
+  }
 
-        new_lc = new_linecmp(line);
-        if (new_lc == NULL) {
-            free(next);
-            next = NULL;
-            break;
-        }
-
-        next->lc = new_lc;
-        next->next = NULL;
-
-        if (!head)
-            head = next;
-        else
-            iter->next = next;
-        iter = next;
-        line = strsep(&data, "\n");
-        wordc += count_words(line);
-        (*linec)++;
-    }
-
-    return head;
+  return head;
 }
 
-lc_t *new_linecmp(char *line)
-{
-    if (!line)
-        return NULL;
+lc_t *new_linecmp(char *line) {
+  if (!line) return NULL;
 
-    lc_t *new_lc = malloc(sizeof(lc_t));
-    if (!new_lc)
-        return NULL;
+  lc_t *new_lc = malloc(sizeof(lc_t));
+  if (!new_lc) return NULL;
 
-    new_lc->pline = line;
-    new_lc->no_ws_line = get_no_ws_line(line);
-    new_lc->lhash = get_lhash(line);
-    new_lc->no_ws_lhash = get_lhash(new_lc->no_ws_line);
+  new_lc->pline = line;
+  new_lc->no_ws_line = get_no_ws_line(line);
+  new_lc->lhash = get_lhash(line);
+  new_lc->no_ws_lhash = get_lhash(new_lc->no_ws_line);
 
-    return new_lc;
+  return new_lc;
 }
 
-void free_linecmp_list(lcll_t **head)
-{
-    lcll_t *iter = *head, *prev;
-    while (iter) {
-        prev = iter;
-        iter = iter->next;
-        if (prev->lc->no_ws_line)
-            free(prev->lc->no_ws_line);
-        free(prev->lc);
-        free(prev);
-    }
+void free_linecmp_list(lcll_t **head) {
+  lcll_t *iter = *head, *prev;
+  while (iter) {
+    prev = iter;
+    iter = iter->next;
+    if (prev->lc->no_ws_line) free(prev->lc->no_ws_line);
+    free(prev->lc);
+    free(prev);
+  }
 
-    *head = NULL;
+  *head = NULL;
 }
-

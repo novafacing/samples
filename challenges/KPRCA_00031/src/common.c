@@ -24,10 +24,10 @@
 #include <libcgc.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "error.h"
 
-int readline(int fd, char *buf, size_t max, size_t *nrx)
-{
+int readline(int fd, char *buf, size_t max, size_t *nrx) {
 #define READ_SIZE 1024
   char tmp[READ_SIZE + 1];
   size_t n;
@@ -44,24 +44,20 @@ int readline(int fd, char *buf, size_t max, size_t *nrx)
       char *nl = strchr(tmp, '\n');
 
       // just newline, i.e. input = "\n"
-      if (*nrx == 0 && nl == tmp)
-        return -1;
+      if (*nrx == 0 && nl == tmp) return -1;
 
       // found newline
-      if (nl)
-        n = nl - tmp;
+      if (nl) n = nl - tmp;
 
       // exceeded bounds, truncate
-      if (*nrx + n > max)
-        n = max - *nrx;
+      if (*nrx + n > max) n = max - *nrx;
 
       *nrx += n;
       memcpy(buf, tmp, n);
       buf += n;
       memset(tmp, '\0', READ_SIZE + 1);
 
-      if (nl)
-        break;
+      if (nl) break;
     }
   }
 

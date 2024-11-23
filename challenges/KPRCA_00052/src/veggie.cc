@@ -28,63 +28,47 @@ extern "C" {
 #include "veggie.h"
 
 namespace {
-    struct veggie_lut {
-        const char *name;
-        int calories;
-        int carbs;
-    };
+struct veggie_lut {
+  const char *name;
+  int calories;
+  int carbs;
+};
 
-    veggie_lut veggies[] = {
-        {"Mushrooms", 40, 6},
-        {"Onions", 22, 7},
-        {"Olives", 70, 11},
-        {"Tomatoes", 30, 5},
-        {"Green Peppers", 24, 3},
-        {"Red Peppers", 28, 5},
-        {"Spinach", 33, 4},
-        {"Arugula", 37, 6}
-    };
+veggie_lut veggies[] = {{"Mushrooms", 40, 6},     {"Onions", 22, 7},
+                        {"Olives", 70, 11},       {"Tomatoes", 30, 5},
+                        {"Green Peppers", 24, 3}, {"Red Peppers", 28, 5},
+                        {"Spinach", 33, 4},       {"Arugula", 37, 6}};
 
-    veggie_lut *find_veggie_entry(const char *veggie_name)
-    {
-        size_t i;
-        for (i = 0; i < sizeof(veggies) / sizeof(veggies[0]); i++) {
-            if (strcasecmp(veggies[i].name, veggie_name) == 0)
-                return &veggies[i];
-        }
+veggie_lut *find_veggie_entry(const char *veggie_name) {
+  size_t i;
+  for (i = 0; i < sizeof(veggies) / sizeof(veggies[0]); i++) {
+    if (strcasecmp(veggies[i].name, veggie_name) == 0) return &veggies[i];
+  }
 
-        return NULL;
-    }
-
-    void print_list()
-    {
-        size_t i;
-        for (i = 0; i < sizeof(veggies) / sizeof(veggies[0]); i++)
-            printf("%d. %s\n", i + 1, veggies[i].name);
-    }
+  return NULL;
 }
 
-Veggie::Veggie(const char *_name, int _calories, int _carbs)
-{
-    name = _name;
-    calories = _calories;
-    carbs = _carbs;
+void print_list() {
+  size_t i;
+  for (i = 0; i < sizeof(veggies) / sizeof(veggies[0]); i++)
+    printf("%d. %s\n", i + 1, veggies[i].name);
+}
+}  // namespace
+
+Veggie::Veggie(const char *_name, int _calories, int _carbs) {
+  name = _name;
+  calories = _calories;
+  carbs = _carbs;
 }
 
-Veggie::~Veggie()
-{
+Veggie::~Veggie() {}
+
+Veggie *Veggie::pick_veggie(const char *veggie_name) {
+  veggie_lut *veggie_entry = find_veggie_entry(veggie_name);
+  if (!veggie_entry) return NULL;
+
+  return new Veggie(veggie_entry->name, veggie_entry->calories,
+                    veggie_entry->carbs);
 }
 
-Veggie *Veggie::pick_veggie(const char *veggie_name)
-{
-    veggie_lut *veggie_entry = find_veggie_entry(veggie_name);
-    if (!veggie_entry)
-        return NULL;
-
-    return new Veggie(veggie_entry->name, veggie_entry->calories, veggie_entry->carbs);
-}
-
-void Veggie::list_options()
-{
-    print_list();
-}
+void Veggie::list_options() { print_list(); }

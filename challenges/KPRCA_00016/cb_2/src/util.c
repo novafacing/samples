@@ -20,35 +20,29 @@
  * THE SOFTWARE.
  *
  */
-#include <libcgc.h>
 #include "util.h"
 
-int read_n(int fd, char *buf, size_t len)
-{
+#include <libcgc.h>
+
+int read_n(int fd, char *buf, size_t len) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      break;
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) break;
     c++;
   }
   return c - buf;
 }
 
-int read_until(int fd, char *buf, size_t len, char delim)
-{
+int read_until(int fd, char *buf, size_t len, char delim) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      break;
-        if (*(c++) == delim)
-            break;
-    }
-    *(c-1) = '\0';
-    return c - buf;
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) break;
+    if (*(c++) == delim) break;
+  }
+  *(c - 1) = '\0';
+  return c - buf;
 }

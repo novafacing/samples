@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define FP_ERANGE -1
 #define FP_ENVAL -2
 
-
 typedef long long fp_number;
 
 int get_fp(fp_number *);

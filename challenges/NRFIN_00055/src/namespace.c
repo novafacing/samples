@@ -20,93 +20,79 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "namespace.h"
+
 #include "stdlib.h"
 #include "string.h"
 
-#include "namespace.h"
-
-int
-namespace_init(struct namespace *ns, size_t size)
-{
-    ns->size = size;
-    if ((size * sizeof(struct variable)) / sizeof(struct variable) != size)
-        return EXIT_FAILURE;
-    return allocate(size * sizeof(struct variable), 0, (void **)&ns->variables);
+int namespace_init(struct namespace *ns, size_t size) {
+  ns->size = size;
+  if ((size * sizeof(struct variable)) / sizeof(struct variable) != size)
+    return EXIT_FAILURE;
+  return allocate(size * sizeof(struct variable), 0, (void **)&ns->variables);
 }
 
-void
-namespace_destroy(struct namespace *ns)
-{
-    deallocate(ns->variables, ns->size * sizeof(struct variable));
-    ns->size = 0;
+void namespace_destroy(struct namespace *ns) {
+  deallocate(ns->variables, ns->size * sizeof(struct variable));
+  ns->size = 0;
 }
 
-static unsigned int
-hash(const char *str)
-{
-    unsigned int i, result = 0;
+static unsigned int hash(const char *str) {
+  unsigned int i, result = 0;
 
-    for (i = 0; i < 4 && str[i]; i++)
-        result = result * 52 + str[i];
+  for (i = 0; i < 4 && str[i]; i++) result = result * 52 + str[i];
 
-    return result;
+  return result;
 }
 
-struct variable *
-lookup_variable(struct namespace *ns, const char *name)
-{
-    size_t i, b;
-    unsigned int h;
-    struct variable *var;
+struct variable *lookup_variable(struct namespace *ns, const char *name) {
+  size_t i, b;
+  unsigned int h;
+  struct variable *var;
 
-    h = hash(name);
+  h = hash(name);
 
-    for (i = 0; i < ns->size; i++) {
-        b = (h + i * i) % ns->size;
-        var = &ns->variables[b];
+  for (i = 0; i < ns->size; i++) {
+    b = (h + i * i) % ns->size;
+    var = &ns->variables[b];
 
-        if (var->type == VAR_EMPTY)
-            return NULL;
+    if (var->type == VAR_EMPTY) return NULL;
 
-        if (strncmp(var->name, name, 4) == 0)
-            return var;
+    if (strncmp(var->name, name, 4) == 0) return var;
+  }
+
+  return NULL;
+}
+
+struct variable *insert_variable(struct namespace *ns, const char *name,
+                                 enum variable_type type) {
+  size_t i, b;
+  unsigned int h;
+  struct variable *var, *last_var = NULL;
+
+  h = hash(name);
+
+  for (i = 0; i < ns->size; i++) {
+    b = (h + i * i) % ns->size;
+    var = &ns->variables[b];
+
+    if (var->type == VAR_EMPTY) {
+      if (last_var) return last_var;
+
+      memset(var->name, '\0', 4);
+      strncpy(var->name, name, 4);
+      var->type = type;
+      return var;
     }
-
-    return NULL;
-}
-
-struct variable *
-insert_variable(struct namespace *ns, const char *name, enum variable_type type)
-{
-    size_t i, b;
-    unsigned int h;
-    struct variable *var, *last_var = NULL;
-
-    h = hash(name);
-
-    for (i = 0; i < ns->size; i++) {
-        b = (h + i * i) % ns->size;
-        var = &ns->variables[b];
-
-        if (var->type == VAR_EMPTY) {
-            if (last_var)
-                return last_var;
-
-            memset(var->name, '\0', 4);
-            strncpy(var->name, name, 4);
-            var->type = type;
-            return var;
-        }
 
 #ifdef PATCHED_1
-        if (var->type != VAR_EMPTY && strncmp(var->name, name, 4) == 0) {
+    if (var->type != VAR_EMPTY && strncmp(var->name, name, 4) == 0) {
 #else
-        if (var->type == type && strncmp(var->name, name, 4) == 0) {
-#endif 
-            last_var = var;
-        }
+    if (var->type == type && strncmp(var->name, name, 4) == 0) {
+#endif
+      last_var = var;
     }
+  }
 
-    return NULL;
+  return NULL;
 }
-

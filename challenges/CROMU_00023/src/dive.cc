@@ -25,19 +25,17 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-uint32_t Dive::AddDiveBin( uint32_t timeval, uint32_t depth )
-{
-    uint32_t index = m_diveBinCount;
+uint32_t Dive::AddDiveBin(uint32_t timeval, uint32_t depth) {
+  uint32_t index = m_diveBinCount;
 
 #ifdef PATCHED
-    if ( index >= DIVE_BIN_COUNT )
-        return (-1);
+  if (index >= DIVE_BIN_COUNT) return (-1);
 #endif
 
-    m_diveBins[index].SetTimeVal( timeval );
-    m_diveBins[index].SetDepth( depth );
+  m_diveBins[index].SetTimeVal(timeval);
+  m_diveBins[index].SetDepth(depth);
 
-    m_diveBinCount++;
+  m_diveBinCount++;
 
-    return (m_diveBinCount);
+  return (m_diveBinCount);
 }

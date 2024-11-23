@@ -18,35 +18,38 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <errno.h>
-#include "libc.h"
+ */
 #include "recv_until_delim_n.h"
 
-#define EOF 					-1
-#define FILE_BUF_SZ 			1024
+#include <errno.h>
+#include <libcgc.h>
+
+#include "libc.h"
+
+#define EOF -1
+#define FILE_BUF_SZ 1024
 
 typedef struct {
-	size_t 	fd;
-	size_t 	idx;					// current idx in buf
-	size_t 	count;					// number of usable bytes in buf
-	unsigned char buf[FILE_BUF_SZ]; // buffer of received bytes
+  size_t fd;
+  size_t idx;                      // current idx in buf
+  size_t count;                    // number of usable bytes in buf
+  unsigned char buf[FILE_BUF_SZ];  // buffer of received bytes
 } FILE;
 
 // list of FILE's in use by this CB for RECEIVING data (not used for sending)
 // In an IPC CB, will need to modify this with the correct FDs
 // By default READ_FD is defined in libc.h
-#define RECV_FILE_COUNT 		1	// number of FILEs in recv_files
-#define RECV_FILE_FROM_FD(fd)		\
- 	switch(fd) {					\
- 		case READ_FD: 				\
- 			f = &recv_files[0];		\
- 			break;					\
- 		default: return ERRNO_RECV;	\
- 	}
+#define RECV_FILE_COUNT 1  // number of FILEs in recv_files
+#define RECV_FILE_FROM_FD(fd) \
+  switch (fd) {               \
+    case READ_FD:             \
+      f = &recv_files[0];     \
+      break;                  \
+    default:                  \
+      return ERRNO_RECV;      \
+  }
 
-static FILE recv_files[RECV_FILE_COUNT] = { {.fd = READ_FD} };
+static FILE recv_files[RECV_FILE_COUNT] = {{.fd = READ_FD}};
 
 /**
  *	Receive one char from the FILE
@@ -56,67 +59,66 @@ static FILE recv_files[RECV_FILE_COUNT] = { {.fd = READ_FD} };
  * @return next available char if found, EOF if no more chars or an error
  */
 static ssize_t recv_char(int fd, int *error) {
-	char ch = 0;
-	FILE *f = NULL;
-	RECV_FILE_FROM_FD(fd);
+  char ch = 0;
+  FILE *f = NULL;
+  RECV_FILE_FROM_FD(fd);
 
-	*error = 0;
+  *error = 0;
 
-	// check for an available char
-	if ((0 != f->count) && ((f->count - 1) >= f->idx)) {
-		goto havechar;
-	}
+  // check for an available char
+  if ((0 != f->count) && ((f->count - 1) >= f->idx)) {
+    goto havechar;
+  }
 
-	// no available char, so need to receive()
-	f->idx = 0;
-	f->count = 0;
+  // no available char, so need to receive()
+  f->idx = 0;
+  f->count = 0;
 
-    if (0 != (receive(f->fd, f->buf, FILE_BUF_SZ, &f->count))) {
-    	*error = ERRNO_RECV;
-    	return EOF;
-    }
-    if (0 == f->count) {
-    	*error = EOF;
-    	return EOF;
-    }
+  if (0 != (receive(f->fd, f->buf, FILE_BUF_SZ, &f->count))) {
+    *error = ERRNO_RECV;
+    return EOF;
+  }
+  if (0 == f->count) {
+    *error = EOF;
+    return EOF;
+  }
 
 havechar:
-	ch = f->buf[f->idx];
-	f->idx++;
-	return ch;
+  ch = f->buf[f->idx];
+  f->idx++;
+  return ch;
 }
 
 ssize_t recv_until_delim_n(int fd, char delim, char *buf, unsigned int size) {
-	if ((NULL == buf) || (0 == size)) {
-		return ERRNO_RECV;
-	}
+  if ((NULL == buf) || (0 == size)) {
+    return ERRNO_RECV;
+  }
 
-	size_t bytes_read_total = 0;
-	char ch = 0;
-	int error = 0;
+  size_t bytes_read_total = 0;
+  char ch = 0;
+  int error = 0;
 
-	for (size_t i = 0; i < size; i++) {
-		ch = recv_char(fd, &error);
+  for (size_t i = 0; i < size; i++) {
+    ch = recv_char(fd, &error);
 
-		if (EOF == ch) {
-			if (ERRNO_RECV == error) {
-				return ERRNO_RECV;
-			}
-			if (EOF == error) {
-				break;
-			}
-		}
+    if (EOF == ch) {
+      if (ERRNO_RECV == error) {
+        return ERRNO_RECV;
+      }
+      if (EOF == error) {
+        break;
+      }
+    }
 
-        buf[bytes_read_total++] = ch;
-        if (delim == ch) {
-        	break;
-        }
-	}
+    buf[bytes_read_total++] = ch;
+    if (delim == ch) {
+      break;
+    }
+  }
 
-	if (delim != buf[bytes_read_total-1]) {
-		return ERRNO_RECV;
-	}
+  if (delim != buf[bytes_read_total - 1]) {
+    return ERRNO_RECV;
+  }
 
-	return bytes_read_total;
+  return bytes_read_total;
 }
-

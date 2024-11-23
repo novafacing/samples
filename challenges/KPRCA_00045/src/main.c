@@ -21,23 +21,22 @@
  *
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
+#include "dict.h"
 #include "readuntil.h"
 #include "sadface.h"
-#include "dict.h"
 #include "strtof.h"
 
-#define MAX_BUF_SIZE  4096
+#define MAX_BUF_SIZE 4096
 
-dict_t** g_context = NULL;
+dict_t **g_context = NULL;
 
 const char *banner = "# Sad Face Template Engine - v0.1\n";
 
-void print_menu()
-{
+void print_menu() {
   printf("1. Define variables\n");
   printf("2. View variables\n");
   printf("3. Submit templated text\n");
@@ -46,20 +45,16 @@ void print_menu()
   printf("\n");
 }
 
-void define_vars(dict_t **vars)
-{
+void define_vars(dict_t **vars) {
   sad_var_type_t var_type;
   char var_name[MAX_BUF_SIZE];
   char var_value[MAX_BUF_SIZE];
   printf("-- Empty variable name will exit this menu\n");
   printf("-- Empty value will undefine the variable (if exists)\n");
-  while (1)
-  {
+  while (1) {
     printf("var name: ");
-    if (read_until(STDIN, var_name, sizeof(var_name), '\n') < 0)
-      return;
-    if (var_name[0] == '\0')
-      return;
+    if (read_until(STDIN, var_name, sizeof(var_name), '\n') < 0) return;
+    if (var_name[0] == '\0') return;
 
     printf("-- Available types\n");
     printf("    0 - String (default)\n");
@@ -67,37 +62,37 @@ void define_vars(dict_t **vars)
     printf("    2 - Float\n");
     printf("    3 - Bool [true/false]\n");
     printf("var type: ");
-    if (read_until(STDIN, var_value, sizeof(var_value), '\n') < 0)
-      return;
-    switch (strtoul(var_value, NULL, 10))
-    {
-      case 1: var_type = SAD_VAR_INT; break;
-      case 2: var_type = SAD_VAR_FLOAT; break;
-      case 3: var_type = SAD_VAR_BOOL; break;
-      default: var_type = SAD_VAR_STR; break;
+    if (read_until(STDIN, var_value, sizeof(var_value), '\n') < 0) return;
+    switch (strtoul(var_value, NULL, 10)) {
+      case 1:
+        var_type = SAD_VAR_INT;
+        break;
+      case 2:
+        var_type = SAD_VAR_FLOAT;
+        break;
+      case 3:
+        var_type = SAD_VAR_BOOL;
+        break;
+      default:
+        var_type = SAD_VAR_STR;
+        break;
     }
 
     printf("var value: ");
-    if (read_until(STDIN, var_value, sizeof(var_value), '\n') < 0)
-      return;
-    if (var_value[0] == '\0')
-    {
-      sad_var_t *var = (sad_var_t *) dict_remove(vars, var_name);
-      if (var)
-      {
-        if (var->type == SAD_VAR_STR && var->value.s)
-          free(var->value.s);
+    if (read_until(STDIN, var_value, sizeof(var_value), '\n') < 0) return;
+    if (var_value[0] == '\0') {
+      sad_var_t *var = (sad_var_t *)dict_remove(vars, var_name);
+      if (var) {
+        if (var->type == SAD_VAR_STR && var->value.s) free(var->value.s);
         free(var);
       }
       continue;
     }
 
-    sad_var_t *var = (sad_var_t *) malloc(sizeof(sad_var_t));
-    if (var)
-    {
+    sad_var_t *var = (sad_var_t *)malloc(sizeof(sad_var_t));
+    if (var) {
       var->type = var_type;
-      switch (var->type)
-      {
+      switch (var->type) {
         case SAD_VAR_STR:
           var->value.s = strdup(var_value);
           break;
@@ -116,23 +111,18 @@ void define_vars(dict_t **vars)
   }
 }
 
-void view_vars(dict_t **vars)
-{
+void view_vars(dict_t **vars) {
   int i, num_vars = 0;
 
   printf("-- Current variables:\n");
-  for (i = 0; i < TABLE_SIZE; ++i)
-  {
+  for (i = 0; i < TABLE_SIZE; ++i) {
     dict_t *cur = vars[i];
-    while (cur)
-    {
-      sad_var_t *var = (sad_var_t *) cur->value;
+    while (cur) {
+      sad_var_t *var = (sad_var_t *)cur->value;
       char *var_s = sadface_var2str(var);
-      if (var_s)
-      {
+      if (var_s) {
         printf(" > %s : %s\n", cur->name, var_s);
-        if (var->type != SAD_VAR_STR)
-          free(var_s);
+        if (var->type != SAD_VAR_STR) free(var_s);
         num_vars++;
       }
       cur = cur->next;
@@ -144,22 +134,18 @@ void view_vars(dict_t **vars)
     printf("-- None\n");
 }
 
-void submit_text(char *inbuf, size_t len)
-{
+void submit_text(char *inbuf, size_t len) {
   memset(inbuf, 0, len);
   printf("-- Submit a null-terminated string\n");
-  if (read_until(STDIN, inbuf, len, '\0') < 0)
-    printf("error.\n");
+  if (read_until(STDIN, inbuf, len, '\0') < 0) printf("error.\n");
 }
 
-void render_text(char *input, dict_t **vars)
-{
+void render_text(char *input, dict_t **vars) {
   char *output;
   size_t output_len;
   sadface_ctx_t *ctx = NULL;
 
-  if (sadface_init(&ctx, NULL, input, vars) < 0)
-  {
+  if (sadface_init(&ctx, NULL, input, vars) < 0) {
     printf("error.\n");
     return;
   }
@@ -168,16 +154,14 @@ void render_text(char *input, dict_t **vars)
   output = calloc(sizeof(char), output_len);
   if (output == NULL || sadface_render(ctx, output, &output_len) < 0)
     printf("error.\n");
-  else
-  {
+  else {
     printf("-- Render start.\n");
     printf("%s\n", output);
     printf("-- Render complete (%d bytes).\n", output_len);
   }
 }
 
-int main()
-{
+int main() {
   size_t input_len;
   char buf[MAX_BUF_SIZE], input[MAX_BUF_SIZE];
   dict_t **vars = dict_new();
@@ -185,38 +169,35 @@ int main()
   /* Banner */
   printf("%s", banner);
 
-  while (1)
-  {
+  while (1) {
     /* Menu */
     print_menu();
     printf("> ");
 
     /* Read in response */
-   if (read_until(STDIN, buf, sizeof(buf), '\n') < 0)
-     goto fail;
-   switch (strtol(buf, NULL, 10))
-   {
-     case 1:
-       define_vars(vars);
-       break;
-     case 2:
-       view_vars(vars);
-       break;
-     case 3:
-       submit_text(input, sizeof(input));
-       break;
-     case 4:
-       render_text(input, vars);
-       break;
-     case 5:
-       printf("# Bye.\n\n");
-       exit(0);
-       break;
-     default:
-       printf("Invalid menu. Try again.\n");
-       break;
-   }
-   printf("\n");
+    if (read_until(STDIN, buf, sizeof(buf), '\n') < 0) goto fail;
+    switch (strtol(buf, NULL, 10)) {
+      case 1:
+        define_vars(vars);
+        break;
+      case 2:
+        view_vars(vars);
+        break;
+      case 3:
+        submit_text(input, sizeof(input));
+        break;
+      case 4:
+        render_text(input, vars);
+        break;
+      case 5:
+        printf("# Bye.\n\n");
+        exit(0);
+        break;
+      default:
+        printf("Invalid menu. Try again.\n");
+        break;
+    }
+    printf("\n");
   }
   return 0;
 

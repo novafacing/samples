@@ -18,42 +18,43 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "operation.h"
+ */
 #include "service.h"
 
+#include <libcgc.h>
+
+#include "libc.h"
+#include "operation.h"
+
 enum {
-    MODE_BUILD = 13980,
-    MODE_EXAMINE = 809110,
+  MODE_BUILD = 13980,
+  MODE_EXAMINE = 809110,
 };
 
 int main(void) {
+  uint32_t mode[1] = {0};
+  int ret = 0;
 
-    uint32_t mode[1] = {0};
-    int ret = 0;
+  while (1) {
+    if ((ret = do_nonce()) == 0) {
+      RECV(mode, sizeof(uint32_t));
 
-    while (1) {
-        if ((ret = do_nonce()) == 0) {            
-            RECV(mode, sizeof(uint32_t));
-
-            switch (mode[0]) {
-                case MODE_BUILD:
-                    ret = do_build();
-                    break;
-                case MODE_EXAMINE:
-                    ret = do_examine();
-                    break;
-                default:
-                    ret = ERR_INVALID_MODE;
-            }
-        } 
-
-        if (ret < 0) {
-            SENDSI(ret);
-            return ret;
-        }
+      switch (mode[0]) {
+        case MODE_BUILD:
+          ret = do_build();
+          break;
+        case MODE_EXAMINE:
+          ret = do_examine();
+          break;
+        default:
+          ret = ERR_INVALID_MODE;
+      }
     }
-    return ret;
+
+    if (ret < 0) {
+      SENDSI(ret);
+      return ret;
+    }
+  }
+  return ret;
 }

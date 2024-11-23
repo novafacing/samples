@@ -26,23 +26,24 @@ THE SOFTWARE.
 #include <libcgc.h>
 
 typedef struct __attribute__((__packed__)) _L4Hdr {
-	unsigned char Dst;
-	unsigned char Src;
-	uint8_t Len;
+  unsigned char Dst;
+  unsigned char Src;
+  uint8_t Len;
 } L4Hdr, *pL4Hdr;
 
 #define MAX_HANDLERS (16)
 typedef struct _Handlers {
-	uint8_t L4Addr;
-	uint8_t (*Handler)(unsigned char *Data, uint8_t DataLen, unsigned char *Response, uint8_t *ResponseLen);
+  uint8_t L4Addr;
+  uint8_t (*Handler)(unsigned char *Data, uint8_t DataLen,
+                     unsigned char *Response, uint8_t *ResponseLen);
 } Handlers, *pHandlers;
 
 typedef struct _L4Connection {
-	uint32_t PeerL3Addr;
-	uint32_t LocalL3Addr;
-	unsigned char PeerL4Addr;
-	unsigned char LocalL4Addr;
-	void *Handler;
+  uint32_t PeerL3Addr;
+  uint32_t LocalL3Addr;
+  unsigned char PeerL4Addr;
+  unsigned char LocalL4Addr;
+  void *Handler;
 } L4Connection, *pL4Connection;
 
 uint8_t L4_RegisterHandler(uint8_t NewL4Addr, void *NewHandler);

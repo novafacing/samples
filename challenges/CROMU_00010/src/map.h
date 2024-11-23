@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 */
 
-
 #ifndef PAGESIZE
 #define PAGESIZE 4096
 #endif
@@ -32,65 +31,70 @@ THE SOFTWARE.
 #ifndef map_h
 #define map_h
 
-
-
 #include "llist.h"
 
 typedef struct intersection_s {
-	char FLAG[32];
-	pdListNode self;
-	struct road_s *other_road;
-	struct intersection_s *prevIntersection;
-	double distance_to_prev;
-	struct intersection_s *nextIntersection;
-	double distance_to_next;
+  char FLAG[32];
+  pdListNode self;
+  struct road_s *other_road;
+  struct intersection_s *prevIntersection;
+  double distance_to_prev;
+  struct intersection_s *nextIntersection;
+  double distance_to_next;
 } intersection, *pintersection;
 
 typedef struct road_s {
-	char FLAG[16];
-	pdListNode self;
-	char name[32];
-	pdList addressList;
-	pdList intersectionList; 
-	double length;
-}road, *proad;
+  char FLAG[16];
+  pdListNode self;
+  char name[32];
+  pdList addressList;
+  pdList intersectionList;
+  double length;
+} road, *proad;
 
 typedef struct map_s {
-	char name[32];
-	pdList roadList;
-}map, *pmap;
-
+  char name[32];
+  pdList roadList;
+} map, *pmap;
 
 typedef struct address_s {
-	char FLAG[8];
-	pdListNode self;
-	int number;
-	char resident[32];
-	proad thisRoad;
-	pintersection prevIntersection;
-	double distance_to_prev;
-	pintersection nextIntersection;
-	double distance_to_next;
-}address, *paddress;
+  char FLAG[8];
+  pdListNode self;
+  int number;
+  char resident[32];
+  proad thisRoad;
+  pintersection prevIntersection;
+  double distance_to_prev;
+  pintersection nextIntersection;
+  double distance_to_next;
+} address, *paddress;
 
 typedef struct routeList_s {
-	proad thisRoad;//pointer to the newly discovered unique road
-	struct routeList_s *parent;//parent is the road that was being explored when this is pushed on the list.
-	char filler[120];//data[4088],  501 fits 8(503+8)=4088..9 to crash,247 fits 16(247+8)=4080..18 to crash ,119 fits 32(119+8)=4064..121 to crash 
+  proad thisRoad;              // pointer to the newly discovered unique road
+  struct routeList_s *parent;  // parent is the road that was being explored
+                               // when this is pushed on the list.
+  char filler[120];  // data[4088],  501 fits 8(503+8)=4088..9 to crash,247 fits
+                     // 16(247+8)=4080..18 to crash ,119 fits
+                     // 32(119+8)=4064..121 to crash
 } routeList, *prouteList;
 
 pmap init_map(char mapName[32]);
 proad add_road(pmap thisMap, char roadName[32], double roadLength);
 void print_roads(pmap thisMap);
-paddress add_address ( int number, char resident[32], proad thisRoad, pintersection prevIntersection,
- 						double distance_to_prev, pintersection nextIntersection, double distance_to_next );
+paddress add_address(int number, char resident[32], proad thisRoad,
+                     pintersection prevIntersection, double distance_to_prev,
+                     pintersection nextIntersection, double distance_to_next);
 void print_addresses(proad thisRoad);
-pintersection add_intersection ( proad thisRoad, proad other_road, pintersection prevIntersection, double distance_to_prev, double distance_to_next );
+pintersection add_intersection(proad thisRoad, proad other_road,
+                               pintersection prevIntersection,
+                               double distance_to_prev,
+                               double distance_to_next);
 void print_intersections(proad thisRoad);
-pintersection delete_intersection(proad thisRoad, pintersection deletedIntersection);
-//new
+pintersection delete_intersection(proad thisRoad,
+                                  pintersection deletedIntersection);
+// new
 psList init_turnList();
-psList get_route(pmap thisMap, psList turnList, proad targetRoad, proad startRoad);
+psList get_route(pmap thisMap, psList turnList, proad targetRoad,
+                 proad startRoad);
 
-
-#endif 
+#endif

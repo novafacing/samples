@@ -21,70 +21,54 @@
  *
  */
 extern "C" {
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 }
 
 #include "sauce.h"
 
 namespace {
-    struct sauce_lut {
-        const char *name;
-        int calories;
-        int carbs;
-    };
+struct sauce_lut {
+  const char *name;
+  int calories;
+  int carbs;
+};
 
-    sauce_lut sauces[] = {
-        {"Tomato", 222, 22},
-        {"Balsamic", 270, 12},
-        {"Italian", 350, 15},
-        {"Ceasar", 367, 29},
-        {"Ranch", 450, 45},
-        {"Lite Italian", 150, 11},
-        {"Lite Ceasar", 250, 20},
-        {"Lite Ranch", 300, 30}
-    };
+sauce_lut sauces[] = {{"Tomato", 222, 22},      {"Balsamic", 270, 12},
+                      {"Italian", 350, 15},     {"Ceasar", 367, 29},
+                      {"Ranch", 450, 45},       {"Lite Italian", 150, 11},
+                      {"Lite Ceasar", 250, 20}, {"Lite Ranch", 300, 30}};
 
-    sauce_lut *find_sauce_entry(const char *sauce_name)
-    {
-        size_t i;
-        for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++) {
-            if (strcasecmp(sauces[i].name, sauce_name) == 0)
-                return &sauces[i];
-        }
+sauce_lut *find_sauce_entry(const char *sauce_name) {
+  size_t i;
+  for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++) {
+    if (strcasecmp(sauces[i].name, sauce_name) == 0) return &sauces[i];
+  }
 
-        return NULL;
-    }
-
-    void print_list()
-    {
-        size_t i;
-        for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++)
-            printf("%d. %s\n", i + 1, sauces[i].name);
-    }
+  return NULL;
 }
 
-Sauce::Sauce(const char *_name, int _calories, int _carbs)
-{
-    name = _name;
-    calories = _calories;
-    carbs = _carbs;
+void print_list() {
+  size_t i;
+  for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++)
+    printf("%d. %s\n", i + 1, sauces[i].name);
+}
+}  // namespace
+
+Sauce::Sauce(const char *_name, int _calories, int _carbs) {
+  name = _name;
+  calories = _calories;
+  carbs = _carbs;
 }
 
-Sauce::~Sauce()
-{
+Sauce::~Sauce() {}
+
+Sauce *Sauce::pour_sauce(const char *sauce_name) {
+  sauce_lut *sauce_entry = find_sauce_entry(sauce_name);
+  if (!sauce_entry) return NULL;
+
+  return new Sauce(sauce_entry->name, sauce_entry->calories,
+                   sauce_entry->carbs);
 }
 
-Sauce *Sauce::pour_sauce(const char *sauce_name)
-{
-    sauce_lut *sauce_entry = find_sauce_entry(sauce_name);
-    if (!sauce_entry)
-        return NULL;
-
-    return new Sauce(sauce_entry->name, sauce_entry->calories, sauce_entry->carbs);
-}
-
-void Sauce::list_options()
-{
-    print_list();
-}
+void Sauce::list_options() { print_list(); }

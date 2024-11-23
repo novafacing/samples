@@ -27,78 +27,72 @@ THE SOFTWARE.
 #ifndef FITNESS_SENSOR_H
 #define FITNESS_SENSOR_H
 
-#include "cutil_list.h" // custom linked list
+#include "cutil_list.h"  // custom linked list
 
 #define INVALID_SENSOR_TYPE 0xff
 
 // index values into the m_sensorArray... not used directly as values
-enum
-{
-	HEART = 0,
-	STEP,
-	SCALE,
-	RUN,
-	BIKE,
-	MAX_SENSOR_VALUE
+enum {
+  HEART = 0,
+  STEP,
+  SCALE,
+  RUN,
+  BIKE,
+  MAX_SENSOR_VALUE
 
 } ValidSensorTypes;
 
-typedef struct
-{
-	uint8_t Type;
-	uint8_t Val_1;
-	uint8_t Val_2;
-	uint8_t Val_3;
+typedef struct {
+  uint8_t Type;
+  uint8_t Val_1;
+  uint8_t Val_2;
+  uint8_t Val_3;
 } SensorMacFormat;
 
-class FitnessSensor
-{
+class FitnessSensor {
+ private:
+  uint16_t m_sensorID;
+  uint8_t m_sensorType;  // pulled from MAC
+  SensorMacFormat m_sensorMAC;
+  uint8_t *data;
+  bool m_invalid;
 
-private:
-	uint16_t m_sensorID;
-	uint8_t m_sensorType; // pulled from MAC
-	SensorMacFormat m_sensorMAC;
-	uint8_t *data;
-	bool m_invalid;
+  uint16_t m_owner;  // user this sensor is registered for
 
-	uint16_t m_owner; // user this sensor is registered for
+ public:
+  FitnessSensor() {}
+  FitnessSensor(uint16_t, uint32_t, uint8_t *, uint32_t);
 
+  uint16_t GetID() { return m_sensorID; }
+  SensorMacFormat GetMAC() { return m_sensorMAC; }
+  uint32_t GetMacAsInt();
+  uint8_t GetType() { return m_sensorType; }
 
-public:
-	FitnessSensor() {}
-	FitnessSensor( uint16_t, uint32_t, uint8_t *, uint32_t);
+  void SetID(uint16_t id) { m_sensorID = id; }
+  bool SetMAC(uint32_t mac);
 
-	uint16_t GetID() { return m_sensorID; }
-	SensorMacFormat GetMAC() { return m_sensorMAC; }
-	uint32_t GetMacAsInt();
-	uint8_t GetType() { return m_sensorType; }
+  bool IsInvalid() { return m_invalid; }
 
-	void SetID(uint16_t id) { m_sensorID = id; }
-	bool SetMAC(uint32_t mac);
+  uint8_t SetUser(uint16_t user);
+  uint16_t GetUser() { return m_owner; }
 
-	bool IsInvalid() { return m_invalid; }
+  uint8_t *GetData() { return data; }
 
-	uint8_t SetUser( uint16_t user );
-	uint16_t GetUser() { return m_owner; }
+  static uint8_t m_sensorArray[MAX_SENSOR_VALUE];
+  static bool GenerateTypeValues();
+  static bool GetSensorTypeValue(uint8_t lookup, uint8_t &val);
 
-	uint8_t *GetData() { return data; }
+  static uint16_t HandleBikeSensor(uint16_t);
+  static uint16_t HandleHeartSensor(uint16_t);
+  static uint16_t HandleScaleSensor(uint16_t);
+  static uint16_t HandleStepSensor(uint16_t);
+  static uint16_t HandleRunSensor(uint16_t);
 
-	static uint8_t m_sensorArray[ MAX_SENSOR_VALUE ];
-	static bool GenerateTypeValues();
-	static bool GetSensorTypeValue( uint8_t lookup, uint8_t &val );
+  // Test only
+  void Print();
 
-	static uint16_t HandleBikeSensor( uint16_t );
-	static uint16_t HandleHeartSensor( uint16_t );
-	static uint16_t HandleScaleSensor( uint16_t );
-	static uint16_t HandleStepSensor( uint16_t );
-	static uint16_t HandleRunSensor( uint16_t );
-
-	
-	// Test only
-	void Print();
-
-	// used for linked list in SensorManager
-	CUtil::DLL_LINK( FitnessSensor ) m_sensorLink; 
+  // used for linked list in SensorManager
+  CUtil::DLL_LINK(FitnessSensor) m_sensorLink;
 };
 
 #endif

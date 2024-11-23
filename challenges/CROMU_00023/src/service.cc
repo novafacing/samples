@@ -26,11 +26,10 @@ THE SOFTWARE.
 
 #include "common.h"
 
-int main(void)
-{
-    CommandHandler oCmdHandler;
+int main(void) {
+  CommandHandler oCmdHandler;
 
-    oCmdHandler.ParserLoop();
+  oCmdHandler.ParserLoop();
 
-    return 0;
+  return 0;
 }

@@ -26,149 +26,115 @@ THE SOFTWARE.
 
 #include "common.h"
 
-DLQueue::DLQueue( )
-    : m_pFirst( NULL ), m_pLast( NULL ), m_count( 0 )
-{
+DLQueue::DLQueue() : m_pFirst(NULL), m_pLast(NULL), m_count(0) {}
 
+DLQueue::~DLQueue() { DeleteAll(); }
+
+void DLQueue::AddFirst(DLItem *pItem) {
+  if (pItem == NULL) return;
+
+  if (m_pFirst == NULL) {
+    pItem->m_pNext = NULL;
+    pItem->m_pPrev = NULL;
+
+    m_pFirst = pItem;
+    m_pLast = pItem;
+  } else {
+    pItem->m_pNext = m_pFirst;
+    pItem->m_pPrev = NULL;
+
+    m_pFirst->m_pPrev = pItem;
+
+    m_pFirst = pItem;
+  }
+
+  // Increment count
+  m_count++;
 }
 
-DLQueue::~DLQueue( )
-{
-    DeleteAll();
+void DLQueue::AddLast(DLItem *pItem) {
+  if (pItem == NULL) return;
+
+  if (m_pLast == NULL) {
+    pItem->m_pNext = NULL;
+    pItem->m_pPrev = NULL;
+
+    m_pFirst = pItem;
+    m_pLast = pItem;
+  } else {
+    pItem->m_pNext = NULL;
+    pItem->m_pPrev = m_pLast;
+
+    m_pLast->m_pNext = pItem;
+
+    m_pLast = pItem;
+  }
+
+  // Increment count
+  m_count++;
 }
 
-void DLQueue::AddFirst( DLItem *pItem )
-{
-    if ( pItem == NULL )
-        return;
+void DLQueue::AddAfter(DLItem *pPrev, DLItem *pItem) {
+  if (pPrev == NULL || pItem == NULL) return;
 
-    if ( m_pFirst == NULL )
-    {
-        pItem->m_pNext = NULL;
-        pItem->m_pPrev = NULL;
+  pItem->m_pNext = pPrev->m_pNext;
+  pItem->m_pPrev = pPrev;
 
-        m_pFirst = pItem;
-        m_pLast = pItem;
-    }
-    else
-    {
-        pItem->m_pNext = m_pFirst;
-        pItem->m_pPrev = NULL;
+  if (pPrev->m_pNext) pPrev->m_pNext->m_pPrev = pItem;
 
-        m_pFirst->m_pPrev = pItem;
+  pPrev->m_pNext = pItem;
 
-        m_pFirst = pItem;
-    }
+  if (m_pLast == pPrev) m_pLast = pItem;
 
-    // Increment count
-    m_count++;
+  // Increment count
+  m_count++;
 }
 
-void DLQueue::AddLast( DLItem *pItem )
-{
-    if ( pItem == NULL )
-        return;
+void DLQueue::Unlink(DLItem *pItem) {
+  if (pItem->m_pNext) pItem->m_pNext->m_pPrev = pItem->m_pPrev;
 
-    if ( m_pLast == NULL )
-    {
-        pItem->m_pNext = NULL;
-        pItem->m_pPrev = NULL;
+  if (pItem->m_pPrev) pItem->m_pPrev->m_pNext = pItem->m_pNext;
 
-        m_pFirst = pItem;
-        m_pLast = pItem;
-    }
-    else
-    {
-        pItem->m_pNext = NULL;
-        pItem->m_pPrev = m_pLast;
+  if (m_pFirst == pItem) m_pFirst = pItem->m_pNext;
 
-        m_pLast->m_pNext = pItem;
+  if (m_pLast == pItem) m_pLast = pItem->m_pPrev;
 
-        m_pLast = pItem;
-    }
-
-    // Increment count
-    m_count++;
+  m_count--;
 }
 
-void DLQueue::AddAfter( DLItem *pPrev, DLItem *pItem )
-{
-    if ( pPrev == NULL || pItem == NULL )
-        return;
+void DLQueue::DeleteItem(DLItem *pItem) {
+  Unlink(pItem);
 
-    pItem->m_pNext = pPrev->m_pNext;
-    pItem->m_pPrev = pPrev;
-
-    if ( pPrev->m_pNext )
-        pPrev->m_pNext->m_pPrev = pItem;
-
-    pPrev->m_pNext = pItem;
-
-    if ( m_pLast == pPrev )
-        m_pLast = pItem;
-
-    // Increment count
-    m_count++;
+  delete pItem;
 }
 
-void DLQueue::Unlink( DLItem *pItem )
-{
-    if ( pItem->m_pNext )
-        pItem->m_pNext->m_pPrev = pItem->m_pPrev;
+void DLQueue::RemoveItem(DLItem *pItem) { Unlink(pItem); }
 
-    if ( pItem->m_pPrev )
-        pItem->m_pPrev->m_pNext = pItem->m_pNext;
+DLItem *DLQueue::RemoveFirst(void) {
+  DLItem *pItem = m_pFirst;
+  Unlink(pItem);
 
-    if ( m_pFirst == pItem )
-        m_pFirst = pItem->m_pNext;
-
-    if ( m_pLast == pItem )
-        m_pLast = pItem->m_pPrev;
-
-    m_count--;
+  return (pItem);
 }
 
-void DLQueue::DeleteItem( DLItem *pItem )
-{
-    Unlink( pItem );
+DLItem *DLQueue::RemoveLast(void) {
+  DLItem *pItem = m_pLast;
+  Unlink(pItem);
 
-    delete pItem;
+  return (pItem);
 }
 
-void DLQueue::RemoveItem( DLItem *pItem )
-{
-    Unlink( pItem );
-}
+void DLQueue::DeleteAll(void) {
+  // Fast delete all items
+  DLItem *pCur = m_pFirst;
+  DLItem *pNext = NULL;
 
-DLItem *DLQueue::RemoveFirst( void )
-{
-    DLItem *pItem = m_pFirst;
-    Unlink( pItem );
+  for (; pCur; pCur = pNext) {
+    pNext = pCur->m_pNext;
 
-    return (pItem);
-}
+    delete pCur;
+  }
 
-DLItem *DLQueue::RemoveLast( void )
-{
-    DLItem *pItem = m_pLast;
-    Unlink( pItem );
-
-    return (pItem);
-}
-
-void DLQueue::DeleteAll( void )
-{
-    // Fast delete all items
-    DLItem *pCur = m_pFirst;
-    DLItem *pNext = NULL;
-
-    for ( ; pCur; pCur = pNext )
-    {
-        pNext = pCur->m_pNext;
-
-        delete pCur;
-    }
-
-    m_count = 0;
-    m_pFirst = m_pLast = NULL;
+  m_count = 0;
+  m_pFirst = m_pLast = NULL;
 }

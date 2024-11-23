@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __COMMS_H__
 
 // Comm helpers
-uint32_t CommSendBytes( uint8_t *pData, uint32_t sendLen );
-uint32_t CommReadBytes( uint8_t *pDest, uint32_t readLen );
+uint32_t CommSendBytes(uint8_t *pData, uint32_t sendLen);
+uint32_t CommReadBytes(uint8_t *pDest, uint32_t readLen);
 
-#endif // __COMMS_H__
+#endif  // __COMMS_H__

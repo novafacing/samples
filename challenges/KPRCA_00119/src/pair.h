@@ -25,35 +25,30 @@
 #include <algorithm.h>
 
 template <class T1, class T2>
-struct pair
-{
-public:
-    pair() {}
-    pair(T1 left_, T2 right_) : left(left_), right(right_) {}
-    pair(const pair& other)
-    {
-        left = other.left;
-        right = other.right;
-    }
-    pair(pair&& other)
-    {
-        std::swap(left, other.left);
-        std::swap(right, other.right);
-    }
+struct pair {
+ public:
+  pair() {}
+  pair(T1 left_, T2 right_) : left(left_), right(right_) {}
+  pair(const pair& other) {
+    left = other.left;
+    right = other.right;
+  }
+  pair(pair&& other) {
+    std::swap(left, other.left);
+    std::swap(right, other.right);
+  }
 
-    pair& operator=(const pair& other)
-    {
-        left = other.left;
-        right = other.right;
-        return *this;
-    }
-    pair& operator=(pair&& other)
-    {
-        std::swap(left, other.left);
-        std::swap(right, other.right);
-        return *this;
-    }
+  pair& operator=(const pair& other) {
+    left = other.left;
+    right = other.right;
+    return *this;
+  }
+  pair& operator=(pair&& other) {
+    std::swap(left, other.left);
+    std::swap(right, other.right);
+    return *this;
+  }
 
-    T1 left;
-    T2 right;
+  T1 left;
+  T2 right;
 };

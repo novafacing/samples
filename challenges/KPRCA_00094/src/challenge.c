@@ -21,47 +21,42 @@
  *
  */
 
-#include <string.h>
-
 #include "challenge.h"
 
-const char* chal_cat_to_string(category_t cat)
-{
-    switch (cat)
-    {
-        case CAT_CRYPTO:
-            return "Crypto";
-        case CAT_PWNABLE:
-            return "Pwnable";
-        case CAT_FORENSICS:
-            return "Forensics";
-        case CAT_WEB:
-            return "Web";
-        case CAT_NETWORK:
-            return "Network";
-        case CAT_REVERSING:
-            return "Reversing";
-        case CAT_MISC:
-            return "Misc.";
-        default:
-            return "Unknown";
-    }
+#include <string.h>
+
+const char* chal_cat_to_string(category_t cat) {
+  switch (cat) {
+    case CAT_CRYPTO:
+      return "Crypto";
+    case CAT_PWNABLE:
+      return "Pwnable";
+    case CAT_FORENSICS:
+      return "Forensics";
+    case CAT_WEB:
+      return "Web";
+    case CAT_NETWORK:
+      return "Network";
+    case CAT_REVERSING:
+      return "Reversing";
+    case CAT_MISC:
+      return "Misc.";
+    default:
+      return "Unknown";
+  }
 }
 
-const char* chal_status_to_string(chal_stat_t stat)
-{
-    switch (stat)
-    {
-        case CSTAT_LOCKED:
-            return "Locked";
-        case CSTAT_SOLVED:
-            return "Solved";
-        case CSTAT_SOLVED_U:
-            return "Cleared";
-        case CSTAT_OPEN:
-            return "Open";
-        default:
-            return "Unknown";
-    }
+const char* chal_status_to_string(chal_stat_t stat) {
+  switch (stat) {
+    case CSTAT_LOCKED:
+      return "Locked";
+    case CSTAT_SOLVED:
+      return "Solved";
+    case CSTAT_SOLVED_U:
+      return "Cleared";
+    case CSTAT_OPEN:
+      return "Open";
+    default:
+      return "Unknown";
+  }
 }
-

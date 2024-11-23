@@ -28,15 +28,13 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-#define RAND_MAX	2147483647
+#define RAND_MAX 2147483647
 
 int minimum(unsigned int a, unsigned int b);
 int max(int a, int b);
-int rand( void );
-void srand( unsigned int seed );
-int atoi( const char *pStr );
-double atof( char *pStr );
- 
+int rand(void);
+void srand(unsigned int seed);
+int atoi(const char *pStr);
+double atof(char *pStr);
 
-
-#endif // STDLIB_H__
+#endif  // STDLIB_H__

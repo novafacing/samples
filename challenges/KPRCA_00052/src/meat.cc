@@ -23,68 +23,54 @@
 #include "meat.h"
 
 extern "C" {
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 };
 
 namespace {
-    struct meat_lut {
-        const char *name;
-        int calories;
-        int carbs;
-        bool is_pork;
-    };
+struct meat_lut {
+  const char *name;
+  int calories;
+  int carbs;
+  bool is_pork;
+};
 
-    meat_lut meats[] = {
-        {"Pepperoni", 222, 22, true},
-        {"All beef pepperoni", 270, 12, false},
-        {"Sausage", 350, 15, true},
-        {"Chicken", 367, 29, false},
-        {"Jerk Pork", 450, 45, true},
-        {"Ground Beef", 150, 11, false}
-    };
+meat_lut meats[] = {
+    {"Pepperoni", 222, 22, true}, {"All beef pepperoni", 270, 12, false},
+    {"Sausage", 350, 15, true},   {"Chicken", 367, 29, false},
+    {"Jerk Pork", 450, 45, true}, {"Ground Beef", 150, 11, false}};
 
-    meat_lut *find_meat_entry(const char *meat_name)
-    {
-        size_t i;
-        for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++) {
-            if (strcasecmp(meats[i].name, meat_name) == 0)
-                return &meats[i];
-        }
+meat_lut *find_meat_entry(const char *meat_name) {
+  size_t i;
+  for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++) {
+    if (strcasecmp(meats[i].name, meat_name) == 0) return &meats[i];
+  }
 
-        return NULL;
-    }
-
-    void print_list()
-    {
-        size_t i;
-        for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++)
-            printf("%d. %s\n", i + 1, meats[i].name);
-    }
+  return NULL;
 }
 
-Meat::Meat(const char *_name, int _calories, int _carbs, bool _is_pork)
-{
-    name = _name;
-    calories = _calories;
-    carbs = _carbs;
-    is_pork = _is_pork;
+void print_list() {
+  size_t i;
+  for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++)
+    printf("%d. %s\n", i + 1, meats[i].name);
+}
+}  // namespace
+
+Meat::Meat(const char *_name, int _calories, int _carbs, bool _is_pork) {
+  name = _name;
+  calories = _calories;
+  carbs = _carbs;
+  is_pork = _is_pork;
 }
 
-Meat::~Meat()
-{
+Meat::~Meat() {}
+
+Meat *Meat::add_meat(const char *meat_name) {
+  meat_lut *meat_entry = find_meat_entry(meat_name);
+  if (!meat_entry) return NULL;
+
+  return new Meat(meat_entry->name, meat_entry->calories, meat_entry->carbs,
+                  meat_entry->is_pork);
 }
 
-Meat *Meat::add_meat(const char *meat_name)
-{
-    meat_lut *meat_entry = find_meat_entry(meat_name);
-    if (!meat_entry)
-        return NULL;
-
-    return new Meat(meat_entry->name, meat_entry->calories, meat_entry->carbs, meat_entry->is_pork);
-}
-
-void Meat::list_options()
-{
-    print_list();
-}
+void Meat::list_options() { print_list(); }

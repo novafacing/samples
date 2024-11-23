@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #pragma once
 #include <libcgc.h>
+
 #include "libc.h"
 
 #define UINT16_MAX 65535U

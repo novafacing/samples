@@ -31,241 +31,241 @@ THE SOFTWARE.
 
 #include "timegen.h"
 
-#define SEEK_SET		(1)
-#define SEEK_CUR		(0)
-#define SEEK_END		(2)
+#define SEEK_SET (1)
+#define SEEK_CUR (0)
+#define SEEK_END (2)
 
-#define FS_NODE_FILE		(1)
-#define FS_NODE_DIRECTORY	(2)
+#define FS_NODE_FILE (1)
+#define FS_NODE_DIRECTORY (2)
 
-#define FS_MODE_OWNER_READ	(1)
-#define FS_MODE_OWNER_WRITE	(2)
-#define FS_MODE_OTHER_READ	(4)
-#define FS_MODE_OTHER_WRITE	(8)
+#define FS_MODE_OWNER_READ (1)
+#define FS_MODE_OWNER_WRITE (2)
+#define FS_MODE_OTHER_READ (4)
+#define FS_MODE_OTHER_WRITE (8)
 
 // Open modes
-#define FILE_OPEN_READ		(1)
-#define FILE_OPEN_WRITE		(2)
+#define FILE_OPEN_READ (1)
+#define FILE_OPEN_WRITE (2)
 
-class CDBNode 
-{
-public:
-	CDBNode( const CUtil::String &sName, const CUtil::String &sOwner, uint8_t modeBits );
-	CDBNode( const char *pszName, const char *pszOwner, uint8_t modeBits );
-	virtual ~CDBNode( );
-	
-	const CUtil::String &GetName( void ) const { return m_sName; };
-	const CUtil::String &GetOwner( void ) const { return m_sOwner; };
-	uint8_t GetModeBits( void ) const { return m_modeBits; };
+class CDBNode {
+ public:
+  CDBNode(const CUtil::String &sName, const CUtil::String &sOwner,
+          uint8_t modeBits);
+  CDBNode(const char *pszName, const char *pszOwner, uint8_t modeBits);
+  virtual ~CDBNode();
 
-	virtual uint8_t GetType( void ) const = 0;
+  const CUtil::String &GetName(void) const { return m_sName; };
+  const CUtil::String &GetOwner(void) const { return m_sOwner; };
+  uint8_t GetModeBits(void) const { return m_modeBits; };
 
-	void SetName( const char *pszName ) { m_sName = pszName; };
-	void SetOwner( const char *pszOwner ) { m_sOwner = pszOwner; };
+  virtual uint8_t GetType(void) const = 0;
 
-	uint32_t GetAccessTime( void ) const { return m_accessTime; };
-	void SetAccessTime( uint32_t accessTime ) { m_accessTime = accessTime; };
+  void SetName(const char *pszName) { m_sName = pszName; };
+  void SetOwner(const char *pszOwner) { m_sOwner = pszOwner; };
 
-protected:
-	CUtil::String m_sName;
-	CUtil::String m_sOwner;
-	uint8_t m_modeBits;
-	uint32_t m_accessTime;
+  uint32_t GetAccessTime(void) const { return m_accessTime; };
+  void SetAccessTime(uint32_t accessTime) { m_accessTime = accessTime; };
 
-public:	
-	CUtil::DLL_LINK( CDBNode ) m_dbLink;	
+ protected:
+  CUtil::String m_sName;
+  CUtil::String m_sOwner;
+  uint8_t m_modeBits;
+  uint32_t m_accessTime;
+
+ public:
+  CUtil::DLL_LINK(CDBNode) m_dbLink;
 };
 
 // 1 MB max file size
-#define FILE_CHUNK_SIZE		(4096)
-#define FILE_MAX_CHUNKS		(256)
-#define MAX_FILE_SIZE		(FILE_CHUNK_SIZE * FILE_MAX_CHUNKS)
+#define FILE_CHUNK_SIZE (4096)
+#define FILE_MAX_CHUNKS (256)
+#define MAX_FILE_SIZE (FILE_CHUNK_SIZE * FILE_MAX_CHUNKS)
 
-#define FILE_WRITE_OK			(0)
-#define FILE_WRITE_ERROR_MAX_FILESIZE	(1)
-#define FILE_WRITE_PAST_EOF		(2)
-#define FILE_WRITE_ERROR		(3)
+#define FILE_WRITE_OK (0)
+#define FILE_WRITE_ERROR_MAX_FILESIZE (1)
+#define FILE_WRITE_PAST_EOF (2)
+#define FILE_WRITE_ERROR (3)
 
-#define FILE_READ_OK			(0)
-#define FILE_READ_EOF			(1)
-#define FILE_READ_ERROR			(2)
+#define FILE_READ_OK (0)
+#define FILE_READ_EOF (1)
+#define FILE_READ_ERROR (2)
 
-class CDBFile : public CDBNode
-{
-public:
-	CDBFile( const CUtil::String &sName, const CUtil::String &sOwner, uint8_t modeBits );
-	CDBFile( const char *pszName, const char *pszOwner, uint8_t modeBits );
-	~CDBFile( );
+class CDBFile : public CDBNode {
+ public:
+  CDBFile(const CUtil::String &sName, const CUtil::String &sOwner,
+          uint8_t modeBits);
+  CDBFile(const char *pszName, const char *pszOwner, uint8_t modeBits);
+  ~CDBFile();
 
-	uint8_t GetType( void ) const { return (FS_NODE_FILE); };
+  uint8_t GetType(void) const { return (FS_NODE_FILE); };
 
-	int32_t GetFileSize( void ) const { return m_fileSize; };
+  int32_t GetFileSize(void) const { return m_fileSize; };
 
-	uint8_t WriteData( int32_t writePos, uint8_t *pData, uint32_t writeLength, uint32_t &writeActual );
-	uint8_t ReadData( int32_t readPos, uint8_t *pData, uint32_t readLength, uint32_t &readActual );
+  uint8_t WriteData(int32_t writePos, uint8_t *pData, uint32_t writeLength,
+                    uint32_t &writeActual);
+  uint8_t ReadData(int32_t readPos, uint8_t *pData, uint32_t readLength,
+                   uint32_t &readActual);
 
-protected:
-	typedef struct FILE_CHUNK
-	{
-		uint8_t chunkData[FILE_CHUNK_SIZE];
-	} tFileChunk;
+ protected:
+  typedef struct FILE_CHUNK {
+    uint8_t chunkData[FILE_CHUNK_SIZE];
+  } tFileChunk;
 
-	int32_t m_fileSize;
+  int32_t m_fileSize;
 
-	tFileChunk *m_pChunks[FILE_MAX_CHUNKS];
+  tFileChunk *m_pChunks[FILE_MAX_CHUNKS];
 };
 
-class CDBFSUser
-{
-public:
-	CDBFSUser( const CUtil::String &sUsername, const CUtil::String &sPassword );
-	CDBFSUser( const char *pszUsername, const char *pszPassword );
-	~CDBFSUser( );
+class CDBFSUser {
+ public:
+  CDBFSUser(const CUtil::String &sUsername, const CUtil::String &sPassword);
+  CDBFSUser(const char *pszUsername, const char *pszPassword);
+  ~CDBFSUser();
 
-	const CUtil::String &GetUsername( void ) const { return m_sUsername; };
-	const CUtil::String &GetPassword( void ) const { return m_sPassword; };
+  const CUtil::String &GetUsername(void) const { return m_sUsername; };
+  const CUtil::String &GetPassword(void) const { return m_sPassword; };
 
-private:
-	CUtil::String m_sUsername;
-	CUtil::String m_sPassword;
+ private:
+  CUtil::String m_sUsername;
+  CUtil::String m_sPassword;
 
-public:
-	CUtil::DLL_LINK( CDBFSUser ) m_fsUserLink;
+ public:
+  CUtil::DLL_LINK(CDBFSUser) m_fsUserLink;
 };
 
-class CDBFSOpenFile
-{
-public:
-	CDBFSOpenFile( CDBFile *pFile, uint8_t openMode );
-	~CDBFSOpenFile( );
+class CDBFSOpenFile {
+ public:
+  CDBFSOpenFile(CDBFile *pFile, uint8_t openMode);
+  ~CDBFSOpenFile();
 
-	CDBFile *GetFile( void ) { return m_pFile; };
-	
-	int32_t GetFilePosition( void ) const { return m_curFilePos; };
-	bool SetFilePosition( int32_t filePosition )
-	{
-		if ( !m_pFile )
-			return (false);
+  CDBFile *GetFile(void) { return m_pFile; };
 
-		if ( filePosition > m_pFile->GetFileSize() )
-			filePosition = m_pFile->GetFileSize();
+  int32_t GetFilePosition(void) const { return m_curFilePos; };
+  bool SetFilePosition(int32_t filePosition) {
+    if (!m_pFile) return (false);
 
-		m_curFilePos = filePosition;
+    if (filePosition > m_pFile->GetFileSize())
+      filePosition = m_pFile->GetFileSize();
 
-		return (true);
-	}
+    m_curFilePos = filePosition;
 
-	bool SetFilePositionEnd( void )
-	{
-		if ( !m_pFile )
-			return (false);
+    return (true);
+  }
 
-		m_curFilePos = m_pFile->GetFileSize();
+  bool SetFilePositionEnd(void) {
+    if (!m_pFile) return (false);
 
-		return (true);	
-	}
+    m_curFilePos = m_pFile->GetFileSize();
 
-	uint8_t GetMode( void ) const { return m_openMode; };
+    return (true);
+  }
 
-private:
-	uint8_t m_openMode;
-	int32_t m_curFilePos;
-	CDBFile *m_pFile;
+  uint8_t GetMode(void) const { return m_openMode; };
 
-public:
-	CUtil::DLL_LINK( CDBFSOpenFile ) m_openFileLink;
+ private:
+  uint8_t m_openMode;
+  int32_t m_curFilePos;
+  CDBFile *m_pFile;
+
+ public:
+  CUtil::DLL_LINK(CDBFSOpenFile) m_openFileLink;
 };
 
-// Database File System 
-class CDBFS
-{
-public:
-	CDBFS( CTimeGen *pTimeGen );
-	~CDBFS( );
+// Database File System
+class CDBFS {
+ public:
+  CDBFS(CTimeGen *pTimeGen);
+  ~CDBFS();
 
-	bool Init( CUtil::String sRootPassword, uint32_t maxFiles );
+  bool Init(CUtil::String sRootPassword, uint32_t maxFiles);
 
-	bool AddFileAsRoot( CUtil::String sFilename, uint8_t *pFileData, uint32_t dataLen );
+  bool AddFileAsRoot(CUtil::String sFilename, uint8_t *pFileData,
+                     uint32_t dataLen);
 
-	CDBFSUser *FindUser( CUtil::String sUsername );
+  CDBFSUser *FindUser(CUtil::String sUsername);
 
-	bool SetUser( CUtil::String sUsername, CUtil::String sPassword );
+  bool SetUser(CUtil::String sUsername, CUtil::String sPassword);
 
-	bool AddUser( CUtil::String sUsername, CUtil::String sPassword );
+  bool AddUser(CUtil::String sUsername, CUtil::String sPassword);
 
-	bool DeleteUser( CUtil::String sUsername );
+  bool DeleteUser(CUtil::String sUsername);
 
-	// Accessor
-	bool HasLastError( void ) const { return m_bLastError; };
-	const CUtil::String &GetLastError( void ) const { return m_sLastError; };
-	
-	// FS functions
-	bool RenameFile( CUtil::String sOldFilename, CUtil::String sNewFilename );
-	bool DeleteFile( CUtil::String sFilename );
+  // Accessor
+  bool HasLastError(void) const { return m_bLastError; };
+  const CUtil::String &GetLastError(void) const { return m_sLastError; };
 
-	CDBFSOpenFile *OpenFile( CUtil::String sFilename, const char *pszMode );
-	bool CloseFile( CDBFSOpenFile *pFile );
+  // FS functions
+  bool RenameFile(CUtil::String sOldFilename, CUtil::String sNewFilename);
+  bool DeleteFile(CUtil::String sFilename);
 
-	CDBFile *ListFileFirst( void ) { return (CDBFile *)m_nodeList.GetFirst(); };
-	CDBFile *ListFileNext( CDBFile *pCur ) { return (CDBFile *)m_nodeList.GetNext( pCur ); };
+  CDBFSOpenFile *OpenFile(CUtil::String sFilename, const char *pszMode);
+  bool CloseFile(CDBFSOpenFile *pFile);
 
-	uint32_t FileRead( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSOpenFile *pFP );
-	uint32_t FileWrite( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSOpenFile *pFP );
-	uint32_t FileSeek( CDBFSOpenFile *pFP, int32_t offset, int8_t origin );
+  CDBFile *ListFileFirst(void) { return (CDBFile *)m_nodeList.GetFirst(); };
+  CDBFile *ListFileNext(CDBFile *pCur) {
+    return (CDBFile *)m_nodeList.GetNext(pCur);
+  };
 
-private:
-	bool IsUserRoot( void )
-	{
-		if ( m_pCurUser && m_pCurUser->GetUsername() == "root" )
-			return (true);
-		else
-			return (false);
-	}
+  uint32_t FileRead(uint8_t *pBuf, uint32_t size, uint32_t nitems,
+                    CDBFSOpenFile *pFP);
+  uint32_t FileWrite(uint8_t *pBuf, uint32_t size, uint32_t nitems,
+                     CDBFSOpenFile *pFP);
+  uint32_t FileSeek(CDBFSOpenFile *pFP, int32_t offset, int8_t origin);
 
-	void SetError( const char *pszError ) { m_bLastError = true; m_sLastError = pszError; };
-	void ClearError( void ) { m_bLastError = false; m_sLastError = ""; };
+ private:
+  bool IsUserRoot(void) {
+    if (m_pCurUser && m_pCurUser->GetUsername() == "root")
+      return (true);
+    else
+      return (false);
+  }
 
-	CDBFile *FindFileByName( const CUtil::String &sFilename );
+  void SetError(const char *pszError) {
+    m_bLastError = true;
+    m_sLastError = pszError;
+  };
+  void ClearError(void) {
+    m_bLastError = false;
+    m_sLastError = "";
+  };
 
-	bool IsFileOpen( CDBFile *pFile );
+  CDBFile *FindFileByName(const CUtil::String &sFilename);
 
-	bool IsMaxFilesReached( void ) 
-	{
-		return (m_curFiles >= m_maxFiles);
-	}
+  bool IsFileOpen(CDBFile *pFile);
 
-	CDBFile *CreateFile( const CUtil::String &sFilename, const CUtil::String &sOwner, uint8_t modeBits )
-	{
-		CDBFile *pFile = new CDBFile( sFilename, sOwner, modeBits );
+  bool IsMaxFilesReached(void) { return (m_curFiles >= m_maxFiles); }
 
-		// If access time is available set it	
-		if ( m_pTimeGen )
-			pFile->SetAccessTime( m_pTimeGen->GetUnixTimestamp() );
-	
-		m_nodeList.AddLast( pFile );
+  CDBFile *CreateFile(const CUtil::String &sFilename,
+                      const CUtil::String &sOwner, uint8_t modeBits) {
+    CDBFile *pFile = new CDBFile(sFilename, sOwner, modeBits);
 
-		return (pFile);
-	}
+    // If access time is available set it
+    if (m_pTimeGen) pFile->SetAccessTime(m_pTimeGen->GetUnixTimestamp());
 
-private:
-	uint32_t m_maxFiles;
-	uint32_t m_curFiles;
+    m_nodeList.AddLast(pFile);
 
-	bool m_bLastError;
-	CUtil::String m_sLastError;
+    return (pFile);
+  }
 
-	CTimeGen *m_pTimeGen;
+ private:
+  uint32_t m_maxFiles;
+  uint32_t m_curFiles;
 
-	CDBFSUser *m_pCurUser;
+  bool m_bLastError;
+  CUtil::String m_sLastError;
 
-	// Starting nodes (root of file system tree)
-	CUtil::DLL_LIST( CDBNode, m_dbLink )	m_nodeList;	
+  CTimeGen *m_pTimeGen;
 
-	// List of users that can access file system
-	CUtil::DLL_LIST( CDBFSUser, m_fsUserLink ) m_userList;
+  CDBFSUser *m_pCurUser;
 
-	// List of open files for file system
-	CUtil::DLL_LIST( CDBFSOpenFile, m_openFileLink ) m_openFileList;
+  // Starting nodes (root of file system tree)
+  CUtil::DLL_LIST(CDBNode, m_dbLink) m_nodeList;
+
+  // List of users that can access file system
+  CUtil::DLL_LIST(CDBFSUser, m_fsUserLink) m_userList;
+
+  // List of open files for file system
+  CUtil::DLL_LIST(CDBFSOpenFile, m_openFileLink) m_openFileList;
 };
 
-#endif // __DBFS_H__
+#endif  // __DBFS_H__

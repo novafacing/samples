@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define MAX_UINT_STR_SIZE 12
 
 #define ENROLL_CMD "enroll"
@@ -26,12 +26,12 @@
 #define CERTS_CMD "crls"
 #define REVOKE_CERT_CMD "revoke"
 
-#define CERT_AUTH_TYPE  "PeerCert"
+#define CERT_AUTH_TYPE "PeerCert"
 
-#define CERT_SUBJECT_HDR  "Subject"
-#define CERT_ISSUER_HDR  "Issuer"
-#define CERT_KEY_HDR  "Key"
-#define CERT_SIG_HDR  "Signature"
+#define CERT_SUBJECT_HDR "Subject"
+#define CERT_ISSUER_HDR "Issuer"
+#define CERT_KEY_HDR "Key"
+#define CERT_SIG_HDR "Signature"
 #define CERT_EXP_HDR "Expiration"
 #define CERT_STATUS_HDR "Status"
 #define CERT_USE_HDR "Use"
@@ -45,27 +45,27 @@
 #define ISSUER_STR "Secure Registers Inc."
 
 typedef struct {
-	char* subject;
-	char* issuer;
-	char* key;
-	char* use;
-	char* revoked;
-	unsigned int signature;
-	unsigned int expiration;
-	unsigned int exp_window;
-	void* next;
+  char* subject;
+  char* issuer;
+  char* key;
+  char* use;
+  char* revoked;
+  unsigned int signature;
+  unsigned int expiration;
+  unsigned int exp_window;
+  void* next;
 } Certificate;
 
 static char private_key[1024];
 static char* issuer;
-Certificate *CRL;
+Certificate* CRL;
 
 void enroll(int id, char* body, unsigned int* expiration_date);
 void crls(int id, char* body, unsigned int* expiration_date);
 void reenroll(int id, char* body, unsigned int* expiration_date);
 void revokeCert(int id, char* body, unsigned int* expiration_date);
 
-Certificate *parseCertificate(char* body);
-int validateCert(Certificate *cert, char* use, unsigned int* expiration_date);
+Certificate* parseCertificate(char* body);
+int validateCert(Certificate* cert, char* use, unsigned int* expiration_date);
 int checkCertUse(char* command, char* useList);
 int isCertCommand(char* command);

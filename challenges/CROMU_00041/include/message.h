@@ -25,14 +25,12 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-
-typedef struct 
-{
-	int match;
-	char to[MAX_NAME_LEN];
-	char from[MAX_NAME_LEN];
-	char msg[MAX_MSG_LEN];
-	char is_draft;
+typedef struct {
+  int match;
+  char to[MAX_NAME_LEN];
+  char from[MAX_NAME_LEN];
+  char msg[MAX_MSG_LEN];
+  char is_draft;
 } Message;
 
 extern int msg_count_login;

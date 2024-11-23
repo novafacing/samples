@@ -18,12 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
 
 #include <libcgc.h>
+
 #include "libc.h"
 
 #define SCRATCH_SZ 2048
@@ -33,21 +34,22 @@
 #define TRUE 1
 
 typedef struct instruction {
-	uint8_t len;
-    uint8_t opcode;
-    uint32_t op1;
-    uint32_t op2;
+  uint8_t len;
+  uint8_t opcode;
+  uint32_t op1;
+  uint32_t op2;
 } inst_t;
 
 int bytecode_vrfy(uint8_t *bytecode, uint16_t len);
-int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out);
+int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch,
+                  uint32_t *out);
 
 // Bytecode is (single) register-based with memory accesses available.
 // Only a single register is used, which can be thought of as ACC (accumulator).
-// Solutions to arthmetic operands are stored in this register which can be 
+// Solutions to arthmetic operands are stored in this register which can be
 // accessed with the appropriate opcodes.
 
-// All arithmetic operations are modulo 0xFFFFFFFF (no special handling for 
+// All arithmetic operations are modulo 0xFFFFFFFF (no special handling for
 // over/underflows, etc).
 
 // Bytecode format:
@@ -59,11 +61,11 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
 #define INST_OFF_SZ 4
 #define INST_IMM_SZ 2
 
-// NOTE1: even if one operand is ACC, both operands still consume space.  
-// The amount of space consumed is dictated by their immediate / offset status.  
+// NOTE1: even if one operand is ACC, both operands still consume space.
+// The amount of space consumed is dictated by their immediate / offset status.
 // The value of the extra operand is ignored.
 
-// NOTE2: This encoding scheme is not space-efficient.  It's designed to be 
+// NOTE2: This encoding scheme is not space-efficient.  It's designed to be
 // easy to grok.
 
 ////
@@ -73,11 +75,11 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
 #define INST_MASK_DST 0x01
 // XXXX XX0X: store into ACC
 // XXXX XX1X: store into mem (offset in operand1)
-// NOTE: If we're storing into memory, we've consumed an operand for the memory 
+// NOTE: If we're storing into memory, we've consumed an operand for the memory
 // offset. We arbitrarily choose op1 to hold this offset.  This implies:
 // INST_MASK_ACC - because our arithmetic will involve ACC & op2.
 // INST_MASK_OP1 - because op1 will be interpreted as an offset.
-// If INST_MASK_DST is set and either INST_MASK_ACC or INST_MASK_OP1 is not, 
+// If INST_MASK_DST is set and either INST_MASK_ACC or INST_MASK_OP1 is not,
 // the instruction is invalid.
 
 #define INST_MASK_ACC 0x02
@@ -99,12 +101,12 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
 ////
 // Opcodes
 ////
-#define OPCODE_ADD 0x00 // 0000: ADD
-#define OPCODE_SUB 0x10 // 0001: SUB
-#define OPCODE_MUL 0x20 // 0010: MUL
-#define OPCODE_DIV 0x30 // 0011: DIV
-#define OPCODE_OUT 0xF0 // 1111: OUT (OUTPUT <- ACC)
+#define OPCODE_ADD 0x00  // 0000: ADD
+#define OPCODE_SUB 0x10  // 0001: SUB
+#define OPCODE_MUL 0x20  // 0010: MUL
+#define OPCODE_DIV 0x30  // 0011: DIV
+#define OPCODE_OUT 0xF0  // 1111: OUT (OUTPUT <- ACC)
 
-#define OUT_DEFAULT 0xDEADBEEF // some probably-incorrect value
+#define OUT_DEFAULT 0xDEADBEEF  // some probably-incorrect value
 
 #endif

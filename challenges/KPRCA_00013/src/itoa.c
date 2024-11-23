@@ -26,40 +26,35 @@
 
 #include "convert.h"
 
-char *itoa(int value, char *str, size_t size)
-{
-    int base = 10;
-    if (size <= 1 )
-        return NULL;
+char *itoa(int value, char *str, size_t size) {
+  int base = 10;
+  if (size <= 1) return NULL;
 
-    size_t i = 0;
-    int is_negative = 0;
+  size_t i = 0;
+  int is_negative = 0;
 
-    if (value < 0)
-        is_negative = 1;
+  if (value < 0) is_negative = 1;
 
-    do {
-        if (is_negative)
-            str[i++] = '0' - value % base;
-        else
-            str[i++] = '0' + value % base;
-
-        value /= base;
-    } while (i < size - 1 && value != 0);
-
-    if (value != 0 || (i == size - 1  && is_negative))
-        return NULL;
-
+  do {
     if (is_negative)
-        str[i++] = '-';
-    str[i--] = '\0';
+      str[i++] = '0' - value % base;
+    else
+      str[i++] = '0' + value % base;
 
-    int j = 0;
-    while (i > j) {
-        char c = str[j];
-        str[j++] = str[i];
-        str[i--] = c;
-    }
+    value /= base;
+  } while (i < size - 1 && value != 0);
 
-    return str;
+  if (value != 0 || (i == size - 1 && is_negative)) return NULL;
+
+  if (is_negative) str[i++] = '-';
+  str[i--] = '\0';
+
+  int j = 0;
+  while (i > j) {
+    char c = str[j];
+    str[j++] = str[i];
+    str[i--] = c;
+  }
+
+  return str;
 }

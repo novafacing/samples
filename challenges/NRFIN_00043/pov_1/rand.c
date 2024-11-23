@@ -18,17 +18,18 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
+ */
 #include "rand.h"
 
+#include <libcgc.h>
+
 void rand(void *buf, unsigned int n) {
-	size_t count = 0;
-	size_t rand_bytes = 0;
-	while (n > count) {
-		if (0 != random(buf, n - count, &rand_bytes)) {
-			_terminate(44);
-		}
-		count += rand_bytes;
-	}
+  size_t count = 0;
+  size_t rand_bytes = 0;
+  while (n > count) {
+    if (0 != random(buf, n - count, &rand_bytes)) {
+      _terminate(44);
+    }
+    count += rand_bytes;
+  }
 }

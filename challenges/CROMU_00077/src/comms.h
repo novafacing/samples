@@ -26,18 +26,17 @@ THE SOFTWARE.
 #ifndef __COMMS_H__
 #define __COMMS_H__
 
-class CNetworkComm
-{
-public:
-	CNetworkComm( int32_t recvFD, int32_t sendFD );
-	~CNetworkComm( );
+class CNetworkComm {
+ public:
+  CNetworkComm(int32_t recvFD, int32_t sendFD);
+  ~CNetworkComm();
 
-	uint32_t RecvData( uint8_t *pDest, uint32_t maxLen );
-	uint32_t SendData( uint8_t *pSource, uint32_t sendLen );
+  uint32_t RecvData(uint8_t *pDest, uint32_t maxLen);
+  uint32_t SendData(uint8_t *pSource, uint32_t sendLen);
 
-private:
-	int32_t m_recvFD;
-	int32_t m_sendFD;
+ private:
+  int32_t m_recvFD;
+  int32_t m_sendFD;
 };
 
-#endif // __COMMS_H__
+#endif  // __COMMS_H__

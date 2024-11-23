@@ -33,8 +33,8 @@ THE SOFTWARE.
 #define VGF_MAX_HEIGHT 512
 
 #define VGF_OBJECT_TRIANGLE 1
-#define VGF_OBJECT_RECTANGLE 0 
-#define VGF_OBJECT_LINE 2 
+#define VGF_OBJECT_RECTANGLE 0
+#define VGF_OBJECT_LINE 2
 #define VGF_OBJECT_CIRCLE 3
 #define VGF_OBJECT_SQUARE 4
 #define VGF_OBJECT_SPRAY 5
@@ -50,7 +50,6 @@ typedef struct VGF_Header_s {
   uint8_t layers;
 } VGF_Header;
 
-
 typedef struct VGF_Object_s {
   uint8_t type;
   uint8_t layer;
@@ -59,12 +58,12 @@ typedef struct VGF_Object_s {
 } VGF_Object;
 
 typedef struct VGF_Triangle_s {
-  uint16_t  x0;
-  uint16_t  y0;
-  uint16_t  x1;
-  uint16_t  y1;
-  uint16_t  x2;
-  uint16_t  y2;
+  uint16_t x0;
+  uint16_t y0;
+  uint16_t x1;
+  uint16_t y1;
+  uint16_t x2;
+  uint16_t y2;
 } VGF_Triangle;
 
 typedef struct VGF_Rectangle_s {

@@ -20,18 +20,17 @@
  * THE SOFTWARE.
  *
  */
+#include "trie.h"
+
 #include <stdio.h>
 #include <string.h>
 
 #include "safe.h"
-#include "trie.h"
 
 static size_t TrieCount = ROOT_IDENTIFIER;
 
-void AllocateAndInitializeTrieRoot(trie** Trie)
-{
-  if (!Trie)
-    return;
+void AllocateAndInitializeTrieRoot(trie** Trie) {
+  if (!Trie) return;
 
   *Trie = xcalloc(sizeof(trie), 1);
   (*Trie)->Data = 0;
@@ -41,8 +40,7 @@ void AllocateAndInitializeTrieRoot(trie** Trie)
   TrieCount++;
 }
 
-trie* InitializeTrieChild(trie_unit Data)
-{
+trie* InitializeTrieChild(trie_unit Data) {
   trie* Child;
 
   Child = xcalloc(sizeof(trie), 1);
@@ -54,14 +52,10 @@ trie* InitializeTrieChild(trie_unit Data)
   return Child;
 }
 
-void FreeTrie(trie* Trie)
-{
-  if (Trie)
-  {
-    for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex)
-    {
-      if (Trie->Children[ChildIndex])
-      {
+void FreeTrie(trie* Trie) {
+  if (Trie) {
+    for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex) {
+      if (Trie->Children[ChildIndex]) {
         FreeTrie(Trie->Children[ChildIndex]);
         Trie->Children[ChildIndex] = NULL;
       }
@@ -71,22 +65,17 @@ void FreeTrie(trie* Trie)
   }
 }
 
-void InsertIntoTrie(trie* Trie, trie_unit* Data, size_t DataSize)
-{
-  if (!Trie)
-    return;
+void InsertIntoTrie(trie* Trie, trie_unit* Data, size_t DataSize) {
+  if (!Trie) return;
 
-  for (size_t DataIndex = 0; DataIndex < DataSize / sizeof(trie_unit); ++DataIndex)
-  {
+  for (size_t DataIndex = 0; DataIndex < DataSize / sizeof(trie_unit);
+       ++DataIndex) {
     trie* Child;
 
-    if (!Trie->Children[Data[DataIndex]])
-    {
+    if (!Trie->Children[Data[DataIndex]]) {
       Child = InitializeTrieChild(Data[DataIndex]);
       Trie->Children[Data[DataIndex]] = Child;
-    }
-    else
-    {
+    } else {
       Child = Trie->Children[Data[DataIndex]];
     }
 
@@ -97,10 +86,8 @@ void InsertIntoTrie(trie* Trie, trie_unit* Data, size_t DataSize)
   Trie->Terminal = 1;
 }
 
-trie* FindInTrie(trie* Trie, trie_unit* Data, size_t DataSize)
-{
-  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
-  {
+trie* FindInTrie(trie* Trie, trie_unit* Data, size_t DataSize) {
+  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex) {
     if (Trie->Children[Data[DataIndex]])
       Trie = Trie->Children[Data[DataIndex]];
     else
@@ -110,64 +97,51 @@ trie* FindInTrie(trie* Trie, trie_unit* Data, size_t DataSize)
   return Trie->Terminal ? Trie : NULL;
 }
 
-trie* FindInTrieByIdentifier(trie* Trie, size_t Identifier)
-{
+trie* FindInTrieByIdentifier(trie* Trie, size_t Identifier) {
   trie* Found = NULL;
 
-  if (Trie->Identifier == Identifier)
-    return Trie;
+  if (Trie->Identifier == Identifier) return Trie;
 
-  if (!Trie)
-    return NULL;
+  if (!Trie) return NULL;
 
-  for (size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex)
-  {
-    if (Trie->Children[UnitIndex])
-    {
+  for (size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex) {
+    if (Trie->Children[UnitIndex]) {
       Found = FindInTrieByIdentifier(Trie->Children[UnitIndex], Identifier);
-      if (Found)
-        return Found;
+      if (Found) return Found;
     }
   }
 
   return NULL;
 }
 
-size_t GetTrieCount(void)
-{
-  return TrieCount;
-}
+size_t GetTrieCount(void) { return TrieCount; }
 
-static int _GatherTerminals(trie* Trie, trie*** Terminals, size_t* TerminalCount, size_t* TerminalMax)
-{
-  if (Trie->Terminal)
-  {
+static int _GatherTerminals(trie* Trie, trie*** Terminals,
+                            size_t* TerminalCount, size_t* TerminalMax) {
+  if (Trie->Terminal) {
     (*Terminals)[*TerminalCount] = Trie;
     *TerminalCount += 1;
 
-    if (*TerminalCount == *TerminalMax)
-    {
+    if (*TerminalCount == *TerminalMax) {
       trie** NewTerminals = xcalloc(sizeof(trie*), 2 * *TerminalMax);
-      memcpy(NewTerminals, *Terminals, *TerminalMax * sizeof(trie *));
+      memcpy(NewTerminals, *Terminals, *TerminalMax * sizeof(trie*));
       *TerminalMax = *TerminalMax * 2;
       free(*Terminals);
       *Terminals = NewTerminals;
     }
   }
 
-  for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++)
-  {
-    if (Trie->Children[ChildIndex])
-    {
-      _GatherTerminals(Trie->Children[ChildIndex], Terminals, TerminalCount, TerminalMax);
+  for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++) {
+    if (Trie->Children[ChildIndex]) {
+      _GatherTerminals(Trie->Children[ChildIndex], Terminals, TerminalCount,
+                       TerminalMax);
     }
   }
 
   return 0;
 }
 
-trie** GatherTerminals(trie* Trie, size_t* TerminalCount)
-{
+trie** GatherTerminals(trie* Trie, size_t* TerminalCount) {
 #define TERMINAL_START_MAX 4
   trie** Terminals = xcalloc(sizeof(trie*), TERMINAL_START_MAX);
   size_t TerminalMax = TERMINAL_START_MAX;
@@ -179,16 +153,13 @@ trie** GatherTerminals(trie* Trie, size_t* TerminalCount)
   return Terminals;
 }
 
-int ReverseArray(trie_unit* String, size_t ArraySize)
-{
-  if (!String || !ArraySize)
-    return -1;
+int ReverseArray(trie_unit* String, size_t ArraySize) {
+  if (!String || !ArraySize) return -1;
 
   trie_unit Temp;
   size_t Index = 0;
 
-  while (Index < ArraySize / 2)
-  {
+  while (Index < ArraySize / 2) {
     Temp = String[Index];
     String[Index] = String[ArraySize - Index - 1];
     String[ArraySize - Index - 1] = Temp;
@@ -198,20 +169,16 @@ int ReverseArray(trie_unit* String, size_t ArraySize)
   return 0;
 }
 
-trie_unit* GetDataString(trie* Trie, size_t* DataLength)
-{
-  if (!Trie)
-    return NULL;
+trie_unit* GetDataString(trie* Trie, size_t* DataLength) {
+  if (!Trie) return NULL;
 
   size_t StringLength = 64;
   size_t StringIndex = 0;
   trie_unit* String = xcalloc(sizeof(trie_unit), 64);
 
-  while (Trie)
-  {
+  while (Trie) {
     String[StringIndex++] = Trie->Data;
-    if (StringIndex == StringLength)
-    {
+    if (StringIndex == StringLength) {
       String = realloc(String, StringLength * 2);
       StringLength *= 2;
     }
@@ -220,13 +187,10 @@ trie_unit* GetDataString(trie* Trie, size_t* DataLength)
   }
 
   // -1 for NULL;
-  if (ReverseArray(String, StringIndex - 1) == 0)
-  {
+  if (ReverseArray(String, StringIndex - 1) == 0) {
     *DataLength = StringIndex;
     return String;
-  }
-  else
-  {
+  } else {
     return NULL;
   }
 }

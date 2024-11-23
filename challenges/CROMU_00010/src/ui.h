@@ -24,13 +24,14 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <mymath.h>
-#include "service.h"
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdlib.h>
+
 #include "llist.h"
 #include "map.h"
+#include "service.h"
 
 #ifndef ui_h
 #define ui_h

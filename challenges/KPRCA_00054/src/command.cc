@@ -20,46 +20,37 @@
  * THE SOFTWARE.
  *
  */
- 
+
 extern "C" {
-  #include <ctype.h>
-  #include "readuntil.h"
+#include <ctype.h>
+
+#include "readuntil.h"
 };
 
 #include "command.h"
 #include "command_manager.h"
 
-Command::Command(const char *name, const char *alias)
-{
+Command::Command(const char *name, const char *alias) {
   memset(this->name, 0, sizeof(this->name));
   memset(this->alias, 0, sizeof(this->alias));
 
   SetName(name);
-  if (alias)
-    SetAlias(alias);
+  if (alias) SetAlias(alias);
 }
 
-Command::~Command()
-{
-}
+Command::~Command() {}
 
-bool is_number(char* c)
-{
-  while (*c)
-  {
-    if (!isdigit(*c))
-      return false;
+bool is_number(char *c) {
+  while (*c) {
+    if (!isdigit(*c)) return false;
     c++;
   }
   return true;
 }
 
-void Command::HandleResponse(int res)
-{
-  if (res == 0)
-    return;
-  switch (this->GetType())
-  {
+void Command::HandleResponse(int res) {
+  if (res == 0) return;
+  switch (this->GetType()) {
     case CT_LIST:
       /* No error code */
       break;
@@ -155,43 +146,34 @@ void Command::HandleResponse(int res)
   }
 }
 
-int ListCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int ListCmd::Execute(FileManager *fm, int argc, char **argv) {
   /* Current Directory */
-  if (argc == 0)
-    fm->PrintFile(0);
+  if (argc == 0) fm->PrintFile(0);
   /* Single File or Directory */
-  else if (argc == 1)
-  {
+  else if (argc == 1) {
     if (!fm->GetFile(argv[0]))
       printf("%s: No such file or directory\n", argv[0]);
     else
       fm->PrintFile(argv[0]);
   }
   /* Multiple Files and/or Directories */
-  else
-  {
+  else {
     int i;
-    for (i = 0; i < argc; ++i)
-    {
+    for (i = 0; i < argc; ++i) {
       if (!fm->GetFile(argv[i]))
         printf("%s: No such file or directory\n", argv[i]);
-      else
-      {
+      else {
         printf("%s:\n", argv[i]);
         fm->PrintFile(argv[i]);
-        if (i < argc - 1)
-          printf("\n");
+        if (i < argc - 1) printf("\n");
       }
     }
   }
   return 0;
 }
 
-int CreateCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int CreateCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No filename specified\n");
     return -1;
   }
@@ -199,29 +181,23 @@ int CreateCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int OpenCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int OpenCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No filename specified\n");
     return -1;
   }
   int n = fm->OpenFile(argv[0]);
   HandleResponse(n);
-  if (n >= 0)
-    printf("[%s] opened (%d)\n", argv[0], n);
+  if (n >= 0) printf("[%s] opened (%d)\n", argv[0], n);
   return 0;
 }
 
-int CloseCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int CloseCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No fileno specified\n");
     return -1;
   }
-  if (!is_number(argv[0]))
-  {
+  if (!is_number(argv[0])) {
     printf("Invalid fileno\n");
     return -1;
   }
@@ -229,40 +205,32 @@ int CloseCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int CloseAllCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int CloseAllCmd::Execute(FileManager *fm, int argc, char **argv) {
   fm->CloseAll();
   return 0;
 }
 
-int ReadCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int ReadCmd::Execute(FileManager *fm, int argc, char **argv) {
   unsigned int fileno;
   size_t pos = 0, len = 0;
-  if (argc == 0)
-  {
+  if (argc == 0) {
     printf("No fileno specified\n");
     return -1;
   }
-  if (!is_number(argv[0]))
-  {
+  if (!is_number(argv[0])) {
     printf("Invalid fileno\n");
     return -1;
   }
   fileno = strtoul(argv[0], 0, 10);
-  if (argc > 1)
-  {
-    if (!is_number(argv[1]))
-    {
+  if (argc > 1) {
+    if (!is_number(argv[1])) {
       printf("Invalid pos\n");
       return -1;
     }
     pos = strtoul(argv[1], 0, 10);
   }
-  if (argc > 2)
-  {
-    if (!is_number(argv[2]))
-    {
+  if (argc > 2) {
+    if (!is_number(argv[2])) {
       printf("Invalid len\n");
       return -1;
     }
@@ -272,35 +240,29 @@ int ReadCmd::Execute(FileManager *fm, int argc, char** argv)
   char *buf;
   int n = fm->ReadFile(fileno, pos, len, &buf);
   HandleResponse(n);
-  if (n >= 0)
-  {
+  if (n >= 0) {
     transmit(STDOUT, buf, n, &len);
     free(buf);
   }
   return 0;
 }
 
-int ModifyCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int ModifyCmd::Execute(FileManager *fm, int argc, char **argv) {
   int n, len;
   unsigned int fileno;
   char buf[512];
   size_t pos = 0, numBytes = 0;
-  if (argc == 0)
-  {
+  if (argc == 0) {
     printf("No fileno specified\n");
     return -1;
   }
-  if (!is_number(argv[0]))
-  {
+  if (!is_number(argv[0])) {
     printf("Invalid fileno\n");
     return -1;
   }
   fileno = strtoul(argv[0], 0, 10);
-  if (argc > 1)
-  {
-    if (!is_number(argv[1]))
-    {
+  if (argc > 1) {
+    if (!is_number(argv[1])) {
       printf("Invalid pos\n");
       return -1;
     }
@@ -309,22 +271,17 @@ int ModifyCmd::Execute(FileManager *fm, int argc, char** argv)
   /* Test if writable */
   n = fm->ModifyFile(fileno, pos, 0, 0);
   HandleResponse(n);
-  if (n)
-    return -1;
+  if (n) return -1;
   printf("<< Edit Mode - end with EOF >>\n");
   printf("pos: %d\n", pos);
   printf("==============================\n");
-  while (1)
-  {
-    if ((len = read_until(STDIN, buf, sizeof(buf), '\n')) < 0)
-      return -1;
-    if (strcmp(buf, "EOF") == 0)
-      break;
+  while (1) {
+    if ((len = read_until(STDIN, buf, sizeof(buf), '\n')) < 0) return -1;
+    if (strcmp(buf, "EOF") == 0) break;
     buf[len - 1] = '\n';
     n = fm->ModifyFile(fileno, pos, buf, len);
     HandleResponse(n);
-    if (n != len)
-      return -1;
+    if (n != len) return -1;
     pos += n;
     numBytes += n;
   }
@@ -333,10 +290,8 @@ int ModifyCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int DeleteCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int DeleteCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No file specified\n");
     return -1;
   }
@@ -344,10 +299,8 @@ int DeleteCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int CreateDirCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int CreateDirCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No dirname specified\n");
     return -1;
   }
@@ -355,10 +308,8 @@ int CreateDirCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int DeleteDirCmd::Execute(FileManager *fm, int argc, char** argv)
-{
-  if (argc == 0)
-  {
+int DeleteDirCmd::Execute(FileManager *fm, int argc, char **argv) {
+  if (argc == 0) {
     printf("No dirname specified\n");
     return -1;
   }
@@ -366,8 +317,7 @@ int DeleteDirCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int ChangeDirCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int ChangeDirCmd::Execute(FileManager *fm, int argc, char **argv) {
   if (argc == 0)
     fm->ChangeDirectory(0);
   else
@@ -375,29 +325,23 @@ int ChangeDirCmd::Execute(FileManager *fm, int argc, char** argv)
   return 0;
 }
 
-int QuitCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int QuitCmd::Execute(FileManager *fm, int argc, char **argv) {
   exit(0);
   return 0;
 }
 
-int HelpCmd::Execute(FileManager *fm, int argc, char** argv)
-{
+int HelpCmd::Execute(FileManager *fm, int argc, char **argv) {
   int i, j;
-  CommandManager *cm = (CommandManager *) fm; // HACKZ
+  CommandManager *cm = (CommandManager *)fm;  // HACKZ
   List<Command *> *commands = cm->GetCommands();
-  for (i = 0; i < commands->length(); ++i)
-  {
+  for (i = 0; i < commands->length(); ++i) {
     Command *cmd = commands->get(i);
     if (argc == 0)
       printf("%s\n", cmd->Usage());
-    else
-    {
-      for (j = 0; j < argc; ++j)
-      {
+    else {
+      for (j = 0; j < argc; ++j) {
         if (strcmp(argv[j], cmd->GetName()) == 0 ||
-            strcmp(argv[j], cmd->GetAlias()) == 0)
-        {
+            strcmp(argv[j], cmd->GetAlias()) == 0) {
           printf("%s\n", cmd->Usage());
           break;
         }

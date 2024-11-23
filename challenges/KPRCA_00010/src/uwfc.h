@@ -4,21 +4,21 @@
 #include <stdlib.h>
 
 typedef struct {
-    unsigned char chunk_id[4];
-    unsigned int chunk_size;
-    unsigned char format[4];
-    unsigned char sub_chunk1_id[4];
-    unsigned int sub_chunk1_size;
-    unsigned short audio_format;
-    unsigned short num_channels;
-    unsigned int sample_rate;
-    unsigned int byte_rate;
-    unsigned short block_align;
-    unsigned short bits_per_sample;
+  unsigned char chunk_id[4];
+  unsigned int chunk_size;
+  unsigned char format[4];
+  unsigned char sub_chunk1_id[4];
+  unsigned int sub_chunk1_size;
+  unsigned short audio_format;
+  unsigned short num_channels;
+  unsigned int sample_rate;
+  unsigned int byte_rate;
+  unsigned short block_align;
+  unsigned short bits_per_sample;
 
-    unsigned char sub_chunk2_id[4];
-    unsigned int sub_chunk2_size;
-    char* data;
+  unsigned char sub_chunk2_id[4];
+  unsigned int sub_chunk2_size;
+  char *data;
 } uwfc_t;
 
 int validate_header(uwfc_t *header);
@@ -31,6 +31,5 @@ void low_pass_filter(uwfc_t *track);
 void high_pass_filter(uwfc_t *track);
 void set_vis_multiplier(char c);
 int get_vis_multiplier();
-
 
 #endif /* !UWFC_H_ */

@@ -21,71 +21,38 @@
  *
  */
 
-#include <libcgc.h>
+#include "asl6.h"
 
 #include <ctype.h>
+#include <libcgc.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "asl6.h"
-
 int fdprintf(int fd, const char *fmt, ...);
 
 #ifndef DEBUG
-  #define DBG(s, ...)
+#define DBG(s, ...)
 #else
-  #define DBG(s, ...) fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define DBG(s, ...) \
+  fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #endif
 
-#define ERR(s, ...) printf("ERROR: " s "\n",##__VA_ARGS__)
+#define ERR(s, ...) printf("ERROR: " s "\n", ##__VA_ARGS__)
 
-const char *tag_class_names[5] = {
-  "UNIVERSAL",
-  "APPLICATION",
-  "CONTEXT",
-  "PRIVATE",
-  "UNKNOWN"
-};
+const char *tag_class_names[5] = {"UNIVERSAL", "APPLICATION", "CONTEXT",
+                                  "PRIVATE", "UNKNOWN"};
 
 const char *utag_names[31] = {
-  "UNKNOWN",
-  "BOOLEAN",
-  "INTEGER",
-  "BITSTR",
-  "OCTETSTR",
-  "NULL",
-  "OID",
-  "ODSC",
-  "EXT",
-  "REAL",
-  "ENUM",
-  "EPDV",
-  "UTFSTR",
-  "ROID",
-  "UNUSED_TAG",
-  "UNUSED_TAG",
-  "SEQ",
-  "SET",
-  "NUMSTR",
-  "PRINTSTR",
-  "TELESTR",
-  "VIDSTR",
-  "IA5STR",
-  "UTCTIME",
-  "GENTIME",
-  "GRAPHSTR",
-  "VISSTR",
-  "GENSTR",
-  "UNISTR",
-  "CHRSTR",
-  "BMPSTR"
-};
-
+    "UNKNOWN", "BOOLEAN",  "INTEGER",    "BITSTR",     "OCTETSTR", "NULL",
+    "OID",     "ODSC",     "EXT",        "REAL",       "ENUM",     "EPDV",
+    "UTFSTR",  "ROID",     "UNUSED_TAG", "UNUSED_TAG", "SEQ",      "SET",
+    "NUMSTR",  "PRINTSTR", "TELESTR",    "VIDSTR",     "IA5STR",   "UTCTIME",
+    "GENTIME", "GRAPHSTR", "VISSTR",     "GENSTR",     "UNISTR",   "CHRSTR",
+    "BMPSTR"};
 
 // Element parsers
-static int parse_tag_class(uint8_t *b, element *e)
-{
+static int parse_tag_class(uint8_t *b, element *e) {
   tag_class c = (b[0] & CLASS_MASK) >> 6;
   if (c < UNIVERSAL || c > PRIVATE)
     return -1;
@@ -96,8 +63,7 @@ static int parse_tag_class(uint8_t *b, element *e)
   return 0;
 }
 
-static int parse_tag(uint8_t *b, element *e)
-{
+static int parse_tag(uint8_t *b, element *e) {
   uint8_t tval;
 
   tval = *b & TAG_MASK;
@@ -106,12 +72,12 @@ static int parse_tag(uint8_t *b, element *e)
   else
     e->tag = tval;
 
-  DBG("parsed tag ident: name = %s, primitive = %d", utag_names[e->tag], e->primitive);
+  DBG("parsed tag ident: name = %s, primitive = %d", utag_names[e->tag],
+      e->primitive);
   return 0;
 }
 
-static int parse_length(uint8_t *b, element *e)
-{
+static int parse_length(uint8_t *b, element *e) {
   size_t num_bytes, i;
   unsigned length;
   if (b[0] < 128) {
@@ -133,31 +99,26 @@ static int parse_length(uint8_t *b, element *e)
 
   b++;
   length = 0;
-  for (i = 0; i < num_bytes; i++)
-    length = (length << 8) | b[i];
+  for (i = 0; i < num_bytes; i++) length = (length << 8) | b[i];
 
-  DBG("parsed long form length: length = %d, num_bytes = %d", length, num_bytes);
+  DBG("parsed long form length: length = %d, num_bytes = %d", length,
+      num_bytes);
   e->length = length;
   return num_bytes + 1;
 }
 
 // Helpers
-static void free_element(element *e)
-{
+static void free_element(element *e) {
   unsigned i;
   if (e != NULL && e->subs != NULL)
     for (i = 0; i < e->nsubs; i++)
-      if (e->subs[i] != NULL)
-        free_element(e->subs[i]);
+      if (e->subs[i] != NULL) free_element(e->subs[i]);
 
-  if (e && e->subs)
-    free(e->subs);
-  if (e)
-    free(e);
+  if (e && e->subs) free(e->subs);
+  if (e) free(e);
 }
 
-static int append_sub(element *e, element *sub)
-{
+static int append_sub(element *e, element *sub) {
   unsigned new_cap;
   if (e->nsubs == e->sub_cap) {
     new_cap = e->sub_cap * 2;
@@ -177,11 +138,9 @@ static int append_sub(element *e, element *sub)
 }
 
 // Decoder
-static int within(uint8_t *b, unsigned length, unsigned st, unsigned sp)
-{
-  unsigned bu = (unsigned) b;
-  if (bu < st || bu >= sp)
-    return -1;
+static int within(uint8_t *b, unsigned length, unsigned st, unsigned sp) {
+  unsigned bu = (unsigned)b;
+  if (bu < st || bu >= sp) return -1;
 #ifdef PATCHED
   else if (((bu + length) < st || (bu + length) > sp) || bu + length < bu)
     return -1;
@@ -190,8 +149,7 @@ static int within(uint8_t *b, unsigned length, unsigned st, unsigned sp)
     return 0;
 }
 
-element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
-{
+element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp) {
   if (within(b, 0, st, sp) != 0) {
     DBG("b = %x, st = %x, sp = %x\n", b, st, sp);
     ERR("bounds exceeded");
@@ -199,12 +157,10 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
   }
 
   element *e = malloc(sizeof(element));
-  if (e == NULL)
-    goto ERROR;
+  if (e == NULL) goto ERROR;
   e->sub_cap = DEFAULT_SUB_CAP;
   e->subs = calloc(sizeof(element *), e->sub_cap);
-  if (e->subs == NULL)
-    goto ERROR;
+  if (e->subs == NULL) goto ERROR;
   e->nsubs = 0;
   e->depth = depth;
   e->primitive = (b[0] & PRIM_MASK) == 0;
@@ -272,17 +228,14 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
       DBG("content parsing consumed %d bytes", sub->length);
 
       cur = sub->data + sub->length;
-      if ((unsigned) cur < st || cur >= e->data + e->length)
-        break;
-
+      if ((unsigned)cur < st || cur >= e->data + e->length) break;
     }
   }
 
   DBG("parsed packet: class = %s, tag = %s,"
       "type = %s, length = %u, num_subs = %d\n",
       tag_class_names[e->cls], utag_names[e->tag],
-      e->primitive == 0 ? "primitive" : "constructed",
-      e->length, e->nsubs);
+      e->primitive == 0 ? "primitive" : "constructed", e->length, e->nsubs);
 
   return e;
 
@@ -291,21 +244,17 @@ ERROR:
   return NULL;
 }
 
-element *decode(uint8_t *b, unsigned end)
-{
-  return _decode(b, 0, (unsigned) b, end);
+element *decode(uint8_t *b, unsigned end) {
+  return _decode(b, 0, (unsigned)b, end);
 }
 
 // Pretty Printers
-static void print_indent(unsigned depth)
-{
+static void print_indent(unsigned depth) {
   unsigned i;
-  for (i = 0; i < depth; i++)
-    printf("    ");
+  for (i = 0; i < depth; i++) printf("    ");
 }
 
-static void print_time(element *e, int utc)
-{
+static void print_time(element *e, int utc) {
   uint8_t *d = e->data;
   unsigned req_len = utc ? 12 : 14;
   unsigned i;
@@ -329,17 +278,15 @@ static void print_time(element *e, int utc)
       printf("%s", "19");
     printf("%c%c", d[0], d[1]);
   } else {
-    printf("%c%c/%c%c/%c%c%c%c",
-        d[6], d[7], d[4], d[5],
-        d[0], d[1], d[2], d[3]);
+    printf("%c%c/%c%c/%c%c%c%c", d[6], d[7], d[4], d[5], d[0], d[1], d[2],
+           d[3]);
     d += 2;
   }
 
   printf(" %c%c:%c%c:%c%c GMT", d[6], d[7], d[8], d[9], d[10], d[11]);
 }
 
-static void print_hex(element *e)
-{
+static void print_hex(element *e) {
   unsigned i;
   if (e->length > 16) {
     printf("\n");
@@ -360,8 +307,7 @@ static void print_hex(element *e)
   }
 }
 
-static int read_octet_int(uint8_t *b, unsigned max, unsigned long *v)
-{
+static int read_octet_int(uint8_t *b, unsigned max, unsigned long *v) {
   unsigned i;
 
   *v = 0;
@@ -376,8 +322,7 @@ static int read_octet_int(uint8_t *b, unsigned max, unsigned long *v)
   return -1;
 }
 
-static void print_oid(element *e)
-{
+static void print_oid(element *e) {
   unsigned i = 0;
   int ret;
   unsigned long v = 0;
@@ -393,8 +338,7 @@ static void print_oid(element *e)
         return;
       }
 
-      if (v == 80)
-        return;
+      if (v == 80) return;
 
       if (v < 80) {
         printf("%u", v / 40);
@@ -417,40 +361,37 @@ static void print_oid(element *e)
     i += ret;
 
 #ifdef PATCHED
-    if (i >= e->length)
-      return;
+    if (i >= e->length) return;
 #endif
 
     printf(".%u", v);
   }
 }
 
-static void print_tag(element *e)
-{
+static void print_tag(element *e) {
   switch (e->cls) {
-  case UNIVERSAL:
-    if (e->tag < 0 || e->tag >= sizeof(utag_names) / sizeof(char *))
-      printf("UNIVERSAL_%d ", e->tag);
-    else
-      printf("UNIVERSAL %s ", utag_names[e->tag]);
-    break;
-  case APPLICATION:
-    printf("APPLICATION_%d ", e->tag);
-    break;
-  case CONTEXT:
-    printf("[%d] ", e->tag);
-    break;
-  case PRIVATE:
-    printf("PRIVATE_%d ", e->tag);
-    break;
-  default:
-    printf("UNKNOWN_%d ", e->tag);
-    break;
+    case UNIVERSAL:
+      if (e->tag < 0 || e->tag >= sizeof(utag_names) / sizeof(char *))
+        printf("UNIVERSAL_%d ", e->tag);
+      else
+        printf("UNIVERSAL %s ", utag_names[e->tag]);
+      break;
+    case APPLICATION:
+      printf("APPLICATION_%d ", e->tag);
+      break;
+    case CONTEXT:
+      printf("[%d] ", e->tag);
+      break;
+    case PRIVATE:
+      printf("PRIVATE_%d ", e->tag);
+      break;
+    default:
+      printf("UNKNOWN_%d ", e->tag);
+      break;
   }
 }
 
-static void print_string(element *e)
-{
+static void print_string(element *e) {
   unsigned i;
   for (i = 0; i < e->length; i++)
     if (isalnum(e->data[i]))
@@ -459,49 +400,47 @@ static void print_string(element *e)
       printf("\\x%x", e->data[i]);
 }
 
-static void print_primitive(element *e)
-{
-  switch(e->cls) {
-  case UNIVERSAL:
-    switch(e->tag) {
-    case BOOLEAN:
-      printf("%s", e->data[0] == 0 ? "False" : "True");
-      return;
-    case INTEGER:
-    case BITSTR:
-    case OCTETSTR:
-      print_hex(e);
-      return;
-    case OID:
-      print_oid(e);
-      return;
-    case UTCTIME:
-      print_time(e, 1);
-      return;
-    case GENTIME:
-      print_time(e, 0);
-      return;
-    case UTFSTR:
-    case NUMSTR:
-    case PRINTSTR:
-    case TELESTR:
-    case VIDSTR:
-    case IA5STR:
-    case VISSTR:
-      print_string(e);
-      return;
+static void print_primitive(element *e) {
+  switch (e->cls) {
+    case UNIVERSAL:
+      switch (e->tag) {
+        case BOOLEAN:
+          printf("%s", e->data[0] == 0 ? "False" : "True");
+          return;
+        case INTEGER:
+        case BITSTR:
+        case OCTETSTR:
+          print_hex(e);
+          return;
+        case OID:
+          print_oid(e);
+          return;
+        case UTCTIME:
+          print_time(e, 1);
+          return;
+        case GENTIME:
+          print_time(e, 0);
+          return;
+        case UTFSTR:
+        case NUMSTR:
+        case PRINTSTR:
+        case TELESTR:
+        case VIDSTR:
+        case IA5STR:
+        case VISSTR:
+          print_string(e);
+          return;
+        default:
+          break;
+      }
     default:
       break;
-    }
-  default:
-    break;
   }
 
   printf("UNPRINTABLE");
 }
 
-void pprint(element *e)
-{
+void pprint(element *e) {
   unsigned i;
   print_indent(e->depth);
   print_tag(e);
@@ -511,10 +450,8 @@ void pprint(element *e)
     printf("\n");
   } else {
     printf("\n");
-    for (i = 0; i < e->nsubs; i++)
-      pprint(e->subs[i]);
+    for (i = 0; i < e->nsubs; i++) pprint(e->subs[i]);
   }
 
-  if (e->depth == 0)
-    free_element(e);
+  if (e->depth == 0) free_element(e);
 }

@@ -27,30 +27,31 @@ THE SOFTWARE.
 #define DEVICE_H
 
 #include <libcgc.h>
+
 #include "stdint.h"
 #include "user.h"
 
 #define MAX_DEVICES (128)
 
-#define DEVICE_UNUSED  (0)
-#define DEVICE_KEYPAD  (1)
-#define DEVICE_SWIPE   (2)
+#define DEVICE_UNUSED (0)
+#define DEVICE_KEYPAD (1)
+#define DEVICE_SWIPE (2)
 #define DEVICE_CONTACT (3)
-#define DEVICE_MOTION  (4)
-#define DEVICE_HEAT    (5)
-#define DEVICE_SMOKE   (6)
-#define DEVICE_ALARM   (7)
+#define DEVICE_MOTION (4)
+#define DEVICE_HEAT (5)
+#define DEVICE_SMOKE (6)
+#define DEVICE_ALARM (7)
 
 // Generic Device handle
 typedef struct _device {
-	uint8_t Type;
-	uint16_t DeviceId;
-	void *Attributes;
+  uint8_t Type;
+  uint16_t DeviceId;
+  void *Attributes;
 } Device, *pDevice;
 
 // List of authorized codes for a given keypad or swipe
 typedef struct _authorized_codes {
-	char AccessCodes[MAX_USERS][ACCESS_CODE_LEN+1];
+  char AccessCodes[MAX_USERS][ACCESS_CODE_LEN + 1];
 } AuthorizedCodes, *pAuthorizedCodes;
 
 // Alarm control Devices
@@ -59,35 +60,35 @@ typedef struct _authorized_codes {
 #define ALARM_INACTIVE (0)
 #define ALARM_ACTIVE (1)
 typedef struct _alarm_attributes {
-	uint8_t Armed;
-	uint8_t Active;
-	uint8_t DeviceList[MAX_DEVICES];
+  uint8_t Armed;
+  uint8_t Active;
+  uint8_t DeviceList[MAX_DEVICES];
 } AlarmAttributes, *pAlarmAttributes;
 
-#define CONTACT_NO     (0)
-#define CONTACT_NC     (1)
-#define CONTACT_OPEN   (0)
+#define CONTACT_NO (0)
+#define CONTACT_NC (1)
+#define CONTACT_OPEN (0)
 #define CONTACT_CLOSED (1)
 typedef struct _contact {
-	uint8_t Mode;
-	uint8_t State;
+  uint8_t Mode;
+  uint8_t State;
 } Contact, *pContact;
 
 #define MOTION_INACTIVE (0)
-#define MOTION_ACTIVE   (1)
+#define MOTION_ACTIVE (1)
 typedef struct _motion {
-	uint8_t State;
+  uint8_t State;
 } Motion, *pMotion;
 
 typedef struct _heat {
-	uint8_t CurrentTemperature;
-	uint8_t ThresholdTemperature;
+  uint8_t CurrentTemperature;
+  uint8_t ThresholdTemperature;
 } Heat, *pHeat;
 
 #define SMOKE_INACTIVE (0)
-#define SMOKE_ACTIVE   (1)
+#define SMOKE_ACTIVE (1)
 typedef struct _smoke {
-	uint8_t State;
+  uint8_t State;
 } Smoke, *pSmoke;
 
 uint8_t FindAvailableDevice(void);
@@ -107,4 +108,3 @@ uint8_t UpdateDevice(uint16_t DeviceId);
 uint8_t ListValidAlarmCodes(uint16_t DeviceId);
 
 #endif
-

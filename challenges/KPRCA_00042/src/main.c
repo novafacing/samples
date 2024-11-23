@@ -23,38 +23,32 @@
 
 #include <stdlib.h>
 
-#include "cmdb.h"
-#include "user.h"
 #include "admin.h"
+#include "cmdb.h"
 #include "debug.h"
+#include "user.h"
 
-enum {DEBUG = 0, ADMIN = 1, USER = 2};
+enum { DEBUG = 0, ADMIN = 1, USER = 2 };
 
-int main()
-{
-    int exited = 0;
-    int user = USER;
+int main() {
+  int exited = 0;
+  int user = USER;
 
-    init_movies();
-    printf("========= Movie Rental Service v0.1 =========\n");
-    printf("   . . . Initializing the inventory . . .\n");
-    printf("         (movie info from IMDb.com)\n");
-    printf("=============================================\n");
+  init_movies();
+  printf("========= Movie Rental Service v0.1 =========\n");
+  printf("   . . . Initializing the inventory . . .\n");
+  printf("         (movie info from IMDb.com)\n");
+  printf("=============================================\n");
 
+  while (!exited) {
+    if (user == USER)
+      exited = run_user_mode(&user);
+    else if (user == ADMIN) {
+      if (run_admin_mode(&user) < 0) exited = 1;
+    } else if (user == DEBUG)
+      run_debug_mode(&user);
 
-    while (!exited) {
-        if (user == USER)
-            exited = run_user_mode(&user);
-        else if(user == ADMIN)
-        {
-            if (run_admin_mode(&user) < 0)
-                exited = 1;
-        }
-        else if(user == DEBUG)
-            run_debug_mode(&user);
-
-        if (!exited)
-            printf("\n");
-    }
-    printf("Bye!\n");
+    if (!exited) printf("\n");
+  }
+  printf("Bye!\n");
 }

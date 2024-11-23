@@ -27,8 +27,7 @@
 #include "trie.h"
 
 typedef struct search_machine search_machine;
-struct search_machine
-{
+struct search_machine {
   // Root of trie we built form signatures
   trie* Trie;
 
@@ -43,8 +42,7 @@ struct search_machine
 };
 
 typedef struct match match;
-struct match
-{
+struct match {
   // Location in search input where pattern matches
   size_t Point;
 
@@ -54,6 +52,7 @@ struct match
 
 int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie);
 void FreeSearchMachine(search_machine* SearchMachine);
-match* FindMatches(search_machine *SearchMachine, trie_unit* Data, size_t DataSize, size_t* NumMatches);
+match* FindMatches(search_machine* SearchMachine, trie_unit* Data,
+                   size_t DataSize, size_t* NumMatches);
 
 #endif /* __SEARCH_MACHINE_H */

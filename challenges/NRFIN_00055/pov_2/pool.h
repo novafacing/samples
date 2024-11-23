@@ -26,8 +26,8 @@
 #include "bitset.h"
 
 struct pool {
-    size_t size;
-    struct chunk *head;
+  size_t size;
+  struct chunk *head;
 };
 
 /**
@@ -70,4 +70,3 @@ void pool_free(struct pool *pool, void *ptr);
 void pool_free_all(struct pool *pool);
 
 #endif /* POOL_H_ */
-

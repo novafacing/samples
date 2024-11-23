@@ -31,12 +31,12 @@ THE SOFTWARE.
 #define MAX_USERS 20
 
 // Defined users
-#define USER_GUEST    0xffff
-#define USER_NONE     0x0000
+#define USER_GUEST 0xffff
+#define USER_NONE 0x0000
 
 typedef struct user_s {
   uint32_t userID;
-  uint8_t  *username;
+  uint8_t *username;
   uint8_t *password;
 } user;
 

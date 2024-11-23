@@ -18,29 +18,29 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #pragma once
 
 #ifdef DEBUG
 
-#include "string.h"
 #include "conv.h"
+#include "string.h"
 
 // //
-// The following is verbatim from EAGLE_00004, but isn't included in the 
+// The following is verbatim from EAGLE_00004, but isn't included in the
 // released binary (DEBUG is not defined), so this reuse shouldn't be a concern.
 // //
 
-#define _FILE_STATE_OPEN  1
+#define _FILE_STATE_OPEN 1
 #define _FILE_STATE_ERROR 2
-#define _FILE_STATE_EOF   4
-#define _FILE_HAVE_LAST   8
+#define _FILE_STATE_EOF 4
+#define _FILE_HAVE_LAST 8
 
 typedef struct _FILE {
-   int fd;
-   int state;
-   int last;
+  int fd;
+  int state;
+  int last;
 } FILE;
 
 extern FILE *stdin;
@@ -52,40 +52,153 @@ typedef __builtin_va_list va_list;
 #define va_end(ap) __builtin_va_end(ap)
 #define va_arg(ap, type) __builtin_va_arg(ap, type)
 
-#define IS_DIGIT     1
-#define IS_UPPER     2
-#define IS_LOWER     4
-#define IS_SPACE     8
-#define IS_XDIGIT    16
-#define IS_CTRL      32
-#define IS_BLANK     64
+#define IS_DIGIT 1
+#define IS_UPPER 2
+#define IS_LOWER 4
+#define IS_SPACE 8
+#define IS_XDIGIT 16
+#define IS_CTRL 32
+#define IS_BLANK 64
 
-#define IS_ALPHA     (IS_LOWER | IS_UPPER)
-#define IS_ALNUM     (IS_ALPHA | IS_DIGIT)
+#define IS_ALPHA (IS_LOWER | IS_UPPER)
+#define IS_ALNUM (IS_ALPHA | IS_DIGIT)
 
 static unsigned char type_flags[256] = {
-     0, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL,
-     IS_CTRL, IS_SPACE | IS_BLANK, IS_SPACE, IS_SPACE, IS_SPACE, IS_SPACE, IS_CTRL, IS_CTRL,
+    0,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_SPACE | IS_BLANK,
+    IS_SPACE,
+    IS_SPACE,
+    IS_SPACE,
+    IS_SPACE,
+    IS_CTRL,
+    IS_CTRL,
 
-     IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL,
-     IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL, IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
+    IS_CTRL,
 
-     IS_SPACE | IS_BLANK, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    IS_SPACE | IS_BLANK,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
 
-     IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT,
-     IS_DIGIT | IS_XDIGIT, IS_DIGIT | IS_XDIGIT, 0, 0, 0, 0, 0, 0,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    IS_DIGIT | IS_XDIGIT,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
 
-     0, IS_UPPER | IS_XDIGIT, IS_UPPER | IS_XDIGIT, IS_UPPER | IS_XDIGIT, IS_UPPER | IS_XDIGIT, IS_UPPER | IS_XDIGIT, IS_UPPER | IS_XDIGIT, IS_UPPER,
-     IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER,
+    0,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER | IS_XDIGIT,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
 
-     IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER, IS_UPPER,
-     IS_UPPER, IS_UPPER, IS_UPPER, 0, 0, 0, 0, 0,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    IS_UPPER,
+    0,
+    0,
+    0,
+    0,
+    0,
 
-     0, IS_LOWER | IS_XDIGIT, IS_LOWER | IS_XDIGIT, IS_LOWER | IS_XDIGIT, IS_LOWER | IS_XDIGIT, IS_LOWER | IS_XDIGIT, IS_LOWER | IS_XDIGIT, IS_LOWER,
-     IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER,
+    0,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER | IS_XDIGIT,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
 
-     IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER, IS_LOWER,
-     IS_LOWER, IS_LOWER, IS_LOWER, 0, 0, 0, 0, 0,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    IS_LOWER,
+    0,
+    0,
+    0,
+    0,
+    0,
 };
 
 int isalpha(int c);
@@ -96,17 +209,17 @@ int isxdigit(int c);
 
 // int toupper(int c);
 
-int vfprintf(FILE * stream, const char *format, va_list ap);
+int vfprintf(FILE *stream, const char *format, va_list ap);
 
-int fprintf(FILE * stream, const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
 
 struct _fd_printer {
-   int fd;
-   int err;
-   unsigned int count;
+  int fd;
+  int err;
+  unsigned int count;
 };
 
-//if flag != 0 return number of chars output so far
+// if flag != 0 return number of chars output so far
 static unsigned int fd_printer(char ch, void *_fp, int flag);
 
 #define STATE_NORMAL 0
@@ -142,21 +255,22 @@ static unsigned int fd_printer(char ch, void *_fp, int flag);
 
 static char *r_utoa(unsigned int val, char *outbuf);
 
-//outbuf needs to be at least 22 chars
+// outbuf needs to be at least 22 chars
 static char *r_llotoa(unsigned long long val, char *outbuf);
 
 static char *r_otoa(unsigned int val, char *outbuf);
 
-//outbuf needs to be at least 22 chars
+// outbuf needs to be at least 22 chars
 static char *r_llxtoa(unsigned long long val, char *outbuf, int caps);
 
 static char *r_xtoa(unsigned int val, char *outbuf, int caps);
 
 static int hex_value_of(char ch);
 
-//func is responsible for outputing the given character
-//user is a pointer to data required by func
-static void printf_core(unsigned int (*func)(char, void *, int), void *user, const char *format, va_list ap);
+// func is responsible for outputing the given character
+// user is a pointer to data required by func
+static void printf_core(unsigned int (*func)(char, void *, int), void *user,
+                        const char *format, va_list ap);
 
 int vdprintf(int fd, const char *format, va_list ap);
 
@@ -164,34 +278,49 @@ int vdprintf(int fd, const char *format, va_list ap);
 
 extern const char *CB_NAME;
 
-#define DBG_SIMPLE(args...) \
-  fprintf(stderr, args);
+#define DBG_SIMPLE(args...) fprintf(stderr, args);
 
-#define DBG(args...) \
-  fprintf(stderr, "%s | %s:%u @ %s() | ", CB_NAME, __FILE__, __LINE__, __func__); \
+#define DBG(args...)                                                   \
+  fprintf(stderr, "%s | %s:%u @ %s() | ", CB_NAME, __FILE__, __LINE__, \
+          __func__);                                                   \
   DBG_SIMPLE(args);
 
-#define ERR(args...) \
-  DBG(args); \
-  if(SUCCESS == ret) { ret = -1; }\
+#define ERR(args...)    \
+  DBG(args);            \
+  if (SUCCESS == ret) { \
+    ret = -1;           \
+  }                     \
   goto bail;
 
-#define MSG_DUMP(msg) \
-  fprintf(stderr, "%s |  msg_dump:\n", CB_NAME); \
-  fprintf(stderr, "%s |    msg.dst .... 0x%08x (%d)\n", CB_NAME, msg.dst, msg.dst); \
-  fprintf(stderr, "%s |    msg.x ...... 0x%08x (%d)\n", CB_NAME, msg.x, msg.x); \
-  fprintf(stderr, "%s |    msg.y ...... 0x%08x (%d)\n", CB_NAME, msg.y, msg.y); \
-  fprintf(stderr, "%s |    msg.op ..... 0x%08x\n", CB_NAME, msg.op); \
-  fprintf(stderr, "%s |    msg.nmb .... 0x%08x (%d)\n", CB_NAME, msg.nmb, msg.nmb); \
-  fprintf(stderr, "%s |    msg.result\n", CB_NAME, msg.result, msg.result >> 32); \
+#define MSG_DUMP(msg)                                                          \
+  fprintf(stderr, "%s |  msg_dump:\n", CB_NAME);                               \
+  fprintf(stderr, "%s |    msg.dst .... 0x%08x (%d)\n", CB_NAME, msg.dst,      \
+          msg.dst);                                                            \
+  fprintf(stderr, "%s |    msg.x ...... 0x%08x (%d)\n", CB_NAME, msg.x,        \
+          msg.x);                                                              \
+  fprintf(stderr, "%s |    msg.y ...... 0x%08x (%d)\n", CB_NAME, msg.y,        \
+          msg.y);                                                              \
+  fprintf(stderr, "%s |    msg.op ..... 0x%08x\n", CB_NAME, msg.op);           \
+  fprintf(stderr, "%s |    msg.nmb .... 0x%08x (%d)\n", CB_NAME, msg.nmb,      \
+          msg.nmb);                                                            \
+  fprintf(stderr, "%s |    msg.result\n", CB_NAME, msg.result,                 \
+          msg.result >> 32);                                                   \
   fprintf(stderr, "%s |      answer ... 0x%08x\n", CB_NAME, msg.result >> 32); \
-  fprintf(stderr, "%s |      token .... 0x%08x\n", CB_NAME, msg.result); \
+  fprintf(stderr, "%s |      token .... 0x%08x\n", CB_NAME, msg.result);
 
 #else /* DEBUG */
 
-#define DBG_SIMPLE(args...) do { } while (0);
-#define DBG(args...) do { } while (0);
-#define ERR(args...) do { } while (0);
-#define MSG_DUMP(args...) do { } while (0);
+#define DBG_SIMPLE(args...) \
+  do {                      \
+  } while (0);
+#define DBG(args...) \
+  do {               \
+  } while (0);
+#define ERR(args...) \
+  do {               \
+  } while (0);
+#define MSG_DUMP(args...) \
+  do {                    \
+  } while (0);
 
 #endif /* DEBUG */

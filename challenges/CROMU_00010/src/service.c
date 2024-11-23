@@ -23,32 +23,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <mymath.h>
 #include "service.h"
-#include "llist.h"
 
+#include <libcgc.h>
+#include <mymath.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include "llist.h"
 #include "map.h"
 #include "ui.h"
 
-
 /*
-graph traversal service that emulates a street map.  
-provides routing from point to point 
-map can be created/edited by adding streets, intersections, 
+graph traversal service that emulates a street map.
+provides routing from point to point
+map can be created/edited by adding streets, intersections,
 and addresses
 */
 
+int main() {
+  // new
+  psList turnList = init_turnList();
+  pmap thisMap = init_map("Newville");
+  puts("This is Mapper.");
+  prompt_loop(thisMap, turnList);
 
-int main(){
-	//new
-	psList turnList = init_turnList();
-	pmap thisMap = init_map("Newville");
-	puts("This is Mapper.");
-	prompt_loop(thisMap, turnList);
-
-	return 1;
+  return 1;
 }

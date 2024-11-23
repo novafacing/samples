@@ -26,28 +26,30 @@
 
 #include "fs_file.h"
 
-class DirectoryTree
-{
-  public:
-    DirectoryTree();
-    DirectoryTree(fs_file *directory);
-    void AddEntry(fs_file *file_info);
-    fs_file *FindFile(const char *path);
-    DirectoryTree *FindDirectory(const char *path);
-    void ListFiles(const char *path, bool recursive);
-    void ClearTree(bool delete_root);
+class DirectoryTree {
+ public:
+  DirectoryTree();
+  DirectoryTree(fs_file *directory);
+  void AddEntry(fs_file *file_info);
+  fs_file *FindFile(const char *path);
+  DirectoryTree *FindDirectory(const char *path);
+  void ListFiles(const char *path, bool recursive);
+  void ClearTree(bool delete_root);
 
-    fs_file *directory_entry();
-    Array<DirectoryTree> subdirectories();
-    Array<fs_file *> file_list();
+  fs_file *directory_entry();
+  Array<DirectoryTree> subdirectories();
+  Array<fs_file *> file_list();
 
-  private:
-    fs_file *directory_entry_;
-    Array<DirectoryTree> subdirectories_;
-    Array<fs_file *> file_list_;
+ private:
+  fs_file *directory_entry_;
+  Array<DirectoryTree> subdirectories_;
+  Array<fs_file *> file_list_;
 
-    bool FindFileHelper(DirectoryTree *dirnode, const char *path, DirectoryTree **found_dir, fs_file **found_file);
-    void ListFileHelper(DirectoryTree *dirnode, const fs_file *file_info, bool recursive, const char *dirname, int namelen, bool skip_path_update);
-    void ClearTreeHelper(DirectoryTree *dirnode);
+  bool FindFileHelper(DirectoryTree *dirnode, const char *path,
+                      DirectoryTree **found_dir, fs_file **found_file);
+  void ListFileHelper(DirectoryTree *dirnode, const fs_file *file_info,
+                      bool recursive, const char *dirname, int namelen,
+                      bool skip_path_update);
+  void ClearTreeHelper(DirectoryTree *dirnode);
 };
 #endif

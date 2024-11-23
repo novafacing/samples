@@ -24,10 +24,7 @@ extern void *realloc(void *ptr, size_t size);
 extern void free(void *ptr);
 extern size_t malloc_size(void *ptr);
 
-static void exit(int ret)
-{
-    _terminate(ret);
-}
+static void exit(int ret) { _terminate(ret); }
 
 #pragma GCC diagnostic pop
 #endif /* !STDLIB_H_ */

@@ -25,16 +25,16 @@
 #define TR_H
 #include <stdio.h>
 
-typedef void* T;
+typedef void *T;
 typedef struct tr_node {
-    char *key;
-    unsigned int prio;
-    T value;
-    struct tr_node *left, *right;
+  char *key;
+  unsigned int prio;
+  T value;
+  struct tr_node *left, *right;
 } tr_node_t;
-typedef tr_node_t* tr_t;
-typedef void (*tr_destroy_value) (T value);
-typedef void (*tr_apply_fn) (tr_t root, void *arg);
+typedef tr_node_t *tr_t;
+typedef void (*tr_destroy_value)(T value);
+typedef void (*tr_apply_fn)(tr_t root, void *arg);
 
 extern tr_destroy_value destroy_value_fn;
 

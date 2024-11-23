@@ -25,75 +25,42 @@
 
 #include "req.h"
 
-typedef struct
-{
-    const char *name;
-    int group;
+typedef struct {
+  const char *name;
+  int group;
 } mission_t;
 
-typedef struct
-{
-    const char *name;
+typedef struct {
+  const char *name;
 } explorer_t;
 
-typedef struct
-{
-    const char *name;
-    CRequirement::Type counter;
-    int price;
+typedef struct {
+  const char *name;
+  CRequirement::Type counter;
+  int price;
 } skill_t;
 
 mission_t g_missions[20] = {
-    { "Pumping Oil!", 1 },
-    { "Trash Collection", 2 },
-    { "Leviathan", 2 },
-    { "Silver Medal", 4 },
-    { "Goliath", 3 },
-    { "Trinkets", 5 },
-    { "Brown Freedom", 1 },
-    { "Hidden Eclipse", 2 },
-    { "Green Eyes", 2 },
-    { "No Mercy", 1 },
-    { "Barbossa", 3 },
-    { "Cyclone", 3 },
-    { "Curtains Up", 4 },
-    { "Avalanche", 1 },
-    { "Pyramid", 5 },
-    { "Jeopardy", 1 },
-    { "White Champion", 1 },
-    { "White Sun", 2 },
-    { "Hidden Sword", 1 },
-    { "Fire Fighter", 2 }
-};
+    {"Pumping Oil!", 1},  {"Trash Collection", 2}, {"Leviathan", 2},
+    {"Silver Medal", 4},  {"Goliath", 3},          {"Trinkets", 5},
+    {"Brown Freedom", 1}, {"Hidden Eclipse", 2},   {"Green Eyes", 2},
+    {"No Mercy", 1},      {"Barbossa", 3},         {"Cyclone", 3},
+    {"Curtains Up", 4},   {"Avalanche", 1},        {"Pyramid", 5},
+    {"Jeopardy", 1},      {"White Champion", 1},   {"White Sun", 2},
+    {"Hidden Sword", 1},  {"Fire Fighter", 2}};
 
 explorer_t g_explorers[20] = {
-    { "Gurro Shiner" },
-    { "Hallie Hope" },
-    { "Jimmy Mcclanahan" },
-    { "Freddie Haugen" },
-    { "Patrina Wasson" },
-    { "Salome Burrell" },
-    { "Rosaria Curley" },
-    { "Bertie Hodgson" },
-    { "Yoko Hauser" },
-    { "Eldon Buckley" },
-    { "Makeda Spears" },
-    { "Marget Burrow" },
-    { "Hae Ledoux" },
-    { "Joeann Findley" },
-    { "Lupita Acosta" },
-    { "Eliza Dickinson" },
-    { "Aurelia Lyon" },
-    { "Steffanie Mabry" },
-    { "Claretha Register" },
-    { "Mimi Strunk" }
-};
+    {"Gurro Shiner"},      {"Hallie Hope"},    {"Jimmy Mcclanahan"},
+    {"Freddie Haugen"},    {"Patrina Wasson"}, {"Salome Burrell"},
+    {"Rosaria Curley"},    {"Bertie Hodgson"}, {"Yoko Hauser"},
+    {"Eldon Buckley"},     {"Makeda Spears"},  {"Marget Burrow"},
+    {"Hae Ledoux"},        {"Joeann Findley"}, {"Lupita Acosta"},
+    {"Eliza Dickinson"},   {"Aurelia Lyon"},   {"Steffanie Mabry"},
+    {"Claretha Register"}, {"Mimi Strunk"}};
 
-skill_t g_skills[6] = {
-    { "Whirling Burst", CRequirement::Type::GROUND_OP, 24 },
-    { "Chaotic Blink", CRequirement::Type::SPECIAL_OP, 15 },
-    { "Aurum Surge", CRequirement::Type::NAVAL_OP, 13 },
-    { "Celestial Attack", CRequirement::Type::AERIAL_OP, 25 },
-    { "Dark Calamity", CRequirement::Type::INTEL_OP, 20 },
-    { "Nebula Cleave", CRequirement::Type::RESCUE_OP, 12 }
-};
+skill_t g_skills[6] = {{"Whirling Burst", CRequirement::Type::GROUND_OP, 24},
+                       {"Chaotic Blink", CRequirement::Type::SPECIAL_OP, 15},
+                       {"Aurum Surge", CRequirement::Type::NAVAL_OP, 13},
+                       {"Celestial Attack", CRequirement::Type::AERIAL_OP, 25},
+                       {"Dark Calamity", CRequirement::Type::INTEL_OP, 20},
+                       {"Nebula Cleave", CRequirement::Type::RESCUE_OP, 12}};

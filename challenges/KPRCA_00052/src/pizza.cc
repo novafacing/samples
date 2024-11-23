@@ -23,126 +23,92 @@
 #include "pizza.h"
 
 extern "C" {
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 }
 
 namespace {
-    /* PRIVATE HELPER FUNCTIONS */
-    void print_helper(void *_topping)
-    {
-        Topping *topping = (Topping*)_topping;
-        printf("%s", topping->get_topping_name());
-        if (topping->contains_pork())
-            printf("**");
-        else if(!topping->is_vegetarian())
-            printf("*");
-        printf("\n");
-    }
+/* PRIVATE HELPER FUNCTIONS */
+void print_helper(void *_topping) {
+  Topping *topping = (Topping *)_topping;
+  printf("%s", topping->get_topping_name());
+  if (topping->contains_pork())
+    printf("**");
+  else if (!topping->is_vegetarian())
+    printf("*");
+  printf("\n");
+}
+}  // namespace
+
+Pizza::Pizza() {}
+
+Pizza::~Pizza() {
+  Topping *topping;
+  Sauce *sauce;
+
+  while (toppings.pop(topping)) delete topping;
+  while (sauce_ots.pop(sauce)) delete sauce;
 }
 
+bool Pizza::add_topping(Topping *topping) {
+  size_t i;
+  for (i = 0; i < toppings.length(); i++)
+    if (*toppings[i] == *topping) return false;
 
-Pizza::Pizza()
-{
+  return toppings.add(topping);
 }
 
-Pizza::~Pizza()
-{
-    Topping *topping;
-    Sauce *sauce;
+bool Pizza::remove_topping(size_t idx) { return toppings.remove(idx); }
 
-    while (toppings.pop(topping))
-        delete topping;
-    while (sauce_ots.pop(sauce))
-        delete sauce;
+bool Pizza::add_sauce(Sauce *sauce) { return sauce_ots.add(sauce); }
+
+bool Pizza::remove_sauce(size_t idx) { return sauce_ots.remove(idx); }
+
+void Pizza::print_toppings() {
+  if (toppings.is_empty())
+    printf("\tNone\n");
+  else
+    toppings.print_list(&print_helper);
 }
 
-bool Pizza::add_topping(Topping *topping)
-{
-    size_t i;
-    for (i = 0; i < toppings.length(); i++)
-        if (*toppings[i] == *topping)
-            return false;
-
-    return toppings.add(topping);
+void Pizza::print_sauces() {
+  if (sauce_ots.is_empty())
+    printf("\tNone\n");
+  else
+    sauce_ots.print_list(&print_helper);
 }
 
-bool Pizza::remove_topping(size_t idx)
-{
-    return toppings.remove(idx);
+size_t Pizza::get_num_toppings() { return toppings.length(); }
+
+size_t Pizza::get_num_sauces() { return sauce_ots.length(); }
+
+void Pizza::print_pizza() {
+  printf("    Selected Toppings\n");
+  print_toppings();
+  printf("    Sauce on the side\n");
+  print_sauces();
 }
 
-bool Pizza::add_sauce(Sauce *sauce)
-{
-    return sauce_ots.add(sauce);
+int Pizza::get_calories() {
+  size_t i, calories = 0;
+  for (i = 0; i < toppings.length(); i++)
+    calories += toppings[i]->get_calories();
+
+  for (i = 0; i < sauce_ots.length(); i++)
+    calories += sauce_ots[i]->get_calories();
+
+  return calories;
 }
 
-bool Pizza::remove_sauce(size_t idx)
-{
-    return sauce_ots.remove(idx);
+int Pizza::get_carbs() {
+  size_t i, carbs = 0;
+  for (i = 0; i < toppings.length(); i++) carbs += toppings[i]->get_carbs();
+
+  for (i = 0; i < sauce_ots.length(); i++) carbs += sauce_ots[i]->get_carbs();
+
+  return carbs;
 }
 
-void Pizza::print_toppings()
-{
-    if (toppings.is_empty())
-        printf("\tNone\n");
-    else
-        toppings.print_list(&print_helper);
+int Pizza::get_prep_time() {
+  return toppings.length() * 30 + sauce_ots.length() * 15;
 }
-
-void Pizza::print_sauces()
-{
-    if (sauce_ots.is_empty())
-        printf("\tNone\n");
-    else
-        sauce_ots.print_list(&print_helper);
-}
-
-size_t Pizza::get_num_toppings()
-{
-    return toppings.length();
-}
-
-size_t Pizza::get_num_sauces()
-{
-    return sauce_ots.length();
-}
-
-void Pizza::print_pizza()
-{
-    printf("    Selected Toppings\n");
-    print_toppings();
-    printf("    Sauce on the side\n");
-    print_sauces();
-}
-
-
-int Pizza::get_calories()
-{
-    size_t i, calories = 0;
-    for (i = 0; i < toppings.length(); i++)
-        calories += toppings[i]->get_calories();
-
-    for (i = 0; i < sauce_ots.length(); i++)
-        calories += sauce_ots[i]->get_calories();
-
-    return calories;
-}
-
-int Pizza::get_carbs()
-{
-    size_t i, carbs = 0;
-    for (i = 0; i < toppings.length(); i++)
-        carbs += toppings[i]->get_carbs();
-
-    for (i = 0; i < sauce_ots.length(); i++)
-        carbs += sauce_ots[i]->get_carbs();
-
-    return carbs;
-}
-
-int Pizza::get_prep_time()
-{
-    return toppings.length()* 30 + sauce_ots.length() * 15;
-}
-

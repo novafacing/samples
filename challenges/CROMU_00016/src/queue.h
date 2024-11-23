@@ -29,10 +29,10 @@ THE SOFTWARE.
 #define MIN_PKT_SIZE 64
 #define MAX_PKT_SIZE 1500
 typedef struct _pkt {
-	double timestamp;
-	unsigned int bytes;
-	unsigned int priority;
-	struct _pkt *next;
+  double timestamp;
+  unsigned int bytes;
+  unsigned int priority;
+  struct _pkt *next;
 } pkt;
 
 #define MIN_PRIORITY 0
@@ -44,30 +44,30 @@ typedef struct _pkt {
 #define MIN_QUEUES 1
 #define MAX_QUEUES 8
 typedef struct _queue {
-	unsigned int max_depth;
-	unsigned int curr_depth;
-	unsigned int bucket;
-	unsigned int max_tokens;
-	unsigned int total_pkts;
-	unsigned int total_bytes;
-	unsigned int dropped_pkts;
-	double cumulative_latency;
-	unsigned char min_priority;
-	unsigned char max_priority;
-	unsigned char weight;
-	pkt *head;
-	pkt *free;
-	pkt *ring_buffer;
+  unsigned int max_depth;
+  unsigned int curr_depth;
+  unsigned int bucket;
+  unsigned int max_tokens;
+  unsigned int total_pkts;
+  unsigned int total_bytes;
+  unsigned int dropped_pkts;
+  double cumulative_latency;
+  unsigned char min_priority;
+  unsigned char max_priority;
+  unsigned char weight;
+  pkt *head;
+  pkt *free;
+  pkt *ring_buffer;
 } queue;
 
 typedef struct _interface {
-	unsigned int speed;
-	unsigned int total_pkts;
-	unsigned int total_bytes;
-	unsigned char num_queues;
-	double ifg;
-	char priority_queue_enabled;
-	queue **ifqueue;
+  unsigned int speed;
+  unsigned int total_pkts;
+  unsigned int total_bytes;
+  unsigned char num_queues;
+  double ifg;
+  char priority_queue_enabled;
+  queue **ifqueue;
 } interface;
 
 int InitQueues(void);

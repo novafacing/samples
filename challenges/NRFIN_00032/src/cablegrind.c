@@ -18,41 +18,39 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-#include "libc.h"
 #include "cablegrind.h"
-#include "libdupe.h"
+
 #include "cablegrindprotos.h"
+#include "libc.h"
+#include "libdupe.h"
 #include "phydissectors.h"
 
-void (*phy_dissectors[]) (uint8_t *payload, int size) = {
-                                process_llama
-};
+void (*phy_dissectors[])(uint8_t *payload, int size) = {process_llama};
 
 void process_llama(uint8_t *payload, int size) {
-    llama_hdr_t *hdr = (llama_hdr_t*)payload;
+  llama_hdr_t *hdr = (llama_hdr_t *)payload;
 
-    if (sizeof(llama_hdr_t) > size)
-        return;
-    LOG("\n\n===llama===\n\n")
+  if (sizeof(llama_hdr_t) > size) return;
+  LOG("\n\n===llama===\n\n")
 
-    if (hdr->type < sizeof(llama_dissectors)/sizeof(llama_dissectors[0])) {
-        size -= sizeof(llama_hdr_t);
-        payload += sizeof(llama_hdr_t);
-        if (size > 0)
-            llama_dissectors[hdr->type](&payload,&size);
-    }
+  if (hdr->type < sizeof(llama_dissectors) / sizeof(llama_dissectors[0])) {
+    size -= sizeof(llama_hdr_t);
+    payload += sizeof(llama_hdr_t);
+    if (size > 0) llama_dissectors[hdr->type](&payload, &size);
+  }
 }
 
 void process_dupe(dupefile_t *f) {
-    dupepkt_t *cur = NULL;
-    LOG("Starting dissection...")
-    while ((cur = dupe_next(f)) && cur != NULL) {
-        LOG("\n\n====New Packet====");
-        if (cur->hdr.size > f->framelen || f->captype >= sizeof(phy_dissectors)/sizeof(phy_dissectors[0]))
-            break;
-        phy_dissectors[f->captype](cur->payload,cur->hdr.size);
-    }
-    LOG("\n\n===Dissection finished===");
+  dupepkt_t *cur = NULL;
+  LOG("Starting dissection...")
+  while ((cur = dupe_next(f)) && cur != NULL) {
+    LOG("\n\n====New Packet====");
+    if (cur->hdr.size > f->framelen ||
+        f->captype >= sizeof(phy_dissectors) / sizeof(phy_dissectors[0]))
+      break;
+    phy_dissectors[f->captype](cur->payload, cur->hdr.size);
+  }
+  LOG("\n\n===Dissection finished===");
 }

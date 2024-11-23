@@ -25,18 +25,25 @@ THE SOFTWARE.
 */
 #ifndef PAINT_H
 #define PAINT_H
-#include "vgf.h"
 #include "canvas.h"
+#include "vgf.h"
 
 RGB_Color *GetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer);
 int GetColorIndex(Canvas *c, uint16_t y, uint16_t x, uint8_t layer);
 void SetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer, uint8_t color);
-void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Triangle *triangle);
-void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end);
-void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Rectangle *rectangle);
-void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Square *square);
-void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Spray *spray);
-void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Line *line);
-void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Circle *circle);
+void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                   VGF_Triangle *triangle);
+void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start,
+                   uint16_t y_start, uint16_t x_end, uint16_t y_end);
+void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                    VGF_Rectangle *rectangle);
+void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                 VGF_Square *square);
+void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                VGF_Spray *spray);
+void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+               VGF_Line *line);
+void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                 VGF_Circle *circle);
 
 #endif

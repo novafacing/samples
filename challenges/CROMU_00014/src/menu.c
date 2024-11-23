@@ -24,73 +24,58 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "menu.h"
-#include "stdlib.h"
+
+#include <libcgc.h>
+
 #include "service.h"
+#include "stdlib.h"
 
 extern logbook_type logbook;
 
-int process_menu(menu_item *menu, int num_items)  {
-	
-	int i;
-	int rcv_cnt;
-	char buf[24];
+int process_menu(menu_item *menu, int num_items) {
+  int i;
+  int rcv_cnt;
+  char buf[24];
 
-    // start the main menu loop
-     while (1) {
+  // start the main menu loop
+  while (1) {
+    printf("\n");
 
-		printf("\n");
-		
-		// print the menu items
-		for (i=0;i< num_items;++i)  {
+    // print the menu items
+    for (i = 0; i < num_items; ++i) {
+      printf("@c - @s\n", menu[i].command[0], menu[i].prompt);
+    }
 
-			printf("@c - @s\n", menu[i].command[0], menu[i].prompt);
+    printf(":");
 
-		}
+    rcv_cnt = getline(buf, sizeof(buf));
 
-		printf(":");
-		
-	    rcv_cnt=getline(buf, sizeof(buf));
-		
-		if (rcv_cnt==0)
-		    continue;
+    if (rcv_cnt == 0) continue;
 
-	    printf("\n");
+    printf("\n");
 
-	    // find entry associated with the ccommand char entered and execute it
-		for (i=0;i< num_items;++i) {
+    // find entry associated with the ccommand char entered and execute it
+    for (i = 0; i < num_items; ++i) {
+      if (find_char(buf[0], menu[i].command)) {
+        if (menu[i].Action == 0) return 0;
 
-			if (find_char(buf[0], menu[i].command))  {
-				
-				if (menu[i].Action==0)
-					return 0;
-		
-				menu[i].Action(&logbook);
-				break;
+        menu[i].Action(&logbook);
+        break;
+      }
+    }
 
-			}
-		}
+  }  // while
 
-
-    }  // while
-
-
-return 0;
-
+  return 0;
 }
 
+int find_char(char c, char *string) {
+  int i;
 
-int find_char(char c, char *string)  {
+  for (i = 0; i < strlen(string); ++i) {
+    if (string[i] == c) return 1;
+  }
 
-	int i;
-
-	for (i=0; i< strlen(string); ++i) {
-
-		if (string[i]== c)
-			return 1;
-	}
-
-	return 0;
-
+  return 0;
 }

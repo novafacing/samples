@@ -23,8 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,25 +32,22 @@ extern "C"
 
 #include "common.h"
 
-uint32_t ReadBytes( uint8_t *pDest, uint32_t numBytes )
-{
-	if ( !pDest )
-		return (0);
+uint32_t ReadBytes(uint8_t *pDest, uint32_t numBytes) {
+  if (!pDest) return (0);
 
-	size_t bytes_read = 0;
-	for ( bytes_read = 0; bytes_read < numBytes; )
-	{
-		size_t num_bytes_read;
-		size_t bytes_remaining = (numBytes - bytes_read);
+  size_t bytes_read = 0;
+  for (bytes_read = 0; bytes_read < numBytes;) {
+    size_t num_bytes_read;
+    size_t bytes_remaining = (numBytes - bytes_read);
 
-		if ( receive( STDIN, (void *)(pDest+bytes_read), bytes_remaining, &num_bytes_read ) != 0 )
-			_terminate( -1 );
+    if (receive(STDIN, (void *)(pDest + bytes_read), bytes_remaining,
+                &num_bytes_read) != 0)
+      _terminate(-1);
 
-		if ( num_bytes_read == 0 )
-			_terminate( -1 );
+    if (num_bytes_read == 0) _terminate(-1);
 
-		bytes_read += num_bytes_read;
-	}
+    bytes_read += num_bytes_read;
+  }
 
-	return (bytes_read);
+  return (bytes_read);
 }

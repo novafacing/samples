@@ -27,10 +27,10 @@
 #include <libcgc.h>
 #include <string.h>
 
-#define MAX_KEY_LEN   128
-#define MAX_DATA_LEN  512
-#define MAX_TEXT_LEN  1024
-#define MAX_SEQ_NUM   500
+#define MAX_KEY_LEN 128
+#define MAX_DATA_LEN 512
+#define MAX_TEXT_LEN 1024
+#define MAX_SEQ_NUM 500
 
 enum lsimp_msg_type_t {
   LMT_HELO = 0x4f4c4548,
@@ -73,7 +73,7 @@ typedef struct lsimp_msg {
   };
 } lsimp_msg_t;
 
-lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len);
-int decode_data(lsimp_keyx_t *keyx, lsimp_data_t* data);
+lsimp_msg_t *parse_msg(char *buf, unsigned int buf_len);
+int decode_data(lsimp_keyx_t *keyx, lsimp_data_t *data);
 
 #endif

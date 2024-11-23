@@ -23,110 +23,85 @@
 #include "mixer.h"
 
 Mixer::Mixer()
-    : nextTrackId(0), tracks(LinkedList<AudioTrack *>::deleteDestructor)
-{
+    : nextTrackId(0), tracks(LinkedList<AudioTrack *>::deleteDestructor) {}
+
+Mixer::~Mixer() {}
+
+unsigned int Mixer::getLength() const {
+  unsigned int length = 0;
+  for (auto it = tracks.begin(); !it.empty(); it.next()) {
+    unsigned int trackLength = it.value()->getLength();
+    if (trackLength > length) length = trackLength;
+  }
+  return length;
 }
 
-Mixer::~Mixer()
-{
+void Mixer::addTrack(AudioTrack *track) {
+  track->id = nextTrackId++;
+  tracks.append(track);
 }
 
-unsigned int Mixer::getLength() const
-{
-    unsigned int length = 0;
-    for (auto it = tracks.begin(); !it.empty(); it.next())
-    {
-        unsigned int trackLength = it.value()->getLength();
-        if (trackLength > length)
-            length = trackLength;
+AudioTrack *Mixer::getTrack(unsigned int id) const {
+  for (auto it = tracks.begin(); !it.empty(); it.next()) {
+    AudioTrack *track = it.value();
+    if (track->id == id) return track;
+  }
+
+  return NULL;
+}
+
+void Mixer::removeTrack(unsigned int id) {
+  for (auto it = tracks.begin(); !it.empty(); it.next()) {
+    AudioTrack *track = it.value();
+    if (track->id == id) {
+      tracks.removeAt(it);
+      delete track;
+      return;
     }
-    return length;
+  }
 }
 
-void Mixer::addTrack(AudioTrack *track)
-{
-    track->id = nextTrackId++;
-    tracks.append(track);
+bool Mixer::splitTrack(unsigned int id) {
+  AudioTrack *track = getTrack(id);
+  if (track == NULL || !track->getStereo()) return false;
+
+  track = track->toMono();
+  addTrack(track);
+  return true;
 }
 
-AudioTrack *Mixer::getTrack(unsigned int id) const
-{
-    for (auto it = tracks.begin(); !it.empty(); it.next())
-    {
-        AudioTrack *track = it.value();
-        if (track->id == id)
-            return track;
+bool Mixer::combineTracks(unsigned int leftId, unsigned int rightId) {
+  AudioTrack *left, *right;
+  left = getTrack(leftId);
+  if (left == NULL || left->getStereo()) return false;
+  for (auto it = tracks.begin(); !it.empty(); it.next()) {
+    right = it.value();
+    if (right->id == rightId) {
+      if (right->getStereo()) return false;
+      if (!left->toStereo(right)) return false;
+      tracks.removeAt(it);
+      return true;
     }
-
-    return NULL;
+  }
+  return false;
 }
 
-void Mixer::removeTrack(unsigned int id)
-{
-    for (auto it = tracks.begin(); !it.empty(); it.next())
-    {
-        AudioTrack *track = it.value();
-        if (track->id == id)
-        {
-            tracks.removeAt(it);
-            delete track;
-            return;
-        }
-    }
+AudioTrack *Mixer::exportMix() {
+  unsigned int length = getLength();
+  AudioTrack *output = new AudioTrack(AudioStream::fromSilence(length),
+                                      AudioStream::fromSilence(length));
+  for (auto it = tracks.begin(); !it.empty(); it.next()) {
+    AudioTrack *track = it.value();
+    output->mix(*track);
+  }
+  return output;
 }
 
-bool Mixer::splitTrack(unsigned int id)
-{
-    AudioTrack *track = getTrack(id);
-    if (track == NULL || !track->getStereo())
-        return false;
-
-    track = track->toMono();
-    addTrack(track);
-    return true;
-}
-
-bool Mixer::combineTracks(unsigned int leftId, unsigned int rightId)
-{
-    AudioTrack *left, *right;
-    left = getTrack(leftId);
-    if (left == NULL || left->getStereo())
-        return false;
-    for (auto it = tracks.begin(); !it.empty(); it.next())
-    {
-        right = it.value();
-        if (right->id == rightId)
-        {
-            if (right->getStereo())
-                return false;
-            if (!left->toStereo(right))
-                return false;
-            tracks.removeAt(it);
-            return true;
-        }
-    }
-    return false;
-}
-
-AudioTrack *Mixer::exportMix()
-{
-    unsigned int length = getLength();
-    AudioTrack *output = new AudioTrack(AudioStream::fromSilence(length), AudioStream::fromSilence(length));
-    for (auto it = tracks.begin(); !it.empty(); it.next())
-    {
-        AudioTrack *track = it.value();
-        output->mix(*track);
-    }
-    return output;
-}
-
-AudioStream *Mixer::generateWhiteNoise(unsigned int length)
-{
-    rng.addEntropy((uint8_t *)0x4347C000, 0x1000);
-    AudioStream *stream = AudioStream::fromSilence(length);
-    for (unsigned int i = 0; i < length; i++)
-    {
-        stream->setSample(i, rng.randomInt32() >> 1);
-    }
-    return stream;
+AudioStream *Mixer::generateWhiteNoise(unsigned int length) {
+  rng.addEntropy((uint8_t *)0x4347C000, 0x1000);
+  AudioStream *stream = AudioStream::fromSilence(length);
+  for (unsigned int i = 0; i < length; i++) {
+    stream->setSample(i, rng.randomInt32() >> 1);
+  }
+  return stream;
 }

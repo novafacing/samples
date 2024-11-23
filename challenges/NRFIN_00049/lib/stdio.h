@@ -32,10 +32,10 @@ extern FILE *stdin, *stdout, *stderr;
 
 /** Is this file in read or write mode, mutually exclusive */
 enum mode {
-    /** Read mode */
-    READ,
-    /** Write mode */
-    WRITE
+  /** Read mode */
+  READ,
+  /** Write mode */
+  WRITE
 };
 
 /**
@@ -104,7 +104,8 @@ int fflush(FILE *stream);
 ssize_t fread(void *ptr, size_t size, FILE *stream);
 
 /**
- * Read at most size bytes from FILE pointer into ptr, stopping on delim, buffered.
+ * Read at most size bytes from FILE pointer into ptr, stopping on delim,
+ * buffered.
  *
  * @param ptr The output buffer
  * @param delim The byte to stop on
@@ -303,4 +304,3 @@ int fscanf(const char *format, ...);
 int sscanf(char *s, const char *format, ...);
 
 #endif /* STDIO_H_ */
-

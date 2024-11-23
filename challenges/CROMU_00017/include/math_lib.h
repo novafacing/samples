@@ -26,11 +26,13 @@ THE SOFTWARE.
 #ifndef MTH_H_DEFINED
 #define MTH_H_DEFINED
 
-//#define DEBUG_PRINT_ON
+// #define DEBUG_PRINT_ON
 #ifdef DEBUG_PRINT_ON
-#	define debug_print(fmt, ...) printf(fmt, __VA_ARGS__);
+#define debug_print(fmt, ...) printf(fmt, __VA_ARGS__);
 #else
-#	define debug_print(...) do{}while(0);
+#define debug_print(...) \
+  do {                   \
+  } while (0);
 #endif
 
 #define FAIL 0
@@ -38,14 +40,16 @@ THE SOFTWARE.
 
 #define INPUT 1
 
-#define PI 3 // doesn't matter if it's correct. also, float math between python and c is dumb
+#define PI \
+  3  // doesn't matter if it's correct. also, float math between python and c is
+     // dumb
 
 #define MAX_INT 2147483647
 
 #define TEST_LEN 12
 
-
-int get_user_answer(int *answer); // gets input, checks if integer, puts num in answer
+int get_user_answer(
+    int *answer);  // gets input, checks if integer, puts num in answer
 int generate_one_equation(char *equation);
 int generate_equation();
 int do_initial_equation();

@@ -25,40 +25,38 @@
 #define BHDR_H_
 
 #pragma pack(push, 1)
-struct bhdr
-{
-    unsigned char jmp_ins[3];
-    unsigned char name[8];
+struct bhdr {
+  unsigned char jmp_ins[3];
+  unsigned char name[8];
 
-    unsigned char sectors_per_cluster;    //1
-    unsigned short num_reserved_sectors;
-    unsigned short bytes_per_sector;   //512
-    unsigned char num_cgfst;
-    unsigned short num_root_dirs;
-    unsigned short total_sectors_small;   //if zero refer to total_sectors_large;
-    unsigned char media_info;
-    unsigned short unused;
-    unsigned short unused_track_info;
-    unsigned short unused_head_info;
-    unsigned int unused_partition_info;
-    unsigned int total_sectors_large;
+  unsigned char sectors_per_cluster;  // 1
+  unsigned short num_reserved_sectors;
+  unsigned short bytes_per_sector;  // 512
+  unsigned char num_cgfst;
+  unsigned short num_root_dirs;
+  unsigned short total_sectors_small;  // if zero refer to total_sectors_large;
+  unsigned char media_info;
+  unsigned short unused;
+  unsigned short unused_track_info;
+  unsigned short unused_head_info;
+  unsigned int unused_partition_info;
+  unsigned int total_sectors_large;
 
-    unsigned int root_cluster_idx;
-    unsigned short drive_desc;
-    unsigned short version;
-    unsigned int sectors_per_cgfst;
-    unsigned short fs_info_sector_idx;
-    unsigned short boot_copy_sector_idx;
-    unsigned char reserved[12];
-    unsigned char cf_cgfst16_32[18];
-    unsigned char fs_type[8];
+  unsigned int root_cluster_idx;
+  unsigned short drive_desc;
+  unsigned short version;
+  unsigned int sectors_per_cgfst;
+  unsigned short fs_info_sector_idx;
+  unsigned short boot_copy_sector_idx;
+  unsigned char reserved[12];
+  unsigned char cf_cgfst16_32[18];
+  unsigned char fs_type[8];
 
-    unsigned char unused_boot_code[419];
+  unsigned char unused_boot_code[419];
 
-    unsigned char drive_num;
-    unsigned char end_signature[2]; // {0x55, 0xAA}
+  unsigned char drive_num;
+  unsigned char end_signature[2];  // {0x55, 0xAA}
 };
 #pragma pack(pop)
 
 #endif
-

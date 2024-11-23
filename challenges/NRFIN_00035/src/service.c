@@ -18,37 +18,48 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "common.h"
-#include "operation.h"
+ */
 #include "service.h"
+
+#include <libcgc.h>
+
+#include "common.h"
+#include "libc.h"
+#include "operation.h"
 #include "tank.h"
 
-
 int main(void) {
-	char ret = SUCCESS;
-    struct tankset *t = NULL;
+  char ret = SUCCESS;
+  struct tankset *t = NULL;
 
-    if (SUCCESS != (ret = create_tanks(&t, TANK_QTY))) {goto bail;}
+  if (SUCCESS != (ret = create_tanks(&t, TANK_QTY))) {
+    goto bail;
+  }
 
-    syslog(LOG_INFO, "H2FLOW Service Ready.");
+  syslog(LOG_INFO, "H2FLOW Service Ready.");
 
-    while (1) {
-        if (SUCCESS != (ret = update_drain_factors(t))) {goto bail;}
-        if (SUCCESS != (ret = rxtx(t))) {goto bail;}
-
-        sleep(SLEEP_INT_SEC, SLEEP_INT_USEC);
-
-        if (SUCCESS != (ret = update_water_levels(t))) {goto bail;}
-        if (SUCCESS != (ret = check_levels(t))) {goto bail;}
+  while (1) {
+    if (SUCCESS != (ret = update_drain_factors(t))) {
+      goto bail;
+    }
+    if (SUCCESS != (ret = rxtx(t))) {
+      goto bail;
     }
 
-bail:
-	if (0 > ret) {
-		send((char *)&ret, 1);
-	}
+    sleep(SLEEP_INT_SEC, SLEEP_INT_USEC);
 
-	return ret;
+    if (SUCCESS != (ret = update_water_levels(t))) {
+      goto bail;
+    }
+    if (SUCCESS != (ret = check_levels(t))) {
+      goto bail;
+    }
+  }
+
+bail:
+  if (0 > ret) {
+    send((char *)&ret, 1);
+  }
+
+  return ret;
 }

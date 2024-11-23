@@ -6,8 +6,8 @@
 typedef double (*handle_op_t)(stack_t **args, int *is_bad_formula);
 
 typedef struct {
-    const char *name;
-    handle_op_t function;
+  const char *name;
+  handle_op_t function;
 } operator_t;
 
 double handle_op_avg(stack_t **args, int *is_bad_formula);

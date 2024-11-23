@@ -23,14 +23,14 @@
 #ifndef STDIO_H_
 #define STDIO_H_
 
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 typedef struct FILE FILE;
 
-extern FILE * const stdin;
-extern FILE * const stdout;
-extern FILE * const stderr;
+extern FILE *const stdin;
+extern FILE *const stdout;
+extern FILE *const stderr;
 
 int printf(const char *fmt, ...);
 int fprintf(FILE *stream, const char *fmt, ...);

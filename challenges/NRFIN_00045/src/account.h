@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef ACCOUNTSTATIC_H
 #define ACCOUNTSTATIC_H
@@ -29,20 +28,19 @@
 #define SYM_SIZE 8
 #include "option.h"
 typedef struct option_holding {
-	uint32_t qty;
-	char symbol[SYM_SIZE];
+  uint32_t qty;
+  char symbol[SYM_SIZE];
 
-} option_holding_t; 
+} option_holding_t;
 
 typedef struct account_record {
-	float balance;
-	char key[KEY_LEN];
-	option_holding_t holdings[MAX_HOLDINGS];
+  float balance;
+  char key[KEY_LEN];
+  option_holding_t holdings[MAX_HOLDINGS];
 } account_record_t;
-
 
 extern account_record_t ACCOUNTS[];
 void init_account(uint32_t idx, float balance, char *key);
 void init_accounts();
-option_holding_t * next_holding(uint32_t acct_id);
+option_holding_t *next_holding(uint32_t acct_id);
 #endif

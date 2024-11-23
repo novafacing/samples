@@ -115,7 +115,8 @@ int fromdigit(char digit, unsigned int base);
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t num);
+int utostr(unsigned int value, unsigned int base, int uppercase, char *str,
+           size_t num);
 
 /**
  * Convert int value to its string representation in base.
@@ -179,4 +180,3 @@ ssize_t strtoi(char *str, unsigned int base, int *result);
 ssize_t strtod(char *str, double *result);
 
 #endif /* CONV_H_ */
-

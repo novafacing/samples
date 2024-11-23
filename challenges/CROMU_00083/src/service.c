@@ -24,189 +24,162 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
+
+#include <libcgc.h>
+
 #include "filesystem.h"
-#include "stdio.h"
-#include "string.h"
 #include "input.h"
 #include "malloc.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 #define COMMAND_COUNT 10
 
 securityIdType securityID = 0;
 
 int main(void) {
-char command[1024];
-char buffer[100];
-char nameBuffer[10];
-int retcode;
-int unauth = 1;
-unsigned int securityToken;
-int i;
-int argcount;
-char **args;
-fileHandleType fh;
+  char command[1024];
+  char buffer[100];
+  char nameBuffer[10];
+  int retcode;
+  int unauth = 1;
+  unsigned int securityToken;
+  int i;
+  int argcount;
+  char **args;
+  fileHandleType fh;
 
-    commandsTableType commands[] = {
+  commandsTableType commands[] = {
 
-        {"make", makeFile },
-        {"erase", eraseFile }, 
-        {"list", listFiles },
-        {"write", overwriteFile }, 
-        {"show", dumpFile },
-        {"last", readFromEnd },
-        { "first", readFirstN }, 
-        { "copy", copyFile }, 
-        { "perms", setPermissions },
-        { "makememfile", makeMemFile }
+      {"make", makeFile},
+      {"erase", eraseFile},
+      {"list", listFiles},
+      {"write", overwriteFile},
+      {"show", dumpFile},
+      {"last", readFromEnd},
+      {"first", readFirstN},
+      {"copy", copyFile},
+      {"perms", setPermissions},
+      {"makememfile", makeMemFile}
 
-    };
+  };
 
-    retcode = initFileSystem(4096, 8192, 8192*300);
+  retcode = initFileSystem(4096, 8192, 8192 * 300);
 
-    if (retcode != 0) {
+  if (retcode != 0) {
+    printf("Error making filesystem\n");
+    _terminate(-1);
+  }
 
-        printf("Error making filesystem\n");
-        _terminate(-1);
+  retcode = createFile("README.txt", REGULAR, ROOT_ID);
+
+  if (retcode != 0) {
+    printf("error making README\n");
+    _terminate(-1);
+  }
+
+  fh = openFile("README.txt", ROOT_ID);
+
+  if (fh < 0) {
+    printf("error making README\n");
+    _terminate(-1);
+  }
+
+  strcpy(buffer, "Welcome to the interactive filesystem shell. ");
+
+  retcode = writeFile(fh, buffer, strlen(buffer), ROOT_ID);
+
+  if (retcode < 0) {
+    printf("error making README\n");
+    _terminate(-1);
+  }
+
+  strcpy(buffer,
+         "Valid commands are make, makememfile, erase, list, copy, write, "
+         "show, first, last, and perms.");
+
+  retcode = writeFile(fh, buffer, strlen(buffer), ROOT_ID);
+
+  if (retcode < 0) {
+    printf("error making Message of the Day\n");
+    _terminate(-1);
+  }
+
+  // this should be read-only but needs to be writable so it can be deleted for
+  // the exploit
+  setPerms(fh, 3, ROOT_ID);
+
+  closeFile(fh);
+
+  makeMemoryFile("authentication.db", 0x4347C000, 4096, 1, 0);
+
+  while (1) {
+    if (unauth) {
+      printf("login: ");
+    } else {
+      printf("> ");
     }
 
+    retcode = receive_until(command, '\n', sizeof(command));
 
-    retcode = createFile("README.txt", REGULAR, ROOT_ID);
-
-    if ( retcode != 0 ) {
-
-        printf("error making README\n");
-        _terminate(-1);
+    if (strlen(command) == 0) {
+      continue;
     }
 
-    fh = openFile("README.txt", ROOT_ID);
+    argcount = tokenize(command, ' ', &args);
 
-    if ( fh < 0 ) {
+    if (unauth) {
+      if (argcount != 2) {
+        free(args);
+        continue;
+      }
 
-        printf("error making README\n");
-        _terminate(-1);
+      securityToken = atoi(args[1]);
 
+      securityID = authenticate(args[0], securityToken);
+
+      if (securityID == 0) {
+        printf("Invalid login\n");
+        free(args);
+        continue;
+      } else {
+        printf("Access allowed\n");
+        lookupName(nameBuffer, securityID);
+
+        printf("Welcome $s\n", nameBuffer);
+      }
+
+      unauth = 0;
+
+      free(args);
+      continue;
     }
 
-    strcpy(buffer, "Welcome to the interactive filesystem shell. ");
+    if (strcmp(args[0], "logout") == 0) {
+      printf("bye felicia\n");
+      unauth = 1;
+      continue;
 
-    retcode = writeFile(fh, buffer, strlen(buffer), ROOT_ID);
+    } else if (strcmp(args[0], "exit") == 0) {
+      break;
 
-    if (retcode < 0 ) {
+    } else {
+      for (i = 0; i < COMMAND_COUNT; ++i) {
+        if (strcmp(args[0], commands[i].command) == 0) {
+          retcode = commands[i].handler(argcount, args);
+          break;
+        }
+      }
 
-        printf("error making README\n");
-        _terminate(-1);
+      if (i == COMMAND_COUNT && strlen(args[0]) > 0) {
+        printf("unknown command $s\n", args[0]);
+      }
 
+      continue;
     }
 
-    strcpy(buffer, "Valid commands are make, makememfile, erase, list, copy, write, show, first, last, and perms.");
+  }  // while
 
-    retcode = writeFile(fh, buffer, strlen(buffer), ROOT_ID);
-
-    if (retcode < 0 ) {
-
-        printf("error making Message of the Day\n");
-        _terminate(-1);
-
-    }
-
-    // this should be read-only but needs to be writable so it can be deleted for the exploit
-    setPerms(fh, 3, ROOT_ID);
-
-    closeFile(fh);
-
-    makeMemoryFile("authentication.db", 0x4347C000, 4096,  1,  0 );
-
-    while (1) {
-
-        if (unauth) {
-
-            printf("login: ");
-        }
-        else {
-
-            printf("> ");
-        }
-
-        retcode = receive_until(command, '\n', sizeof(command));
-
-        if (strlen(command) == 0) {
-
-            continue;
-        }
-
-        argcount = tokenize(command, ' ', &args);
-        
-        if (unauth) {
-
-            if (argcount != 2) {
-
-                free(args);
-                continue;
-            }
-
-            securityToken = atoi(args[1]);
-
-            securityID = authenticate(args[0], securityToken);
-
-            if (securityID == 0) {
-
-                printf("Invalid login\n");
-                free(args);
-                continue;
-            }
-            else {
-
-                printf("Access allowed\n");
-                lookupName(nameBuffer, securityID);
-
-                printf("Welcome $s\n", nameBuffer);
-
-            }
-
-            unauth = 0;
-
-            free(args);
-            continue;
-
-        }
-
-        if (strcmp(args[0], "logout") == 0) {
-
-            printf("bye felicia\n");
-            unauth = 1;
-            continue;
-
-        }
-        else if (strcmp(args[0], "exit") == 0 ) {
-
-            break;
-
-        }
-        else {
-
-            for ( i= 0; i < COMMAND_COUNT; ++i ) {
-
-                if ( strcmp(args[0], commands[i].command) == 0 ) {
-
-                    retcode = commands[i].handler(argcount, args);
-                    break;
-                }
-
-            }
-
-            if ( i == COMMAND_COUNT && strlen(args[0]) > 0 ) {
-
-                printf("unknown command $s\n", args[0]);
-
-            }
-            
-            continue;
-        }
-
-    } //while
-
-}  // main  
-
+}  // main

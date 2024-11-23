@@ -33,22 +33,22 @@
 typedef double rpnval;
 
 struct matrix {
-    unsigned int width, height;
-    double data[0];
+  unsigned int width, height;
+  double data[0];
 };
 
 #define NAN_MASK (0x7ff8ull << 48)
 // This will also catch +/- inf
-#define IS_NAN(x) ((*((unsigned long long *)(&x)) & (0x7ff0ull << 48)) == (0x7ff0ull << 48))
-#define GET_TYPE(x) ((*((unsigned long long *)(&x)) & ((0xffffull) << 32)) >> 32)
-#define GET_VALUE(x) ((unsigned long)(*((unsigned long long *)(&x)) & 0xfffffffful))
-#define SIZEOF_MATRIX(m) (sizeof(struct matrix) + m->width * m->height * sizeof(double))
+#define IS_NAN(x) \
+  ((*((unsigned long long *)(&x)) & (0x7ff0ull << 48)) == (0x7ff0ull << 48))
+#define GET_TYPE(x) \
+  ((*((unsigned long long *)(&x)) & ((0xffffull) << 32)) >> 32)
+#define GET_VALUE(x) \
+  ((unsigned long)(*((unsigned long long *)(&x)) & 0xfffffffful))
+#define SIZEOF_MATRIX(m) \
+  (sizeof(struct matrix) + m->width * m->height * sizeof(double))
 
-enum rpnval_type {
-    INTEGER,
-    MATRIX,
-    DOUBLE
-};
+enum rpnval_type { INTEGER, MATRIX, DOUBLE };
 
 /**
  * Return the type of the rpnval.
@@ -56,19 +56,17 @@ enum rpnval_type {
  * @param val The rpnval
  * @return The type of val
  */
-static inline enum rpnval_type
-get_type(rpnval val)
-{
-    int type = GET_TYPE(val);
+static inline enum rpnval_type get_type(rpnval val) {
+  int type = GET_TYPE(val);
 
-    if (IS_NAN(val)) {
-        if (type == INTEGER)
-            return INTEGER;
-        else if (type == MATRIX)
-            return MATRIX;
-    }
+  if (IS_NAN(val)) {
+    if (type == INTEGER)
+      return INTEGER;
+    else if (type == MATRIX)
+      return MATRIX;
+  }
 
-    return DOUBLE;
+  return DOUBLE;
 }
 
 /**
@@ -78,22 +76,17 @@ get_type(rpnval val)
  * @param out Output pointer
  * @return 0 if successful, -1 if not
  */
-static inline int
-as_integer(rpnval val, int *out)
-{
-    if (out == NULL)
-        return -1;
+static inline int as_integer(rpnval val, int *out) {
+  if (out == NULL) return -1;
 
-    if (get_type(val) != INTEGER)
-        return -1;
+  if (get_type(val) != INTEGER) return -1;
 
-    *out = GET_VALUE(val);
+  *out = GET_VALUE(val);
 
-    // If out == INT_MIN, this causes erroneous SIGFPE, so disallow this
-    if (*out == INT_MIN)
-        return -1;
+  // If out == INT_MIN, this causes erroneous SIGFPE, so disallow this
+  if (*out == INT_MIN) return -1;
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -102,34 +95,28 @@ as_integer(rpnval val, int *out)
  * @param val_ The integer value to set
  * @param out_ Output pointer
  */
-static inline void
-set_integer(int val_, rpnval *out_)
-{
-    unsigned long long *out = (unsigned long long *)out_;
-    unsigned long long tag = (unsigned long long)INTEGER << 32;
-    unsigned long long val = (unsigned long long)val_ & 0xffffffff;
+static inline void set_integer(int val_, rpnval *out_) {
+  unsigned long long *out = (unsigned long long *)out_;
+  unsigned long long tag = (unsigned long long)INTEGER << 32;
+  unsigned long long val = (unsigned long long)val_ & 0xffffffff;
 
-    *out = NAN_MASK | tag | val;
+  *out = NAN_MASK | tag | val;
 }
 
 /**
  * Get the matrix value of an rpnval.
- * 
+ *
  * @param val The rpnval
  * @param out Output pointer
  * @return 0 if successful, -1 if not
  */
-static inline int
-as_matrix(rpnval val, struct matrix **out)
-{
-    if (out == NULL)
-        return -1;
+static inline int as_matrix(rpnval val, struct matrix **out) {
+  if (out == NULL) return -1;
 
-    if (get_type(val) != MATRIX)
-        return -1;
+  if (get_type(val) != MATRIX) return -1;
 
-    *out = (struct matrix *)GET_VALUE(val);
-    return 0;
+  *out = (struct matrix *)GET_VALUE(val);
+  return 0;
 }
 
 /**
@@ -138,14 +125,12 @@ as_matrix(rpnval val, struct matrix **out)
  * @param val_ The matrix value to set
  * @param out_ Output pointer
  */
-static inline void
-set_matrix(struct matrix *val_, rpnval *out_)
-{
-    unsigned long long *out = (unsigned long long *)out_;
-    unsigned long long tag = (unsigned long long)MATRIX << 32;
-    unsigned long long val = (unsigned long long)val_;
+static inline void set_matrix(struct matrix *val_, rpnval *out_) {
+  unsigned long long *out = (unsigned long long *)out_;
+  unsigned long long tag = (unsigned long long)MATRIX << 32;
+  unsigned long long val = (unsigned long long)val_;
 
-    *out = NAN_MASK | tag | val;
+  *out = NAN_MASK | tag | val;
 }
 
 /**
@@ -155,17 +140,13 @@ set_matrix(struct matrix *val_, rpnval *out_)
  * @param out Output pointer
  * @return 0 if successful, -1 of not
  */
-static inline int
-as_double(rpnval val, double *out)
-{
-    if (out == NULL)
-        return -1;
+static inline int as_double(rpnval val, double *out) {
+  if (out == NULL) return -1;
 
-    if (get_type(val) != DOUBLE)
-        return -1;
+  if (get_type(val) != DOUBLE) return -1;
 
-    *out = val;
-    return 0;
+  *out = val;
+  return 0;
 }
 
 /**
@@ -174,11 +155,6 @@ as_double(rpnval val, double *out)
  * @param val The double value to set
  * @param out Ouput pointer
  */
-static inline void
-set_double(double val, rpnval *out)
-{
-    *out = val;
-}
+static inline void set_double(double val, rpnval *out) { *out = val; }
 
 #endif /* RPNVAL_H_ */
-

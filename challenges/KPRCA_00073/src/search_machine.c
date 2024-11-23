@@ -20,15 +20,15 @@
  * THE SOFTWARE.
  *
  */
+#include "search_machine.h"
+
 #include <string.h>
 
 #include "assert.h"
 #include "safe.h"
-#include "search_machine.h"
 #include "trie.h"
 
-int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie)
-{
+int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie) {
   SearchMachine->Trie = Trie;
 
   // For each keyword in the keyword tree, set out(Node-For-Keyword) = {Keyword}
@@ -38,33 +38,34 @@ int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie)
   // Each state has an out (set of patterns recognized upon entering it
   // out :: Map StateID [String]
   SearchMachine->Out = xcalloc(GetTrieCount(), sizeof(list*));
-  for (size_t TerminalIndex = 0; TerminalIndex < TerminalCount; ++TerminalIndex)
-  {
+  for (size_t TerminalIndex = 0; TerminalIndex < TerminalCount;
+       ++TerminalIndex) {
     size_t DataLength;
     size_t TerminalIdentifier = Terminals[TerminalIndex]->Identifier;
-    trie_unit* DataUpToNode = GetDataString(Terminals[TerminalIndex], &DataLength);
+    trie_unit* DataUpToNode =
+        GetDataString(Terminals[TerminalIndex], &DataLength);
     Assert(DataUpToNode != NULL, "ISM1");
-    AllocateAndInitializeListHead(&(SearchMachine->Out[TerminalIdentifier]), DataUpToNode);
+    AllocateAndInitializeListHead(&(SearchMachine->Out[TerminalIdentifier]),
+                                  DataUpToNode);
   }
 
-  SearchMachine->Fail = xcalloc(GetTrieCount(), sizeof(trie *));
+  SearchMachine->Fail = xcalloc(GetTrieCount(), sizeof(trie*));
 
   // goto :: Map (StateID, Symbol) StatePtr
-  SearchMachine->Goto = xcalloc(sizeof(void *), GetTrieCount());
+  SearchMachine->Goto = xcalloc(sizeof(void*), GetTrieCount());
 
   // Copy over trie links into goto
-  for (size_t TrieIndex = 0; TrieIndex < GetTrieCount(); TrieIndex++)
-  {
+  for (size_t TrieIndex = 0; TrieIndex < GetTrieCount(); TrieIndex++) {
     SearchMachine->Goto[TrieIndex] = xcalloc(sizeof(trie*), UNIT_CARDINALITY);
     trie* TrieToCopy = FindInTrieByIdentifier(Trie, TrieIndex);
-    memcpy(SearchMachine->Goto[TrieIndex], TrieToCopy->Children, sizeof(trie*) * UNIT_CARDINALITY);
+    memcpy(SearchMachine->Goto[TrieIndex], TrieToCopy->Children,
+           sizeof(trie*) * UNIT_CARDINALITY);
   }
 
   // g(ROOT, a) := ROOT forall a in SIGMA where a doesn't leave ROOT
-  for (size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
-  {
-    if (Trie->Children[AlphabetIndex] == NULL)
-    {
+  for (size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY;
+       ++AlphabetIndex) {
+    if (Trie->Children[AlphabetIndex] == NULL) {
       SearchMachine->Goto[ROOT_IDENTIFIER][AlphabetIndex] = Trie;
     }
   }
@@ -72,21 +73,18 @@ int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie)
   return 0;
 }
 
-void FreeSearchMachine(search_machine* SearchMachine)
-{
-  if (SearchMachine)
-  {
+void FreeSearchMachine(search_machine* SearchMachine) {
+  if (SearchMachine) {
     // FreeSignatureDatabase will get the Trie
 
-    for (size_t ListIndex = 0; ListIndex < GetTrieCount(); ++ListIndex)
-    {
-      if (SearchMachine->Out[ListIndex])
-      {
+    for (size_t ListIndex = 0; ListIndex < GetTrieCount(); ++ListIndex) {
+      if (SearchMachine->Out[ListIndex]) {
         FreeList(SearchMachine->Out[ListIndex]);
-        for (size_t OtherListIndex = 0; OtherListIndex < GetTrieCount(); ++OtherListIndex)
-        {
-          if (OtherListIndex != ListIndex && SearchMachine->Out[OtherListIndex] == SearchMachine->Out[ListIndex])
-          {
+        for (size_t OtherListIndex = 0; OtherListIndex < GetTrieCount();
+             ++OtherListIndex) {
+          if (OtherListIndex != ListIndex &&
+              SearchMachine->Out[OtherListIndex] ==
+                  SearchMachine->Out[ListIndex]) {
             SearchMachine->Out[OtherListIndex] = NULL;
           }
         }
@@ -94,18 +92,14 @@ void FreeSearchMachine(search_machine* SearchMachine)
       }
     }
 
-    if (SearchMachine->Fail)
-    {
+    if (SearchMachine->Fail) {
       free(SearchMachine->Fail);
       SearchMachine->Fail = NULL;
     }
 
-    if (SearchMachine->Goto)
-    {
-      for (size_t GotoIndex = 0; GotoIndex < GetTrieCount(); ++GotoIndex)
-      {
-        if (SearchMachine->Goto[GotoIndex])
-        {
+    if (SearchMachine->Goto) {
+      for (size_t GotoIndex = 0; GotoIndex < GetTrieCount(); ++GotoIndex) {
+        if (SearchMachine->Goto[GotoIndex]) {
           free(SearchMachine->Goto[GotoIndex]);
           SearchMachine->Goto[GotoIndex] = NULL;
         }
@@ -116,27 +110,24 @@ void FreeSearchMachine(search_machine* SearchMachine)
   }
 }
 
-match* FindMatches(search_machine *SearchMachine, trie_unit* Data, size_t DataSize, size_t* NumMatches)
-{
+match* FindMatches(search_machine* SearchMachine, trie_unit* Data,
+                   size_t DataSize, size_t* NumMatches) {
   size_t MaxMatches = 0;
   match* Matches = NULL;
   *NumMatches = 0;
 
   trie* Node = SearchMachine->Trie;
 
-  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
-  {
-    while (SearchMachine->Goto[Node->Identifier] == NULL || SearchMachine->Goto[Node->Identifier][Data[DataIndex]] == NULL)
-    {
+  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex) {
+    while (SearchMachine->Goto[Node->Identifier] == NULL ||
+           SearchMachine->Goto[Node->Identifier][Data[DataIndex]] == NULL) {
       Node = SearchMachine->Fail[Node->Identifier];
     }
 
     Node = SearchMachine->Goto[Node->Identifier][Data[DataIndex]];
 
-    if (SearchMachine->Out[Node->Identifier] != NULL)
-    {
-      if (*NumMatches == MaxMatches)
-      {
+    if (SearchMachine->Out[Node->Identifier] != NULL) {
+      if (*NumMatches == MaxMatches) {
         size_t NewMaxMatches = MaxMatches * 2 + 1;
         Assert(NewMaxMatches > MaxMatches, "MATCH");
         match* NewMatches = xcalloc(sizeof(match), NewMaxMatches);

@@ -25,11 +25,10 @@
 #define MGC_FRAME_H_
 
 #pragma pack(push, 1)
-struct mgc_frame
-{
-    unsigned char raw_header[3];
-    unsigned short num_frames_left;
-    char data[];
+struct mgc_frame {
+  unsigned char raw_header[3];
+  unsigned short num_frames_left;
+  char data[];
 };
 #pragma pack(pop)
 

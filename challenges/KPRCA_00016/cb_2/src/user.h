@@ -35,10 +35,10 @@ typedef struct user {
   struct user *next;
 } user_t;
 
-typedef user_t* user_list_t;
+typedef user_t *user_list_t;
 
 int add_user(user_list_t *, user_t *);
-user_t* find_user(user_list_t, char *);
-user_t* find_user_by_id(user_list_t, unsigned short);
+user_t *find_user(user_list_t, char *);
+user_t *find_user_by_id(user_list_t, unsigned short);
 
 #endif

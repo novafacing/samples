@@ -30,21 +30,15 @@
 
 #include <libcgc.h>
 
-enum utf8_decode_state {
-    ACCEPT,
-    REJECT,
-    TWO_BYTE,
-    THREE_BYTE,
-    FOUR_BYTE
-};
+enum utf8_decode_state { ACCEPT, REJECT, TWO_BYTE, THREE_BYTE, FOUR_BYTE };
 
 typedef unsigned char utf8char;
 typedef unsigned int ucscodepoint;
 
-enum utf8_decode_state utf8_decode(enum utf8_decode_state state, utf8char c, ucscodepoint *out);
+enum utf8_decode_state utf8_decode(enum utf8_decode_state state, utf8char c,
+                                   ucscodepoint *out);
 ssize_t utf8_encode(ucscodepoint in, utf8char *out, size_t size);
 
 size_t utf8_canonicalize(utf8char *dst, const utf8char *src, size_t n);
 
 #endif /* UTF8_H_ */
-

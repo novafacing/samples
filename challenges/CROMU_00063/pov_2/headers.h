@@ -32,30 +32,30 @@ typedef unsigned char uint8_t;
 #define L2_ADJACENCY_DISCOVERY_TYPE (0x02)
 #define L2_ADJACENCY_RESPONSE_TYPE (0x03)
 typedef struct __attribute__((__packed__)) _L2Hdr {
-	uint16_t Dst;
-	uint16_t Src;
-	uint8_t Len; // num bytes after L2Hdr including checksum footer
-	uint8_t NxtHdr;
-	uint8_t Vlan;
+  uint16_t Dst;
+  uint16_t Src;
+  uint8_t Len;  // num bytes after L2Hdr including checksum footer
+  uint8_t NxtHdr;
+  uint8_t Vlan;
 } L2Hdr, *pL2Hdr;
 
 #define L4_HEADER_TYPE (0x01)
 typedef struct __attribute__((__packed__)) _L3Hdr {
-	uint32_t Dst;
-	uint32_t Src;
-	uint8_t Len; // number of bytes after L3Hdr
-	uint8_t NxtHdr;
+  uint32_t Dst;
+  uint32_t Src;
+  uint8_t Len;  // number of bytes after L3Hdr
+  uint8_t NxtHdr;
 } L3Hdr, *pL3Hdr;
 
 typedef struct __attribute__((__packed__)) _L4Hdr {
-	unsigned char Dst;
-	unsigned char Src;
-	uint8_t Len;
+  unsigned char Dst;
+  unsigned char Src;
+  uint8_t Len;
 } L4Hdr, *pL4Hdr;
 
 typedef struct __attribute__((__packed__)) _L2Adjacency {
-	uint32_t L3Addr;
-	uint16_t L2Addr;
-	uint8_t Age;
-	uint8_t Vlan;
+  uint32_t L3Addr;
+  uint16_t L2Addr;
+  uint8_t Age;
+  uint8_t Vlan;
 } L2Adjacency, *pL2Adjacency;

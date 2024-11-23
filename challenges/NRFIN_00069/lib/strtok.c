@@ -18,102 +18,97 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 /**
-* Finds the first occurence of c in s
-* 
-* @param s the string to look in
-* @param c the character to look for
-*
-* @return The first index in s where c occurs
-*/
-char *strchr(const char* s, int c) {
+ * Finds the first occurence of c in s
+ *
+ * @param s the string to look in
+ * @param c the character to look for
+ *
+ * @return The first index in s where c occurs
+ */
+char *strchr(const char *s, int c) {
+  int i;
+  for (i = 0; s[0] != (char)c; i++) {
+    if (s[i + 1] == '\0') return 0;
+  }
 
-	int i;
-	for(i=0; s[0] != (char) c; i++) {
-		if(s[i+1] == '\0')
-			return 0;
-	}
-
-	return (char *) &s[i];
+  return (char *)&s[i];
 }
 
 /**
-* Spans the initial part of a null-terminated string as long as s1 does 
-* occur in s2.
-* 
-* @param s1 the string to look for in s2
-* @param s2 the string to span
-*
-* @return The index in s2 after s1
-*/
+ * Spans the initial part of a null-terminated string as long as s1 does
+ * occur in s2.
+ *
+ * @param s1 the string to look for in s2
+ * @param s2 the string to span
+ *
+ * @return The index in s2 after s1
+ */
 size_t strspn(const char *s1, const char *s2) {
-	size_t result=0;
+  size_t result = 0;
 
-	for(int i=0; s1[i] != '\0' && strchr(s2, s1[i]); i++, result++);
+  for (int i = 0; s1[i] != '\0' && strchr(s2, s1[i]); i++, result++);
 
-	return result;
+  return result;
 }
 
 /**
-* Spans the initial part of a null-terminated string as long as s1 does not 
-* occur in s2.
-* 
-* @param s1 the string to look for in s2
-* @param s2 the string to span
-*
-* @return The index in s2 which starts s1
-*/
+ * Spans the initial part of a null-terminated string as long as s1 does not
+ * occur in s2.
+ *
+ * @param s1 the string to look for in s2
+ * @param s2 the string to span
+ *
+ * @return The index in s2 which starts s1
+ */
 size_t strcspn(const char *s1, const char *s2) {
-	size_t result=0;
+  size_t result = 0;
 
-	for(int i=0; s1[i] != '\0'; i++, result++) {
-		if(strchr(s2, s1[i]))
-			return result;
-	}
+  for (int i = 0; s1[i] != '\0'; i++, result++) {
+    if (strchr(s2, s1[i])) return result;
+  }
 
-	return result;
+  return result;
 }
 
 /**
-* Remove sequential tokens from a null-terminated string
-*
-* NOTES: If string is > 0, the string is set and the first token is retuned.
-*        If string is = 0, the next token of the set string is returned until NULL.
-*
-* 
-* @param string The string to tokenize
-* @param delim The delimeter that separates the tokens
-*
-* @return A null-terminated string containing the token
-*/
-char *strtok(char* string,const char *delim) {
-	static char *ptr=0;
-	int start, finish;
+ * Remove sequential tokens from a null-terminated string
+ *
+ * NOTES: If string is > 0, the string is set and the first token is retuned.
+ *        If string is = 0, the next token of the set string is returned until
+ * NULL.
+ *
+ *
+ * @param string The string to tokenize
+ * @param delim The delimeter that separates the tokens
+ *
+ * @return A null-terminated string containing the token
+ */
+char *strtok(char *string, const char *delim) {
+  static char *ptr = 0;
+  int start, finish;
 
-	if(string != NULL) {
-		ptr = string;
-	} else if( ptr == NULL) {
-		return 0;
-	}
+  if (string != NULL) {
+    ptr = string;
+  } else if (ptr == NULL) {
+    return 0;
+  }
 
-	start = strspn(ptr, delim);
-	string = &ptr[start];
-	finish = strcspn(string, delim);
-	ptr = &string[finish];
+  start = strspn(ptr, delim);
+  string = &ptr[start];
+  finish = strcspn(string, delim);
+  ptr = &string[finish];
 
-	if(ptr == string)
-		return ptr=NULL;
+  if (ptr == string) return ptr = NULL;
 
-	if(ptr[0] != '\0') {
-		ptr[0] = '\0';
-		ptr = &ptr[1];
-	} else
-		ptr = NULL;
+  if (ptr[0] != '\0') {
+    ptr[0] = '\0';
+    ptr = &ptr[1];
+  } else
+    ptr = NULL;
 
-	return string;
+  return string;
 }
-
-

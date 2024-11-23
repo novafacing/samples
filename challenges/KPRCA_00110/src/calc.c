@@ -20,52 +20,39 @@
  * THE SOFTWARE.
  *
  */
-#include <string.h>
 #include "calc.h"
 
-void calc_add(op_t *op)
-{
-  if (op->type != OP_ADD)
-    return;
+#include <string.h>
+
+void calc_add(op_t *op) {
+  if (op->type != OP_ADD) return;
   op->result = op->arg1 + op->arg2;
 }
 
-void calc_sub(op_t *op)
-{
-  if (op->type != OP_SUB)
-    return;
+void calc_sub(op_t *op) {
+  if (op->type != OP_SUB) return;
   op->result = op->arg1 - op->arg2;
 }
 
-void calc_mul(op_t *op)
-{
-  if (op->type != OP_MUL)
-    return;
+void calc_mul(op_t *op) {
+  if (op->type != OP_MUL) return;
   op->result = op->arg1 * op->arg2;
 }
 
-void calc_div(op_t *op)
-{
-  if (op->type != OP_DIV || op->arg2 == 0)
-    return;
+void calc_div(op_t *op) {
+  if (op->type != OP_DIV || op->arg2 == 0) return;
   op->result = op->arg1 / op->arg2;
 }
 
-void calc_mod(op_t *op)
-{
-  if (op->type != OP_MOD || op->arg2 == 0)
-    return;
+void calc_mod(op_t *op) {
+  if (op->type != OP_MOD || op->arg2 == 0) return;
   op->result = op->arg1 % op->arg2;
 }
 
-
-void calc_compute(op_t *op)
-{
-  if (op->type != OP_CMP)
-    return;
-  op_t *cop = (op_t *) op->arg1;
-  switch (cop->type)
-  {
+void calc_compute(op_t *op) {
+  if (op->type != OP_CMP) return;
+  op_t *cop = (op_t *)op->arg1;
+  switch (cop->type) {
     case OP_ADD:
       calc_add(cop);
       break;
@@ -85,4 +72,3 @@ void calc_compute(op_t *op)
       break;
   }
 }
-

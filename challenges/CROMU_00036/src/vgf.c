@@ -23,11 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
 #include "vgf.h"
+
+#include <libcgc.h>
+
 #include "paint.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 // Verify VGF Header
 // Returns 0 for success, -1 for failure
@@ -54,7 +56,7 @@ int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
   while (file_data < file_end) {
     VGF_Object *o = (VGF_Object *)file_data;
     file_data += sizeof(VGF_Object);
-    
+
     if (o->type == VGF_OBJECT_LAST) {
       *file_data_in = file_data;
       return 0;
@@ -70,7 +72,8 @@ int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
 
     switch (o->type) {
       case VGF_OBJECT_TRIANGLE: {
-        PaintTriangle(c, o->layer, o->color, o->fill, (VGF_Triangle *)file_data);
+        PaintTriangle(c, o->layer, o->color, o->fill,
+                      (VGF_Triangle *)file_data);
         file_data += sizeof(VGF_Triangle);
         break;
       }
@@ -90,7 +93,8 @@ int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
         break;
       }
       case VGF_OBJECT_RECTANGLE: {
-        PaintRectangle(c, o->layer, o->color, o->fill, (VGF_Rectangle *)file_data);
+        PaintRectangle(c, o->layer, o->color, o->fill,
+                       (VGF_Rectangle *)file_data);
         file_data += sizeof(VGF_Rectangle);
         break;
       }
@@ -102,6 +106,6 @@ int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
       default:
         break;
     }
-  } 
+  }
   return -1;
 }

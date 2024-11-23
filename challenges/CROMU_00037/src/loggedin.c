@@ -24,182 +24,180 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "service.h"
+
 #include "jlib.h"
+#include "service.h"
 
 extern int CURRENT_USER;
-//extern users_t USERS[MAX_USERS];
+// extern users_t USERS[MAX_USERS];
 extern users_t *USERS;
 extern int NUM_USERS;
 
 void SendMessage(void) {
-	char user[MAX_USER_NAME_LEN+1];
-	char message[MAX_MESSAGE_LEN];
-	int i, j;
+  char user[MAX_USER_NAME_LEN + 1];
+  char message[MAX_MESSAGE_LEN];
+  int i, j;
 
-	// read in the To:
-	zero(user, MAX_USER_NAME_LEN+1);
-	print("To: ");
-	if (read_until(user, '\n', MAX_USER_NAME_LEN+1) == -1) {
-		_terminate(-1);
-	}
+  // read in the To:
+  zero(user, MAX_USER_NAME_LEN + 1);
+  print("To: ");
+  if (read_until(user, '\n', MAX_USER_NAME_LEN + 1) == -1) {
+    _terminate(-1);
+  }
 
-	if (strlen(user) == 0) {
-		return;
-	}
+  if (strlen(user) == 0) {
+    return;
+  }
 
-	// read in the Message:
-	zero(message, MAX_MESSAGE_LEN);
-	print("Message: ");
-	if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
-		_terminate(-1);
-	}
-	if (strlen(message) == 0) {
-		return;
-	}
+  // read in the Message:
+  zero(message, MAX_MESSAGE_LEN);
+  print("Message: ");
+  if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
+    _terminate(-1);
+  }
+  if (strlen(message) == 0) {
+    return;
+  }
 
-	// find the recipient
-	for (i = 0; i < NUM_USERS; i++) {
-		if (strmatch(user, USERS[i].name)) {
-			break;
-		}
-	}
-	if (i == NUM_USERS) {
-		return;
-	}
+  // find the recipient
+  for (i = 0; i < NUM_USERS; i++) {
+    if (strmatch(user, USERS[i].name)) {
+      break;
+    }
+  }
+  if (i == NUM_USERS) {
+    return;
+  }
 
-	if (USERS[i].top_message == MAX_MESSAGES) {
-		// recipient's mailbox is full
-		print("[-] Recipient's mailbox is full\n");
-		return;
-	}
-	
-	// store the message
-	j = USERS[i].top_message+1;
-	strcopy(USERS[i].messages[j], message);
-	USERS[i].msg_read[j] = 0;
-	USERS[i].top_message = j;
+  if (USERS[i].top_message == MAX_MESSAGES) {
+    // recipient's mailbox is full
+    print("[-] Recipient's mailbox is full\n");
+    return;
+  }
 
-	return;
+  // store the message
+  j = USERS[i].top_message + 1;
+  strcopy(USERS[i].messages[j], message);
+  USERS[i].msg_read[j] = 0;
+  USERS[i].top_message = j;
 
+  return;
 }
 
 void ReadMessage(void) {
-	char id[4];
-	int id_val;
+  char id[4];
+  int id_val;
 
-	// read in the ID:
-	zero(id, 4);
-	print("ID: ");
-	if (read_until(id, '\n', 4) == -1) {
-		_terminate(-1);
-	}
-	if (strlen(id) == 0) {
-		return;
-	}
+  // read in the ID:
+  zero(id, 4);
+  print("ID: ");
+  if (read_until(id, '\n', 4) == -1) {
+    _terminate(-1);
+  }
+  if (strlen(id) == 0) {
+    return;
+  }
 
-	if (!isdigits(id)) {
-		return;
-	}
-	id_val = atoi(id);
+  if (!isdigits(id)) {
+    return;
+  }
+  id_val = atoi(id);
 
-	if (id_val > USERS[CURRENT_USER].top_message) {
-		print("[-] Message ID out of range\n");
-		return;
-	}
+  if (id_val > USERS[CURRENT_USER].top_message) {
+    print("[-] Message ID out of range\n");
+    return;
+  }
 
-	if (USERS[CURRENT_USER].messages[id_val][0] == '\0') {
-		print("[-] Message ID not found\n");
-		return;
-	}
+  if (USERS[CURRENT_USER].messages[id_val][0] == '\0') {
+    print("[-] Message ID not found\n");
+    return;
+  }
 
-	// print the message
-	print("***********************************\n");
-	print(id);
-	print(":  ");
-	print(USERS[CURRENT_USER].messages[id_val]);
-	print("\n");
-	print("***********************************\n");
-	USERS[CURRENT_USER].msg_read[id_val] = 1;
+  // print the message
+  print("***********************************\n");
+  print(id);
+  print(":  ");
+  print(USERS[CURRENT_USER].messages[id_val]);
+  print("\n");
+  print("***********************************\n");
+  USERS[CURRENT_USER].msg_read[id_val] = 1;
 
-	return;
+  return;
 }
 
 void ListMessages(void) {
-	unsigned int i;
+  unsigned int i;
 
-	for (i = 1; i <= USERS[CURRENT_USER].top_message; i++) {
-		if (USERS[CURRENT_USER].messages[i][0] == '\0') {
-			continue;
-		}
+  for (i = 1; i <= USERS[CURRENT_USER].top_message; i++) {
+    if (USERS[CURRENT_USER].messages[i][0] == '\0') {
+      continue;
+    }
 
-		print("***********************************\n");
-		print_uint(i);
-		print(":  ");
-		print(USERS[CURRENT_USER].messages[i]);
-		print("\n");
-		print("***********************************\n");
-		
-	}
+    print("***********************************\n");
+    print_uint(i);
+    print(":  ");
+    print(USERS[CURRENT_USER].messages[i]);
+    print("\n");
+    print("***********************************\n");
+  }
 
-	return;
+  return;
 }
 
 void DeleteMessage(void) {
-	char id[4];
-	int id_val;
+  char id[4];
+  int id_val;
 
-	// read in the ID:
-	zero(id, 4);
-	print("ID: ");
-	if (read_until(id, '\n', 4) == -1) {
-		_terminate(-1);
-	}
-	if (strlen(id) == 0) {
-		return;
-	}
+  // read in the ID:
+  zero(id, 4);
+  print("ID: ");
+  if (read_until(id, '\n', 4) == -1) {
+    _terminate(-1);
+  }
+  if (strlen(id) == 0) {
+    return;
+  }
 
-	if (!isdigits(id)) {
-		return;
-	}
-	id_val = atoi(id);
+  if (!isdigits(id)) {
+    return;
+  }
+  id_val = atoi(id);
 
-	if (id_val > USERS[CURRENT_USER].top_message) {
-		print("[-] Message ID out of range\n");
-		return;
-	}
+  if (id_val > USERS[CURRENT_USER].top_message) {
+    print("[-] Message ID out of range\n");
+    return;
+  }
 
-	zero(USERS[CURRENT_USER].messages[id_val], MAX_MESSAGE_LEN);
-	
-	return;
+  zero(USERS[CURRENT_USER].messages[id_val], MAX_MESSAGE_LEN);
 
+  return;
 }
 
 void PrintNewMessages(void) {
-	unsigned int i;
-	int first = 1;
+  unsigned int i;
+  int first = 1;
 
-	for (i = 1; i < MAX_MESSAGES; i++) {
-		if (USERS[CURRENT_USER].messages[i][0] == '\0') {
-			continue;
-		}
-		if (USERS[CURRENT_USER].msg_read[i] == 1) {
-			continue;
-		}
+  for (i = 1; i < MAX_MESSAGES; i++) {
+    if (USERS[CURRENT_USER].messages[i][0] == '\0') {
+      continue;
+    }
+    if (USERS[CURRENT_USER].msg_read[i] == 1) {
+      continue;
+    }
 
-		if (first) {
-			print("Unread messages:\n");
-			first = 0;
-		}
-		print("***********************************\n");
-		print_uint(i);
-		print(":  ");
-		print(USERS[CURRENT_USER].messages[i]);
-		print("\n");
-		print("***********************************\n");
+    if (first) {
+      print("Unread messages:\n");
+      first = 0;
+    }
+    print("***********************************\n");
+    print_uint(i);
+    print(":  ");
+    print(USERS[CURRENT_USER].messages[i]);
+    print("\n");
+    print("***********************************\n");
 
-		USERS[CURRENT_USER].msg_read[i] = 1;
-	}
+    USERS[CURRENT_USER].msg_read[i] = 1;
+  }
 
-	return;
+  return;
 }

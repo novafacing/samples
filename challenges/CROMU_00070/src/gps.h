@@ -29,64 +29,63 @@ THE SOFTWARE.
 #include "workerprng.h"
 
 // Longitude 0-360, latitude 0-180
-class CGPSCoordinates
-{
-public:
-	CGPSCoordinates( );
-	CGPSCoordinates( uint16_t latDegrees, uint8_t latMinutes, uint8_t latSeconds, uint16_t longDegrees, uint8_t longMinutes, uint8_t longSeconds );
-	~CGPSCoordinates( );
+class CGPSCoordinates {
+ public:
+  CGPSCoordinates();
+  CGPSCoordinates(uint16_t latDegrees, uint8_t latMinutes, uint8_t latSeconds,
+                  uint16_t longDegrees, uint8_t longMinutes,
+                  uint8_t longSeconds);
+  ~CGPSCoordinates();
 
-	uint16_t GetLatitudeDegrees( void ) const { return m_latDegrees; };
-	uint8_t GetLatitudeMinutes( void ) const { return m_latMinutes; };
-	uint8_t GetLatitudeSeconds( void ) const { return m_latSeconds; };
+  uint16_t GetLatitudeDegrees(void) const { return m_latDegrees; };
+  uint8_t GetLatitudeMinutes(void) const { return m_latMinutes; };
+  uint8_t GetLatitudeSeconds(void) const { return m_latSeconds; };
 
-	uint16_t GetLongitudeDegrees( void ) const { return m_longDegrees; };
-	uint8_t GetLongitudeMinutes( void ) const { return m_longMinutes; };
-	uint8_t GetLongitudeSeconds( void ) const { return m_longSeconds; };
+  uint16_t GetLongitudeDegrees(void) const { return m_longDegrees; };
+  uint8_t GetLongitudeMinutes(void) const { return m_longMinutes; };
+  uint8_t GetLongitudeSeconds(void) const { return m_longSeconds; };
 
-	uint32_t GetSerializedSize( void );
+  uint32_t GetSerializedSize(void);
 
-	uint32_t Serialize( uint8_t *pDest, uint32_t destLen );
-	uint32_t Deserialize( uint8_t *pSource, uint32_t sourceLen );
+  uint32_t Serialize(uint8_t *pDest, uint32_t destLen);
+  uint32_t Deserialize(uint8_t *pSource, uint32_t sourceLen);
 
-	double GetLatRadians( void );
-	double GetLongRadians( void );
+  double GetLatRadians(void);
+  double GetLongRadians(void);
 
-private:
-	uint16_t m_latDegrees;
-	uint8_t m_latMinutes;
-	uint8_t m_latSeconds;
+ private:
+  uint16_t m_latDegrees;
+  uint8_t m_latMinutes;
+  uint8_t m_latSeconds;
 
-	uint16_t m_longDegrees;
-	uint8_t m_longMinutes;
-	uint8_t m_longSeconds;
+  uint16_t m_longDegrees;
+  uint8_t m_longMinutes;
+  uint8_t m_longSeconds;
 };
 
-class CGPS
-{
-public:
-	CGPS( );
-	~CGPS( );
+class CGPS {
+ public:
+  CGPS();
+  ~CGPS();
 
-	bool SetCoordinates( CGPSCoordinates &newCoords );
+  bool SetCoordinates(CGPSCoordinates &newCoords);
 
-	bool GetLastCoordinates( CGPSCoordinates &coords )
-	{
-		if ( !m_bLocked )
-			return (false);
+  bool GetLastCoordinates(CGPSCoordinates &coords) {
+    if (!m_bLocked) return (false);
 
-		coords = m_lastCoordinates;
-		
-		return (true);	
-	}
+    coords = m_lastCoordinates;
 
-	bool IsLocked( void ) const { return m_bLocked; };
+    return (true);
+  }
 
-	static uint32_t GetDistanceMeters( CGPSCoordinates &coord1, CGPSCoordinates &coord2 );
+  bool IsLocked(void) const { return m_bLocked; };
 
-private:
-	bool m_bLocked;
-	CGPSCoordinates m_lastCoordinates;
+  static uint32_t GetDistanceMeters(CGPSCoordinates &coord1,
+                                    CGPSCoordinates &coord2);
+
+ private:
+  bool m_bLocked;
+  CGPSCoordinates m_lastCoordinates;
 };
 
-#endif // __GPS_H__
+#endif  // __GPS_H__

@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 #define VOLUMETRIC_HEAT_CAP_AIR (1200)
 
-
 int32_t GetSimLength(void);
 double L(uint32_t, uint32_t, uint32_t);
 double C(uint32_t, uint32_t, uint32_t);

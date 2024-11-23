@@ -25,8 +25,9 @@ THE SOFTWARE.
 */
 
 // Generated at 2015-01-25 14:32:33 -0500
-#include "protocol.h"
 #include "messages.h"
+
+#include "protocol.h"
 
 void* extract_scramble_req(protocol_frame* frame) {
   if (frame->type != 1) _terminate(-1);

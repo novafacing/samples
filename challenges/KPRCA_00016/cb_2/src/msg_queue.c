@@ -21,28 +21,22 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
 #include "msg_queue.h"
 
-int enq_msg(msg_queue *q, message_t *msg)
-{
-  if (msg)
-  {
-    if (*q == NULL)
-    {
-      *q = (node_t *) malloc(sizeof(node_t));
-      if (*q == NULL)
-        return -1;
+#include <stdlib.h>
+#include <string.h>
+
+int enq_msg(msg_queue *q, message_t *msg) {
+  if (msg) {
+    if (*q == NULL) {
+      *q = (node_t *)malloc(sizeof(node_t));
+      if (*q == NULL) return -1;
       (*q)->msg = msg;
       (*q)->next = NULL;
-    }
-    else
-    {
+    } else {
       node_t *n;
-      node_t *tmp = (node_t *) malloc(sizeof(node_t));
-      if (tmp == NULL)
-        return -1;
+      node_t *tmp = (node_t *)malloc(sizeof(node_t));
+      if (tmp == NULL) return -1;
       tmp->msg = msg;
       tmp->next = NULL;
       for (n = *q; n->next != NULL; n = n->next);
@@ -52,20 +46,15 @@ int enq_msg(msg_queue *q, message_t *msg)
   return 0;
 }
 
-message_t* deq_msg(msg_queue *q)
-{
+message_t *deq_msg(msg_queue *q) {
   message_t *ret = NULL;
 
-  if (*q)
-  {
-    if ((*q)->next == NULL)
-    {
+  if (*q) {
+    if ((*q)->next == NULL) {
       ret = (*q)->msg;
       free(*q);
       *q = NULL;
-    }
-    else
-    {
+    } else {
       node_t *tmp = *q;
       ret = tmp->msg;
       *q = tmp->next;
@@ -75,26 +64,19 @@ message_t* deq_msg(msg_queue *q)
   return ret;
 }
 
-message_t* deq_msg_at(msg_queue *q, int idx)
-{
+message_t *deq_msg_at(msg_queue *q, int idx) {
   int i;
   message_t *ret = NULL;
 
-  if (*q)
-  {
-    if ((*q)->next == NULL && idx == 1)
-    {
+  if (*q) {
+    if ((*q)->next == NULL && idx == 1) {
       ret = (*q)->msg;
       free(*q);
       *q = NULL;
-    }
-    else
-    {
+    } else {
       node_t *node, *prev = NULL;
-      for (i = 0, node = *q; node != NULL; ++i, node = node->next)
-      {
-        if (i == idx)
-        {
+      for (i = 0, node = *q; node != NULL; ++i, node = node->next) {
+        if (i == idx) {
           if (prev == NULL)
             *q = node->next;
           else

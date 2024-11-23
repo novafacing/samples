@@ -27,24 +27,24 @@ THE SOFTWARE.
 #include "string.h"
 
 /**
- * Frees a string and its buffer. The calling function does not need to free the structure
+ * Frees a string and its buffer. The calling function does not need to free the
+ *structure
  * @param str Pointer to a string structure
  * @return Returns nothing
- **/ 
-void freeString( pstring str )
-{
-	if ( str == NULL ) {
-		return;
-	}
+ **/
+void freeString(pstring str) {
+  if (str == NULL) {
+    return;
+  }
 
-	/// If buffer is not NULL then free it. The length should be maxlength
-	if ( str->buffer ) {
-		deallocate( str->buffer, str->maxlength );
-	}
+  /// If buffer is not NULL then free it. The length should be maxlength
+  if (str->buffer) {
+    deallocate(str->buffer, str->maxlength);
+  }
 
-	deallocate(str, sizeof(string));
+  deallocate(str, sizeof(string));
 
-	return;
+  return;
 }
 
 /**
@@ -53,37 +53,36 @@ void freeString( pstring str )
  * @param str Pointer to the string structure
  * @return Returns the final index after the URL or -1 on failure
  **/
-int skipUrl( pstring str )
-{
-	int retval = -1;
-	int index = 0;
-	char c = '\x00';
+int skipUrl(pstring str) {
+  int retval = -1;
+  int index = 0;
+  char c = '\x00';
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	/// Save the starting index
-	index = str->index;
+  /// Save the starting index
+  index = str->index;
 
-	/// Loop until the end of the buffer or an invalid character is encountered
-	while ( index < str->maxlength ) {
-		c = str->buffer[index];
+  /// Loop until the end of the buffer or an invalid character is encountered
+  while (index < str->maxlength) {
+    c = str->buffer[index];
 
-		if ( !isalnum(c) && c != '.' && c != '/' && c != ':' ) {
-			/// Set the new index past to the invalid character
-			str->index = index;
+    if (!isalnum(c) && c != '.' && c != '/' && c != ':') {
+      /// Set the new index past to the invalid character
+      str->index = index;
 
-			/// Set the return value to the new index
-			retval = index;
-			break;
-		}
+      /// Set the return value to the new index
+      retval = index;
+      break;
+    }
 
-		index++;
-	}
+    index++;
+  }
 
 end:
-	return retval;
+  return retval;
 }
 
 /**
@@ -92,15 +91,14 @@ end:
  * @param outIndex Pointer to an integer to store the value
  * @return Returns the current index into the string
  **/
-int getIndex( pstring str, int *outIndex )
-{
-	if ( str == NULL ) {
-		return -1;
-	}
+int getIndex(pstring str, int *outIndex) {
+  if (str == NULL) {
+    return -1;
+  }
 
-	*outIndex = str->index;
+  *outIndex = str->index;
 
-	return str->index;
+  return str->index;
 }
 
 /**
@@ -108,32 +106,31 @@ int getIndex( pstring str, int *outIndex )
  * @param str Pointer to the string structure
  * @return The final index after any integer data or -1 on error
  **/
-int skipInt( pstring str ) 
-{
-	int retval = -1;
-	int index = 0;
-	char c = '\x00';
+int skipInt(pstring str) {
+  int retval = -1;
+  int index = 0;
+  char c = '\x00';
 
-	if ( str == NULL ) {
-		return -1;
-	}
+  if (str == NULL) {
+    return -1;
+  }
 
-	index = str->index;
+  index = str->index;
 
-	while( index < str->maxlength ) {
-		c = str->buffer[index];
+  while (index < str->maxlength) {
+    c = str->buffer[index];
 
-		if ( c == '+' || c == '-' || isdigit(c) ) {
-			index++;
-			continue;
-		} else {
-			str->index = index;
-			retval = str->index;
-			break;
-		}
-	}
+    if (c == '+' || c == '-' || isdigit(c)) {
+      index++;
+      continue;
+    } else {
+      str->index = index;
+      retval = str->index;
+      break;
+    }
+  }
 
-	return retval;
+  return retval;
 }
 
 /**
@@ -141,31 +138,30 @@ int skipInt( pstring str )
  * @param str Pointer to the string structure
  * @return The final index after any float data or -1 on error
  **/
-int skipFloat( pstring str ) 
-{
-	int retval = -1;
-	int index = 0;
-	char c = '\x00';
+int skipFloat(pstring str) {
+  int retval = -1;
+  int index = 0;
+  char c = '\x00';
 
-	if ( str == NULL ) {
-		return -1;
-	}
+  if (str == NULL) {
+    return -1;
+  }
 
-	index = str->index;
+  index = str->index;
 
-	while( index < str->maxlength ) {
-		c = str->buffer[index];
+  while (index < str->maxlength) {
+    c = str->buffer[index];
 
-		if ( c == '.' || c == '+' || c == '-' || isdigit(c) ) {
-			index++;
-		} else {
-			str->index = index;
-			retval = str->index;
-			break;
-		}
-	}
+    if (c == '.' || c == '+' || c == '-' || isdigit(c)) {
+      index++;
+    } else {
+      str->index = index;
+      retval = str->index;
+      break;
+    }
+  }
 
-	return retval;
+  return retval;
 }
 
 /**
@@ -176,48 +172,47 @@ int skipFloat( pstring str )
  * @return Returns a pointer to the requested data or NULL on failure.
  *	This buffer needs to be freed by the caller.
  **/
-char *copyData( pstring str, int start, int end )
-{
-	char *data = NULL;
-	int length = 0;
+char *copyData(pstring str, int start, int end) {
+  char *data = NULL;
+  int length = 0;
 
-	if ( str == NULL ) {
-		return data;
-	}
+  if (str == NULL) {
+    return data;
+  }
 
-	/// The start and end must be greater than 0
-	if ( end < 0 || start < 0) {
-		return NULL;
-	}
+  /// The start and end must be greater than 0
+  if (end < 0 || start < 0) {
+    return NULL;
+  }
 
-	/// If they are equal then there is nothing to copy
-	if ( end == start ) {
-		return NULL;
-	}
+  /// If they are equal then there is nothing to copy
+  if (end == start) {
+    return NULL;
+  }
 
-	/// End must be after start
-	if ( end < start ) {
-		return data;
-	}
+  /// End must be after start
+  if (end < start) {
+    return data;
+  }
 
-	/// Both must be within the valid range
-	if ( str->maxlength < end || str->maxlength < start) {
-		return data;
-	}
+  /// Both must be within the valid range
+  if (str->maxlength < end || str->maxlength < start) {
+    return data;
+  }
 
-	/// Calculate string length
-	length = end - start;
+  /// Calculate string length
+  length = end - start;
 
-	if ( allocate( length+1, 0, (void**)&data) != 0 ) {
-		data = NULL;
-		return data;
-	}
+  if (allocate(length + 1, 0, (void **)&data) != 0) {
+    data = NULL;
+    return data;
+  }
 
-	bzero( data, length + 1 );
+  bzero(data, length + 1);
 
-	memcpy( data, str->buffer + start, length );
+  memcpy(data, str->buffer + start, length);
 
-	return data;
+  return data;
 }
 
 /**
@@ -225,28 +220,27 @@ char *copyData( pstring str, int start, int end )
  * @param str Pointer to the string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipAlpha( pstring str )
-{
-	int retval = -1;
-	int index = 0;
+int skipAlpha(pstring str) {
+  int retval = -1;
+  int index = 0;
 
-	if ( str == NULL ) {
-		return retval;
-	}
+  if (str == NULL) {
+    return retval;
+  }
 
-	index = str->index;
+  index = str->index;
 
-	while ( index < str->maxlength ) {
-		if ( !isalpha( str->buffer[index] ) ) {
-			str->index = index;
-			retval = str->index;
-			return retval;
-		}
+  while (index < str->maxlength) {
+    if (!isalpha(str->buffer[index])) {
+      str->index = index;
+      retval = str->index;
+      return retval;
+    }
 
-		index++;
-	}
+    index++;
+  }
 
-	return retval;
+  return retval;
 }
 
 /**
@@ -254,27 +248,26 @@ int skipAlpha( pstring str )
  * @param str Pointer to the string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipToNonAlphaNumSpace( pstring str )
-{
-	int retval = -1;
-	int index = 0;
+int skipToNonAlphaNumSpace(pstring str) {
+  int retval = -1;
+  int index = 0;
 
-	if ( str == NULL ) {
-		return retval;
-	}
+  if (str == NULL) {
+    return retval;
+  }
 
-	index = str->index;
-	while ( index < str->maxlength ) {
-		if ( !isalnum( str->buffer[index] ) && str->buffer[index] != ' ') {
-			str->index = index;
-			retval = str->index;
-			return retval;
-		}
+  index = str->index;
+  while (index < str->maxlength) {
+    if (!isalnum(str->buffer[index]) && str->buffer[index] != ' ') {
+      str->index = index;
+      retval = str->index;
+      return retval;
+    }
 
-		index++;
-	}
+    index++;
+  }
 
-	return retval;
+  return retval;
 }
 
 /**
@@ -282,50 +275,47 @@ int skipToNonAlphaNumSpace( pstring str )
  * @param str Pointer to the string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipToNonAlphaNum( pstring str )
-{
-	int retval = -1;
-	int index = 0;
+int skipToNonAlphaNum(pstring str) {
+  int retval = -1;
+  int index = 0;
 
-	if ( str == NULL ) {
-		return retval;
-	}
+  if (str == NULL) {
+    return retval;
+  }
 
-	index = str->index;
-	while ( index < str->maxlength ) {
-		if ( !isalnum( str->buffer[index] ) ) {
-			str->index = index;
-			retval = str->index;
-			return retval;
-		}
+  index = str->index;
+  while (index < str->maxlength) {
+    if (!isalnum(str->buffer[index])) {
+      str->index = index;
+      retval = str->index;
+      return retval;
+    }
 
-		index++;
-	}
+    index++;
+  }
 
-	return retval;
+  return retval;
 }
 
 /**
- * Increment the string by a one 
+ * Increment the string by a one
  * @param str Pointer to the string structure
  * @return Returns the index skipped to or -1 on failure
  **/
-int incChar( pstring str )
-{
-	int retval = -1;
+int incChar(pstring str) {
+  int retval = -1;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	if ( str->index + 1 < str->maxlength ) {
-		str->index += 1;
-		retval = str->index;
-	}
-
+  if (str->index + 1 < str->maxlength) {
+    str->index += 1;
+    retval = str->index;
+  }
 
 end:
-	return retval;
+  return retval;
 }
 
 /**
@@ -334,22 +324,20 @@ end:
  * @param count Amount by which to increase the index
  * @return Returns the index skipped to or -1 on failure
  **/
-int skipLength( pstring str, int count )
-{
-	int retval = -1;
+int skipLength(pstring str, int count) {
+  int retval = -1;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	if ( str->index + count < str->maxlength ) {
-		str->index += count;
-		retval = str->index;
-	}
-
+  if (str->index + count < str->maxlength) {
+    str->index += count;
+    retval = str->index;
+  }
 
 end:
-	return retval;
+  return retval;
 }
 
 /**
@@ -358,17 +346,16 @@ end:
  * @param c Character to test for
  * @return Returns 1 if true, 0 if false
  **/
-int atChar( pstring str, char c )
-{
-	if ( str == NULL ) {
-		return 0;
-	}
+int atChar(pstring str, char c) {
+  if (str == NULL) {
+    return 0;
+  }
 
-	if ( str->buffer[ str->index ] == c ) {
-		return 1;
-	}
+  if (str->buffer[str->index] == c) {
+    return 1;
+  }
 
-	return 0;
+  return 0;
 }
 
 /**
@@ -377,29 +364,28 @@ int atChar( pstring str, char c )
  * @param c Character to locate
  * @return Returns the index of the next instance or -1 on failure
  **/
-int skipTo( pstring str, char c )
-{
-	int index = 0;
-	int retval = -1;
+int skipTo(pstring str, char c) {
+  int index = 0;
+  int retval = -1;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	index = str->index;
+  index = str->index;
 
-	while ( index < str->maxlength ) {
-		if ( str->buffer[index] == c ) {
-			str->index = index;
-			retval = index;
-			goto end;
-		}
+  while (index < str->maxlength) {
+    if (str->buffer[index] == c) {
+      str->index = index;
+      retval = index;
+      goto end;
+    }
 
-		index++;
-	}
+    index++;
+  }
 
 end:
-	return retval;
+  return retval;
 }
 
 /**
@@ -407,35 +393,34 @@ end:
  * @param data Pointer to the data this structure will manage
  * @return Returns a pointer to a string structure or NULL on failure
  **/
-pstring initString( char *data )
-{
-	pstring newString = NULL;
-	int length = 0;
+pstring initString(char *data) {
+  pstring newString = NULL;
+  int length = 0;
 
-	if (data == NULL ) {
-		goto end;
-	}	
+  if (data == NULL) {
+    goto end;
+  }
 
-	length = strlen(data)+1;
+  length = strlen(data) + 1;
 
-	if ( allocate( sizeof(string), 0, (void**)&newString) != 0 ) {
-		newString = NULL;
-		goto end;
-	}
+  if (allocate(sizeof(string), 0, (void **)&newString) != 0) {
+    newString = NULL;
+    goto end;
+  }
 
-	if ( allocate( length, 0, (void**)&(newString->buffer)) != 0 ) {
-		deallocate( newString, sizeof(string) );
-		newString = NULL;
-	}
+  if (allocate(length, 0, (void **)&(newString->buffer)) != 0) {
+    deallocate(newString, sizeof(string));
+    newString = NULL;
+  }
 
-	bzero( newString->buffer, length );
-	memcpy( newString->buffer, data, length-1 );
+  bzero(newString->buffer, length);
+  memcpy(newString->buffer, data, length - 1);
 
-	newString->maxlength = length;
-	newString->index = 0;
+  newString->maxlength = length;
+  newString->index = 0;
 
 end:
-	return newString;
+  return newString;
 }
 
 /**
@@ -443,30 +428,31 @@ end:
  * @param st String structure containing the data to skip
  * @return Returns the new index
  **/
-int skipWhiteSpace( pstring st )
-{
-        int retval = -1;
-        int si = 0;
+int skipWhiteSpace(pstring st) {
+  int retval = -1;
+  int si = 0;
 
-	char c = '\x00';
+  char c = '\x00';
 
-        if ( st == NULL ) {
-                goto end;
-        }
+  if (st == NULL) {
+    goto end;
+  }
 
-	if ( st->maxlength <= st->index ) {
-		return -1;
-	}
+  if (st->maxlength <= st->index) {
+    return -1;
+  }
 
-        si = st->index;
+  si = st->index;
 
-        while ( si < st->maxlength && (st->buffer[ si ] == '\n' || st->buffer[si] == '\t' || st->buffer[si] == ' ' || st->buffer[si] == '\r') ) {
-                si++;
-        }
+  while (si < st->maxlength &&
+         (st->buffer[si] == '\n' || st->buffer[si] == '\t' ||
+          st->buffer[si] == ' ' || st->buffer[si] == '\r')) {
+    si++;
+  }
 
-        retval = si;
-        st->index = si;
+  retval = si;
+  st->index = si;
 
 end:
-        return retval;
+  return retval;
 }

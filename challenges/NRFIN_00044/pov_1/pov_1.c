@@ -25,48 +25,45 @@
 #define NEGOTIATE_FD (3)
 #define INITIAL_BOARD_LEN (1144)
 
-static const char *pov = "e4%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x\n";
+static const char *pov =
+    "e4%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%"
+    "x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x\n";
 static const char *quit = "quit\n";
 
-int
-main(void)
-{
-    size_t len;
-    char *endp, *line = NULL;
-    unsigned int flag = 0;
-    static char buf[4096];
+int main(void) {
+  size_t len;
+  char *endp, *line = NULL;
+  unsigned int flag = 0;
+  static char buf[4096];
 
-    unsigned negotiate = 2;
-    unsigned params[3];
+  unsigned negotiate = 2;
+  unsigned params[3];
 
-    if (transmit_all(NEGOTIATE_FD, &negotiate, sizeof(negotiate)) != 0)
-        return -1;
+  if (transmit_all(NEGOTIATE_FD, &negotiate, sizeof(negotiate)) != 0) return -1;
 
-    if (length_read(NEGOTIATE_FD, (unsigned char *)&params, sizeof(params)) != sizeof(params))
-        return -1;
+  if (length_read(NEGOTIATE_FD, (unsigned char *)&params, sizeof(params)) !=
+      sizeof(params))
+    return -1;
 
-    if (length_read(STDIN, (unsigned char *)buf, INITIAL_BOARD_LEN) != INITIAL_BOARD_LEN)
-        return -1;
+  if (length_read(STDIN, (unsigned char *)buf, INITIAL_BOARD_LEN) !=
+      INITIAL_BOARD_LEN)
+    return -1;
 
-    len = strlen(pov);
-    if (transmit_all(STDOUT, pov, len) != 0)
-        return -1;
+  len = strlen(pov);
+  if (transmit_all(STDOUT, pov, len) != 0) return -1;
 
-    // Intial newline
-    if (length_read(STDIN, (unsigned char *)buf, 1) != 1)
-        return -1;
+  // Intial newline
+  if (length_read(STDIN, (unsigned char *)buf, 1) != 1) return -1;
 
-    // Printed move string
-    delimited_read(STDIN, (unsigned char **)&line, (unsigned int *)&len, (unsigned char *)"\n", 1);
-    flag = strtoul(line + len - 9, &endp, 16);
+  // Printed move string
+  delimited_read(STDIN, (unsigned char **)&line, (unsigned int *)&len,
+                 (unsigned char *)"\n", 1);
+  flag = strtoul(line + len - 9, &endp, 16);
 
-    if (transmit_all(NEGOTIATE_FD, &flag, sizeof(flag)) != 0)
-        return -1;
+  if (transmit_all(NEGOTIATE_FD, &flag, sizeof(flag)) != 0) return -1;
 
-    len = strlen(quit);
-    if (transmit_all(STDOUT, quit, len) != 0)
-        return -1;
+  len = strlen(quit);
+  if (transmit_all(STDOUT, quit, len) != 0) return -1;
 
-    return 0;
+  return 0;
 }
-

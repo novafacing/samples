@@ -18,25 +18,24 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef PRODUCTS_H
 #define PRODUCTS_H 1
 
-#define MAX_DESC_LEN	128		// max bytes in Product desc
-#define BARCODE_SZ 		8		// # bytes in bar code
+#define MAX_DESC_LEN 128  // max bytes in Product desc
+#define BARCODE_SZ 8      // # bytes in bar code
 
 typedef float __attribute__((regparm(2))) (*sale_fn)(unsigned int, float);
 
 typedef struct {
-	unsigned char barcode[BARCODE_SZ];
-	char desc[MAX_DESC_LEN];
-	unsigned int model_num;
-	float cost;
-	sale_fn sfn;
-	unsigned int update_serial;
+  unsigned char barcode[BARCODE_SZ];
+  char desc[MAX_DESC_LEN];
+  unsigned int model_num;
+  float cost;
+  sale_fn sfn;
+  unsigned int update_serial;
 } Product;
-
 
 /**
  * Initialize the postage and mailboxes.

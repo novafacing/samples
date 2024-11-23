@@ -27,22 +27,18 @@ THE SOFTWARE.
 #ifndef STACK_H_DEFINED
 #define STACK_H_DEFINED
 
-
 #define MAX_NUM_COUNT 64
 #define MAX_OP_COUNT 64
 
-typedef struct
-{
-	int stak[MAX_NUM_COUNT+1];
-	int count;
-} Stack_i; // int stack
+typedef struct {
+  int stak[MAX_NUM_COUNT + 1];
+  int count;
+} Stack_i;  // int stack
 
-
-typedef struct
-{
-	char stak[MAX_NUM_COUNT+1];
-	int count;
-} Stack_c; // char stack
+typedef struct {
+  char stak[MAX_NUM_COUNT + 1];
+  int count;
+} Stack_c;  // char stack
 
 // tracks numbers
 extern Stack_i num_stack;
@@ -51,7 +47,6 @@ extern int curr_num_stack;
 // tracks symbols (+,-)
 extern Stack_c op_stack;
 extern int curr_op_stack;
-
 
 int push_num(int num);
 int pop_num(int *num);

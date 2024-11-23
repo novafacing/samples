@@ -18,25 +18,23 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+#include "service.h"
+
 #include <libcgc.h>
+
 #include "libc.h"
 #include "operation.h"
-#include "service.h"
 #include "rxtx.h"
 
-
-
 int main(void) {
+  int ret = 0;
 
-    int ret = 0;
+  ret = play_game();
 
-    ret = play_game();
+  if (0 > ret) {
+    send_error(ret);
+  }
 
-    if (0 > ret) {
-        send_error(ret);
-    }
-
-	return ret;        
-
+  return ret;
 }

@@ -18,26 +18,26 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "memcmp.h"
 
 int memcmp(void *s1, void *s2, unsigned int cnt) {
-	unsigned char *p_s1 = (unsigned char *)s1;
-	unsigned char *p_s2 = (unsigned char *)s2;
+  unsigned char *p_s1 = (unsigned char *)s1;
+  unsigned char *p_s2 = (unsigned char *)s2;
 
-	if (0 == cnt) {
-		return 0;
-	}
-	unsigned int idx = 0;
-	while ((idx < cnt) && (p_s1[idx] == p_s2[idx])) {
-		idx++;
-	}
+  if (0 == cnt) {
+    return 0;
+  }
+  unsigned int idx = 0;
+  while ((idx < cnt) && (p_s1[idx] == p_s2[idx])) {
+    idx++;
+  }
 
-	if (idx == cnt) {
-		return 0;
-	} else if (p_s1[idx] > p_s2[idx]) {
-		return 1;
-	} else {
-		return -1;
-	}
+  if (idx == cnt) {
+    return 0;
+  } else if (p_s1[idx] > p_s2[idx]) {
+    return 1;
+  } else {
+    return -1;
+  }
 }

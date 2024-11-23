@@ -27,37 +27,29 @@ static const String *SPEC_ATTR = String::intern("spec");
 static const String *VERSION_ATTR = String::intern("version");
 
 CmlNode::CmlNode(const String *ns, const String *tag)
-    : Node(ns, tag, NodeClass::CMLNODE)
-{
-    d_spec = String::intern("");
-    d_version = String::intern("1.0");
-    d_childns = String::intern("");
+    : Node(ns, tag, NodeClass::CMLNODE) {
+  d_spec = String::intern("");
+  d_version = String::intern("1.0");
+  d_childns = String::intern("");
 }
 
-void CmlNode::set_attr(const char *name, String *value)
-{
-    Node::set_attr(name, value);
+void CmlNode::set_attr(const char *name, String *value) {
+  Node::set_attr(name, value);
 
-    const String *sname = String::intern(name);
-    if (sname == NAMESPACE_ATTR)
-    {
-        d_childns = value;
+  const String *sname = String::intern(name);
+  if (sname == NAMESPACE_ATTR) {
+    d_childns = value;
+  } else if (sname == SPEC_ATTR) {
+    d_spec = value;
+  } else if (sname == VERSION_ATTR) {
+    char *end;
+    unsigned int major, minor = 0;
+    major = strtoul(value->cstr(), &end, 10);
+    if (end != NULL) {
+      end++;
+      minor = strtoul(end, &end, 10);
     }
-    else if (sname == SPEC_ATTR)
-    {
-        d_spec = value;
-    }
-    else if (sname == VERSION_ATTR)
-    {
-        char *end;
-        unsigned int major, minor = 0;
-        major = strtoul(value->cstr(), &end, 10);
-        if (end != NULL)
-        {
-            end++;
-            minor = strtoul(end, &end, 10);
-        }
-        d_version = value;
-        d_version_code = ((unsigned long long)major << 32) | minor;
-    }
+    d_version = value;
+    d_version_code = ((unsigned long long)major << 32) | minor;
+  }
 }

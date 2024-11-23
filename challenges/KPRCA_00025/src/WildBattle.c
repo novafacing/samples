@@ -21,34 +21,32 @@
  *
  */
 #include "WildBattle.h"
-#include "Program.h"
+
 #include "Monster.h"
+#include "Program.h"
 
 DefineClass(WildBattle, Battle)
 
-DefineFunction(WildBattle, void, $destroy)
-{
-    delete(this->m_monster);
+    DefineFunction(WildBattle, void, $destroy) {
+  delete (this->m_monster);
 }
 
-DefineFunction(WildBattle, void, init, unsigned int level)
-{
-    this->m_level = level;
-    this->m_monster = Monster_new_random(level);
-    this->m_can_capture = 1;
-    this->m_can_retreat = 1;
+DefineFunction(WildBattle, void, init, unsigned int level) {
+  this->m_level = level;
+  this->m_monster = Monster_new_random(level);
+  this->m_can_capture = 1;
+  this->m_can_retreat = 1;
 }
 
-DefineFunction(WildBattle, int, run, Player *p)
-{
-    Array *enemy = new(Array);
-    $(enemy, push, this->m_monster);
-    this->m_enemy_team = enemy;
+DefineFunction(WildBattle, int, run, Player *p) {
+  Array *enemy = new (Array);
+  $(enemy, push, this->m_monster);
+  this->m_enemy_team = enemy;
 
-    $($io, format, "A wild %s attacks!\n", this->m_monster->m_name);
-    int battle_won = $super(Battle, this, run, p);
+  $($io, format, "A wild %s attacks!\n", this->m_monster->m_name);
+  int battle_won = $super(Battle, this, run, p);
 
-    this->m_enemy_team = NULL;
-    delete(enemy);
-    return battle_won;
+  this->m_enemy_team = NULL;
+  delete (enemy);
+  return battle_won;
 }

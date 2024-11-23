@@ -31,4 +31,4 @@ void reverse(char *str, int len);
 int stoi(char *str, int *moved);
 int itos(int, char *str);
 
-#endif // STRING_H_DEFINED
+#endif  // STRING_H_DEFINED

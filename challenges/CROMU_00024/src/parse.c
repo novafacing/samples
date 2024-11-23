@@ -26,59 +26,49 @@ THE SOFTWARE.
 
 #include "stdlib.h"
 
-
 int parse_command(char *buffer, char separator, char ***args) {
-	
-	int arg_count;
-	char *tmp;
-	int i;
+  int arg_count;
+  char *tmp;
+  int i;
 
-	
-	if (*buffer != 0) {
+  if (*buffer != 0) {
+    // there is at least 1 because this function was called with a string
+    arg_count = 1;
+    tmp = buffer;
+  } else
+    return -1;
 
-		// there is at least 1 because this function was called with a string
-		arg_count = 1;
-		tmp=buffer;
-	}
-	else
-		return -1;
+  // count how many fields are on the command so memory can be allocated for the
+  // pointers
+  while (*tmp++ != 0) {
+    if (*tmp == separator) ++arg_count;
+  }  // while
 
-	// count how many fields are on the command so memory can be allocated for the pointers
-	while(*tmp++ != 0) {
+  // allocate one char pointer for each field in the command
+  *args = calloc(arg_count, sizeof(char *));
 
-		if (*tmp==separator)
-			++arg_count;
-	} // while
+  // failed to allocate the memory
+  if (*args == 0) {
+    return -1;
+  }
 
-	// allocate one char pointer for each field in the command
-	*args=calloc(arg_count, sizeof(char *));
+  // start back from the beginning of the buffer
+  tmp = buffer;
 
-	// failed to allocate the memory
-	if (*args==0) {
-		return -1;
-	}
+  // for each field, store a pointer to the first char
+  for (i = 0; i < arg_count; ++i) {
+    (*args)[i] = tmp;
 
-	// start back from the beginning of the buffer
-	tmp=buffer;
+    while (*tmp != separator && *tmp != 0) ++tmp;
 
-	// for each field, store a pointer to the first char
-	for (i=0;i< arg_count; ++i) {
+    // if we found the separator, overwrite it with a null so our args will be
+    // properly terminated
+    if (*tmp != 0) {
+      *tmp = 0;
+      ++tmp;
+    }
 
-		(*args)[i]=tmp;
+  }  // for
 
-		while (*tmp!= separator && *tmp != 0)
-			++tmp;
-
-		// if we found the separator, overwrite it with a null so our args will be properly terminated
-		if (*tmp !=0) {
-
-			*tmp=0;
-			++tmp;
-		}
-
-
-	} //for 
-
-	return (arg_count);
-
+  return (arg_count);
 }

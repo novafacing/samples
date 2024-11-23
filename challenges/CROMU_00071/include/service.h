@@ -34,38 +34,32 @@ THE SOFTWARE.
 #define MAX_CONNECTIONS 10
 
 typedef struct connectionList {
+  char destCode[4];
+  unsigned int cost;
+  unsigned int time;
 
-	char destCode[4];
-	unsigned int cost;
-	unsigned int time;
-
-	struct connectionList *next;
+  struct connectionList *next;
 
 } connectionListType;
 
-
 typedef struct airportInfo {
+  char code[4];
+  unsigned short delayFactor;
 
-	char code[4];
-	unsigned short delayFactor;
+  connectionListType *connections;
 
-	connectionListType *connections;
-
-	struct airportInfo *next;
+  struct airportInfo *next;
 
 } airportInfoType;
 
-
-int loadDB( airportInfoType **airports );
-int showAirports( airportInfoType *airports, char *command );
-int addAirport( airportInfoType **airports, char *command );
-int deleteAirport( airportInfoType **airports, char *command );
-int findRoutes( airportInfoType *airports, char *command );
-int check4Code( airportInfoType *airports, char apCode[4]);
-int check4ConnectionCode( connectionListType *connections, char apCode[4] );
+int loadDB(airportInfoType **airports);
+int showAirports(airportInfoType *airports, char *command);
+int addAirport(airportInfoType **airports, char *command);
+int deleteAirport(airportInfoType **airports, char *command);
+int findRoutes(airportInfoType *airports, char *command);
+int check4Code(airportInfoType *airports, char apCode[4]);
+int check4ConnectionCode(connectionListType *connections, char apCode[4]);
 int execute_cmd(airportInfoType **airports, char *buffer);
 unsigned int check_db();
 
 #endif
-
-

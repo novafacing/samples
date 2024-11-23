@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define COMMON_H
 
 #include <libcgc.h>
+
 #include "stdint.h"
 
 #define MAX_FRAME_LEN (256)

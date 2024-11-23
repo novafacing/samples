@@ -18,54 +18,52 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
+#include "cablegrind.h"
 #include "libc.h"
 #include "libdupe.h"
-#include "cablegrind.h"
 
 int main(void) {
-    int i;
-    uint32_t filesize;
-    uint8_t *data;
-    uint8_t *warmup;
-    dupefile_t *f;
+  int i;
+  uint32_t filesize;
+  uint8_t *data;
+  uint8_t *warmup;
+  dupefile_t *f;
 
-    //we want to warmup the heap for performance or something
-    //actually just to ensure heap corruption is a bit easier
-    for(i = 1024; i > 0; i--) {
-        warmup = malloc((i+1)*2);
-        free(warmup);
-    }
+  // we want to warmup the heap for performance or something
+  // actually just to ensure heap corruption is a bit easier
+  for (i = 1024; i > 0; i--) {
+    warmup = malloc((i + 1) * 2);
+    free(warmup);
+  }
 
+  __stack_cookie_init();
 
-    __stack_cookie_init();
+  RECV(sizeof(uint32_t), (char *)&filesize);
 
-    RECV(sizeof(uint32_t),(char *)&filesize);
+  if (filesize > MAX_DUPE_SIZE) return 1;
 
-    if (filesize > MAX_DUPE_SIZE)
-        return 1;
+  setheap(0);
+  data = malloc(filesize);
 
-    setheap(0);
-    data = malloc(filesize);
+  if (!data) return 2;
 
-    if (!data)
-        return 2;
+  RECV(filesize, (char *)data);
 
-    RECV(filesize,(char *)data);
+  f = dupe_open(data);
 
-    f = dupe_open(data);
+  if (!f || f->caplen != filesize - sizeof(dupefile_t)) {
+    LOG("Bad file.")
+    return 3;
+  }
 
-    if (!f || f->caplen != filesize-sizeof(dupefile_t)) {
-        LOG("Bad file.")
-        return 3;
-    }
+  process_dupe(f);
 
-    process_dupe(f);
+  setheap(0);
+  dupe_close(f);
 
-    setheap(0);
-    dupe_close(f);
-
-    return 0;
+  return 0;
 }

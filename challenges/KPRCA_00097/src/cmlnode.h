@@ -24,21 +24,23 @@
 
 #include "node.h"
 
-class CmlNode : public Node
-{
-    friend class Node;
-private:
-    CmlNode(const String *ns, const String *tag);
-public:
-    virtual void set_attr(const char *name, String *value);
+class CmlNode : public Node {
+  friend class Node;
 
-    inline const String *childns() { return d_childns; }
-    inline const String *spec() { return d_spec; }
-    inline const String *version() { return d_version; }
-    inline unsigned long long version_code() { return d_version_code; }
-private:
-    const String *d_spec;
-    const String *d_version;
-    unsigned long long d_version_code;
-    const String *d_childns;
+ private:
+  CmlNode(const String *ns, const String *tag);
+
+ public:
+  virtual void set_attr(const char *name, String *value);
+
+  inline const String *childns() { return d_childns; }
+  inline const String *spec() { return d_spec; }
+  inline const String *version() { return d_version; }
+  inline unsigned long long version_code() { return d_version_code; }
+
+ private:
+  const String *d_spec;
+  const String *d_version;
+  unsigned long long d_version_code;
+  const String *d_childns;
 };

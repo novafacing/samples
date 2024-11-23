@@ -30,30 +30,38 @@ THE SOFTWARE.
 #include <stdint.h>
 // Implement an exception handler with setjmp/longjmp
 
-#define MAX_EXCEPTION_NAME      (64)
-#define MAX_EXCEPTION_EXTRA     (128)
+#define MAX_EXCEPTION_NAME (64)
+#define MAX_EXCEPTION_EXTRA (128)
 
-typedef struct EXCEPTION_DATA_STRUCT
-{
-    uint8_t exceptionNumber;
-    char szExceptionName[MAX_EXCEPTION_NAME];
-    char szExceptionExtra[MAX_EXCEPTION_EXTRA];
+typedef struct EXCEPTION_DATA_STRUCT {
+  uint8_t exceptionNumber;
+  char szExceptionName[MAX_EXCEPTION_NAME];
+  char szExceptionExtra[MAX_EXCEPTION_EXTRA];
 } tExceptionData;
 
-typedef struct EXCEPTION_FRAME_STRUCT
-{
-    jmp_buf jmpBuffer;
+typedef struct EXCEPTION_FRAME_STRUCT {
+  jmp_buf jmpBuffer;
 } tExceptionFrame;
 
-#define TRY         switch( setjmp( get_next_exception_frame()->jmpBuffer ) ) { case 0: while(1) {
-#define CATCH(e)    break; case e:
-#define THROW(e)    longjmp( get_current_exception_frame()->jmpBuffer, e )
-#define FINALLY   break; } default:
-#define ETRY      pop_exception_frame(); }
+#define TRY                                                \
+  switch (setjmp(get_next_exception_frame()->jmpBuffer)) { \
+    case 0:                                                \
+      while (1) {
+#define CATCH(e) \
+  break;         \
+  case e:
+#define THROW(e) longjmp(get_current_exception_frame()->jmpBuffer, e)
+#define FINALLY \
+  break;        \
+  }             \
+  default:
+#define ETRY             \
+  pop_exception_frame(); \
+  }
 
-void init_exception_handler( void );
-tExceptionFrame *get_next_exception_frame( void );
-tExceptionFrame *get_current_exception_frame( void );
-tExceptionFrame *pop_exception_frame( void );
+void init_exception_handler(void);
+tExceptionFrame *get_next_exception_frame(void);
+tExceptionFrame *get_current_exception_frame(void);
+tExceptionFrame *pop_exception_frame(void);
 
-#endif // __EXCEPTION_HANDLER_H__
+#endif  // __EXCEPTION_HANDLER_H__

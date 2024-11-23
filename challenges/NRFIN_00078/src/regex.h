@@ -38,4 +38,3 @@
 int regex_match(char *regex, char *line, char **begin, char **end);
 
 #endif /* REGEX_H_ */
-

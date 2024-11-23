@@ -28,18 +28,18 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdarg.h>
+
 #include "stdint.h"
 
-int putchar( int c );
+int putchar(int c);
 
-int printf( const char *format, ... );
-int vprintf( const char *format, va_list args );
-int sprintf( char *buf, const char *format, ... );
-int vsprintf( char *buf, const char *format, va_list args );
-int puts( const char *s );
-int debug_print( const char *format, ... );
+int printf(const char *format, ...);
+int vprintf(const char *format, va_list args);
+int sprintf(char *buf, const char *format, ...);
+int vsprintf(char *buf, const char *format, va_list args);
+int puts(const char *s);
+int debug_print(const char *format, ...);
 int receive_fixed(uint8_t *buffer, int length);
 int transmit_fixed(uint8_t *buffer, int length);
 
-
-#endif // __STDIO_H__
+#endif  // __STDIO_H__

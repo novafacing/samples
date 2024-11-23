@@ -27,9 +27,9 @@ THE SOFTWARE.
 #define __COMMON_H__
 
 extern "C" {
-#include <stdlib.h>
 #include <libcgc.h>
 #include <stdint.h>
+#include <stdlib.h>
 }
 
 #ifdef NULL
@@ -39,15 +39,15 @@ extern "C" {
 
 #include <string.h>
 
-#include "dlqueue.h"
-#include "datetime_helper.h"
-#include "datetime.h"
-#include "diverinfo.h"
-#include "dive.h"
 #include "commandhandler.h"
+#include "datetime.h"
+#include "datetime_helper.h"
+#include "dive.h"
+#include "diverinfo.h"
+#include "dlqueue.h"
 
-void ReadLine( String &sLine );
-void ReadUint32( uint32_t &value );
-uint32_t StringToInt( const String &sInStr );
+void ReadLine(String &sLine);
+void ReadUint32(uint32_t &value);
+uint32_t StringToInt(const String &sInStr);
 
-#endif // __COMMON_H___
+#endif  // __COMMON_H___

@@ -21,12 +21,11 @@
  *
  */
 #include "oo.h"
-const __init_array_t __init_array_begin __attribute__((section(".rodata.init")));
+const __init_array_t __init_array_begin
+    __attribute__((section(".rodata.init")));
 
 __except_state_t *__except_current;
-void raise(int exc)
-{
-    if (__except_current)
-        longjmp(__except_current->jmpbuf, exc);
-    _terminate(5);
+void raise(int exc) {
+  if (__except_current) longjmp(__except_current->jmpbuf, exc);
+  _terminate(5);
 }

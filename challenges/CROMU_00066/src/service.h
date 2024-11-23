@@ -27,12 +27,9 @@ THE SOFTWARE.
 #ifndef SERVICE_H
 #define SERVICE_H
 
-
-extern "C"
-{
-	#include "stdio.h"
-	#include <stdlib.h>
+extern "C" {
+#include "stdio.h"
+#include <stdlib.h>
 }
-
 
 #endif

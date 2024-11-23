@@ -22,15 +22,9 @@
  */
 #include "oo.h"
 
-static void Object_$init(Object *X)
-{
-}
+static void Object_$init(Object *X) {}
 
-static void Object_$destroy(Object *X)
-{
-}
+static void Object_$destroy(Object *X) {}
 
-struct __vtable_Object __default_vtable_Object = {
-    Object_$init,
-    Object_$destroy
-};
+struct __vtable_Object __default_vtable_Object = {Object_$init,
+                                                  Object_$destroy};

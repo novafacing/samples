@@ -24,155 +24,126 @@ THE SOFTWARE.
 
 */
 
-
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
-#include "stdio.h"
-#include "string.h"
+
 #include "commands.h"
 #include "malloc.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
-int create_sprint( productDefType *database, newSprintMessageType *message) {
+int create_sprint(productDefType *database, newSprintMessageType *message) {
+  sprintEntryType *newSprint;
+  sprintEntryType *sprintPtr;
 
-sprintEntryType *newSprint;
-sprintEntryType *sprintPtr;
+  // first find the product ID
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
+  // it wasn't found
+  if (database == 0) {
+    return (-1);
+  }
 
-	// first find the product ID 
-	while(database != 0 && database->ID != message->productID )
-		database = database->next;
+  // allocate memory for the new sprint
+  newSprint = (sprintEntryType *)calloc(sizeof(sprintEntryType));
 
-	// it wasn't found
-	if (database == 0) {
+  if (newSprint == 0) _terminate(-1);
 
-		return(-1);
-	}
+  newSprint->ID = message->sprintID;
 
+  // add an extra byte since strlen doesn't count the null terminator
+  newSprint->title = calloc(strlen((char *)&message->title) + 1);
 
-	// allocate memory for the new sprint
-	newSprint = (sprintEntryType *)calloc(sizeof(sprintEntryType));
+  if (newSprint->title == 0) _terminate(-1);
 
-	if (newSprint == 0)
-		_terminate(-1);
+  strncpy(newSprint->title, &message->title, strlen(&message->title));
 
-	newSprint->ID = message->sprintID;
+  // set the default values, all 0 in this case
+  newSprint->duration = 0;
+  newSprint->total_points = 0;
+  newSprint->velocity_required = 0;
+  newSprint->sprintBacklogList = 0;
+  newSprint->next = 0;
 
-	// add an extra byte since strlen doesn't count the null terminator
-	newSprint->title = calloc(strlen((char *)&message->title)+1);
+  // if this is the first sprint, it changes the head pointer so its a special
+  // case
+  if (database->sprintList == 0) {
+    database->sprintList = newSprint;
+    return 0;
+  }
 
-	if (newSprint->title == 0)
-		_terminate(-1);
+  sprintPtr = database->sprintList;
 
+  // otherwise find the end of the linked list
+  while (sprintPtr->next != 0) sprintPtr = sprintPtr->next;
 
-	strncpy(newSprint->title, &message->title, strlen(&message->title));
+  // now add the new sprint to the end
+  sprintPtr->next = newSprint;
 
-	// set the default values, all 0 in this case
-	newSprint->duration = 0;
-	newSprint->total_points = 0;
-	newSprint->velocity_required = 0;
-	newSprint->sprintBacklogList = 0;
-	newSprint->next = 0;
-
-
-	// if this is the first sprint, it changes the head pointer so its a special case
-	if (database->sprintList == 0) {
-		database->sprintList = newSprint;
-		return 0;
-	}
-
-	sprintPtr = database->sprintList;
-
-	// otherwise find the end of the linked list
-	while(sprintPtr->next != 0)
-		sprintPtr = sprintPtr->next;
-
-	// now add the new sprint to the end
-	sprintPtr->next = newSprint;
-
-return 0;
-
+  return 0;
 }
 
+int delete_sprint(productDefType *database, deleteSprintMessageType *message) {
+  sprintEntryType *sprintPtr;
+  sprintEntryType *prevPtr;
 
-int delete_sprint( productDefType *database, deleteSprintMessageType *message) {
+  // find the product id
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
+  // it wasn't found
+  if (database == 0) {
+    return (-1);
+  }
 
-sprintEntryType *sprintPtr;
-sprintEntryType *prevPtr;
+  // if the sprint list is empty, there's nothing to delete
+  if (database->sprintList == 0) {
+    return (-1);
+  }
 
+  // if its the head of the linked list, special case to delete
+  if (database->sprintList->ID == message->sprintID) {
+    // don't delete a sprint that still has backlog items assigned to it
+    if (database->sprintList->sprintBacklogList != 0) return (-1);
 
-	// find the product id 
-	while(database != 0 && database->ID != message->productID )
-		database = database->next;
+    sprintPtr = database->sprintList;
+    database->sprintList = sprintPtr->next;
 
-	// it wasn't found
-	if (database == 0) {
+    // does it have a title?  Free that memory first
+    if (sprintPtr->title) free(sprintPtr->title);
 
-		return(-1);
-	}
+    free(sprintPtr);
+    return 0;
 
-	// if the sprint list is empty, there's nothing to delete
-	if (database->sprintList == 0) {
+  }
+  // otherwise, just link around the entry to be deleted
+  else {
+    prevPtr = database->sprintList;
+    sprintPtr = prevPtr->next;
 
-		return (-1);
-	}
+    while (sprintPtr != 0 && sprintPtr->ID != message->sprintID) {
+      prevPtr = sprintPtr;
+      sprintPtr = sprintPtr->next;
+    }
+  }
 
-	// if its the head of the linked list, special case to delete
-	if (database->sprintList->ID == message->sprintID) {
+  // it wasn't found if we hit the end of the list
+  if (sprintPtr == 0) {
+    return (-1);
+  } else {
+    // don't delete a sprint that still has backlog items assigned to it
+    if (sprintPtr->sprintBacklogList != 0) return (-1);
 
-		// don't delete a sprint that still has backlog items assigned to it
-		if (database->sprintList->sprintBacklogList != 0)
-			return(-1);
+    prevPtr->next = sprintPtr->next;
+  }
 
-		sprintPtr = database->sprintList;
-		database->sprintList = sprintPtr->next;
+  // does it have a title?  Free that memory first
+  if (sprintPtr->title) free(sprintPtr->title);
 
-		// does it have a title?  Free that memory first
-		if (sprintPtr->title)
-			free(sprintPtr->title);
+  // now delete the sprint's memory
+  free(sprintPtr);
 
-		free(sprintPtr);
-		return 0;
-
-	}
-	// otherwise, just link around the entry to be deleted
-	else {
-
-		prevPtr = database->sprintList;
-		sprintPtr = prevPtr->next;
-
-		while(sprintPtr != 0 && sprintPtr->ID != message->sprintID) {
-			prevPtr = sprintPtr;
-			sprintPtr = sprintPtr->next;
-		}
-	}
-
-	// it wasn't found if we hit the end of the list
-	if (sprintPtr == 0) {
-
-		return(-1);
-	}
-	else {
-
-			// don't delete a sprint that still has backlog items assigned to it
-		if (sprintPtr->sprintBacklogList != 0)
-			return(-1);
-		
-		prevPtr->next = sprintPtr->next;
-
-	}
-
-	// does it have a title?  Free that memory first
-	if (sprintPtr->title)
-		free(sprintPtr->title);
-		
-	// now delete the sprint's memory
-	free(sprintPtr);
-
-
-	return 0;
-
+  return 0;
 }
-
-

@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef OSFILES_H
 #define OSFILES_H
 
-
 void InitializeOSFiles();
 
-#endif 
+#endif

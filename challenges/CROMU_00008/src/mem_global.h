@@ -29,16 +29,15 @@ THE SOFTWARE.
 #include "exception_handler.h"
 #include "expression_parser.h"
 
-#define MAX_PARSE_STACKSIZE         (20)
-#define MAX_EXCEPTION_FRAME_SIZE    (5)
+#define MAX_PARSE_STACKSIZE (20)
+#define MAX_EXCEPTION_FRAME_SIZE (5)
 
-#define MEM_RESERVE_SIZE            (4096*128)
+#define MEM_RESERVE_SIZE (4096 * 128)
 
-typedef struct _GLOBAL_MEMORY_LAYOUT
-{
-    tItemStack parseStack[MAX_PARSE_STACKSIZE];
-    tExceptionFrame exceptionFrameList[MAX_EXCEPTION_FRAME_SIZE];
-    uint8_t mem_reserve[MEM_RESERVE_SIZE];
+typedef struct _GLOBAL_MEMORY_LAYOUT {
+  tItemStack parseStack[MAX_PARSE_STACKSIZE];
+  tExceptionFrame exceptionFrameList[MAX_EXCEPTION_FRAME_SIZE];
+  uint8_t mem_reserve[MEM_RESERVE_SIZE];
 } tGlobalMemoryLayout;
 
-#endif // __MEMGLOBAL_H__
+#endif  // __MEMGLOBAL_H__

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H
@@ -58,7 +58,8 @@ typedef struct FILE FILE;
 extern FILE *stdin, *stdout, *stderr;
 
 /**
- * Read at most size bytes from FILE pointer into ptr, stopping on delim, buffered.
+ * Read at most size bytes from FILE pointer into ptr, stopping on delim,
+ * buffered.
  *
  * @param ptr The output buffer
  * @param delim The byte to stop on
@@ -68,9 +69,9 @@ extern FILE *stdin, *stdout, *stderr;
  */
 ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
 
-//#define DEBUG 1
+// #define DEBUG 1
 #ifdef DEBUG
-#define debug(args...) fdprintf(stderr,args)
+#define debug(args...) fdprintf(stderr, args)
 #else
 #define debug(args...)
 #endif
@@ -90,7 +91,8 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param a Address to store pointer to new allocation at.
  * @return Address in a.
  */
-#define ALLOCRW(s,a) if(allocate(s, 0, &a)) DIE(ALLOCFAIL)
+#define ALLOCRW(s, a) \
+  if (allocate(s, 0, &a)) DIE(ALLOCFAIL)
 
 /**
  * Allocate RWX memory.
@@ -99,7 +101,8 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param a Address to store pointer to new allocation at.
  * @return Address in a.
  */
-#define ALLOCRWX(s,a) if(allocate(s, 1, &a)) DIE(ALLOCFAIL)
+#define ALLOCRWX(s, a) \
+  if (allocate(s, 1, &a)) DIE(ALLOCFAIL)
 
 /**
  * Deallocate memory.
@@ -108,7 +111,8 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s Amount of memory in bytes to dealloc.
  * @return Nothing
  */
-#define DEALLOC(a,s) if(deallocate(a, s)) DIE(DEALLOCFAIL)
+#define DEALLOC(a, s) \
+  if (deallocate(a, s)) DIE(DEALLOCFAIL)
 
 /**
  * Get random bytes.
@@ -117,7 +121,8 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param b Buffer to write random bytes to.
  * @return Bytes in b.
  */
-#define RANDOM(s,b)  if(random(b, s, NULL)) DIE(RANDFAIL)
+#define RANDOM(s, b) \
+  if (random(b, s, NULL)) DIE(RANDFAIL)
 
 /**
  * Simple conversion for hex char
@@ -133,7 +138,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s struct to read into
  * @return 1 on success, 0 on failure
  */
-#define READDATA(s) (sizeof(s) == readall(STDIN,(char *)&s,sizeof(s)) ? 1 : 0)
+#define READDATA(s) (sizeof(s) == readall(STDIN, (char *)&s, sizeof(s)) ? 1 : 0)
 
 /**
  * Send data to stdout
@@ -141,7 +146,8 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s struct to write
  * @return 1 on success, 0 on failure
  */
-#define SENDDATA(s) (sizeof(s) == sendall(STDOUT,(char *)&s,sizeof(s)) ? 1 : 0)
+#define SENDDATA(s) \
+  (sizeof(s) == sendall(STDOUT, (char *)&s, sizeof(s)) ? 1 : 0)
 
 /**
  * Send a string to stdout
@@ -149,7 +155,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s string to write
  * @return 1 on success, 0 on failure
  */
-#define SENDSTR(s) (strlen(s) == sendall(STDOUT,s,strlen(s)) ? 1 : 0)
+#define SENDSTR(s) (strlen(s) == sendall(STDOUT, s, strlen(s)) ? 1 : 0)
 
 /**
  * Send a string followed by newline to stdout
@@ -164,7 +170,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param x array
  * @return sizeof_array(array)
  */
-#define SIZEOFARR(x) (sizeof(x)/sizeof(x[0]))
+#define SIZEOFARR(x) (sizeof(x) / sizeof(x[0]))
 
 /**
  * Read until NEWLINE is hit
@@ -182,7 +188,7 @@ size_t readline(int fd, char *buf, size_t s);
  * @param fd File descriptor to read from.
  * @param buf Buffer to write read bytes to.
  * @param s Maximum number of bytes to read
- * @return Number of bytes read 
+ * @return Number of bytes read
  */
 size_t readall(int fd, char *buf, size_t s);
 
@@ -221,7 +227,7 @@ int streq(char *s1, char *s2);
  * @param s1 Input string.
  * @return Length of string, not including NULL terminator..
  */
-int strlen(const char *s); 
+int strlen(const char *s);
 
 /**
  * Format string and store in buffer
@@ -231,7 +237,7 @@ int strlen(const char *s);
  * @param ... Additional format arguments
  * @return None.
  */
-void sprintf(char *buf, const char *fmt, ...); 
+void sprintf(char *buf, const char *fmt, ...);
 
 /**
  * Format string and store in buffer
@@ -241,7 +247,7 @@ void sprintf(char *buf, const char *fmt, ...);
  * @param argp Additional format arguments
  * @return None.
  */
-void vsprintf(char *buf, const char *fmt, va_list argp); 
+void vsprintf(char *buf, const char *fmt, va_list argp);
 
 /**
  * Print things to stdout.
@@ -250,7 +256,7 @@ void vsprintf(char *buf, const char *fmt, va_list argp);
  * @param ... Additional format arguments
  * @return None.
  */
-void printf(const char *fmt, ...); 
+void printf(const char *fmt, ...);
 
 /**
  * Print things to file descriptor.
@@ -270,7 +276,7 @@ void fdprintf(int fd, const char *fmt, ...);
  * @param argp Additional format arguments
  * @return None.
  */
-void vfdprintf(int fd, const char *fmt, va_list argp); 
+void vfdprintf(int fd, const char *fmt, va_list argp);
 
 /**
  * Tokenize string
@@ -279,7 +285,7 @@ void vfdprintf(int fd, const char *fmt, va_list argp);
  * @param sep Seperator to tokenize off of
  * @return Next token in string.
  */
-char *strtok(char *s, char sep); 
+char *strtok(char *s, char sep);
 
 /**
  * String copy
@@ -288,7 +294,7 @@ char *strtok(char *s, char sep);
  * @param s2 src
  * @return None.
  */
-void strcpy(char *s1, const char *s2); 
+void strcpy(char *s1, const char *s2);
 
 /**
  * String to int
@@ -304,7 +310,7 @@ unsigned int atoi(char *s);
  * @param src src
  * @return None.
  */
-char * strcat(char *dest, const char *src);
+char *strcat(char *dest, const char *src);
 
 /**
  * Memory copy
@@ -314,7 +320,7 @@ char * strcat(char *dest, const char *src);
  * @param len length
  * @return None.
  */
-void memcpy(void *dest, void *src, size_t len); 
+void memcpy(void *dest, void *src, size_t len);
 
 /**
  * Check if two buffers are equal

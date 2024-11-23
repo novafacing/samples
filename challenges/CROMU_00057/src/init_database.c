@@ -25,107 +25,80 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
+#include "malloc.h"
 #include "service.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
-#include "malloc.h"
 
-int init_database( productDefType **database ) {
+int init_database(productDefType **database) {
+  productDefType *pTemp;
 
+  pTemp = *database;
 
-	productDefType *pTemp;
+  if (pTemp == 0) {
+    pTemp = malloc(sizeof(productDefType));
 
-	pTemp = *database;
+    if (pTemp == 0) _terminate(-1);
+  }
 
-
-	if (pTemp == 0) {
-
-		pTemp = malloc(sizeof(productDefType));
-
-		if (pTemp == 0) 
-			_terminate(-1);
-
-	}
-
-	return 0;
-
+  return 0;
 }
 
+int destroy_database(productDefType **database) {
+  productDefType *productPtr, *tmpProduct;
+  sprintEntryType *sprintPtr, *tmpSprintPtr;
+  backlogItemType *pblPtr, *tmpPBIPtr;
+  backlogItemType *sblPtr, *tmpSBLPtr;
 
-int destroy_database ( productDefType **database ) {
+  productPtr = *database;
 
-productDefType *productPtr, *tmpProduct;
-sprintEntryType *sprintPtr, *tmpSprintPtr;
-backlogItemType *pblPtr, *tmpPBIPtr;
-backlogItemType *sblPtr, *tmpSBLPtr;
+  while (productPtr != 0) {
+    pblPtr = productPtr->productBacklog;
 
+    // first delete the product backlog
+    while (pblPtr != 0) {
+      if (pblPtr->description != 0) free(pblPtr->description);
 
-	productPtr = *database;
+      tmpPBIPtr = pblPtr;
 
-	while (productPtr != 0) {
+      pblPtr = pblPtr->next;
 
-		pblPtr = productPtr->productBacklog;
+      free(tmpPBIPtr);
+    }
 
-		// first delete the product backlog
-		while( pblPtr != 0) {
+    sprintPtr = productPtr->sprintList;
 
+    while (sprintPtr != 0) {
+      sblPtr = sprintPtr->sprintBacklogList;
 
-			if (pblPtr->description != 0)
-				free(pblPtr->description);
+      while (sblPtr != 0) {
+        if (sblPtr->description != 0) free(sblPtr->description);
 
-			tmpPBIPtr = pblPtr;
+        tmpSBLPtr = sblPtr;
+        sblPtr = sblPtr->next;
 
-			pblPtr = pblPtr->next;
+        free(tmpSBLPtr);
+      }
 
-			free(tmpPBIPtr);
+      if (sprintPtr->title != 0) free(sprintPtr->title);
 
-		}
+      tmpSprintPtr = sprintPtr;
+      sprintPtr = sprintPtr->next;
 
+      free(tmpSprintPtr);
+    }
 
-		sprintPtr = productPtr->sprintList;
+    if (productPtr->title != 0) free(productPtr->title);
 
-		while ( sprintPtr != 0) {
+    tmpProduct = productPtr;
+    productPtr = productPtr->next;
 
-			sblPtr = sprintPtr->sprintBacklogList;
+    free(tmpProduct);
+  }
 
-			while ( sblPtr != 0) {
+  *database = 0;
 
-
-				if (sblPtr->description != 0)
-					free(sblPtr->description);
-
-				tmpSBLPtr = sblPtr;
-				sblPtr = sblPtr->next;
-
-				free(tmpSBLPtr);
-
-			}
-
-			if (sprintPtr->title != 0 ) 
-				free(sprintPtr->title);
-
-			tmpSprintPtr = sprintPtr;
-			sprintPtr = sprintPtr->next;
-
-			free(tmpSprintPtr);
-
-
-		}
-
-		if (productPtr->title != 0)
-			free(productPtr->title);
-
-		tmpProduct = productPtr;
-		productPtr = productPtr->next;
-
-		free(tmpProduct);
-
-
-	}
-
-	*database = 0;
-
-	return 0;
-
+  return 0;
 }

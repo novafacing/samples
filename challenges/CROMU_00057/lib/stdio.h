@@ -29,14 +29,14 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdarg.h>
 
-int putchar( int c );
+int putchar(int c);
 
-int printf( const char *format, ... );
-int vprintf( const char *format, va_list args );
-int sprintf( char *buf, const char *format, ... );
-int vsprintf( char *buf, const char *format, va_list args );
-int puts( const char *s );
+int printf(const char *format, ...);
+int vprintf(const char *format, va_list args);
+int sprintf(char *buf, const char *format, ...);
+int vsprintf(char *buf, const char *format, va_list args);
+int puts(const char *s);
 void send(unsigned char *buf, int count);
-int write( int fd, void *buffer, size_t count );
+int write(int fd, void *buffer, size_t count);
 
-#endif // __STDIO_H__
+#endif  // __STDIO_H__

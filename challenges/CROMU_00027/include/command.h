@@ -26,7 +26,15 @@ THE SOFTWARE.
 #ifndef COMMAND_H
 #define COMMAND_H
 
-enum CommandType {NO_COMMAND, REQUEST, QUERY, SEND, REMOVE, VISUALIZE, INTERACT};
+enum CommandType {
+  NO_COMMAND,
+  REQUEST,
+  QUERY,
+  SEND,
+  REMOVE,
+  VISUALIZE,
+  INTERACT
+};
 
 typedef struct {
   enum CommandType command;
@@ -39,4 +47,4 @@ void DestroyCommand(CommandStruct *command);
 int ReceiveCommand(CommandStruct *command, int *more_commands);
 void HandleCommand(CommandStruct *command);
 
-#endif // COMMAND_H
+#endif  // COMMAND_H

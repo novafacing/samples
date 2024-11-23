@@ -18,29 +18,29 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 #include <libcgc.h>
 #include <stdint.h>
 
-#define SZ_PRNG_BUF 8 // 64 bits
-#define SZ_PRNG_KEY 16 // 128 bits
+#define SZ_PRNG_BUF 8   // 64 bits
+#define SZ_PRNG_KEY 16  // 128 bits
 
 #define CRYPTO_ROUNDS 42
-#define CRYPTO_DELTA 0xcafebabe // 0x9e3779b9 in TEA
-#define CRYPTO_SUM (0xcafebabe * CRYPTO_ROUNDS) // 0xC6EF3720 in TEA
+#define CRYPTO_DELTA 0xcafebabe                  // 0x9e3779b9 in TEA
+#define CRYPTO_SUM (0xcafebabe * CRYPTO_ROUNDS)  // 0xC6EF3720 in TEA
 
- /**
- * Set the global PRNG key.  This key acts as seed to the PRNG.  
+/**
+ * Set the global PRNG key.  This key acts as seed to the PRNG.
  * Called during initial setup.
  *
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
 int prng_set_key(void *key);
 
- /**
- * Get count bytes of pesudo-random data and write it into the buffer pointed 
+/**
+ * Get count bytes of pesudo-random data and write it into the buffer pointed
  * to by buf.
  *
  * Based on the the key schedule in the public domain Tiny Encryption Algorith.
@@ -49,19 +49,19 @@ int prng_set_key(void *key);
  */
 int prng_get_bytes(void *buf, size_t count);
 
- /**
- * Provided 64 bits of plaintext, encrypt with a 128 bit key to form a 64 bit 
- * ciphertext block.  
- * 
+/**
+ * Provided 64 bits of plaintext, encrypt with a 128 bit key to form a 64 bit
+ * ciphertext block.
+ *
  * Based on the public domain Tiny Encryption Algorithm.
  *
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
 int encrypt_1block(void *v, void *k);
 
- /**
- * Provided 64 bits of ciphertextr, decrypt with a 128 bit key to form a 64 bit 
- * plaintext block.  
+/**
+ * Provided 64 bits of ciphertextr, decrypt with a 128 bit key to form a 64 bit
+ * plaintext block.
  *
  * Based on the public domain Tiny Encryption Algorithm.
  *

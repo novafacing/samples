@@ -18,84 +18,47 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "actuators.h"
 
 #include <libcgc.h>
+
 #include "libc.h"
-#include "actuators.h"
 
 unsigned char ready = 0;
 unsigned char units = 0;
 unsigned char bowl_set = 0;
 
 void init_dispenser(void) {
-	bowl_set = 0;
-	units = 0;
-	ready = 1;
+  bowl_set = 0;
+  units = 0;
+  ready = 1;
 }
 
-void dispense_bowl(void) {
-	bowl_set = 1;
-}
+void dispense_bowl(void) { bowl_set = 1; }
 
-void completion_buzzer(void) {
-	ready = 0;
-}
+void completion_buzzer(void) { ready = 0; }
 
 // liquids
-void dispense_dairy_milk(void) {
-	units++;
-}
-void dispense_dairy_cream(void) {
-	units++;
-}
-void dispense_water(void) {
-	units++;
-}
-void dispense_soy_milk(void) {
-	units++;
-}
-void dispense_almond_milk(void) {
-	units++;
-}
+void dispense_dairy_milk(void) { units++; }
+void dispense_dairy_cream(void) { units++; }
+void dispense_water(void) { units++; }
+void dispense_soy_milk(void) { units++; }
+void dispense_almond_milk(void) { units++; }
 
 // cereals
-void dispense_sugar_loops(void) {
-	units++;
-}
-void dispense_maize_flakes(void) {
-	units++;
-}
-void dispense_marshmallow_figuringes(void) {
-	units++;
-}
-void dispense_chocolate_rice_pellets(void) {
-	units++;
-}
-void dispense_oohs_of_oats(void) {
-	units++;
-}
-void dispense_crunchy_puffs(void) {
-	units++;
-}
-void dispense_frutiz_n_nuts(void) {
-	units++;
-}
+void dispense_sugar_loops(void) { units++; }
+void dispense_maize_flakes(void) { units++; }
+void dispense_marshmallow_figuringes(void) { units++; }
+void dispense_chocolate_rice_pellets(void) { units++; }
+void dispense_oohs_of_oats(void) { units++; }
+void dispense_crunchy_puffs(void) { units++; }
+void dispense_frutiz_n_nuts(void) { units++; }
 
 // toppings
-void dispense_chocolate_drops(void) {
-	units++;
-}
-void dispense_blueberries(void) {
-	units++;
-}
-void dispense_berry_medley(void) {
-	units++;
-}
-void dispense_sugar_cube(void) {
-	units++;
-}
-void dispense_strawberries(void) {
-	units++;
-}
-
+void dispense_chocolate_drops(void) { units++; }
+void dispense_blueberries(void) { units++; }
+void dispense_berry_medley(void) { units++; }
+void dispense_sugar_cube(void) { units++; }
+void dispense_strawberries(void) { units++; }

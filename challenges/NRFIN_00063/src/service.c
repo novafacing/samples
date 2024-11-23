@@ -18,26 +18,27 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
 #include "libc.h"
 #include "products.h"
 
-static char STATUS_OK[2] 	= {0};
-static char STATUS_ERR[2] 	= {0};
-static char STATUS_QUIT[2]	= {0};
+static char STATUS_OK[2] = {0};
+static char STATUS_ERR[2] = {0};
+static char STATUS_QUIT[2] = {0};
 
 /**
  * Compute the status codes based on the values of the flag page
  */
 void gen_status_codes(void) {
-    const char *fp = (char *)FLAG_PAGE;
-    for (unsigned int idx = 0; idx < 4094; idx += 3) {
-        STATUS_OK[idx % 2]          ^= fp[idx];
-        STATUS_ERR[(idx + 1) % 2]   ^= fp[idx + 1];
-        STATUS_QUIT[(idx + 2) % 2]  ^= fp[idx + 2];
-    }
+  const char *fp = (char *)FLAG_PAGE;
+  for (unsigned int idx = 0; idx < 4094; idx += 3) {
+    STATUS_OK[idx % 2] ^= fp[idx];
+    STATUS_ERR[(idx + 1) % 2] ^= fp[idx + 1];
+    STATUS_QUIT[(idx + 2) % 2] ^= fp[idx + 2];
+  }
 }
 
 /**
@@ -45,30 +46,27 @@ void gen_status_codes(void) {
  *
  * @param status_code  The 2 status code bytes to send.
  */
- void send_status(char *status_code) {
-    SEND(STDOUT, status_code, 2);
-}
+void send_status(char *status_code) { SEND(STDOUT, status_code, 2); }
 
 int main(void) {
+  short ret = 0;
 
-    short ret = 0;
+  gen_status_codes();
 
-    gen_status_codes();
+  setup();
 
-    setup();
+  while (TRUE) {
+    ret = process_cmd();
 
-    while (TRUE) {
-        ret = process_cmd();
-
-        if (0 == ret) {
-        	send_status((char *)STATUS_OK);
-        } else if (-1 == ret) {
-        	send_status((char *)STATUS_ERR);
-        } else {
-	        send_status((char *)STATUS_QUIT);
-	        break;
-        }
+    if (0 == ret) {
+      send_status((char *)STATUS_OK);
+    } else if (-1 == ret) {
+      send_status((char *)STATUS_ERR);
+    } else {
+      send_status((char *)STATUS_QUIT);
+      break;
     }
+  }
 
-    return 0;
+  return 0;
 }

@@ -226,4 +226,3 @@ size_t strspn(const char *str1, const char *str2);
 char *strtok(char *str, const char *delimiters);
 
 #endif /* STRING_H_ */
-

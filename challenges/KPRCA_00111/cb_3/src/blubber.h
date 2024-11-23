@@ -25,28 +25,26 @@
 #include "constants.h"
 #include "vector.h"
 
-class blub
-{
-  public:
-    uint32_t id;
-    uint32_t ts;
-    char username[USERNAME_MAX + 1];
-    char content[BLUB_MAX + 1];
-    blub(char* author, char* content);
+class blub {
+ public:
+  uint32_t id;
+  uint32_t ts;
+  char username[USERNAME_MAX + 1];
+  char content[BLUB_MAX + 1];
+  blub(char* author, char* content);
 };
 
-class blubber
-{
-  public:
-    vector blubs;
-    vector subs;
-    uint32_t last_read;
-    char username[USERNAME_MAX + 1];
+class blubber {
+ public:
+  vector blubs;
+  vector subs;
+  uint32_t last_read;
+  char username[USERNAME_MAX + 1];
 
-    blubber();
-    void set_username(char* username);
-    blub* gen_blub(void);
-    blub* record_blub(char* buf);
-    void subscribe(blubber* b);
-    void unsubscribe(blubber* b);
+  blubber();
+  void set_username(char* username);
+  blub* gen_blub(void);
+  blub* record_blub(char* buf);
+  void subscribe(blubber* b);
+  void unsubscribe(blubber* b);
 };

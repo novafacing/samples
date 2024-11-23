@@ -22,25 +22,19 @@
  */
 #include "vector.h"
 
-vector::vector(int c)
-{
-  if (c == 0)
-  {
+vector::vector(int c) {
+  if (c == 0) {
     cap = 64;
-  }
-  else
-  {
+  } else {
     cap = c;
   }
 
   len = 0;
-  data = (void **)calloc(cap, sizeof(void *));
+  data = (void**)calloc(cap, sizeof(void*));
 }
 
-bool vector::set(int idx, void* datum)
-{
-  if (idx >= len)
-  {
+bool vector::set(int idx, void* datum) {
+  if (idx >= len) {
     return false;
   }
 
@@ -48,15 +42,10 @@ bool vector::set(int idx, void* datum)
   return true;
 }
 
-int vector::length(void)
-{
-  return len;
-}
+int vector::length(void) { return len; }
 
-void vector::remove(int idx)
-{
-  for (int i = idx + 1; i < len; ++i)
-  {
+void vector::remove(int idx) {
+  for (int i = idx + 1; i < len; ++i) {
     data[idx - 1] = data[idx];
   }
 
@@ -64,12 +53,9 @@ void vector::remove(int idx)
   len--;
 }
 
-bool vector::contains(void* e)
-{
-  for (int idx = 0; idx < len; ++idx)
-  {
-    if (get(idx) == e)
-    {
+bool vector::contains(void* e) {
+  for (int idx = 0; idx < len; ++idx) {
+    if (get(idx) == e) {
       return true;
     }
   }
@@ -77,8 +63,7 @@ bool vector::contains(void* e)
   return false;
 }
 
-void* vector::get(int idx)
-{
+void* vector::get(int idx) {
 #ifdef PATCHED_1
   if (idx >= len || idx < 0)
 #else
@@ -91,23 +76,18 @@ void* vector::get(int idx)
   return data[idx];
 }
 
-void vector::add(void* datum)
-{
-  if (len == cap)
-  {
-    data = (void **)realloc(data, cap * 2 * sizeof(void *));
+void vector::add(void* datum) {
+  if (len == cap) {
+    data = (void**)realloc(data, cap * 2 * sizeof(void*));
     cap *= 2;
   }
 
   data[len++] = datum;
 }
 
-int vector::index_of(void* e)
-{
-  for (int idx = 0; idx < len; ++idx)
-  {
-    if (data[idx] == e)
-    {
+int vector::index_of(void* e) {
+  for (int idx = 0; idx < len; ++idx) {
+    if (data[idx] == e) {
       return idx;
     }
   }

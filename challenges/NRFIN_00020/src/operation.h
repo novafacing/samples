@@ -18,14 +18,19 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef OPERATION_H
 #define OPERATION_H 1
 
-#define ALLOC(sz,p) if (SUCCESS != allocate(sz, 0, (void **)p)) {_terminate(ERRNO_ALLOC);}
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
+#define ALLOC(sz, p)                            \
+  if (SUCCESS != allocate(sz, 0, (void **)p)) { \
+    _terminate(ERRNO_ALLOC);                    \
+  }
+#define RECV(v, s)                   \
+  if (s != recv_all((char *)v, s)) { \
+    _terminate(ERR_RECV_FAILED);     \
+  }
 #define SENDSI(v) send((char *)&v, sizeof(int32_t));
 
 // 4096 syllables bytes, assuming 2 bytes per syllable is 2048 syllables
@@ -40,35 +45,35 @@
 
 // notes
 enum {
-	C = 1,
-	D = 2,
-	E = 3,
-	F = 4,
-	G = 5,
-	A = 6,
-	B = 7,
+  C = 1,
+  D = 2,
+  E = 3,
+  F = 4,
+  G = 5,
+  A = 6,
+  B = 7,
 };
 
 // syllables
 enum {
-	Ut = 1,
-	Re = 2,
-	Mi = 3,
-	Fa = 4,
-	Sol = 5,
-	La = 6,
-	Si = 7,
+  Ut = 1,
+  Re = 2,
+  Mi = 3,
+  Fa = 4,
+  Sol = 5,
+  La = 6,
+  Si = 7,
 };
 
 enum {
-	ERR_RECV_FAILED = -900,
-	ERR_INVALID_CMD = -901,
-	ERR_INVALID_NOTE = -902,
-	ERR_INVALID_SYLLABLE = -903,
-	ERR_TOO_MANY_NOTES = -904,
-	ERR_TOO_MANY_SYLLABLES = -905,
-	ERR_NO_NOTES = -906,
-	ERR_NO_SYLLABLES = -907,
+  ERR_RECV_FAILED = -900,
+  ERR_INVALID_CMD = -901,
+  ERR_INVALID_NOTE = -902,
+  ERR_INVALID_SYLLABLE = -903,
+  ERR_TOO_MANY_NOTES = -904,
+  ERR_TOO_MANY_SYLLABLES = -905,
+  ERR_NO_NOTES = -906,
+  ERR_NO_SYLLABLES = -907,
 };
 
 extern int to_syllables(char *syllables_buf, char *notes_buf);

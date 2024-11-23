@@ -23,59 +23,61 @@
  *
  */
 
+#include "movie.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "movie.h"
-
-const char* movie_g2s(enum genre_t genre)
-{
- const char *genre_str = NULL;
-  switch (genre)
-  {
+const char *movie_g2s(enum genre_t genre) {
+  const char *genre_str = NULL;
+  switch (genre) {
     case G_ACTION:
-      genre_str = "Action"; break;
+      genre_str = "Action";
+      break;
     case G_ROMANCE:
-      genre_str = "Romance"; break;
+      genre_str = "Romance";
+      break;
     case G_COMEDY:
-      genre_str = "Comedy"; break;
+      genre_str = "Comedy";
+      break;
     case G_HORROR:
-      genre_str = "Horror"; break;
+      genre_str = "Horror";
+      break;
     default:
-      genre_str = "Other"; break;
+      genre_str = "Other";
+      break;
   }
   return genre_str;
 }
 
-const char* movie_r2s(enum rating_t rating)
-{
+const char *movie_r2s(enum rating_t rating) {
   const char *rating_str = NULL;
-  switch (rating)
-  {
+  switch (rating) {
     case R_G:
-      rating_str = "G"; break;
+      rating_str = "G";
+      break;
     case R_PG:
-      rating_str = "PG"; break;
+      rating_str = "PG";
+      break;
     case R_PG13:
-      rating_str = "PG13"; break;
+      rating_str = "PG13";
+      break;
     case R_R:
-      rating_str = "R"; break;
+      rating_str = "R";
+      break;
     default:
-      rating_str = "Unknown"; break;
+      rating_str = "Unknown";
+      break;
   }
   return rating_str;
 }
 
-int movie_add(movie_list_t *list, movie_t *movie)
-{
-  if (list)
-  {
-    movie_node_t *node = (movie_node_t *) malloc(sizeof(movie_node_t));
-    if (node == NULL)
-      return -1;
+int movie_add(movie_list_t *list, movie_t *movie) {
+  if (list) {
+    movie_node_t *node = (movie_node_t *)malloc(sizeof(movie_node_t));
+    if (node == NULL) return -1;
 
-    if (*list == NULL)
-    {
+    if (*list == NULL) {
       node->movie = movie;
       node->next = NULL;
       *list = node;
@@ -83,15 +85,13 @@ int movie_add(movie_list_t *list, movie_t *movie)
     }
 
     movie_node_t *tmp = movie_find(*list, movie->title);
-    if (tmp)
-    {
+    if (tmp) {
       if (node) free(node);
       return -1;
     }
 
     tmp = *list;
-    while (1)
-    {
+    while (1) {
       if (tmp->next == NULL) break;
       tmp = tmp->next;
     }
@@ -104,28 +104,21 @@ int movie_add(movie_list_t *list, movie_t *movie)
   return -1;
 }
 
-void free_movie(movie_t *movie)
-{
-  if (movie)
-  {
-    if (movie->title)
-      free(movie->title);
-    if (movie->desc)
-      free(movie->desc);
+void free_movie(movie_t *movie) {
+  if (movie) {
+    if (movie->title) free(movie->title);
+    if (movie->desc) free(movie->desc);
     free(movie);
   }
 }
 
-int movie_delete(movie_list_t *list, int id)
-{
-  if (list)
-  {
+int movie_delete(movie_list_t *list, int id) {
+  if (list) {
     movie_node_t *prev = NULL;
     movie_node_t *tmp = *list;
 
     int n = 1;
-    if (tmp && id == 1)
-    {
+    if (tmp && id == 1) {
       *list = tmp->next;
       free(tmp);
       return 0;
@@ -134,11 +127,9 @@ int movie_delete(movie_list_t *list, int id)
     prev = *list;
     tmp = prev->next;
 
-    while (tmp != NULL)
-    {
+    while (tmp != NULL) {
       n++;
-      if (id == n)
-      {
+      if (id == n) {
         prev->next = tmp->next;
         free(tmp);
         break;
@@ -151,38 +142,26 @@ int movie_delete(movie_list_t *list, int id)
   return -1;
 }
 
-int movie_update(movie_t *movie)
-{
-  
-  return 0;
-}
+int movie_update(movie_t *movie) { return 0; }
 
-movie_node_t* movie_find(movie_list_t list, char *title)
-{
-  if (list)
-  {
+movie_node_t *movie_find(movie_list_t list, char *title) {
+  if (list) {
     movie_node_t *cur = list;
-    while (cur != NULL)
-    {
-      if (strcmp(cur->movie->title, title) == 0)
-        return cur;
+    while (cur != NULL) {
+      if (strcmp(cur->movie->title, title) == 0) return cur;
       cur = cur->next;
     }
   }
   return NULL;
 }
 
-movie_node_t* movie_find_by_id(movie_list_t list, int id)
-{
-  if (list)
-  {
+movie_node_t *movie_find_by_id(movie_list_t list, int id) {
+  if (list) {
     int n = 0;
     movie_node_t *cur = list;
-    while (cur != NULL)
-    {
+    while (cur != NULL) {
       n++;
-      if (id == n)
-        return cur;
+      if (id == n) return cur;
       cur = cur->next;
     }
   }

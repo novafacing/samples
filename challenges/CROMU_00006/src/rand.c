@@ -1,7 +1,8 @@
-#include "libc.h"
 #include "rand.h"
+
 #include "charter.h"
 #include "data.h"
+#include "libc.h"
 
 uint32 index = 0;
 uint32 mt[624];
@@ -14,8 +15,7 @@ void seed() {
   index = 0;
   mt[index] = seed_value;
   for (uint32 i = 1; i < 624; i++) {
-    mt[i] = 0xffffffff & (1812433253 * 
-                          (mt[i - 1] ^ (mt[i - 1] >> 30)) + 1);
+    mt[i] = 0xffffffff & (1812433253 * (mt[i - 1] ^ (mt[i - 1] >> 30)) + 1);
   }
 
   seeded = 1;
@@ -38,18 +38,18 @@ void noise() {
 
 void replacer(data_package pack) {
   __block uint32 max = 0;
-  uint32* pd = (uint32*) pack.contents;
-  each(pack, ^(uint32 cur, uint32 datum){
-      if (datum > max) max = datum;
-    });
+  uint32* pd = (uint32*)pack.contents;
+  each(pack, ^(uint32 cur, uint32 datum) {
+    if (datum > max) max = datum;
+  });
 
-  each(pack, ^(uint32 cur, uint32 datum){
-      if (max > 0) {
-        pd[cur] = rand() % max;
-      } else {
-        pd[cur] = 0;
-      }
-    });
+  each(pack, ^(uint32 cur, uint32 datum) {
+    if (max > 0) {
+      pd[cur] = rand() % max;
+    } else {
+      pd[cur] = 0;
+    }
+  });
 }
 
 void generate_numbers();
@@ -72,8 +72,7 @@ uint32 rand() {
 
 void generate_numbers() {
   for (uint32 i = 0; i < 624; i++) {
-    uint32 y = (mt[i] & 0x80000000 +
-         (mt[(i + 1) % 624] & (0x7fffffff)));
+    uint32 y = (mt[i] & 0x80000000 + (mt[(i + 1) % 624] & (0x7fffffff)));
     mt[i] = mt[(i + 397) % 624] ^ (y >> 1);
     if (y % 2 == 1) mt[i] = mt[i] ^ 0x9908b0df;
   }

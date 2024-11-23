@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #define MAX_AUTH_TYPE_SIZE 10
 #define MAX_UINT_STR_SIZE 12
@@ -26,7 +26,7 @@
 
 #define QUIT_CMD "quit"
 
-#define UP_AUTH_TYPE  "UserPass"
+#define UP_AUTH_TYPE "UserPass"
 
 #define COMMAND_HDR "Command"
 #define RESPONSE_HDR "Response"
@@ -39,23 +39,23 @@
 #define RESPONSE_ERR_NO_MESSAGE "Invalid Message"
 
 typedef struct {
- 	int a;
-  	void (* callback)(int, char*, unsigned int*);
- 	char* name;
-   	void* next;
+  int a;
+  void (*callback)(int, char*, unsigned int*);
+  char* name;
+  void* next;
 } Service;
 
 typedef struct {
-	char* command;
-	char auth[MAX_AUTH_TYPE_SIZE];
-	int id;
-	void* credential;
-	char* body;
+  char* command;
+  char auth[MAX_AUTH_TYPE_SIZE];
+  int id;
+  void* credential;
+  char* body;
 } Message;
 
 typedef struct {
-	char* username;
-	char* password;
+  char* username;
+  char* password;
 } UserPass;
 
-unsigned int expiration_date=0;
+unsigned int expiration_date = 0;

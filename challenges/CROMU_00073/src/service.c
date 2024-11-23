@@ -25,11 +25,12 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "types.h"
+
+#include "handler.h"
+#include "messages.h"
 #include "monte.h"
 #include "protocol.h"
-#include "messages.h"
-#include "handler.h"
+#include "types.h"
 
 void say_hello();
 
@@ -42,7 +43,7 @@ int main(void) {
 
   run_loop();
 
-  return -1; // should never reach
+  return -1;  // should never reach
 }
 
 void say_hello() {
@@ -51,7 +52,7 @@ void say_hello() {
 
   hello_resp.id = HELLO_ID;
   hello_resp.length = HELLO_EXPECTED_LENGTH;
-  hello_resp.value = (void*) &hello_resp_contents;
+  hello_resp.value = (void*)&hello_resp_contents;
 
   hello_resp_contents.pos0 = monte_gen();
 

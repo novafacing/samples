@@ -28,19 +28,18 @@ THE SOFTWARE.
 
 #include "simulation.h"
 
-typedef struct _RENDER_GRID_DATA
-{
-    double bounds_x, bounds_y;
+typedef struct _RENDER_GRID_DATA {
+  double bounds_x, bounds_y;
 
-    uint32_t particles_in_grid;
+  uint32_t particles_in_grid;
 } tRenderGrid;
 
-#define RENDER_GRID_X_SIZE      (20)
-#define RENDER_GRID_Y_SIZE      (20)
+#define RENDER_GRID_X_SIZE (20)
+#define RENDER_GRID_Y_SIZE (20)
 
-void init_render_grid( void );
-void clear_render_grid( void );
-void add_render_grid( tParticleData *pItem );
-void display_render_grid( void );
+void init_render_grid(void);
+void clear_render_grid(void);
+void add_render_grid(tParticleData *pItem);
+void display_render_grid(void);
 
-#endif // __RENDER_H__
+#endif  // __RENDER_H__

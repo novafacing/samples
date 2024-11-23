@@ -18,34 +18,34 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef TANK_H
 #define TANK_H 1
 
 #include <stdint.h>
+
 #include "h2o.h"
 
 enum {
-	/* Valve positions */
-	CLOSED = 0,
-	OPEN = 1,
-	/* Status values */
-	IN_SERVICE = 2,
-	OUT_OF_SERVICE = 6,
+  /* Valve positions */
+  CLOSED = 0,
+  OPEN = 1,
+  /* Status values */
+  IN_SERVICE = 2,
+  OUT_OF_SERVICE = 6,
 };
 
 struct tank {
-	uint8_t id;				// ID number of tank
-	uint8_t fill_rate; 		// amt of h2o added per round
-	uint8_t drain_rate; 	// amt of h2o drained per round
-	uint8_t valve_position; // position of valve
-	uint8_t capacity; 		// qty of h2o tank can hold
-	uint8_t level; 			// qty of h2o in tank
-	uint8_t status; 		// status of tank
-	uint8_t eol; 			// make struct into even mult of 4 bytes
-	struct h2o *contents[];	// array of h2o ptrs
+  uint8_t id;              // ID number of tank
+  uint8_t fill_rate;       // amt of h2o added per round
+  uint8_t drain_rate;      // amt of h2o drained per round
+  uint8_t valve_position;  // position of valve
+  uint8_t capacity;        // qty of h2o tank can hold
+  uint8_t level;           // qty of h2o in tank
+  uint8_t status;          // status of tank
+  uint8_t eol;             // make struct into even mult of 4 bytes
+  struct h2o *contents[];  // array of h2o ptrs
 };
 
 /**
@@ -126,8 +126,8 @@ extern int set_out_of_service(struct tank *t);
 extern int is_in_service(struct tank *t);
 
 /**
- * Set the tank to as having reached end-of-life. Close and disallow input and output.
- * It cannot be undone.
+ * Set the tank to as having reached end-of-life. Close and disallow input and
+ * output. It cannot be undone.
  *
  * @param t Tank
  * @return SUCCESS or ERR_UNINITIALIZED_TANK, ERR_END_OF_LIFE on error
@@ -181,7 +181,7 @@ extern int do_drain(struct tank *t);
  * Check tank level to against low level marker.
  *
  * @param t Tank
- * @return TRUE if at or below low level, FALSE if 
+ * @return TRUE if at or below low level, FALSE if
  *	above low level or ERR_UNINITIALIZED_TANK, ERR_END_OF_LIFE on error.
  */
 extern int is_level_low(struct tank *t);
@@ -190,8 +190,9 @@ extern int is_level_low(struct tank *t);
  * Check tank level to against critically low level marker.
  *
  * @param t Tank
- * @return TRUE if at or below critical low level, FALSE if 
- *	above critical low level or ERR_UNINITIALIZED_TANK, ERR_END_OF_LIFE on error.
+ * @return TRUE if at or below critical low level, FALSE if
+ *	above critical low level or ERR_UNINITIALIZED_TANK, ERR_END_OF_LIFE on
+ *error.
  */
 extern int is_level_crit_low(struct tank *t);
 

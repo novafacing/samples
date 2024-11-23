@@ -24,11 +24,13 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "handler.h"
-#include "protocol.h"
+
+#include <libcgc.h>
+
 #include "messages.h"
 #include "monte.h"
+#include "protocol.h"
 
 void handle_unrecognized_id(uint8 id);
 void handle_check(protocol_frame* rq);
@@ -37,8 +39,8 @@ void handle_double(protocol_frame* frame);
 
 void run_loop() {
   while (1) {
-    protocol_with_recv_frame(^uint8 (protocol_frame* frame) {
-        switch (frame->id) {
+    protocol_with_recv_frame(^uint8(protocol_frame* frame) {
+      switch (frame->id) {
         case TERMINATE_ID:
           _terminate(0);
           break;
@@ -54,10 +56,10 @@ void run_loop() {
         default:
           handle_unrecognized_id(frame->id);
           return 0;
-        };
+      };
 
-        return 1;
-      });
+      return 1;
+    });
   }
 }
 
@@ -73,7 +75,7 @@ void handle_unrecognized_id(uint8 id) {
 }
 
 void handle_check(protocol_frame* frame) {
-  check_req_contents *rq = extract_check_req(frame);
+  check_req_contents* rq = extract_check_req(frame);
 
   float64 splatter = rq->pos0;
   float64 scaler = rq->pos1;
@@ -108,8 +110,7 @@ void bufcpy(uint8 len, char* in, char* out) {
   }
 }
 
-void double_body(protocol_frame* frame,
-                 char* output_buf_addr,
+void double_body(protocol_frame* frame, char* output_buf_addr,
                  uint8 output_buf_len) {
   protocol_frame f;
   uint16 input_buf_len = frame->length;
@@ -133,14 +134,13 @@ void double_body(protocol_frame* frame,
   bufcpy(input_buf_len, input_buf, output_buf_addr);
 
   protocol_send(&f);
-
 }
 
 void handle_double(protocol_frame* frame) {
   uint8 intermediate_len = monte_happy() * 2;
   uint8 output_buf_len = intermediate_len - (intermediate_len % 8);
   char output_buf[output_buf_len];
-  char* output_buf_addr = (char*) &output_buf;
+  char* output_buf_addr = (char*)&output_buf;
 
   double_body(frame, output_buf_addr, output_buf_len);
 }

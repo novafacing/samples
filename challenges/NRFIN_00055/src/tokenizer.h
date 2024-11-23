@@ -26,26 +26,26 @@
 #include <libcgc.h>
 
 enum token_type {
-    TOK_CONSTANT,
-    TOK_VARIABLE,
-    TOK_ASSIGNMENT,
-    TOK_ADD,
-    TOK_SUBTRACT,
-    TOK_MULTIPLY,
-    TOK_DIVIDE,
-    TOK_NEGATE,
-    TOK_ADDRESS_OF,
-    TOK_DEREFERENCE,
-    TOK_LEFT_PARENTHESIS,
-    TOK_RIGHT_PARENTHESIS
+  TOK_CONSTANT,
+  TOK_VARIABLE,
+  TOK_ASSIGNMENT,
+  TOK_ADD,
+  TOK_SUBTRACT,
+  TOK_MULTIPLY,
+  TOK_DIVIDE,
+  TOK_NEGATE,
+  TOK_ADDRESS_OF,
+  TOK_DEREFERENCE,
+  TOK_LEFT_PARENTHESIS,
+  TOK_RIGHT_PARENTHESIS
 };
 
 struct token {
-    enum token_type type;
-    union {
-        char s[4];
-        int i;
-    } val;
+  enum token_type type;
+  union {
+    char s[4];
+    int i;
+  } val;
 };
 
 /**
@@ -60,4 +60,3 @@ struct token {
 ssize_t tokenize(char *str, struct token *token);
 
 #endif /* TOKENIZER_H_ */
-

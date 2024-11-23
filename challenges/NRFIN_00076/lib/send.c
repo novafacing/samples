@@ -18,15 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "send.h"
+
 #include "sendall.h"
 
 int send(const char *buf, const size_t size) {
-    if(sendall(STDOUT, buf, size)) {
-        _terminate(ERRNO_SEND);
-    }
+  if (sendall(STDOUT, buf, size)) {
+    _terminate(ERRNO_SEND);
+  }
 
-    return SUCCESS;
+  return SUCCESS;
 }

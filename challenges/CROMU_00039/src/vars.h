@@ -28,11 +28,11 @@ THE SOFTWARE.
 #define MAX_VALUE_LEN (128)
 
 typedef struct _vars {
-	char name[MAX_NAME_LEN];
-	uint8_t type;
-	unsigned char value[MAX_VALUE_LEN];
-	struct _vars *prev;
-	struct _vars *next;
+  char name[MAX_NAME_LEN];
+  uint8_t type;
+  unsigned char value[MAX_VALUE_LEN];
+  struct _vars *prev;
+  struct _vars *next;
 } vars_t;
 
 #define STRING (1)

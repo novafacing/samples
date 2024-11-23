@@ -25,8 +25,8 @@ THE SOFTWARE.
 */
 
 #pragma once
-#include "types.h"
 #include "lexer.h"
+#include "types.h"
 
 typedef enum operation_type_enum {
   OP_NOP = 0,

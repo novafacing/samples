@@ -18,35 +18,34 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
 #include "libc.h"
 #include "mail.h"
 
-static const char STATUS_OK[2] 		= {'\x04','\x04'};
-static const char STATUS_ERR[2] 	= {'\x1E','\x44'};
-static const char STATUS_QUIT[2]	= {'\x04','\x17'};
-
+static const char STATUS_OK[2] = {'\x04', '\x04'};
+static const char STATUS_ERR[2] = {'\x1E', '\x44'};
+static const char STATUS_QUIT[2] = {'\x04', '\x17'};
 
 int main(void) {
+  short ret = 0;
 
-    short ret = 0;
+  setup();
 
-    setup();
+  while (TRUE) {
+    ret = process_cmd();
 
-    while (TRUE) {
-        ret = process_cmd();
-
-        if (0 == ret) {
-        	send_status((char *)STATUS_OK);
-        } else if (-1 == ret) {
-        	send_status((char *)STATUS_ERR);
-        } else {
-	        send_status((char *)STATUS_QUIT);
-	        break;
-        }
+    if (0 == ret) {
+      send_status((char *)STATUS_OK);
+    } else if (-1 == ret) {
+      send_status((char *)STATUS_ERR);
+    } else {
+      send_status((char *)STATUS_QUIT);
+      break;
     }
+  }
 
-    return 0;
+  return 0;
 }

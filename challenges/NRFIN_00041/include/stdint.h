@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STDINT_H
 #define STDINT_H 1
@@ -30,10 +30,9 @@ typedef unsigned short uint16_t;
 typedef signed char int8_t;
 typedef unsigned char uint8_t;
 typedef enum {
-	FALSE = 0,
-	TRUE = 1,
+  FALSE = 0,
+  TRUE = 1,
 } bool_t;
-
 
 #define SUCCESS 0
 

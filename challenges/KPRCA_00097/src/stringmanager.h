@@ -28,11 +28,11 @@
 class String;
 class StringManager;
 
-class StringManager : public Singleton<StringManager>
-{
-public:
-    StringManager();
-    const String *intern(const char *str);
-private:
-    HashMap<const char *, String *, CStringComparator> d_intern_map;
+class StringManager : public Singleton<StringManager> {
+ public:
+  StringManager();
+  const String *intern(const char *str);
+
+ private:
+  HashMap<const char *, String *, CStringComparator> d_intern_map;
 };

@@ -25,70 +25,68 @@
 
 #include <cstdint.h>
 
-#include "req.h"
-#include "reward.h"
 #include "explorer.h"
 #include "list.h"
+#include "req.h"
+#include "reward.h"
 
-class CMissionEstimate
-{
-    friend class CMission;
+class CMissionEstimate {
+  friend class CMission;
 
-    public:
-        CMissionEstimate() {};
-        ~CMissionEstimate() {};
+ public:
+  CMissionEstimate() {};
+  ~CMissionEstimate() {};
 
-        int GetSuccessRate() { return m_successRate; }
-        int GetGroupNeeded() { return m_groupNeeded; }
-        int GetGroupSupplied() { return m_groupSupplied; }
-        CRequirement::Type GetMissingTypes() { return m_missing; }
+  int GetSuccessRate() { return m_successRate; }
+  int GetGroupNeeded() { return m_groupNeeded; }
+  int GetGroupSupplied() { return m_groupSupplied; }
+  CRequirement::Type GetMissingTypes() { return m_missing; }
 
-    private:
-        int m_successRate;
-        CRequirement::Type m_missing;
-        int m_groupNeeded;
-        int m_groupSupplied;
+ private:
+  int m_successRate;
+  CRequirement::Type m_missing;
+  int m_groupNeeded;
+  int m_groupSupplied;
 };
 
-class CMission
-{
-    public:
-        CMission(const char *name, const CRequirement &req, const CReward &reward);
-        ~CMission();
+class CMission {
+ public:
+  CMission(const char *name, const CRequirement &req, const CReward &reward);
+  ~CMission();
 
-        void SetRequirement(const CRequirement &req);
-        CRequirement& GetRequirement();
-        void SetReward(const CReward &reward);
-        CReward& GetReward();
-        CList<CExplorer *>* GetExplorers() { return m_exps; }
-        bool IsAvail();
-        int GetSuccessRate() { return m_successRate; }
-        void SetSuccessRate(int sr) { m_successRate = sr; }
+  void SetRequirement(const CRequirement &req);
+  CRequirement &GetRequirement();
+  void SetReward(const CReward &reward);
+  CReward &GetReward();
+  CList<CExplorer *> *GetExplorers() { return m_exps; }
+  bool IsAvail();
+  int GetSuccessRate() { return m_successRate; }
+  void SetSuccessRate(int sr) { m_successRate = sr; }
 
-        const char* GetName();
-        int GetReqLevel();
-        int GetReqGroup();
-        int GetReqSupply();
-        int GetDuration();
-        void SubDuration(int n) { m_req.m_duration -= n; }
-        char* GetReqTypeString();
+  const char *GetName();
+  int GetReqLevel();
+  int GetReqGroup();
+  int GetReqSupply();
+  int GetDuration();
+  void SubDuration(int n) { m_req.m_duration -= n; }
+  char *GetReqTypeString();
 
-        int GetRewardExp() { return m_reward.m_exp; }
-        int GetRewardSupply() { return m_reward.m_supply; }
+  int GetRewardExp() { return m_reward.m_exp; }
+  int GetRewardSupply() { return m_reward.m_supply; }
 
-        void Execute(const CList<CExplorer *> &explorers);
-        CMissionEstimate* Check(const CList<CExplorer *> &explorers);
-        bool Complete();
+  void Execute(const CList<CExplorer *> &explorers);
+  CMissionEstimate *Check(const CList<CExplorer *> &explorers);
+  bool Complete();
 
-    private:
-        CRequirement::Type EvalCounters(const CList<CExplorer *> &exps);
+ private:
+  CRequirement::Type EvalCounters(const CList<CExplorer *> &exps);
 
-        static const int k_maxNameLength = 32;
+  static const int k_maxNameLength = 32;
 
-        char *m_name;
-        CRequirement m_req;
-        CReward m_reward;
-        bool m_avail;
-        int m_successRate;
-        CList<CExplorer *> *m_exps;
+  char *m_name;
+  CRequirement m_req;
+  CReward m_reward;
+  bool m_avail;
+  int m_successRate;
+  CList<CExplorer *> *m_exps;
 };

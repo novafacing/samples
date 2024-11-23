@@ -27,17 +27,18 @@ THE SOFTWARE.
 #define SERVICE_H
 
 #include <libcgc.h>
+
 #include "linkedlist.h"
 #include "stdint.h"
 
-#define QUERY_ALL     0x01
-#define QUERY_SERVER  0x02
-#define QUERY_ONE     0x03
-#define QUERY_ADMIN   0x04
+#define QUERY_ALL 0x01
+#define QUERY_SERVER 0x02
+#define QUERY_ONE 0x03
+#define QUERY_ADMIN 0x04
 
-#define RESPONSE      0x05
+#define RESPONSE 0x05
 
-#define LIST_SERVER   0x01
+#define LIST_SERVER 0x01
 #define LIST_INSTANCE 0x02
 
 typedef struct query_s {
@@ -59,11 +60,11 @@ typedef struct serverInfo_s {
 typedef struct instanceInfo_s {
   char *name;
   serverInfo *server;
-  int   port;
-  int   adminPortOffset;
-  int   isClustered;
-  char  *versionString;
-  char  *optionString;
+  int port;
+  int adminPortOffset;
+  int isClustered;
+  char *versionString;
+  char *optionString;
 } instanceInfo;
 
 extern linkedList *serverList;

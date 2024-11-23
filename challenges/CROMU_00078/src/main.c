@@ -24,32 +24,33 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include <stdio.h>
-#include <malloc.h>
 #include <input.h>
+#include <libcgc.h>
+#include <malloc.h>
+#include <stdio.h>
+
 #include "3dc.h"
 #include "compress.h"
 
 enum {
-  NO_FUNC,        // 0x00
-  NEW_FILE,       // 0x01
-  CHECK_FILE,     // 0x02
-  SKEW_IMAGE,     // 0x03
-  ROTATE_IMAGE,   // 0x04
-  BRIGHTNESS,     // 0x05
-  OPACITY,        // 0x06
-  COMPRESS,       // 0x07
-  DECOMPRESS,     // 0x08
-  SHOW_PIXEL,     // 0x09
-  SCALE_IMAGE,    // 0x0a
-  EXIT            // 0x0b
+  NO_FUNC,       // 0x00
+  NEW_FILE,      // 0x01
+  CHECK_FILE,    // 0x02
+  SKEW_IMAGE,    // 0x03
+  ROTATE_IMAGE,  // 0x04
+  BRIGHTNESS,    // 0x05
+  OPACITY,       // 0x06
+  COMPRESS,      // 0x07
+  DECOMPRESS,    // 0x08
+  SHOW_PIXEL,    // 0x09
+  SCALE_IMAGE,   // 0x0a
+  EXIT           // 0x0b
 } menuSelections;
 
 enum {
-  X,              // 0x00
-  Y,              // 0x01
-  Z               // 0x02
+  X,  // 0x00
+  Y,  // 0x01
+  Z   // 0x02
 } coords;
 
 void menu() {
@@ -73,35 +74,32 @@ void menu() {
 
   uint16_t pixelCount = MAGIC_PAGE_SIZE / sizeof(t3DCPixel);
 
-  t3DCPixel **px_list = malloc(pixelCount * sizeof(t3DCPixel*));
-  memset(px_list, 0, pixelCount * sizeof(t3DCPixel*));
+  t3DCPixel **px_list = malloc(pixelCount * sizeof(t3DCPixel *));
+  memset(px_list, 0, pixelCount * sizeof(t3DCPixel *));
 
   ReadFile(px_list);
 
-  while(choice) {
+  while (choice) {
     receive_bytes(&choice, 1);
 
-    switch(choice) {
-      case NEW_FILE:
-      {
+    switch (choice) {
+      case NEW_FILE: {
         printf("NEW_FILE selected\n");
         memset(new_init, 0, 4096);
         NewFile(px_list, new_init);
         break;
       }
-      case CHECK_FILE:
-      {
+      case CHECK_FILE: {
         printf("CHECK_FILE selected\n");
         CheckFile(px_list, MAX_PIXELS);
         break;
       }
-      case SKEW_IMAGE:
-      {
+      case SKEW_IMAGE: {
         printf("SKEW_IMAGE selected\n");
         receive_bytes(&coord, 1);
-        receive_bytes((char*)&val, 2);
+        receive_bytes((char *)&val, 2);
 
-        switch(coord) {
+        switch (coord) {
           case X:
             RunTask(px_list, SkewX, val);
             break;
@@ -117,12 +115,11 @@ void menu() {
         }
         break;
       }
-      case ROTATE_IMAGE:
-      {
+      case ROTATE_IMAGE: {
         printf("ROTATE_IMAGE selected\n");
         receive_bytes(&coord, 1);
-        receive_bytes((char*)&val, 2);
-        switch(coord) {
+        receive_bytes((char *)&val, 2);
+        switch (coord) {
           case X:
             RunTask(px_list, RotateX, val);
             break;
@@ -138,38 +135,33 @@ void menu() {
         }
         break;
       }
-      case SCALE_IMAGE:
-      {
+      case SCALE_IMAGE: {
         printf("SCALE_IMAGE selected\n");
-        receive_bytes((char*)&val, 2);
+        receive_bytes((char *)&val, 2);
         RunTask(px_list, Scale, (int16_t)val);
         break;
       }
-      case BRIGHTNESS:
-      {
+      case BRIGHTNESS: {
         printf("BRIGHTNESS selected\n");
-        receive_bytes((char*)&val, 2);
+        receive_bytes((char *)&val, 2);
         RunTask(px_list, Brightness, (int16_t)val);
         break;
       }
-      case OPACITY:
-      {
+      case OPACITY: {
         printf("OPACITY selected\n");
-        receive_bytes((char*)&val, 1);
+        receive_bytes((char *)&val, 1);
         RunTask(px_list, Opacity, val);
         break;
       }
-      case COMPRESS:
-      {
+      case COMPRESS: {
         printf("COMPRESS selected\n");
         Compress(px_list, in_data, &compress_len);
         decompress_flag = 0;
         break;
       }
-      case DECOMPRESS:
-      {
+      case DECOMPRESS: {
         printf("DECOMPRESS selected\n");
-        if(compress_len == 0) {
+        if (compress_len == 0) {
           printf("No compressed data.\n");
           break;
         } else if (decompress_flag) {
@@ -185,14 +177,12 @@ void menu() {
         decompress_flag = 1;
         break;
       }
-      case SHOW_PIXEL:
-      {
+      case SHOW_PIXEL: {
         printf("SHOW_PIXEL selected\n");
         printf("Select the pixel to view:\n");
-        receive_bytes((char*)&val, 2);
+        receive_bytes((char *)&val, 2);
 
         if (val < pixelCount && val >= 0) {
-
           t3DCPixel *tmp = malloc(sizeof(t3DCPixel));
           memcpy(tmp, px_list[val], sizeof(t3DCPixel));
           ShowPixel(tmp);
@@ -200,7 +190,6 @@ void menu() {
           free(tmp);
 
         } else if (last_shown != NULL) {
-
           printf("Out of range. Showing last displayed pixel.\n");
           ShowPixel(last_shown);
 
@@ -210,15 +199,13 @@ void menu() {
 
         break;
       }
-      case EXIT:
-      {
+      case EXIT: {
         printf("EXIT selected\n");
         choice = 0;
         free(px_list);
         return;
       }
-      default:
-      {
+      default: {
         printf("UNKNOWN command\n");
         choice = 0;
         free(px_list);
@@ -230,10 +217,9 @@ void menu() {
 }
 
 int main(void) {
+  printf("3D Coordinates (3DC) Image File Format Tools\n");
 
-    printf("3D Coordinates (3DC) Image File Format Tools\n");
+  menu();
 
-    menu();
-
-    return 0;
+  return 0;
 }

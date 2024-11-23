@@ -18,42 +18,41 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+#include "order.h"
+
 #include <libcgc.h>
 #include <stdint.h>
 
-#include "order.h"
-
 Order *pop_order_from_list(Order **o_list) {
-	if (NULL == *o_list) return NULL;
+  if (NULL == *o_list) return NULL;
 
-	Order *o = *o_list;
-	*o_list = (Order *)o->next;
+  Order *o = *o_list;
+  *o_list = (Order *)o->next;
 
-	return o;
+  return o;
 }
 
 void append_order_to_list(Order **o_list, Order *o) {
-	Order *cur = *o_list;
-	o->next = NULL;
+  Order *cur = *o_list;
+  o->next = NULL;
 
-	if (NULL == cur) {
-		*o_list = o;
-	} else {
-		for (; NULL != cur->next; cur=(Order *)cur->next);
+  if (NULL == cur) {
+    *o_list = o;
+  } else {
+    for (; NULL != cur->next; cur = (Order *)cur->next);
 
-		cur->next = o;
-	}
+    cur->next = o;
+  }
 }
 
 unsigned char get_order_list_size(Order *o_list) {
-	Order *cur = o_list;
-	unsigned char count = 0;
+  Order *cur = o_list;
+  unsigned char count = 0;
 
-	while (NULL != cur) {
-		cur=(Order *)cur->next;
-		count++;
-	}
-	return count;
+  while (NULL != cur) {
+    cur = (Order *)cur->next;
+    count++;
+  }
+  return count;
 }
-

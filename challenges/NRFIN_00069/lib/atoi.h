@@ -18,23 +18,23 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /**
-* Is the int c an ascii digit
-*
-* digit: '0' - '9'
-* 
-* @param c int to test
-* @return 1 if yes, 0 if no
-*/
+ * Is the int c an ascii digit
+ *
+ * digit: '0' - '9'
+ *
+ * @param c int to test
+ * @return 1 if yes, 0 if no
+ */
 int isdigit(int c);
 
 /**
-* Convert the string representation of a number to an integer
-* Note: Function will overflow if string represents a number larger an int
-*
-* @param str The string to convert
-* @return an int containing the value represented in str
-*/
+ * Convert the string representation of a number to an integer
+ * Note: Function will overflow if string represents a number larger an int
+ *
+ * @param str The string to convert
+ * @return an int containing the value represented in str
+ */
 int atoi(char* str);

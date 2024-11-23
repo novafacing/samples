@@ -18,11 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STREQ_H
 #define STREQ_H 1
-
 
 /**
  * Compares two strings for equal contents and length.
@@ -33,6 +32,5 @@
  * @return 0 if equal, -1 if not
  */
 int streq(const char* str1, const char* str2, const char term);
-
 
 #endif

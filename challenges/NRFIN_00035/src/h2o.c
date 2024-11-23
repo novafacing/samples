@@ -18,23 +18,21 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-#include <libcgc.h>
-#include "libc.h"
-#include "common.h"
 #include "h2o.h"
 
+#include <libcgc.h>
+
+#include "common.h"
+#include "libc.h"
 
 struct h2o *create_h2o() {
-	struct h2o *new = malloc(sizeof(struct h2o));
-	new->H2O[0] = 'H';
-	new->H2O[1] = 'H';
-	new->H2O[2] = 'O';
-	return new;
+  struct h2o *new = malloc(sizeof(struct h2o));
+  new->H2O[0] = 'H';
+  new->H2O[1] = 'H';
+  new->H2O[2] = 'O';
+  return new;
 }
 
-void destroy_h2o(struct h2o *h) {
-	free(h);
-}
-
+void destroy_h2o(struct h2o *h) { free(h); }

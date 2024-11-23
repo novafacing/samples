@@ -18,15 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "prng.h"
 
 #include "libc.h"
-#include "prng.h"
 
 static bool initialized;
 static uint32_t last;
 
-#define FPSIZE (PAGE_SIZE/sizeof(uint32_t))
+#define FPSIZE (PAGE_SIZE / sizeof(uint32_t))
 
 /**
  * Return a random integer
@@ -34,17 +35,18 @@ static uint32_t last;
  * @return A random integer
  */
 uint32_t randint() {
-    uint32_t *src = (uint32_t*)FLAG_PAGE;
+  uint32_t *src = (uint32_t *)FLAG_PAGE;
 
-    if (!initialized) {
-        last = *src;
-        initialized = true;
-    }
+  if (!initialized) {
+    last = *src;
+    initialized = true;
+  }
 
-    //can this be broken? guess we'll find out :)
-    last ^= src[(src[last%FPSIZE]) % FPSIZE]  ^ src[(last*src[last % FPSIZE]) % FPSIZE];
+  // can this be broken? guess we'll find out :)
+  last ^= src[(src[last % FPSIZE]) % FPSIZE] ^
+          src[(last * src[last % FPSIZE]) % FPSIZE];
 
-    return last;
+  return last;
 }
 
 /**
@@ -54,19 +56,17 @@ uint32_t randint() {
  * @param s Number of bytes to copy in
  * @param out Place to store number of bytes copied
  *
- * @return 0, always succeeds 
+ * @return 0, always succeeds
  */
 uint32_t rand(void *buf, size_t s, size_t *out) {
-    size_t i;
-    uint8_t *b = (uint8_t *) buf;
+  size_t i;
+  uint8_t *b = (uint8_t *)buf;
 
+  for (i = 0; i < s; i++) {
+    b[i] = randint();  // just truncate
+  }
 
-    for (i = 0; i < s; i++) {
-        b[i] = randint(); //just truncate
-    }
+  if (out) *out = i;
 
-    if (out)
-        *out = i;
-
-    return 0;
+  return 0;
 }

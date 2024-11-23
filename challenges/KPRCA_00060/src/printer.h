@@ -24,52 +24,42 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
-#define NUM_MAX_JOBS    1000
+#define NUM_MAX_JOBS 1000
 
-enum pstate_t {
-    PS_IDLE,
-    PS_QUEUED,
-    PS_RECEIVING,
-    PS_PRINTING
-};
+enum pstate_t { PS_IDLE, PS_QUEUED, PS_RECEIVING, PS_PRINTING };
 
-enum jstate_t {
-    JS_INVALID,
-    JS_WAITING,
-    JS_QUEUED,
-    JS_PRINTING
-};
+enum jstate_t { JS_INVALID, JS_WAITING, JS_QUEUED, JS_PRINTING };
 
 typedef struct job {
-    enum jstate_t state;
-    char *data;
-    unsigned int data_len;
-    unsigned int ticks;
+  enum jstate_t state;
+  char *data;
+  unsigned int data_len;
+  unsigned int ticks;
 
-    /* Configuration */
-    char cls[32];
-    char host[32];
-    unsigned int indent;
-    char name[100];
-    char banner_flag;
-    char banner_user[32];
-    char owner[32];
-    char mail_flag;
-    char mail_user[32];
-    char source[131];
-    unsigned int device_num;
-    unsigned int inode_num;
-    char title[80];
-    unsigned int width;
-    char format;
+  /* Configuration */
+  char cls[32];
+  char host[32];
+  unsigned int indent;
+  char name[100];
+  char banner_flag;
+  char banner_user[32];
+  char owner[32];
+  char mail_flag;
+  char mail_user[32];
+  char source[131];
+  unsigned int device_num;
+  unsigned int inode_num;
+  char title[80];
+  unsigned int width;
+  char format;
 } job_t;
 
 typedef struct printer {
-    enum pstate_t state;
-    char queue[256];
-    job_t jobs[NUM_MAX_JOBS];
-    void (*tick_func) (struct printer *);
-    struct printer *self;
+  enum pstate_t state;
+  char queue[256];
+  job_t jobs[NUM_MAX_JOBS];
+  void (*tick_func)(struct printer *);
+  struct printer *self;
 } printer_t;
 
 int cmd_print_jobs(printer_t *printer);
@@ -83,6 +73,6 @@ int cmd_remove_jobs(printer_t *printer, char *agent, unsigned int job_id);
 void printer_tick(printer_t *printer);
 
 void print_ws(int n);
-char* jstate_str(enum jstate_t s);
+char *jstate_str(enum jstate_t s);
 
 #endif

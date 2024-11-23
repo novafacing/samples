@@ -23,35 +23,34 @@
 #ifndef BRC_PACKET_H_
 #define BRC_PACKET_H_
 #include <stdio.h>
+
 #include "brc_protocol.h"
 
 class BrcPacket {
-  public:
-    BrcPacket(FILE *fd_in, FILE *fd_out);
-    ~BrcPacket();
+ public:
+  BrcPacket(FILE *fd_in, FILE *fd_out);
+  ~BrcPacket();
 
-    int Recv();
-    int Send() const;
-    bool SetPacket(BrcProtocol *brc_msg);
-    const BrcProtocol *GetProtocol() const;
-    void ClearPacket();
-    const unsigned short protocol_id() const;
-    void DebugPrintPacket() const;
+  int Recv();
+  int Send() const;
+  bool SetPacket(BrcProtocol *brc_msg);
+  const BrcProtocol *GetProtocol() const;
+  void ClearPacket();
+  const unsigned short protocol_id() const;
+  void DebugPrintPacket() const;
 
-  private:
-    bool IsValidProtocolId() const;
-    bool IsValidPacket() const;
-    unsigned int CalcChecksum() const;
-    BrcProtocol *MatchRecvdProtocol() const;
+ private:
+  bool IsValidProtocolId() const;
+  bool IsValidPacket() const;
+  unsigned int CalcChecksum() const;
+  BrcProtocol *MatchRecvdProtocol() const;
 
-    FILE *fd_in_;
-    FILE *fd_out_;
-    unsigned short protocol_id_;
-    unsigned short length_;
-    BrcProtocol *brc_msg_;
-    unsigned int checksum_;
+  FILE *fd_in_;
+  FILE *fd_out_;
+  unsigned short protocol_id_;
+  unsigned short length_;
+  BrcProtocol *brc_msg_;
+  unsigned int checksum_;
 };
 
 #endif /* BRC_PACKET_H_ */
-
-

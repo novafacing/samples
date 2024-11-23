@@ -25,61 +25,55 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 
+#include "service.h"
+#include "stdlib.h"
 
 void print_type(unsigned short type) {
+  switch (type) {
+    case 1:
 
+      printf("BYTE");
+      break;
 
-	switch (type) {
+    case 2:
 
+      printf("ASCII");
+      break;
 
-		case 1:
+    case 3:
 
-			printf("BYTE");
-			break;
+      printf("SHORT");
+      break;
 
-		case 2:
+    case 4:
 
-			printf("ASCII");
-			break;
+      printf("LONG");
+      break;
 
-		case 3:
+    case 5:
 
-			printf("SHORT");
-			break;
+      printf("RATIONAL");
+      break;
 
-		case 4:
+    case 7:
 
-			printf("LONG");
-			break;
+      printf("UNDEFINED");
+      break;
 
-		case 5:
+    case 9:
 
-			printf("RATIONAL");
-			break;
+      printf("SLONG");
+      break;
 
-		case 7:
+    case 10:
 
-			printf("UNDEFINED");
-			break;
+      printf("SRATIONAL");
+      break;
 
-		case 9:
+    default:
 
-			printf("SLONG");
-			break;
+      printf("UNKNOWN");
 
-		case 10:
-
-			printf("SRATIONAL");
-			break;
-
-		default:
-
-			printf("UNKNOWN");
-
-
-	}  // switch
+  }  // switch
 }
-

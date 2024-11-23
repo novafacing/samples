@@ -24,40 +24,37 @@
 #define SUCCESS 0
 #define LOW_BALANCE 1
 #define INVALID_PRICE 2
-#define SONG_SIZE RESULT_VALUE_SIZE*5
-#define REQUEST_SIZE RESULT_VALUE_SIZE*2 + MAX_LIMIT
+#define SONG_SIZE RESULT_VALUE_SIZE * 5
+#define REQUEST_SIZE RESULT_VALUE_SIZE * 2 + MAX_LIMIT
 #define INVALID_PRICE_MSG "Invalid Price\n"
 
 const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const char *attributes[] = {"artistTerm", "albumTerm", "songTerm"};
+const char* attributes[] = {"artistTerm", "albumTerm", "songTerm"};
 
-const unsigned int MIN_REQ_LEN = sizeof(TERM_STR) 
-								+ sizeof(ATTRIBUTE_STR)
-								+ sizeof(LIMIT_STR)
-								+ sizeof(KEYVAL_DELIM)*3
-								+ sizeof(PARAM_DELIM)*2
-								+ sizeof(EOL_STR);
+const unsigned int MIN_REQ_LEN = sizeof(TERM_STR) + sizeof(ATTRIBUTE_STR) +
+                                 sizeof(LIMIT_STR) + sizeof(KEYVAL_DELIM) * 3 +
+                                 sizeof(PARAM_DELIM) * 2 + sizeof(EOL_STR);
 
 typedef struct Request {
-	char term[RESULT_VALUE_SIZE];
-	char attribute[RESULT_VALUE_SIZE];
-	char limit[MAX_LIMIT];
+  char term[RESULT_VALUE_SIZE];
+  char attribute[RESULT_VALUE_SIZE];
+  char limit[MAX_LIMIT];
 } Request;
 
 typedef struct Song {
-	char id[RESULT_VALUE_SIZE];
-	char artist[RESULT_VALUE_SIZE];
-	char album[RESULT_VALUE_SIZE];
-	char song[RESULT_VALUE_SIZE];
-	char price[RESULT_VALUE_SIZE];
+  char id[RESULT_VALUE_SIZE];
+  char artist[RESULT_VALUE_SIZE];
+  char album[RESULT_VALUE_SIZE];
+  char song[RESULT_VALUE_SIZE];
+  char price[RESULT_VALUE_SIZE];
 } Song;
 
 typedef struct SongList {
-	unsigned int size;
+  unsigned int size;
 #ifdef PATCHED
-	unsigned int maxSize;
+  unsigned int maxSize;
 #else
 #endif
-	Song* songs;
-	unsigned char balance;
+  Song* songs;
+  unsigned char balance;
 } SongList;

@@ -29,11 +29,12 @@
 struct ray;
 
 struct plane {
-    struct shape shape;
-    struct vector normal;
-    void *data;
-    double __attribute__((regparm(3))) (*intersect)(struct plane *, struct ray *ray, void *data);
-    unsigned int id;
+  struct shape shape;
+  struct vector normal;
+  void *data;
+  double __attribute__((regparm(3))) (*intersect)(struct plane *,
+                                                  struct ray *ray, void *data);
+  unsigned int id;
 };
 
 /**
@@ -45,4 +46,3 @@ struct plane {
 void plane_init(struct plane *plane, struct vector normal);
 
 #endif /* PLANE_H_ */
-

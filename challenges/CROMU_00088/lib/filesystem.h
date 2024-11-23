@@ -37,151 +37,142 @@ THE SOFTWARE.
 #define FREE_BLOCK_LIST 1
 #define INITIAL_ROOT_DIR_BLOCK 2
 
-
 typedef int securityIdType;
 typedef unsigned char otherPermsType;
 
-enum fileTypes { 	DIRECTORY = 0x1,
-					REGULAR = 0x2,
-					RW_MEMORY = 0x3,
-					RO_MEMORY = 0x4
+enum fileTypes {
+  DIRECTORY = 0x1,
+  REGULAR = 0x2,
+  RW_MEMORY = 0x3,
+  RO_MEMORY = 0x4
 };
 
-enum errorCodes { 
+enum errorCodes {
 
-					NO_ERROR = 0x0,
-					ERROR_NOT_FOUND = -1,
-					ERROR_BAD_TYPE = -2,
-					ERROR_BAD_GEOMETRY = -3,
-					ERROR_BAD_SIZE = -4,
-					ERROR_NO_BLOCKS = -5, 
-					ERROR_BAD_VALUE = -6,
-					ERROR_EOF = -7,
-					ERROR_READ_ERROR = -8,
-					ERROR_INIT = -9,
-					ERROR_MAX_EXCEEDED = -10,
-					ERROR_BAD_HANDLE = -11,
-					ERROR_FILE_EXISTS = -12, 
-					ERROR_FILE_OPEN = -13,
-					ERROR_NO_PERMISSION = -14
+  NO_ERROR = 0x0,
+  ERROR_NOT_FOUND = -1,
+  ERROR_BAD_TYPE = -2,
+  ERROR_BAD_GEOMETRY = -3,
+  ERROR_BAD_SIZE = -4,
+  ERROR_NO_BLOCKS = -5,
+  ERROR_BAD_VALUE = -6,
+  ERROR_EOF = -7,
+  ERROR_READ_ERROR = -8,
+  ERROR_INIT = -9,
+  ERROR_MAX_EXCEEDED = -10,
+  ERROR_BAD_HANDLE = -11,
+  ERROR_FILE_EXISTS = -12,
+  ERROR_FILE_OPEN = -13,
+  ERROR_NO_PERMISSION = -14
 
 };
-
-typedef struct { 
-
-	unsigned int inUse;
-	unsigned int totalSize;
-	unsigned int blockSize;
-	unsigned int totalBlocks;
-	unsigned int rootDirBlock;
-	unsigned int freeListBlock;
-	unsigned int dirEntriesPerBlock;
-	unsigned int blockEntriesPerCatalog;
-	unsigned int checkValue;
-
-}  MasterBlockType;
 
 typedef struct {
+  unsigned int inUse;
+  unsigned int totalSize;
+  unsigned int blockSize;
+  unsigned int totalBlocks;
+  unsigned int rootDirBlock;
+  unsigned int freeListBlock;
+  unsigned int dirEntriesPerBlock;
+  unsigned int blockEntriesPerCatalog;
+  unsigned int checkValue;
 
-	unsigned int totalSize;
-	unsigned int blockSize;
-	unsigned int totalBlocks;
-	unsigned int freeBlocks;
-	unsigned int maxEntriesPerDirectory;
-	unsigned int maxBlocksPerFile;
+} MasterBlockType;
+
+typedef struct {
+  unsigned int totalSize;
+  unsigned int blockSize;
+  unsigned int totalBlocks;
+  unsigned int freeBlocks;
+  unsigned int maxEntriesPerDirectory;
+  unsigned int maxBlocksPerFile;
 
 } fileSystemInfoType;
 
 typedef struct {
-
-	MasterBlockType mblock0;
-	MasterBlockType mblock1;
-	MasterBlockType mblock3;
+  MasterBlockType mblock0;
+  MasterBlockType mblock1;
+  MasterBlockType mblock3;
 
 } mbStructType;
 
-
-typedef struct  { 
-
-	unsigned int RESERVED;
-	securityIdType securityID;
-	otherPermsType othersPermissions;
-	unsigned int fileSize;
-	enum fileTypes fileType;
-	unsigned int firstCatalogBlock;
-	char name[MAX_FILENAME_LEN];
+typedef struct {
+  unsigned int RESERVED;
+  securityIdType securityID;
+  otherPermsType othersPermissions;
+  unsigned int fileSize;
+  enum fileTypes fileType;
+  unsigned int firstCatalogBlock;
+  char name[MAX_FILENAME_LEN];
 
 } directoryEntryType;
 
-typedef struct  { 
-
-	unsigned short maxEntries;
-	unsigned short numEntries;
-	unsigned int nextBlock;
-	directoryEntryType entry[];
+typedef struct {
+  unsigned short maxEntries;
+  unsigned short numEntries;
+  unsigned int nextBlock;
+  directoryEntryType entry[];
 
 } rootDirType;
 
-
 typedef struct {
-
-	enum fileTypes type;
-	unsigned int size;
+  enum fileTypes type;
+  unsigned int size;
 
 } fileInfoType;
 
 typedef struct {
+  directoryEntryType *currentFile;
+  unsigned int dirEntryNum;
+  enum fileTypes;
+  char filespec[MAX_FILENAME_LEN];
 
-	directoryEntryType *currentFile;
-	unsigned int dirEntryNum;
-	enum fileTypes;
-	char filespec[MAX_FILENAME_LEN];
-	
 } findFileHandleType;
 
 typedef char fileHandleType;
 
 typedef struct {
-
-	unsigned int inUse;
-	unsigned int dirEntryNum;
-	unsigned int readBlockNum;
-	unsigned int readPos;
-	unsigned int writeBlockNum;
-	unsigned int writePos;
-	unsigned int fileSize;
-	unsigned int firstCatalogBlock;
-	securityIdType securityID;
-	otherPermsType othersPermissions;
-	enum fileTypes fileType;
+  unsigned int inUse;
+  unsigned int dirEntryNum;
+  unsigned int readBlockNum;
+  unsigned int readPos;
+  unsigned int writeBlockNum;
+  unsigned int writePos;
+  unsigned int fileSize;
+  unsigned int firstCatalogBlock;
+  securityIdType securityID;
+  otherPermsType othersPermissions;
+  enum fileTypes fileType;
 
 } fileCursorType;
 
-
-
-int initFileSystem( unsigned int sectorSize, unsigned int blockSize, unsigned int totalSize );
-int createFile( char *name, enum fileTypes type, securityIdType);
-int deleteFile( fileHandleType fh, securityIdType );
-int truncateFile ( fileHandleType fh, securityIdType );
-int findFiles( char *filespec, findFileHandleType **currentFile );
-int findNextFile( findFileHandleType *currentFile);
-int statusFile( char *name, fileInfoType *info );
-fileHandleType openFile( char *name, securityIdType );
-int writeFile( fileHandleType fh, char *buffer, unsigned int size, securityIdType );
-int readFile(fileHandleType fh, char *buffer, unsigned int size, int relPosition, unsigned int *numRead, securityIdType);
-int readFileUntil( fileHandleType fh, char *buffer, unsigned int size, char delim, unsigned int *numRead, securityIdType securityID );
-int closeFile( fileHandleType fh );
-int flushFile( fileHandleType fh );
-int fileReadPosition( fileHandleType fh, unsigned int offset );
-int fileReadPosRelative( fileHandleType fh, int offset );
-int fileWritePosition( fileHandleType fh, unsigned int offset );
-int fileWritePosRelative( fileHandleType fh, int offset );
+int initFileSystem(unsigned int sectorSize, unsigned int blockSize,
+                   unsigned int totalSize);
+int createFile(char *name, enum fileTypes type, securityIdType);
+int deleteFile(fileHandleType fh, securityIdType);
+int truncateFile(fileHandleType fh, securityIdType);
+int findFiles(char *filespec, findFileHandleType **currentFile);
+int findNextFile(findFileHandleType *currentFile);
+int statusFile(char *name, fileInfoType *info);
+fileHandleType openFile(char *name, securityIdType);
+int writeFile(fileHandleType fh, char *buffer, unsigned int size,
+              securityIdType);
+int readFile(fileHandleType fh, char *buffer, unsigned int size,
+             int relPosition, unsigned int *numRead, securityIdType);
+int readFileUntil(fileHandleType fh, char *buffer, unsigned int size,
+                  char delim, unsigned int *numRead, securityIdType securityID);
+int closeFile(fileHandleType fh);
+int flushFile(fileHandleType fh);
+int fileReadPosition(fileHandleType fh, unsigned int offset);
+int fileReadPosRelative(fileHandleType fh, int offset);
+int fileWritePosition(fileHandleType fh, unsigned int offset);
+int fileWritePosRelative(fileHandleType fh, int offset);
 int getFileSystemInfo(fileSystemInfoType *fsInfo);
-int createDirectory( char *name, securityIdType );
-int setPerms(fileHandleType fh, otherPermsType othersPermissions, securityIdType securityID);
-int makeMemoryFile(char *name, unsigned int address, unsigned int length, char accessType, securityIdType  );
-
+int createDirectory(char *name, securityIdType);
+int setPerms(fileHandleType fh, otherPermsType othersPermissions,
+             securityIdType securityID);
+int makeMemoryFile(char *name, unsigned int address, unsigned int length,
+                   char accessType, securityIdType);
 
 #endif
-
-

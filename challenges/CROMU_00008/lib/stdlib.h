@@ -28,21 +28,21 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
-int tolower( int c );
-int toupper( int c );
+int isspace(int c);
+int isdigit(int c);
+int isnan(double val);
+int isinf(double val);
+int tolower(int c);
+int toupper(int c);
 double atof(const char *str);
 int atoi(const char *str);
 
-int strcmp( char *str1, char *str2 );
-char *strcpy( char *dest, char *src );
-char *strncpy( char *dest, const char *src, size_t num );
-size_t strlen( const char *str );
-int printf( const char *fmt, ... );
+int strcmp(char *str1, char *str2);
+char *strcpy(char *dest, char *src);
+char *strncpy(char *dest, const char *src, size_t num);
+size_t strlen(const char *str);
+int printf(const char *fmt, ...);
 
-void memcpy( void *dest, void *src, size_t numbytes );
+void memcpy(void *dest, void *src, size_t numbytes);
 
-#endif // __STDLIB_H__
+#endif  // __STDLIB_H__

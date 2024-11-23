@@ -20,74 +20,68 @@
  * THE SOFTWARE.
  *
  */
+#include "brc_response.h"
+
 #include <cstdio.h>
 #include <cstring.h>
-#include "brc_response.h"
 
 BrcResponse::BrcResponse(unsigned short recv_length)
     : BrcProtocol(recv_length), response_code_(-1), msg_length_(0) {
-    set_server_addr();
+  set_server_addr();
 }
 
-BrcResponse::BrcResponse(short response_code, char *msg, unsigned short msg_length)
-    : BrcProtocol(token_length() + sizeof(server_addr_) + sizeof(response_code_) + sizeof(msg_length_) + msg_length),
-      response_code_(response_code), msg_length_(msg_length) {
-    raw_data_ = new char[length_];
-    set_token();
-    set_server_addr();
+BrcResponse::BrcResponse(short response_code, char *msg,
+                         unsigned short msg_length)
+    : BrcProtocol(token_length() + sizeof(server_addr_) +
+                  sizeof(response_code_) + sizeof(msg_length_) + msg_length),
+      response_code_(response_code),
+      msg_length_(msg_length) {
+  raw_data_ = new char[length_];
+  set_token();
+  set_server_addr();
 
-    char *pdata = raw_data_ + token_length();
-    memcpy(pdata, &server_addr_, sizeof(server_addr_));
-    pdata += sizeof(server_addr_);
-    memcpy(pdata, &response_code, sizeof(response_code));
-    pdata += sizeof(response_code);
-    memcpy(pdata, &msg_length, sizeof(msg_length));
-    pdata += sizeof(msg_length);
-    memcpy(pdata, msg, msg_length);
+  char *pdata = raw_data_ + token_length();
+  memcpy(pdata, &server_addr_, sizeof(server_addr_));
+  pdata += sizeof(server_addr_);
+  memcpy(pdata, &response_code, sizeof(response_code));
+  pdata += sizeof(response_code);
+  memcpy(pdata, &msg_length, sizeof(msg_length));
+  pdata += sizeof(msg_length);
+  memcpy(pdata, msg, msg_length);
 }
 
 BrcResponse::~BrcResponse() {
-    server_addr_ = 0;
-    response_code_ = 0;
-    msg_length_ = 0;
+  server_addr_ = 0;
+  response_code_ = 0;
+  msg_length_ = 0;
 }
 
 bool BrcResponse::Recv(FILE *fd_in) {
-    if (!BrcProtocol::Recv(fd_in))
-        return false;
+  if (!BrcProtocol::Recv(fd_in)) return false;
 
-    char *pdata  = raw_data_ + token_length();
-    server_addr_ = *((int *)pdata);
-    pdata += sizeof(server_addr_);
-    response_code_ = *((short *)pdata);
-    pdata += sizeof(response_code_);
-    msg_length_ = *((unsigned short *)pdata);
-    return true;
+  char *pdata = raw_data_ + token_length();
+  server_addr_ = *((int *)pdata);
+  pdata += sizeof(server_addr_);
+  response_code_ = *((short *)pdata);
+  pdata += sizeof(response_code_);
+  msg_length_ = *((unsigned short *)pdata);
+  return true;
 }
 
-const unsigned int BrcResponse::protocol_id() const {
-    return 8;
-}
+const unsigned int BrcResponse::protocol_id() const { return 8; }
 
-const int BrcResponse::server_addr() const {
-    return server_addr_;
-}
+const int BrcResponse::server_addr() const { return server_addr_; }
 
 const unsigned short BrcResponse::response_code() const {
-    return response_code_;
+  return response_code_;
 }
 
-const unsigned short BrcResponse::msg_length() const {
-    return msg_length_;
-}
+const unsigned short BrcResponse::msg_length() const { return msg_length_; }
 
 const char *BrcResponse::msg() const {
-    char *pdata = raw_data_ + token_length();
-    pdata += sizeof(server_addr_) + sizeof(response_code_) + sizeof(msg_length_);
-    return pdata;
+  char *pdata = raw_data_ + token_length();
+  pdata += sizeof(server_addr_) + sizeof(response_code_) + sizeof(msg_length_);
+  return pdata;
 }
 
-void BrcResponse::set_server_addr() {
-    server_addr_ = 99999999;
-}
-
+void BrcResponse::set_server_addr() { server_addr_ = 99999999; }

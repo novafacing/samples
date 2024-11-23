@@ -24,19 +24,20 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "malloc.h"
-#include "error.h"
-#include "tree.h"
+
 #include "command.h"
+#include "error.h"
+#include "malloc.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "tree.h"
 
 // Runs the ASCII Content Server
 int main(void) {
   // Initialize server
   if (InitializeTree() != 0) {
     PrintErrorAndTerminate("Initialize server failed");
-  }  
+  }
   // Respond to commands
   CommandStruct command;
   int more_commands = 0;
@@ -46,6 +47,6 @@ int main(void) {
     }
     HandleCommand(&command);
     DestroyCommand(&command);
-  } while (more_commands == 1); 
+  } while (more_commands == 1);
   return 0;
 }

@@ -8,14 +8,14 @@ extern "C" {
 };
 
 namespace IO {
-    static const unsigned int MAX_IO_SIZE = 128;
+static const unsigned int MAX_IO_SIZE = 128;
 
-    char *buf();
-    bool readline(size_t max_size=MAX_IO_SIZE);
-    int readnum(size_t max_size=MAX_IO_SIZE);
-    char *iotextdup(size_t max_size=MAX_IO_SIZE);
-    bool readnbytes(size_t nbytes, char *data);
-    File *upload_file();
-}
+char *buf();
+bool readline(size_t max_size = MAX_IO_SIZE);
+int readnum(size_t max_size = MAX_IO_SIZE);
+char *iotextdup(size_t max_size = MAX_IO_SIZE);
+bool readnbytes(size_t nbytes, char *data);
+File *upload_file();
+}  // namespace IO
 
 #endif

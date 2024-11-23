@@ -25,296 +25,294 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
-
-void print_xif_tag_text(unsigned short tag) 
+void print_xif_tag_text(unsigned short tag)
 
 {
-    switch (tag) {
+  switch (tag) {
+    case 0x9000:
 
-        case 0x9000:
+      printf("ExifVersion");
+      break;
 
-            printf("ExifVersion");
-            break;
+    case 0xa000:
 
-        case 0xa000:
+      printf("FlashpixVersion");
+      break;
 
-            printf("FlashpixVersion");
-            break;
+    case 0xa001:
 
-        case 0xa001:
+      printf("ColorSpace");
+      break;
 
-            printf("ColorSpace");
-            break;
+    case 0x9101:
 
-        case 0x9101:
+      printf("ComponentsConfiguration");
+      break;
 
-            printf("ComponentsConfiguration");
-            break;
+    case 0x9102:
 
-        case 0x9102:
+      printf("CompressedBitsPerPixel");
+      break;
 
-            printf("CompressedBitsPerPixel");
-            break;
+    case 0xa002:
 
-        case 0xa002:
+      printf("PixelXDimension");
+      break;
 
-            printf("PixelXDimension");
-            break;
+    case 0xa003:
 
-        case 0xa003:
+      printf("PixelYDimension");
+      break;
 
-            printf("PixelYDimension");
-            break;
+    case 0x927c:
 
-        case 0x927c:
+      printf("MakeNote");
+      break;
 
-            printf("MakeNote");
-            break;
+    case 0x9286:
 
-        case 0x9286:
+      printf("UserComment");
+      break;
 
-            printf("UserComment");
-            break;
+    case 0xa004:
 
-        case 0xa004:
+      printf("RelatedSoundFile");
+      break;
 
-            printf("RelatedSoundFile");
-            break;
+    case 0x9003:
 
-        case 0x9003:
+      printf("DateTimeOriginal");
+      break;
 
-            printf("DateTimeOriginal");
-            break;
+    case 0x9004:
 
-        case 0x9004:
+      printf("DateTimeDigitized");
+      break;
 
-            printf("DateTimeDigitized");
-            break;
+    case 0x9290:
 
-        case 0x9290:
+      printf("SubSecTime");
+      break;
 
-            printf("SubSecTime");
-            break;
+    case 0x9291:
 
-        case 0x9291:
+      printf("SubSecTimeOriginal");
+      break;
 
-            printf("SubSecTimeOriginal");
-            break;
+    case 0x9292:
 
-        case 0x9292:
+      printf("SubSecTimeDigitized");
+      break;
 
-            printf("SubSecTimeDigitized");
-            break;
+    case 0xa420:
 
-        case 0xa420:
+      printf("ImageUniqueID");
+      break;
 
-            printf("ImageUniqueID");
-            break;
+    case 0x829a:
 
-        case 0x829a:
+      printf("ExposureTime");
+      break;
 
-            printf("ExposureTime");
-            break;
+    case 0x829d:
 
-        case 0x829d:
+      printf("FNumber");
+      break;
 
-            printf("FNumber");
-            break;
+    case 0x8822:
 
-        case 0x8822:
+      printf("ExposureProgram");
+      break;
 
-            printf("ExposureProgram");
-            break;
+    case 0x8824:
 
-        case 0x8824:
+      printf("SpectralSensitivity");
+      break;
 
-            printf("SpectralSensitivity");
-            break;
+    case 0x8827:
 
-        case 0x8827:
+      printf("ISOSpeedRatings");
+      break;
 
-            printf("ISOSpeedRatings");
-            break;
+    case 0x8828:
 
-        case 0x8828:
+      printf("OECF");
+      break;
 
-            printf("OECF");
-            break;
+    case 0x9201:
 
-        case 0x9201:
+      printf("ShutterSpeedValue");
+      break;
 
-            printf("ShutterSpeedValue");
-            break;
+    case 0x9202:
 
-        case 0x9202:
+      printf("ApertureValue");
+      break;
 
-            printf("ApertureValue");
-            break;
+    case 0x9203:
 
-        case 0x9203:
+      printf("BrightnessValue");
+      break;
 
-            printf("BrightnessValue");
-            break;
+    case 0x9204:
 
-        case 0x9204:
+      printf("ExposureBiasValue");
+      break;
 
-            printf("ExposureBiasValue");
-            break;
+    case 0x9205:
 
-        case 0x9205:
+      printf("MaxApertureValue");
+      break;
 
-            printf("MaxApertureValue");
-            break;
+    case 0x9206:
 
-        case 0x9206:
+      printf("SubjectDistance");
+      break;
 
-            printf("SubjectDistance");
-            break;
+    case 0x9207:
 
-        case 0x9207:
+      printf("MeteringMode");
+      break;
 
-            printf("MeteringMode");
-            break;
+    case 0x9208:
 
-        case 0x9208:
+      printf("LightSource");
+      break;
 
-            printf("LightSource");
-            break;
+    case 0x9209:
 
-        case 0x9209:
+      printf("Flash");
+      break;
 
-            printf("Flash");
-            break;
+    case 0x920a:
 
-        case 0x920a:
+      printf("FocalLength");
+      break;
 
-            printf("FocalLength");
-            break;
+    case 0x9214:
 
-        case 0x9214:
+      printf("SubjectArea");
+      break;
 
-            printf("SubjectArea");
-            break;
+    case 0xa20b:
 
-        case 0xa20b:
+      printf("FlashEnergy");
+      break;
 
-            printf("FlashEnergy");
-            break;
+    case 0xa20c:
 
-        case 0xa20c:
+      printf("SpatialFrequencyResponse");
+      break;
 
-            printf("SpatialFrequencyResponse");
-            break;
+    case 0xa20e:
 
-        case 0xa20e:
+      printf("FocalPlaneXResolution");
+      break;
 
-            printf("FocalPlaneXResolution");
-            break;
+    case 0xa20f:
 
-        case 0xa20f:
+      printf("FocalPlaneYResolution");
+      break;
 
-            printf("FocalPlaneYResolution");
-            break;
+    case 0xa210:
 
-        case 0xa210:
+      printf("FocalPlaneResolutionUnit");
+      break;
 
-            printf("FocalPlaneResolutionUnit");
-            break;
+    case 0xa214:
 
-        case 0xa214:
+      printf("SubjectLocation");
+      break;
 
-            printf("SubjectLocation");
-            break;
+    case 0xa215:
 
-        case 0xa215:
+      printf("ExposureIndex");
+      break;
 
-            printf("ExposureIndex");
-            break;
+    case 0xa217:
 
-        case 0xa217:
+      printf("SensingMethod");
+      break;
 
-            printf("SensingMethod");
-            break;
+    case 0xa300:
 
-        case 0xa300:
+      printf("FileSource");
+      break;
 
-            printf("FileSource");
-            break;
+    case 0xa301:
 
-        case 0xa301:
+      printf("SceneType");
+      break;
 
-            printf("SceneType");
-            break;
+    case 0xa302:
 
-        case 0xa302:
+      printf("CFAPattern");
+      break;
 
-            printf("CFAPattern");
-            break;
+    case 0xa401:
 
-        case 0xa401:
+      printf("CustomRendered");
+      break;
 
-            printf("CustomRendered");
-            break;
+    case 0xa402:
 
-        case 0xa402:
+      printf("ExposureMode");
+      break;
 
-            printf("ExposureMode");
-            break;
+    case 0xa403:
 
-        case 0xa403:
+      printf("WhiteBalance");
+      break;
 
-            printf("WhiteBalance");
-            break;
+    case 0xa404:
 
-        case 0xa404:
+      printf("DigitalZoomRatio");
+      break;
 
-            printf("DigitalZoomRatio");
-            break;
+    case 0xa405:
 
-        case 0xa405:
+      printf("FocalLengthin35mmFilm");
+      break;
 
-            printf("FocalLengthin35mmFilm");
-            break;
+    case 0xa406:
 
-        case 0xa406:
+      printf("SceneCaptureType");
+      break;
 
-            printf("SceneCaptureType");
-            break;
+    case 0xa407:
 
-        case 0xa407:
+      printf("GainControl");
+      break;
 
-            printf("GainControl");
-            break;
+    case 0xa408:
 
-        case 0xa408:
+      printf("Contrast");
+      break;
 
-            printf("Contrast");
-            break;
+    case 0xa409:
 
-        case 0xa409:
+      printf("Saturation");
+      break;
 
-            printf("Saturation");
-            break;
+    case 0xa40a:
 
-        case 0xa40a:
+      printf("Sharpness");
+      break;
 
-            printf("Sharpness");
-            break;
+    case 0xa40b:
 
-        case 0xa40b:
+      printf("DeviceSettingDescription");
+      break;
 
-            printf("DeviceSettingDescription");
-            break;
+    case 0xa40c:
 
-        case 0xa40c:
+      printf("SubjectDistanceRange");
+      break;
 
-            printf("SubjectDistanceRange");
-            break;
+  }  // switch
 
-    } //switch
-
-} // print_xif_tag_text
-
+}  // print_xif_tag_text

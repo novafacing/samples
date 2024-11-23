@@ -18,20 +18,20 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 typedef struct {
-	int x;
-	int y;
-} Coordinate; 
+  int x;
+  int y;
+} Coordinate;
 
 typedef struct {
-	Coordinate bottomLeft;
-	Coordinate topRight;
-	unsigned int columns;
-	unsigned int rows;
-	unsigned int* data;
+  Coordinate bottomLeft;
+  Coordinate topRight;
+  unsigned int columns;
+  unsigned int rows;
+  unsigned int* data;
 } Map;
 
 void setCoordinate(Map** map, int x, int y, unsigned int value);
 unsigned int getCoordinate(Map* map, int x, int y);
-void freeMap(Map **map_ptr);
+void freeMap(Map** map_ptr);

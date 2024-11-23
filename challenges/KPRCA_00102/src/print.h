@@ -25,22 +25,20 @@
 #define PRINT_H_
 #include <cstdio.h>
 
-#define PRINT_ARR_CHARS(_array, _size) \
-    do { \
-        unsigned char * __array = (unsigned char *)(_array); \
-        for (int _i=0; _i < (_size); _i++) \
-        { \
-            printf(ESC "c", (__array)[_i]); \
-        } \
-    } while (0)
+#define PRINT_ARR_CHARS(_array, _size)                  \
+  do {                                                  \
+    unsigned char *__array = (unsigned char *)(_array); \
+    for (int _i = 0; _i < (_size); _i++) {              \
+      printf(ESC "c", (__array)[_i]);                   \
+    }                                                   \
+  } while (0)
 
-#define PRINT_ARR_HEX(_array, _size) \
-    do { \
-        unsigned char * __array = (unsigned char *)(_array); \
-        for (int _i=0; _i < (_size); _i++) \
-        { \
-            printf("\\x" ESC "02x", (__array)[_i]); \
-        } \
-    } while (0)
+#define PRINT_ARR_HEX(_array, _size)                    \
+  do {                                                  \
+    unsigned char *__array = (unsigned char *)(_array); \
+    for (int _i = 0; _i < (_size); _i++) {              \
+      printf("\\x" ESC "02x", (__array)[_i]);           \
+    }                                                   \
+  } while (0)
 
 #endif

@@ -30,16 +30,8 @@
 #define MAX_PATH_SIZE 0x40
 
 typedef struct signature signature;
-struct signature
-{
-  enum
-  {
-    LOW = 1,
-    GUARDED,
-    ELEVATED,
-    HIGH,
-    SEVERE
-  } Severity;
+struct signature {
+  enum { LOW = 1, GUARDED, ELEVATED, HIGH, SEVERE } Severity;
 
   char* Path;
   size_t PathSize;
@@ -50,8 +42,7 @@ struct signature
 
 #define MAX_SIGNATURES 0x1000
 typedef struct signature_db signature_db;
-struct signature_db
-{
+struct signature_db {
   size_t SignatureCount;
   signature* Signatures[MAX_SIGNATURES];
   trie* Trie;
@@ -59,14 +50,17 @@ struct signature_db
 };
 
 int InitializeSignatureDatabase(signature_db* SignatureDatabase);
-int InitializeSignature(signature* Signature, int Severity, trie_unit* Data, size_t DataSize, char* Path, size_t PathSize);
+int InitializeSignature(signature* Signature, int Severity, trie_unit* Data,
+                        size_t DataSize, char* Path, size_t PathSize);
 void FreeSignature(signature* Signature);
 char* SeverityString(unsigned Severity);
 void PrintSignature(FILE* Stream, signature* Signature);
-unsigned long BytesToUnsigned(unsigned char *Data, size_t DataSize);
+unsigned long BytesToUnsigned(unsigned char* Data, size_t DataSize);
 void FreeSignatureDatabase(signature_db* SignatureDatabase);
-int AddSignatureToSignatureDatabase(signature_db* SignatureDatabase, signature* Signature);
+int AddSignatureToSignatureDatabase(signature_db* SignatureDatabase,
+                                    signature* Signature);
 int BuildSignatureDatabaseSearchMachine(signature_db* SignatureDatabase);
-list* SearchSignatureDatabase(signature_db* SignatureDatabase, trie_unit* Data, size_t DataSize);
+list* SearchSignatureDatabase(signature_db* SignatureDatabase, trie_unit* Data,
+                              size_t DataSize);
 
 #endif /* __SIGDB_H__ */

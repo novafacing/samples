@@ -32,22 +32,22 @@ THE SOFTWARE.
  * It points to the current byte/bit to be read
  **/
 typedef struct rpti_image_data {
-	char *buffer;
-	int max;
-	int cbyte;
-	int cbit;
+  char *buffer;
+  int max;
+  int cbyte;
+  int cbit;
 } rpti_image_data, *prpti_image_data;
 
-int rpti_display_img( prpti_image_data );
-int rpti_read_magic( prpti_image_data );
-int rpti_read_xaxis( prpti_image_data );
-int rpti_read_yaxis( prpti_image_data );
-int rpti_read_initx( prpti_image_data rid, int *out_data );
-int rpti_read_inity( prpti_image_data rid, int *out_data );
-int rpti_read_axist( prpti_image_data );
-int rpti_read_pixel( prpti_image_data rid, int *out_data  );
-int rpti_read_check( prpti_image_data, int bit_count );
-int rpti_inc_index( prpti_image_data, int bit_count );
-int rpti_read_bits( prpti_image_data, int bit_count, int *out_data );
+int rpti_display_img(prpti_image_data);
+int rpti_read_magic(prpti_image_data);
+int rpti_read_xaxis(prpti_image_data);
+int rpti_read_yaxis(prpti_image_data);
+int rpti_read_initx(prpti_image_data rid, int *out_data);
+int rpti_read_inity(prpti_image_data rid, int *out_data);
+int rpti_read_axist(prpti_image_data);
+int rpti_read_pixel(prpti_image_data rid, int *out_data);
+int rpti_read_check(prpti_image_data, int bit_count);
+int rpti_inc_index(prpti_image_data, int bit_count);
+int rpti_read_bits(prpti_image_data, int bit_count, int *out_data);
 
 #endif

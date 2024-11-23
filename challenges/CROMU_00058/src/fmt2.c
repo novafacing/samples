@@ -25,53 +25,53 @@ THE SOFTWARE.
 */
 
 #include "fmt2.h"
+
 #include "cpu.h"
 #include "stdio.h"
 
 void doBranch(pruCPU *cpu, fmt2BranchInstruction inst) {
-	if(inst.header.subOp == 1) {
-		cpu->r[inst.rd.reg] = cpu->pc+1;
-	}
-	if(inst.header.other == 0) {
-		cpu->pc = cpu->r[inst.arg2.reg.rs2.reg];
-	} else {
-		cpu->pc = inst.arg2.imm;
-	}
+  if (inst.header.subOp == 1) {
+    cpu->r[inst.rd.reg] = cpu->pc + 1;
+  }
+  if (inst.header.other == 0) {
+    cpu->pc = cpu->r[inst.arg2.reg.rs2.reg];
+  } else {
+    cpu->pc = inst.arg2.imm;
+  }
 }
 
 void doLdi(pruCPU *cpu, fmt2LdiInstruction inst) {
-	cpu->r[inst.rd.reg] = inst.imm;
+  cpu->r[inst.rd.reg] = inst.imm;
 }
 
 void doLmbd(pruCPU *cpu, fmt2LmbdInstruction inst) {
-	int i;
-	int arg;
-	if(inst.header.other == 0)
-		arg = cpu->r[inst.arg2.rs2.reg];
-	else
-		arg = inst.arg2.imm;
-	for(i=31;i>=0;i--) {
-		if( ! (((cpu->r[inst.rd.reg] >> i) ^ cpu->r[inst.arg2.rs2.reg])&1))
-			break;
-	}
-	if(i<0)
-		cpu->r[inst.rd.reg] = 32;
-	else
-		cpu->r[inst.rd.reg] = i;
-		
+  int i;
+  int arg;
+  if (inst.header.other == 0)
+    arg = cpu->r[inst.arg2.rs2.reg];
+  else
+    arg = inst.arg2.imm;
+  for (i = 31; i >= 0; i--) {
+    if (!(((cpu->r[inst.rd.reg] >> i) ^ cpu->r[inst.arg2.rs2.reg]) & 1)) break;
+  }
+  if (i < 0)
+    cpu->r[inst.rd.reg] = 32;
+  else
+    cpu->r[inst.rd.reg] = i;
 }
 
 void doScan(pruCPU *cpu, fmt2ScanInstruction inst) {
-	if(inst.header.other == 1)
-	{
-		if(cpu->r[inst.rs1.reg]+inst.arg2.imm < 0x1000)
-			cpu->r[inst.rd.reg] = cpu->code[cpu->r[inst.rs1.reg]+inst.arg2.imm];
-	} else {
-		#ifndef PATCHED_1
-		cpu->r[inst.rd.reg] = cpu->code[cpu->r[inst.rs1.reg]+cpu->r[inst.arg2.rs2.reg]];
-		#else
-		if(cpu->r[inst.rs1.reg]+cpu->r[inst.arg2.rs2.reg] < 0x1000)
-			cpu->r[inst.rd.reg] = cpu->code[cpu->r[inst.rs1.reg]+cpu->r[inst.arg2.rs2.reg]];
-		#endif
-	}
+  if (inst.header.other == 1) {
+    if (cpu->r[inst.rs1.reg] + inst.arg2.imm < 0x1000)
+      cpu->r[inst.rd.reg] = cpu->code[cpu->r[inst.rs1.reg] + inst.arg2.imm];
+  } else {
+#ifndef PATCHED_1
+    cpu->r[inst.rd.reg] =
+        cpu->code[cpu->r[inst.rs1.reg] + cpu->r[inst.arg2.rs2.reg]];
+#else
+    if (cpu->r[inst.rs1.reg] + cpu->r[inst.arg2.rs2.reg] < 0x1000)
+      cpu->r[inst.rd.reg] =
+          cpu->code[cpu->r[inst.rs1.reg] + cpu->r[inst.arg2.rs2.reg]];
+#endif
+  }
 }

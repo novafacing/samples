@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define RANDOM_ERROR 3
 #define MAP_WIDTH 10
 #define MAP_HEIGHT 13
@@ -28,16 +28,16 @@
 
 #define FLAG_PAGE 0x4347C000
 #ifdef PATCHED_1
-	#define SEND_SZ 100
+#define SEND_SZ 100
 #else
-	#define SEND_SZ 32
+#define SEND_SZ 32
 #endif
 
 typedef struct {
-	int x;
-	int y;
+  int x;
+  int y;
 } Position;
 
 typedef struct {
-	Position location;
+  Position location;
 } Vehicle;

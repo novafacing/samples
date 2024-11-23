@@ -18,22 +18,19 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 /*F*************************/
-void
-bzero(buf, num)
+void bzero(buf, num)
 
-char *buf;				/* buffer to zeroize */
-unsigned int num;		/* the length of the buffer */
+    char *buf;    /* buffer to zeroize */
+unsigned int num; /* the length of the buffer */
 /*
-* PURPOSE : Set all bytes in buffer to zero
-*
-* RETURN : None
-*
-*F*/
+ * PURPOSE : Set all bytes in buffer to zero
+ *
+ * RETURN : None
+ *
+ *F*/
 {
-	int i;
-	for (i = 0; i < num; i++)
-		buf[i] = buf[i] ^ buf[i];
-
+  int i;
+  for (i = 0; i < num; i++) buf[i] = buf[i] ^ buf[i];
 }

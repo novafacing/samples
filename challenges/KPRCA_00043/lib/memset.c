@@ -25,18 +25,14 @@
 
 #include "libcgc.h"
 
-void *memset(void *s, int c, size_t n)
-{
-  if (s == NULL)
-    return NULL;
+void *memset(void *s, int c, size_t n) {
+  if (s == NULL) return NULL;
 
-  if (n == 0)
-    return s;
+  if (n == 0) return s;
 
   unsigned char *p = s;
   size_t i;
-  for(i = 0; i < n; i++)
-    *p++ = (unsigned char) c;
+  for (i = 0; i < n; i++) *p++ = (unsigned char)c;
 
   return s;
 }

@@ -25,34 +25,28 @@
 #include "eval.h"
 #include "shared_ptr.h"
 
-class Array
-{
-public:
-    static const int MAX_ITEMS = 1000;
+class Array {
+ public:
+  static const int MAX_ITEMS = 1000;
 
-    int length()
-    {
-        return items.length();
-    }
-    bool set(int i, Var* val);
-    bool get(int i, Var** pval);
-private:
-    vector<unique_ptr<Var>> items;
+  int length() { return items.length(); }
+  bool set(int i, Var* val);
+  bool get(int i, Var** pval);
+
+ private:
+  vector<unique_ptr<Var>> items;
 };
 
-class ArrayVar : public Var
-{
-public:
-    ArrayVar();
-    ~ArrayVar();
+class ArrayVar : public Var {
+ public:
+  ArrayVar();
+  ~ArrayVar();
 
-    static void registerExternals(Evaluator& eval);
+  static void registerExternals(Evaluator& eval);
 
-    virtual Var* copy();
-    Array& getArray()
-    {
-        return *array.get();
-    }
-private:
-    shared_ptr<Array> array;
+  virtual Var* copy();
+  Array& getArray() { return *array.get(); }
+
+ private:
+  shared_ptr<Array> array;
 };

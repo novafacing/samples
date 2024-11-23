@@ -28,50 +28,48 @@ THE SOFTWARE.
 
 class DLQueue;
 
-class DLItem
-{
-public:
-    DLItem( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
-    ~DLItem( ) { };
+class DLItem {
+ public:
+  DLItem() : m_pNext(NULL), m_pPrev(NULL) {};
+  ~DLItem() {};
 
-    DLItem *GetNext( void ) { return m_pNext; };
-    DLItem *GetPrev( void ) { return m_pPrev; };
+  DLItem *GetNext(void) { return m_pNext; };
+  DLItem *GetPrev(void) { return m_pPrev; };
 
-    friend class DLQueue;
+  friend class DLQueue;
 
-private:
-    DLItem *m_pNext;
-    DLItem *m_pPrev;
+ private:
+  DLItem *m_pNext;
+  DLItem *m_pPrev;
 };
 
-class DLQueue
-{
-public:
-    DLQueue( );
-    ~DLQueue( );
+class DLQueue {
+ public:
+  DLQueue();
+  ~DLQueue();
 
-    void DeleteAll( void );
+  void DeleteAll(void);
 
-    void AddFirst( DLItem *pItem );
-    void AddLast( DLItem *pItem );
-    void AddAfter( DLItem *pPrev, DLItem *pItem );
+  void AddFirst(DLItem *pItem);
+  void AddLast(DLItem *pItem);
+  void AddAfter(DLItem *pPrev, DLItem *pItem);
 
-    void Unlink( DLItem *pItem );
+  void Unlink(DLItem *pItem);
 
-    void DeleteItem( DLItem *pItem );
-    void RemoveItem( DLItem *pItem );
-    DLItem *RemoveFirst( void );
-    DLItem *RemoveLast( void );
+  void DeleteItem(DLItem *pItem);
+  void RemoveItem(DLItem *pItem);
+  DLItem *RemoveFirst(void);
+  DLItem *RemoveLast(void);
 
-    DLItem *GetFirst( void ) { return m_pFirst; };
-    DLItem *GetLast( void ) { return m_pLast; };
+  DLItem *GetFirst(void) { return m_pFirst; };
+  DLItem *GetLast(void) { return m_pLast; };
 
-    size_t GetCount( void ) { return m_count; };
+  size_t GetCount(void) { return m_count; };
 
-private:
-    DLItem *m_pFirst;
-    DLItem *m_pLast;
-    size_t m_count;
+ private:
+  DLItem *m_pFirst;
+  DLItem *m_pLast;
+  size_t m_count;
 };
 
-#endif // __DLQUEUE_H___
+#endif  // __DLQUEUE_H___

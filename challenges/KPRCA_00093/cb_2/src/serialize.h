@@ -24,31 +24,30 @@
 #define SERIALIZE_H_
 #include "brc_default_codes.h"
 
-#define APPEND_PARAM(_cmd_str, _param, _length) \
-    do { \
-        unsigned short __temp_length_val = (_length); \
-        memcpy((_cmd_str), &__temp_length_val, sizeof((__temp_length_val))); \
-        (_cmd_str) += sizeof(__temp_length_val); \
-        memcpy((_cmd_str), (_param), __temp_length_val); \
-        (_cmd_str) += __temp_length_val; \
-    } while(0)
+#define APPEND_PARAM(_cmd_str, _param, _length)                          \
+  do {                                                                   \
+    unsigned short __temp_length_val = (_length);                        \
+    memcpy((_cmd_str), &__temp_length_val, sizeof((__temp_length_val))); \
+    (_cmd_str) += sizeof(__temp_length_val);                             \
+    memcpy((_cmd_str), (_param), __temp_length_val);                     \
+    (_cmd_str) += __temp_length_val;                                     \
+  } while (0)
 
-#define ADD_LENGTH(_cur_length, _param_length) \
-    do { \
-        unsigned short __temp_length_val = (_param_length); \
-        (_cur_length) += __temp_length_val + sizeof(__temp_length_val); \
-    } while(0)
+#define ADD_LENGTH(_cur_length, _param_length)                      \
+  do {                                                              \
+    unsigned short __temp_length_val = (_param_length);             \
+    (_cur_length) += __temp_length_val + sizeof(__temp_length_val); \
+  } while (0)
 
+#define ADD_EOM_LENGTH(_cur_length)            \
+  do {                                         \
+    (_cur_length) += BrcGlobals::eom_length(); \
+  } while (0)
 
-#define ADD_EOM_LENGTH(_cur_length) \
-    do { \
-        (_cur_length) += BrcGlobals::eom_length(); \
-    } while(0)
-
-#define APPEND_EOM(_cmd_str) \
-    do { \
-        memcpy((_cmd_str), BrcGlobals::eom(), BrcGlobals::eom_length()); \
-        (_cmd_str) += BrcGlobals::eom_length(); \
-    } while(0)
+#define APPEND_EOM(_cmd_str)                                         \
+  do {                                                               \
+    memcpy((_cmd_str), BrcGlobals::eom(), BrcGlobals::eom_length()); \
+    (_cmd_str) += BrcGlobals::eom_length();                          \
+  } while (0)
 
 #endif /* SERIALIZE_H_ */

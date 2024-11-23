@@ -22,11 +22,9 @@
  */
 #include <string.h>
 
-char *strcpy(char *dest, const char *src)
-{
+char *strcpy(char *dest, const char *src) {
   char *p;
-  for (p = dest; *src != '\0'; src++, p++)
-    *p = *src;
+  for (p = dest; *src != '\0'; src++, p++) *p = *src;
 
   *p = '\0';
   return dest;

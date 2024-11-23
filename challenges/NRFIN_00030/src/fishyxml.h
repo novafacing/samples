@@ -18,12 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef FISHYXML_H
 #define FISHYXML_H 1
-
 
 /*
 ### FISHYXML Grammar ###
@@ -54,37 +52,35 @@ error = int16
 * ID = 0x49
 * DRAW = 0x50
 * GO_FISH = 0x51
-* FISHING = 0x52 
+* FISHING = 0x52
 * ASK = 0x53
 * BOOKS = 0x54
 * TURN = 0x55
 * NAME = 0x56
 */
 
-
 enum {
-	// tokens
-	END = 0x27,
-	START = 0x28,
-	FIN = 0x29,
-	// tags
-	GAME = 0x42,
-	PLAYER = 0x43,
-	CARDS = 0x44,
-	CARD = 0x45,
-	SUIT = 0x46,
-	RANK = 0x47,
-	ERROR = 0x48,
-	ID = 0x49,
-	DRAW = 0x50,
-	GO_FISH = 0x51,
-	FISHING = 0x52,
-	ASK = 0x53,
-	BOOKS = 0x54,
-	TURN = 0x55,
-	NAME = 0x56,
+  // tokens
+  END = 0x27,
+  START = 0x28,
+  FIN = 0x29,
+  // tags
+  GAME = 0x42,
+  PLAYER = 0x43,
+  CARDS = 0x44,
+  CARD = 0x45,
+  SUIT = 0x46,
+  RANK = 0x47,
+  ERROR = 0x48,
+  ID = 0x49,
+  DRAW = 0x50,
+  GO_FISH = 0x51,
+  FISHING = 0x52,
+  ASK = 0x53,
+  BOOKS = 0x54,
+  TURN = 0x55,
+  NAME = 0x56,
 };
-
 
 /**
  * Parse binary xml to extract the remote player's name.
@@ -159,7 +155,7 @@ extern int parse_xml_go_fish(char *xml);
 extern int gen_xml_go_fish(char *xml, uint8_t qty);
 
 /**
- * Parse binary xml to extract ask 
+ * Parse binary xml to extract ask
  *
  * "START ASK RANK <data> END END FIN"
  *

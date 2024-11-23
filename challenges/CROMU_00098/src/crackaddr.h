@@ -9,5 +9,4 @@
 
 char *crackaddr(char *addr, char *output);
 
-
 #endif

@@ -23,8 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,104 +58,94 @@ CUtil::String ReadLine( void )
 	return CUtil::String(pszLine);
 }
 #else
-char g_szLineBuffer[4096+1];
+char g_szLineBuffer[4096 + 1];
 uint32_t g_lineLength = 0;
 
-CUtil::String ReadLine( void )
-{
-        uint32_t maxLen = 4096;
+CUtil::String ReadLine(void) {
+  uint32_t maxLen = 4096;
 
-        char *pszLine = new char[maxLen+1];
+  char *pszLine = new char[maxLen + 1];
 
-        bool bLineFound = false;
-        uint32_t lastScanPos = 0;
-        while ( 1 )
-        {
-                uint32_t pos;
-                for ( pos = lastScanPos; pos < g_lineLength; pos++ )
-                {
-                        if ( g_szLineBuffer[pos] == '\n' )
-                        {
-                                bLineFound = true;
-                                break;
-                        }
-                }
+  bool bLineFound = false;
+  uint32_t lastScanPos = 0;
+  while (1) {
+    uint32_t pos;
+    for (pos = lastScanPos; pos < g_lineLength; pos++) {
+      if (g_szLineBuffer[pos] == '\n') {
+        bLineFound = true;
+        break;
+      }
+    }
 
-                if ( bLineFound )
-                {
-                        // Include newline
-                        lastScanPos = pos;
-                        break;
-                }
+    if (bLineFound) {
+      // Include newline
+      lastScanPos = pos;
+      break;
+    }
 
-		if ( pos == g_lineLength && g_lineLength == maxLen )
-                {
-                        // Exceeded max length!
-                        lastScanPos = pos;
-                        break;
-                }
+    if (pos == g_lineLength && g_lineLength == maxLen) {
+      // Exceeded max length!
+      lastScanPos = pos;
+      break;
+    }
 
-                lastScanPos = pos;
+    lastScanPos = pos;
 
-                size_t num_bytes;
-                uint32_t readRemaining = (maxLen - pos);
+    size_t num_bytes;
+    uint32_t readRemaining = (maxLen - pos);
 
-                if ( receive( STDIN, g_szLineBuffer+pos, readRemaining, &num_bytes ) != 0 )
-                        _terminate( -1 );
+    if (receive(STDIN, g_szLineBuffer + pos, readRemaining, &num_bytes) != 0)
+      _terminate(-1);
 
-                if ( num_bytes == 0 )
-                        _terminate( -1 );
+    if (num_bytes == 0) _terminate(-1);
 
-                g_lineLength += num_bytes;
-        }
+    g_lineLength += num_bytes;
+  }
 
-        memcpy( pszLine, g_szLineBuffer, lastScanPos );
-        pszLine[lastScanPos] = '\0';
+  memcpy(pszLine, g_szLineBuffer, lastScanPos);
+  pszLine[lastScanPos] = '\0';
 
-        CUtil::String sLine = pszLine;
+  CUtil::String sLine = pszLine;
 
-        delete pszLine;
+  delete pszLine;
 
-        uint32_t copyToPos = 0;
-        uint32_t copyFromPos = lastScanPos+1;
+  uint32_t copyToPos = 0;
+  uint32_t copyFromPos = lastScanPos + 1;
 
-        if ( bLineFound )
-        {
-                for ( uint32_t copyAmount = 0; copyAmount < (g_lineLength-(lastScanPos+1)); copyAmount++ )
-                        g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
+  if (bLineFound) {
+    for (uint32_t copyAmount = 0;
+         copyAmount < (g_lineLength - (lastScanPos + 1)); copyAmount++)
+      g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
 
-                g_lineLength -= (lastScanPos+1);
-        }
-        else
-        {
-                for ( uint32_t copyAmount = 0; copyAmount < (g_lineLength-lastScanPos); copyAmount++ )
-                        g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
+    g_lineLength -= (lastScanPos + 1);
+  } else {
+    for (uint32_t copyAmount = 0; copyAmount < (g_lineLength - lastScanPos);
+         copyAmount++)
+      g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
 
-                g_lineLength -= (lastScanPos);
-        }
+    g_lineLength -= (lastScanPos);
+  }
 
-        return (sLine);
+  return (sLine);
 }
 #endif
 
-bool HexCharToInt( char c, uint8_t &outValue )
-{
-	if ( c >= 'A' && c <= 'F' )
-		outValue = (10 + (c - 'A'));
-	else if ( c >= 'a' && c <= 'f' )
-		outValue = (10 + (c -'a'));
-	else if ( c >= '0' && c <= '9' )
-		outValue = (c - '0');
-	else
-		return (false);
+bool HexCharToInt(char c, uint8_t &outValue) {
+  if (c >= 'A' && c <= 'F')
+    outValue = (10 + (c - 'A'));
+  else if (c >= 'a' && c <= 'f')
+    outValue = (10 + (c - 'a'));
+  else if (c >= '0' && c <= '9')
+    outValue = (c - '0');
+  else
+    return (false);
 
-	return (true);
+  return (true);
 }
 
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen )
-{
-	for ( uint32_t i = 0; i < dataLen; i++ )
-		printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
-	
-	printf( "\n" );
+void PrintHexBytes(uint8_t *pData, uint32_t dataLen) {
+  for (uint32_t i = 0; i < dataLen; i++)
+    printf("$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF);
+
+  printf("\n");
 }

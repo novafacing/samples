@@ -28,10 +28,10 @@ THE SOFTWARE.
 #define __common_h__
 
 #define MAX_MSG_LEN 15
-#define MAX_MESSAGES 20 //20
-#define MAX_MESSAGES_LOGIN 4 //10
-#define MAX_USERS 10 //3
+#define MAX_MESSAGES 20       // 20
+#define MAX_MESSAGES_LOGIN 4  // 10
+#define MAX_USERS 10          // 3
 #define MAX_NAME_LEN 15
-#define MAX_PASS_LEN 15 
+#define MAX_PASS_LEN 15
 
 #endif

@@ -22,13 +22,10 @@
  */
 #include "string.h"
 
-char *strcasestr(const char *haystack, const char *needle)
-{
-    unsigned int i;
-    unsigned int l = strlen(needle);
-    for (i = 0; haystack[i] != 0; i++)
-        if (strncasecmp(&haystack[i], needle, l) == 0)
-            return (char *)&haystack[i];
-    return NULL;
+char *strcasestr(const char *haystack, const char *needle) {
+  unsigned int i;
+  unsigned int l = strlen(needle);
+  for (i = 0; haystack[i] != 0; i++)
+    if (strncasecmp(&haystack[i], needle, l) == 0) return (char *)&haystack[i];
+  return NULL;
 }
-

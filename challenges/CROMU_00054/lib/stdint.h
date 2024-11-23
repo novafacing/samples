@@ -35,4 +35,4 @@ typedef signed short int int16_t;
 typedef unsigned char uint8_t;
 typedef signed char int8_t;
 
-#endif // __STDINT_H__
+#endif  // __STDINT_H__

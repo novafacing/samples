@@ -20,21 +20,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "shape.h"
+
 #include <libcgc.h>
 
 #include "vector.h"
 
-#include "shape.h"
-
-void
-shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
-        struct vector position, struct vector color, struct vector emission)
-{
-    shape->next = NULL;
-    shape->type = type;
-    shape->material = material;
-    shape->position = position;
-    shape->color = color;
-    shape->emission = emission;
+void shape_init(struct shape *shape, enum shape_type type,
+                enum surface_type material, struct vector position,
+                struct vector color, struct vector emission) {
+  shape->next = NULL;
+  shape->type = type;
+  shape->material = material;
+  shape->position = position;
+  shape->color = color;
+  shape->emission = emission;
 }
-

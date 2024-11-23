@@ -27,14 +27,15 @@ THE SOFTWARE.
 #define PLANT_SYSTEM_H
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "stdint.h"
+#include "stdlib.h"
 
 #define MAX_VALVE_INPUT (5)
 #define MAX_VALVE_OUTPUT (5)
 #define MAX_FILTERS (10)
 #define SQFT_PER_FILTER (100)
-#define MINUTES_PER_DAY (60*24)
+#define MINUTES_PER_DAY (60 * 24)
 
 #define INFLUENT (0)
 #define HEADWORKS (1)
@@ -45,51 +46,51 @@ THE SOFTWARE.
 #define EFFLUENT (6)
 
 typedef struct _plantsystem {
-	// System Type
-	uint8_t Type;
+  // System Type
+  uint8_t Type;
 
-	// system name
-	char Name[32];
+  // system name
+  char Name[32];
 
-	// Headworks values
-	double TssReductionPct; 
+  // Headworks values
+  double TssReductionPct;
 
-	// Actived Sludge Process values
-	double AerationPct;
-	double AerationMaxScfm;
-	double GlycerinRate;
-	double AlumRate;
+  // Actived Sludge Process values
+  double AerationPct;
+  double AerationMaxScfm;
+  double GlycerinRate;
+  double AlumRate;
 
-	// Filter values
-	double GpmPerSqft;
-	uint8_t NumActiveFilters;
-	uint8_t MaxFilters;
+  // Filter values
+  double GpmPerSqft;
+  uint8_t NumActiveFilters;
+  uint8_t MaxFilters;
 
-	// Disinfection values
-	uint8_t SuccessfulDisinfection;
-	double ChlorineRate;
-	double ChlorineResidual;
+  // Disinfection values
+  uint8_t SuccessfulDisinfection;
+  double ChlorineRate;
+  double ChlorineResidual;
 
-	// Effluent
-	uint8_t QualityFailures;
+  // Effluent
+  uint8_t QualityFailures;
 
-	// valve values
-	// pointer to structs that are outputs from the valve
-	struct _plantsystem *Output[MAX_VALVE_OUTPUT];
+  // valve values
+  // pointer to structs that are outputs from the valve
+  struct _plantsystem *Output[MAX_VALVE_OUTPUT];
 
-	// common values for most plant systems
-	double Flow;     // MGD
-	double Cbod;	 // lbs/day
-	double Tss;      // lbs/day
-	double Tn;       // lbs/day
-	double Tp;       // lbs/day
+  // common values for most plant systems
+  double Flow;  // MGD
+  double Cbod;  // lbs/day
+  double Tss;   // lbs/day
+  double Tn;    // lbs/day
+  double Tp;    // lbs/day
 
-	// pointer to structs that are inputs to the valve
-	struct _plantsystem *Input[MAX_VALVE_INPUT];
+  // pointer to structs that are inputs to the valve
+  struct _plantsystem *Input[MAX_VALVE_INPUT];
 
-	// percent open for each valve output
-	double PctOpen[MAX_VALVE_OUTPUT];
-	
+  // percent open for each valve output
+  double PctOpen[MAX_VALVE_OUTPUT];
+
 } PlantSystem, *pPlantSystem;
 
 #endif

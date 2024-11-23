@@ -23,17 +23,15 @@
  *
  */
 
-#include "wrapper.h"
 #include <libcgc.h>
 
-char *strchr(const char *s, int c)
-{
+#include "wrapper.h"
+
+char *strchr(const char *s, int c) {
   const char *p = s;
 
-  while (*p)
-  {
-    if (*p == c)
-      return (char *) p;
+  while (*p) {
+    if (*p == c) return (char *)p;
     p++;
   }
 

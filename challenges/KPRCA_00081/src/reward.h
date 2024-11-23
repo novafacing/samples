@@ -23,15 +23,14 @@
 
 #pragma once
 
-class CReward
-{
-    friend class CMission;
+class CReward {
+  friend class CMission;
 
-    public:
-        CReward(int exp, int supply);
-        ~CReward();
+ public:
+  CReward(int exp, int supply);
+  ~CReward();
 
-    private:
-        int m_exp;
-        int m_supply;
+ private:
+  int m_exp;
+  int m_supply;
 };

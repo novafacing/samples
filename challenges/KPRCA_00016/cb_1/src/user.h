@@ -33,13 +33,13 @@ typedef struct user {
   unsigned int auth_code;
   char username[MAX_USERNAME_LEN];
   char password[MAX_PASSWORD_LEN];
-  struct user *next;
+  struct user* next;
 } user_t;
 
 typedef user_t* user_list_t;
 
-int add_user(user_list_t *, user_t *);
-user_t* find_user(user_list_t, char *);
+int add_user(user_list_t*, user_t*);
+user_t* find_user(user_list_t, char*);
 user_t* find_user_by_id(user_list_t, unsigned short);
 user_t* get_user(user_list_t, unsigned short, unsigned int);
 

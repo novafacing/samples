@@ -25,88 +25,74 @@ THE SOFTWARE.
 */
 #include <ctype.h>
 
-#define		DEL	0x7f
-#define		SPC	0x20
+#define DEL 0x7f
+#define SPC 0x20
 
-#define		TAB	0x09
-#define		LF	0x0a
-#define		VT	0x0b
-#define 	FF	0x0c
-#define		CR	0x0d
+#define TAB 0x09
+#define LF 0x0a
+#define VT 0x0b
+#define FF 0x0c
+#define CR 0x0d
 
-int isdigit( int c )
-{
-	if ( c >= '0' && c <= '9' )
-		return 1;
-	else
-		return 0;
+int isdigit(int c) {
+  if (c >= '0' && c <= '9')
+    return 1;
+  else
+    return 0;
 }
 
-int isupper( int c )
-{
-	if ( c >= 'A' && c <= 'Z' )
-		return 1;
-	else
-		return 0;
+int isupper(int c) {
+  if (c >= 'A' && c <= 'Z')
+    return 1;
+  else
+    return 0;
 }
 
-int islower( int c )
-{
-	if ( c >= 'a' && c <= 'z' )
-		return 1;
-	else
-		return 0;
+int islower(int c) {
+  if (c >= 'a' && c <= 'z')
+    return 1;
+  else
+    return 0;
 }
 
-int isalpha( int c )
-{
-	if ( isupper( c ) || islower( c ) )
-		return 1;
-	else
-		return 0;
+int isalpha(int c) {
+  if (isupper(c) || islower(c))
+    return 1;
+  else
+    return 0;
 }
 
-int isalnum( int c )
-{
-	if ( isalpha( c ) || isdigit( c ) )
-		return 1;
-	else
-		return 0;
+int isalnum(int c) {
+  if (isalpha(c) || isdigit(c))
+    return 1;
+  else
+    return 0;
 }
 
-int isprint( int c )
-{
-	if ( c >= SPC && c != DEL )
-		return 1;
-	else
-		return 0;
+int isprint(int c) {
+  if (c >= SPC && c != DEL)
+    return 1;
+  else
+    return 0;
 }
 
-int toupper( int c )
-{
-	if ( islower( c ) )
-		return (c - 'a') + 'A';
-	else
-		return c;
+int toupper(int c) {
+  if (islower(c))
+    return (c - 'a') + 'A';
+  else
+    return c;
 }
 
-int tolower( int c )
-{
-	if ( isupper( c ) )
-	       return (c - 'A') + 'a';
-	else
-		return c;	
+int tolower(int c) {
+  if (isupper(c))
+    return (c - 'A') + 'a';
+  else
+    return c;
 }
 
-int isspace( int c )
-{
-	if ( c == SPC ||
-	     c == TAB ||
-	     c == LF ||
-	     c == VT ||
-	     c == FF ||
-	     c == CR )
-		return 1;
-	else
-		return 0;
+int isspace(int c) {
+  if (c == SPC || c == TAB || c == LF || c == VT || c == FF || c == CR)
+    return 1;
+  else
+    return 0;
 }

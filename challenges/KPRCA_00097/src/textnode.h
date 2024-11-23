@@ -24,14 +24,16 @@
 
 #include "node.h"
 
-class TextNode : public Node
-{
-    friend class Node;
-private:
-    TextNode(const String *ns, const String *tag);
-public:
-    const String *text();
-    void set_text(String *text);
-private:
-    String *d_text;
+class TextNode : public Node {
+  friend class Node;
+
+ private:
+  TextNode(const String *ns, const String *tag);
+
+ public:
+  const String *text();
+  void set_text(String *text);
+
+ private:
+  String *d_text;
 };

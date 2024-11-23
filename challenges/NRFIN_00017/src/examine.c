@@ -18,12 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "components.h"
-#include "assemble.h"
+ */
 #include "examine.h"
+
+#include <libcgc.h>
+
+#include "assemble.h"
+#include "components.h"
+#include "libc.h"
 
 /*
  * Check the load center to see if it has too much amp load.
@@ -35,11 +37,11 @@
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_load_center() {
-	if (get_total_amp_load_on_load_center() > get_amp_rating_of_load_center()) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_total_amp_load_on_load_center() > get_amp_rating_of_load_center()) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -52,12 +54,13 @@ static uint8_t is_too_much_amp_load_on_load_center() {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_breaker(uint32_t breaker_id) {
-	if (get_total_amp_load_on_breaker_by_breaker_id(breaker_id) > (0.8 * (float)get_amp_rating_of_breaker(breaker_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-} 
+  if (get_total_amp_load_on_breaker_by_breaker_id(breaker_id) >
+      (0.8 * (float)get_amp_rating_of_breaker(breaker_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
 
 /*
  * Check the breaker to see if it has too many outlets on its circuit.
@@ -69,21 +72,19 @@ static uint8_t is_too_much_amp_load_on_breaker(uint32_t breaker_id) {
  *  Not to many outlets: FALSE
  */
 static uint8_t is_too_many_outlets_on_breaker(uint32_t breaker_id) {
-	uint32_t outlet_count = get_count_outlets_on_breaker(breaker_id);
-	uint8_t res = FALSE;
-	switch(get_amp_rating_of_breaker(breaker_id)) {
-		case FIFTEEN_AMP:
-			if (outlet_count > 8)
-				res = TRUE;
-			break;
-		case TWENTY_AMP:
-			if (outlet_count > 10)
-				res = TRUE;
-			break;
-		default:
-			res = FALSE;
-	}
-	return res;
+  uint32_t outlet_count = get_count_outlets_on_breaker(breaker_id);
+  uint8_t res = FALSE;
+  switch (get_amp_rating_of_breaker(breaker_id)) {
+    case FIFTEEN_AMP:
+      if (outlet_count > 8) res = TRUE;
+      break;
+    case TWENTY_AMP:
+      if (outlet_count > 10) res = TRUE;
+      break;
+    default:
+      res = FALSE;
+  }
+  return res;
 }
 
 /*
@@ -96,11 +97,12 @@ static uint8_t is_too_many_outlets_on_breaker(uint32_t breaker_id) {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_outlet(outlet_id) {
-	if (get_total_amp_load_on_outlet_by_outlet_id(outlet_id) > (0.8 * (float)get_amp_rating_of_outlet(outlet_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_total_amp_load_on_outlet_by_outlet_id(outlet_id) >
+      (0.8 * (float)get_amp_rating_of_outlet(outlet_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -113,11 +115,12 @@ static uint8_t is_too_much_amp_load_on_outlet(outlet_id) {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_one_outlet_receptacle(outlet_id) {
-	if (get_max_receptacle_amp_load_on_outlet_by_outlet_id(outlet_id) > (0.8 * (float)get_amp_rating_of_outlet(outlet_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_max_receptacle_amp_load_on_outlet_by_outlet_id(outlet_id) >
+      (0.8 * (float)get_amp_rating_of_outlet(outlet_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -130,11 +133,12 @@ static uint8_t is_too_much_amp_load_on_one_outlet_receptacle(outlet_id) {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_splitter(splitter_id) {
-	if (get_total_amp_load_on_splitter_by_splitter_id(splitter_id) > (0.8 * (float)get_amp_rating_of_splitter(splitter_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_total_amp_load_on_splitter_by_splitter_id(splitter_id) >
+      (0.8 * (float)get_amp_rating_of_splitter(splitter_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -146,12 +150,13 @@ static uint8_t is_too_much_amp_load_on_splitter(splitter_id) {
  *  Too much amp load: TRUE
  *  Not too much amp load: FALSE
  */
- static uint8_t is_too_much_amp_load_on_one_splitter_receptacle(splitter_id) {
-	if (get_max_receptacle_amp_load_on_splitter_by_splitter_id(splitter_id) > (0.8 * (float)get_amp_rating_of_splitter(splitter_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+static uint8_t is_too_much_amp_load_on_one_splitter_receptacle(splitter_id) {
+  if (get_max_receptacle_amp_load_on_splitter_by_splitter_id(splitter_id) >
+      (0.8 * (float)get_amp_rating_of_splitter(splitter_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -164,11 +169,12 @@ static uint8_t is_too_much_amp_load_on_splitter(splitter_id) {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_light_string(light_string_id) {
-	if (get_total_amp_load_on_light_string_by_light_string_id(light_string_id) > get_amp_rating_of_light_string(light_string_id)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_total_amp_load_on_light_string_by_light_string_id(light_string_id) >
+      get_amp_rating_of_light_string(light_string_id)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -181,11 +187,12 @@ static uint8_t is_too_much_amp_load_on_light_string(light_string_id) {
  *  Not too much amp load: FALSE
  */
 static uint8_t is_too_much_amp_load_on_receptacle(receptacle_id) {
-	if (get_total_amp_load_on_receptacle_by_receptacle_id(receptacle_id) > (float)get_amp_rating_of_receptacle(receptacle_id)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if (get_total_amp_load_on_receptacle_by_receptacle_id(receptacle_id) >
+      (float)get_amp_rating_of_receptacle(receptacle_id)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -199,7 +206,7 @@ static uint8_t is_too_much_amp_load_on_receptacle(receptacle_id) {
  *  Not overloaded: FALSE
  */
 uint8_t is_electrical_panel_overloaded() {
-	return is_too_much_amp_load_on_load_center();
+  return is_too_much_amp_load_on_load_center();
 }
 
 /*
@@ -214,12 +221,12 @@ uint8_t is_electrical_panel_overloaded() {
  *  Not overloaded: FALSE
  */
 uint8_t is_breaker_overloaded(uint32_t breaker_id) {
-	if ((TRUE == is_too_many_outlets_on_breaker(breaker_id)) || 
-		(TRUE == is_too_much_amp_load_on_breaker(breaker_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if ((TRUE == is_too_many_outlets_on_breaker(breaker_id)) ||
+      (TRUE == is_too_much_amp_load_on_breaker(breaker_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /*
@@ -234,13 +241,13 @@ uint8_t is_breaker_overloaded(uint32_t breaker_id) {
  *  Not overloaded: FALSE
  */
 uint8_t is_outlet_overloaded(uint32_t outlet_id) {
-	if ((TRUE == is_too_much_amp_load_on_outlet(outlet_id)) ||
-		(TRUE == is_too_much_amp_load_on_one_outlet_receptacle(outlet_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-} 
+  if ((TRUE == is_too_much_amp_load_on_outlet(outlet_id)) ||
+      (TRUE == is_too_much_amp_load_on_one_outlet_receptacle(outlet_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
 
 /*
  * Check the splitter to see if it is overloaded.
@@ -254,13 +261,13 @@ uint8_t is_outlet_overloaded(uint32_t outlet_id) {
  *  Not overloaded: FALSE
  */
 uint8_t is_splitter_overloaded(uint32_t splitter_id) {
-	if ((TRUE == is_too_much_amp_load_on_splitter(splitter_id)) ||
-		(TRUE == is_too_much_amp_load_on_one_splitter_receptacle(splitter_id))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-} 
+  if ((TRUE == is_too_much_amp_load_on_splitter(splitter_id)) ||
+      (TRUE == is_too_much_amp_load_on_one_splitter_receptacle(splitter_id))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
 
 /*
  * Check the light string to see if it is overloaded.
@@ -273,12 +280,12 @@ uint8_t is_splitter_overloaded(uint32_t splitter_id) {
  *  Not overloaded: FALSE
  */
 uint8_t is_light_string_overloaded(uint32_t light_string_id) {
-	if (TRUE == is_too_much_amp_load_on_light_string(light_string_id)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-} 
+  if (TRUE == is_too_much_amp_load_on_light_string(light_string_id)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
 
 /*
  * Check the receptacle to see if it is overloaded.
@@ -291,10 +298,9 @@ uint8_t is_light_string_overloaded(uint32_t light_string_id) {
  *  Not overloaded: FALSE
  */
 uint8_t is_receptacle_overloaded(uint32_t receptacle_id) {
-	if (TRUE == is_too_much_amp_load_on_receptacle(receptacle_id)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-} 
-
+  if (TRUE == is_too_much_amp_load_on_receptacle(receptacle_id)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}

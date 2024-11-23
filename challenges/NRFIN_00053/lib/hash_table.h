@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H 1
@@ -29,20 +29,19 @@
 
 These functions are designed under the following assumptions:
 
-1. The hash table struct is initialize with functions that are directly associated 
-	with the type of the 'key'. (uint/int key -> ht_int_init, str key -> ht_str_init)
+1. The hash table struct is initialize with functions that are directly
+associated with the type of the 'key'. (uint/int key -> ht_int_init, str key ->
+ht_str_init)
 2. The type of the 'key' must be a 32bit int/uint or a pointer to a string.
-	Mixing 'key' int and uint types in one hash table is not advised.
+        Mixing 'key' int and uint types in one hash table is not advised.
 3. The type of the 'value' is only important for the ht_value_as_XYZ functions.
-4. The (key, value) pair is a struct where the 'key' comes immediately before the 'value'.
-	i.e.:
-	struct {
-		type1 key;
-		type2 value;
-	};
-	Some exmaple struct types are defined below.
+4. The (key, value) pair is a struct where the 'key' comes immediately before
+the 'value'. i.e.: struct { type1 key; type2 value;
+        };
+        Some exmaple struct types are defined below.
 5. The hash table stores pointers to structs. (void *)
-6. There are no pairs with duplicate 'key's in the hash table (prev will be replaced by new)
+6. There are no pairs with duplicate 'key's in the hash table (prev will be
+replaced by new)
 
 */
 
@@ -86,96 +85,97 @@ typedef void *(*f_key_ptr)(void *);
 typedef void *(*f_value_ptr)(ht_t *, void *);
 
 struct ht {
-	unsigned int buckets_cnt;	// number of buckets (next prime > size)
-	unsigned int size;			// number of buckets requested by user
-	unsigned int pair_cnt;		// number of pairs stored in ht
-	unsigned int iter_idx;		// index in buckets where iterator is
-	struct node  *iter_node;	// node in list where iterator is 
-	struct list **buckets;		// array with values of: default NULL, else pointer to struct list
-	f_hash fn_hash;
-	f_key_in_pair fn_key_in_pair;
-	f_key_ptr fn_key_ptr;
-	f_value_ptr fn_value_ptr;
+  unsigned int buckets_cnt;  // number of buckets (next prime > size)
+  unsigned int size;         // number of buckets requested by user
+  unsigned int pair_cnt;     // number of pairs stored in ht
+  unsigned int iter_idx;     // index in buckets where iterator is
+  struct node *iter_node;    // node in list where iterator is
+  struct list **buckets;  // array with values of: default NULL, else pointer to
+                          // struct list
+  f_hash fn_hash;
+  f_key_in_pair fn_key_in_pair;
+  f_key_ptr fn_key_ptr;
+  f_value_ptr fn_value_ptr;
 };
 
 /**
  * Example pair struct for unsigned int key and values
  */
 typedef struct uint_uint_pair {
-	unsigned int key;
-	unsigned int value;
+  unsigned int key;
+  unsigned int value;
 } uint_uint_pair_t;
 
 /**
  * Example pair struct for signed int key and value
  */
 typedef struct int_int_pair {
-	int key;
-	int value;
+  int key;
+  int value;
 } int_int_pair_t;
 
 /**
  * Example pair struct for string key and value
  */
 typedef struct str_str_pair {
-	char *key;
-	char *value;
+  char *key;
+  char *value;
 } str_str_pair_t;
 
 /**
  * Example pair struct for string key and int value
  */
 typedef struct str_int_pair {
-	char *key;
-	int value;
+  char *key;
+  int value;
 } str_int_pair_t;
 
 /**
  * Example pair struct for string key and int value
  */
 typedef struct str_uint_pair {
-	char *key;
-	unsigned int value;
+  char *key;
+  unsigned int value;
 } str_uint_pair_t;
 
 /**
  * Example pair struct for int key and string value
  */
 typedef struct int_str_pair {
-	int key;
-	char *value;
+  int key;
+  char *value;
 } int_str_pair_t;
 
 /**
  * Example pair struct for unsigned int key and string value
  */
 typedef struct uint_str_pair {
-	unsigned int key;
-	char *value;
+  unsigned int key;
+  char *value;
 } uint_str_pair_t;
 
 /**
  * Example pair struct for unsigned int key and void * value
  */
 typedef struct uint_voidp_pair {
-	unsigned int key;
-	void *value;
+  unsigned int key;
+  void *value;
 } uint_voidp_pair_t;
 
 /**
  * Example pair struct for signed int key and void * value
  */
 typedef struct int_voidp_pair {
-	int key;
-	void *value;
+  int key;
+  void *value;
 } int_voidp_pair_t;
 
 /**
  * Example pair struct for char * key and void * value
  */
 typedef struct str_voidp_pair {
-	char *key;
-	void *value;
+  char *key;
+  void *value;
 } str_voidp_pair_t;
 
 /**
@@ -236,8 +236,8 @@ unsigned int ht_length(ht_t *h);
  *
  * @param h 	Pointer to the hash table
  * @param pair 	VA of struct holding key and value
- * @return 		NULL if no pre-existing pair with this key, else 
- *				VA of pre-existing pair that was removed and 
+ * @return 		NULL if no pre-existing pair with this key, else
+ *				VA of pre-existing pair that was removed and
  *				replaced by this new pair
  */
 void *ht_pair_insert(ht_t *h, void *pair);
@@ -283,7 +283,8 @@ void *ht_value_as_voidp(ht_t *h, void *key);
  *
  * @param h 	Pointer to the hash table
  * @param key 	Pointer to key
- * @return 		uint value (will segfault if key is not found in hash table)
+ * @return 		uint value (will segfault if key is not found in hash
+ * table)
  */
 unsigned int ht_value_as_uint(ht_t *h, void *key);
 
@@ -292,7 +293,8 @@ unsigned int ht_value_as_uint(ht_t *h, void *key);
  *
  * @param h 	Pointer to the hash table
  * @param key 	Pointer to key
- * @return 		int value (will segfault if key is not found in hash table)
+ * @return 		int value (will segfault if key is not found in hash
+ * table)
  */
 int ht_value_as_int(ht_t *h, void *key);
 
@@ -313,7 +315,8 @@ void *ht_pair_iter_start(ht_t *h);
 void *ht_pair_iter_next(ht_t *h);
 
 /**
- * Determine if this hash table needs to be re-hashed to more evenly spread out the pairs
+ * Determine if this hash table needs to be re-hashed to more evenly spread out
+ * the pairs
  *
  * @param h 	Pointer to hash table
  * @return		1 if needs re-hash, 0 if not
@@ -364,6 +367,4 @@ str_uint_pair_t *get_s_ui_pair(char *s, unsigned int i);
  */
 str_int_pair_t *get_s_i_pair(char *s, int i);
 
-
 #endif
-

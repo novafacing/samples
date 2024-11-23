@@ -23,8 +23,8 @@
 #ifndef MALLOC_PRIVATE_H_
 #define MALLOC_PRIVATE_H_
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define RUN_SIZE (1024 * 1024)
 #define TINY_SIZE (4)
@@ -36,56 +36,50 @@
 #define NUM_BINS (NUM_TINY_BINS + NUM_SMALL_BINS)
 #define NUM_RUNS ((UINT_MAX / RUN_SIZE) + 1)
 
-enum {
-    MM_UNALLOCATED,
-    MM_TINY,
-    MM_SMALL,
-    MM_LARGE
-};
+enum { MM_UNALLOCATED, MM_TINY, MM_SMALL, MM_LARGE };
 
 typedef struct {
-    struct malloc_free *free_list[NUM_BINS];
-    unsigned char mem_map[NUM_RUNS];
+  struct malloc_free *free_list[NUM_BINS];
+  unsigned char mem_map[NUM_RUNS];
 
-    /* tiny-specific metadata */
-    struct tiny_page *tiny_pages[NUM_TINY_BINS];
-    void *tiny_run;
-    size_t tiny_offset;
+  /* tiny-specific metadata */
+  struct tiny_page *tiny_pages[NUM_TINY_BINS];
+  void *tiny_run;
+  size_t tiny_offset;
 } malloc_t;
 
 typedef struct {
-    union {
-        size_t prev_size; /* small allocations */
-        malloc_t *heap; /* large allocations */
-    };
-    size_t size_flags;
-    char data[0];
+  union {
+    size_t prev_size; /* small allocations */
+    malloc_t *heap;   /* large allocations */
+  };
+  size_t size_flags;
+  char data[0];
 } malloc_hdr_t;
 
 typedef struct {
-    int unused;
+  int unused;
 } small_run_t;
 
 typedef struct tiny_page {
-    unsigned short size;
-    unsigned short offset;
+  unsigned short size;
+  unsigned short offset;
 } tiny_page_t;
 
 typedef struct malloc_tiny_free {
-    struct malloc_tiny_free *next;
+  struct malloc_tiny_free *next;
 } malloc_tiny_free_t;
 
 typedef struct malloc_small_free {
-    malloc_hdr_t hdr;
-    struct malloc_small_free *prev, *next;
+  malloc_hdr_t hdr;
+  struct malloc_small_free *prev, *next;
 } malloc_small_free_t;
 
 typedef struct malloc_free {
-    union
-    {
-        malloc_tiny_free_t tiny;
-        malloc_small_free_t small;
-    };
+  union {
+    malloc_tiny_free_t tiny;
+    malloc_small_free_t small;
+  };
 } malloc_free_t;
 
 malloc_t g_heap;
@@ -95,18 +89,18 @@ void malloc_free(malloc_t *heap, void *ptr);
 void *malloc_realloc(malloc_t *heap, void *ptr, size_t n);
 size_t malloc_size(malloc_t *heap, void *ptr);
 
-static inline int size_to_bin(size_t n)
-{
-    if (n < SMALL_SIZE)
-        return (n / 4) - 1;
-    else if (n <= 512)
-        return NUM_TINY_BINS + (n / 16) - 1;
-    else if (n <= 4096 + 512)
-        return NUM_TINY_BINS + (512 / 16) + ((n - 512) / 128) - 1;
-    else if (n <= LARGE_SIZE)
-        return NUM_TINY_BINS + (512 / 16) + (4096 / 128) + ((n - 4096 - 512) / 2048) - 1;
-    else
-        return NUM_TINY_BINS + NUM_SMALL_BINS - 1;
+static inline int size_to_bin(size_t n) {
+  if (n < SMALL_SIZE)
+    return (n / 4) - 1;
+  else if (n <= 512)
+    return NUM_TINY_BINS + (n / 16) - 1;
+  else if (n <= 4096 + 512)
+    return NUM_TINY_BINS + (512 / 16) + ((n - 512) / 128) - 1;
+  else if (n <= LARGE_SIZE)
+    return NUM_TINY_BINS + (512 / 16) + (4096 / 128) +
+           ((n - 4096 - 512) / 2048) - 1;
+  else
+    return NUM_TINY_BINS + NUM_SMALL_BINS - 1;
 }
 
 #endif

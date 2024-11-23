@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #pragma once
 
@@ -49,4 +49,4 @@ int strcmp(const char* str1, const char* str2, const char term);
  * @param term String termination char
  * @returns Number of bytes preceeding the term char.
  */
-unsigned int strlen(const char *str, const char term);
+unsigned int strlen(const char* str, const char term);

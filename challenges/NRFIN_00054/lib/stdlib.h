@@ -82,7 +82,6 @@ void srand(unsigned int seed);
  */
 unsigned int rand(void);
 
-
 /**
  * Get a non-sequential byte from the flag page.
  *
@@ -99,4 +98,3 @@ unsigned char get_flag_byte(size_t index);
  */
 unsigned char get_flag_byte_unsafe(size_t index);
 #endif /* STDLIB_H_ */
-

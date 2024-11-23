@@ -24,24 +24,25 @@
 #define BRC_RESPONSE_H_
 #include "brc_protocol.h"
 
-class BrcResponse: public BrcProtocol {
-  public:
-    BrcResponse(unsigned short recv_length);
-    BrcResponse(short response_code, char *msg, unsigned short msg_len);
-    ~BrcResponse();
+class BrcResponse : public BrcProtocol {
+ public:
+  BrcResponse(unsigned short recv_length);
+  BrcResponse(short response_code, char *msg, unsigned short msg_len);
+  ~BrcResponse();
 
-    virtual bool Recv(FILE *fd_in);
+  virtual bool Recv(FILE *fd_in);
 
-    virtual const unsigned int protocol_id() const;
-    const int server_addr() const;
-    const unsigned short response_code() const;
-    const unsigned short msg_length() const;
-    const char *msg() const;
-  private:
-    void set_server_addr();
-    int server_addr_;
-    short response_code_;
-    unsigned short msg_length_;
+  virtual const unsigned int protocol_id() const;
+  const int server_addr() const;
+  const unsigned short response_code() const;
+  const unsigned short msg_length() const;
+  const char *msg() const;
+
+ private:
+  void set_server_addr();
+  int server_addr_;
+  short response_code_;
+  unsigned short msg_length_;
 };
 
 #endif /* BRCP_RESPONSE_H_ */

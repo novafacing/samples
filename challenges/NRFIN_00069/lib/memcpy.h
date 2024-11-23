@@ -18,16 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 /**
-* Copy n bytes from src to dest
-* 
-* @param dest The address to store the bytes in
-* @param src The address to retrieve the bytes from
-* @param n The number of bytes to copy
-*
-* @return None
-*/
+ * Copy n bytes from src to dest
+ *
+ * @param dest The address to store the bytes in
+ * @param src The address to retrieve the bytes from
+ * @param n The number of bytes to copy
+ *
+ * @return None
+ */
 void *memcpy(void *dest, const void *src, size_t n);

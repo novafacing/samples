@@ -3,13 +3,13 @@
 typedef struct professor professor_t;
 
 #include <stdlib.h>
-#include "ptrlist.h"
-#include "course.h"
 
-struct professor
-{
-    char *name;
-    ptrlist_t *courses_taught;
+#include "course.h"
+#include "ptrlist.h"
+
+struct professor {
+  char *name;
+  ptrlist_t *courses_taught;
 };
 
 professor_t *create_professor(char *name);

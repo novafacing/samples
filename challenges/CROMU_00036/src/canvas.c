@@ -23,23 +23,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
 #include "canvas.h"
+
+#include <libcgc.h>
+
 #include "paint.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 // Allocates memory for each layer and creates new canvas object
-int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers) {
-  
+int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size,
+                 uint8_t layers) {
   if (layers > CANVAS_MAX_LAYERS) {
     return -1;
   }
-  #ifdef PATCHED
+#ifdef PATCHED
   if (layers == 0) {
     return -1;
   }
-  #endif 
+#endif
   Canvas *c;
   if (allocate(sizeof(Canvas), 0, (void **)&c) != 0) {
     _terminate(-1);
@@ -66,7 +68,7 @@ void DestroyCanvas(Canvas **c) {
   if (*c == NULL) {
     return;
   }
-  for (int l=0; l < (*c)->num_layers; l++) {
+  for (int l = 0; l < (*c)->num_layers; l++) {
     if ((*c)->layers[l] != NULL) {
       deallocate((*c)->layers[l], (*c)->y_size * (*c)->x_size);
       (*c)->layers[l] = NULL;
@@ -76,8 +78,9 @@ void DestroyCanvas(Canvas **c) {
   *c = NULL;
 }
 
-// Flattens the canvas 
-// Starting from layer 1 and moving up, any non-default colors are overlayed onto layer 0
+// Flattens the canvas
+// Starting from layer 1 and moving up, any non-default colors are overlayed
+// onto layer 0
 void FlattenCanvas(Canvas *c) {
   for (int l = 1; l < c->num_layers; l++) {
     for (int y = 0; y < c->y_size; y++) {

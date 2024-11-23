@@ -2,17 +2,17 @@
 #include <libcgc.h>
 
 unsigned int read_all(int fd, char *buf, unsigned int size) {
-   char ch;
-   unsigned int total = 0;
-   size_t nbytes;
-   while (size) {
-      if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
-         break;
-      }
-      buf[total++] = ch;
-      size--;
-   }
-   return total;
+  char ch;
+  unsigned int total = 0;
+  size_t nbytes;
+  while (size) {
+    if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
+      break;
+    }
+    buf[total++] = ch;
+    size--;
+  }
+  return total;
 }
 
 /*
@@ -23,16 +23,16 @@ unsigned int read_all(int fd, char *buf, unsigned int size) {
  * is endchar.
  */
 int read_until_delim(int fd, char *buf, unsigned int size, char endchar) {
-   char ch;
-   unsigned int total = 0;
-   size_t nbytes;
-   while (1) {
-      if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
-         return -1;
-      }
-      if (ch == endchar) break;
-      if (total >= size) return -1;
-      buf[total++] = ch;
-   }
-   return (int)total;
+  char ch;
+  unsigned int total = 0;
+  size_t nbytes;
+  while (1) {
+    if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
+      return -1;
+    }
+    if (ch == endchar) break;
+    if (total >= size) return -1;
+    buf[total++] = ch;
+  }
+  return (int)total;
 }

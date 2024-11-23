@@ -18,48 +18,48 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-
-#include <libcgc.h>
-#include "libc.h"
 #include "rle.h"
 
+#include <libcgc.h>
 
-void decode(video *vid, char key){
-    uint32_t i, csum = 0, j, cur;
+#include "libc.h"
 
-    if (key != vid->key) {
-        if(vid->decbuf && vid) {
-            DEALLOC((void*)vid->decbuf, vid->dlen);
-            vid->decbuf = NULL;
-            vid->dlen = 0;
-        }
-        return;
+void decode(video *vid, char key) {
+  uint32_t i, csum = 0, j, cur;
+
+  if (key != vid->key) {
+    if (vid->decbuf && vid) {
+      DEALLOC((void *)vid->decbuf, vid->dlen);
+      vid->decbuf = NULL;
+      vid->dlen = 0;
     }
+    return;
+  }
 
-    vid->dlen = 0;
+  vid->dlen = 0;
 
-    for (i=0; i < vid->elen/4; i++) 
-        csum += *(((uint32_t*)vid->encbuf)+i) ^ (key<<24|key<<16|key<<8|key);
-    
-    if (csum != vid->csum) {
-        return;
-    }
+  for (i = 0; i < vid->elen / 4; i++)
+    csum += *(((uint32_t *)vid->encbuf) + i) ^
+            (key << 24 | key << 16 | key << 8 | key);
 
-    //now run over buffer and analyze how big decompressed vid will be
-    for (i=0; i < vid->elen; i+=2) { 
-        vid->dlen += (uint8_t)(vid->encbuf[i]^vid->key);
-        vid->dlen++;
-    }
+  if (csum != vid->csum) {
+    return;
+  }
 
-    ALLOC(0, (void**)&(vid->decbuf), vid->dlen);
+  // now run over buffer and analyze how big decompressed vid will be
+  for (i = 0; i < vid->elen; i += 2) {
+    vid->dlen += (uint8_t)(vid->encbuf[i] ^ vid->key);
+    vid->dlen++;
+  }
 
-    //now, actually decode/decompress
-    cur = 0;
-    for (i=0; i < vid->elen; i+=2) {
-        for(j=0; j <= (uint8_t)(vid->encbuf[i]^vid->key); j++)
-            vid->decbuf[cur++] = vid->encbuf[i+1]^vid->key;
-    }
+  ALLOC(0, (void **)&(vid->decbuf), vid->dlen);
 
+  // now, actually decode/decompress
+  cur = 0;
+  for (i = 0; i < vid->elen; i += 2) {
+    for (j = 0; j <= (uint8_t)(vid->encbuf[i] ^ vid->key); j++)
+      vid->decbuf[cur++] = vid->encbuf[i + 1] ^ vid->key;
+  }
 }

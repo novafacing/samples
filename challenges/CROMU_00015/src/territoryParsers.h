@@ -29,19 +29,19 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "string.h"
-#include "service.h"
-#include "helper.h"
-#include "genericParsers.h"
-#include "countyParsers.h"
 
-void initTerritory( pTerritory ty);
-int territoryMenu( pTerritory ty );
-void freeTerritory( pTerritory ty );
-void printTerritoryInfo( pTerritory ty );
-pTerritory territoryTopLevel( pstring str);
-int extractEstablished( pstring str );
-char *extractFounder( pstring str );
+#include "countyParsers.h"
+#include "genericParsers.h"
+#include "helper.h"
+#include "service.h"
+#include "string.h"
+
+void initTerritory(pTerritory ty);
+int territoryMenu(pTerritory ty);
+void freeTerritory(pTerritory ty);
+void printTerritoryInfo(pTerritory ty);
+pTerritory territoryTopLevel(pstring str);
+int extractEstablished(pstring str);
+char *extractFounder(pstring str);
 
 #endif
-

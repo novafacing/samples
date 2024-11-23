@@ -22,21 +22,15 @@
  */
 #include "fxgain.h"
 
-FxGain::FxGain(Gain gain_) : gain(gain_)
-{
+FxGain::FxGain(Gain gain_) : gain(gain_) {}
+
+void FxGain::apply(AudioTrack &track) const {
+  apply(*track.getChannel(0));
+  if (track.getStereo()) apply(*track.getChannel(1));
 }
 
-void FxGain::apply(AudioTrack &track) const
-{
-    apply(*track.getChannel(0));
-    if (track.getStereo())
-        apply(*track.getChannel(1));
-}
-
-void FxGain::apply(AudioStream &stream) const
-{
-    for (unsigned int i = 0; i < stream.getLength(); i++)
-    {
-        stream.setSample(i, gain.adjustSample(stream.getSample(i)));
-    }
+void FxGain::apply(AudioStream &stream) const {
+  for (unsigned int i = 0; i < stream.getLength(); i++) {
+    stream.setSample(i, gain.adjustSample(stream.getSample(i)));
+  }
 }

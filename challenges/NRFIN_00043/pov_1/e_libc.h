@@ -19,7 +19,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 // this is the libc from EAGLE_00005/pov_1/
 // the only change I've made is to define fprintf() in e_libc.c
@@ -41,16 +41,16 @@
 // int transmit_all(int fd, const void *buf, const size_t size);
 // int receive_all(int fd, char *buf, const size_t size);
 
-#define EOF                  -1
+#define EOF -1
 
 #ifndef NULL
-#define NULL ((void*)0)
+#define NULL ((void *)0)
 #endif
 
-#define _FILE_STATE_OPEN  1
+#define _FILE_STATE_OPEN 1
 #define _FILE_STATE_ERROR 2
-#define _FILE_STATE_EOF   4
-#define _FILE_HAVE_LAST   8
+#define _FILE_STATE_EOF 4
+#define _FILE_HAVE_LAST 8
 
 struct _FILE;
 typedef struct _FILE FILE;
@@ -69,6 +69,6 @@ extern FILE *stderr;
 // int ferror(FILE *stream);
 // int feof(FILE *stream);
 
-int fprintf(FILE * stream, const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
 
 #endif

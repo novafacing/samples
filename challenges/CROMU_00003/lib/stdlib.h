@@ -32,47 +32,45 @@ THE SOFTWARE.
 #include <libcgc.h>
 
 typedef struct _heap_block_header {
-	size_t remaining_size;
-	struct _heap_block_header *next;
-	char data[1];
+  size_t remaining_size;
+  struct _heap_block_header *next;
+  char data[1];
 } heap_block_header;
 
-
 typedef struct _heap_header {
-	size_t size;
-	char flags;
+  size_t size;
+  char flags;
 } heap_header;
 
 typedef struct _heap_metadata {
-	size_t mem_commit;
-	size_t mem_free;
-	size_t mem_inuse;
-	heap_block_header *blocks;
+  size_t mem_commit;
+  size_t mem_free;
+  size_t mem_inuse;
+  heap_block_header *blocks;
 } heap_metadata;
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
+int isspace(int c);
+int isdigit(int c);
+int isnan(double val);
+int isinf(double val);
 double atof(const char *str);
 int atoi(const char *str);
 void *calloc(size_t count, size_t size);
 void free(void *ptr);
 void *malloc(size_t size);
 
-
-char *strcpy( char *dest, char *src );
-int printf( const char *fmt, ... );
-void bzero( void *, size_t );
-int strcmp( const char *, const char * );
-char *strncat( char *dest, const char *src, size_t n );
-size_t receive_until( char *, char, size_t );
-size_t strcat( char *, char* );
-size_t strlen( char * );
-size_t itoa( char *, size_t, size_t );
-void puts( char *t );
-void *memcpy(void *dest, void*src, unsigned int len);
+char *strcpy(char *dest, char *src);
+int printf(const char *fmt, ...);
+void bzero(void *, size_t);
+int strcmp(const char *, const char *);
+char *strncat(char *dest, const char *src, size_t n);
+size_t receive_until(char *, char, size_t);
+size_t strcat(char *, char *);
+size_t strlen(char *);
+size_t itoa(char *, size_t, size_t);
+void puts(char *t);
+void *memcpy(void *dest, void *src, unsigned int len);
 void *memset(void *dest, char c, unsigned int len);
-size_t strlen( char * str );
+size_t strlen(char *str);
 
-#endif // __STDLIB_H__
+#endif  // __STDLIB_H__

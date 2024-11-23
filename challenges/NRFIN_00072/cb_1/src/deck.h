@@ -18,23 +18,22 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef DECK_H
 #define DECK_H 1
 
 #include "card.h"
 
 typedef struct {
-	unsigned int count; 	// number of cards remaining in deck
-	Card cards[];			// array of Cards
+  unsigned int count;  // number of cards remaining in deck
+  Card cards[];        // array of Cards
 } Deck;
-
 
 /*
  * Define a new deck or replace deck with a new one.
  *
- * This copies the values out of the values param, but does not free the values param.
- * The caller should do that.
+ * This copies the values out of the values param, but does not free the values
+ * param. The caller should do that.
  *
  * @param count 	Number of cards
  * @param values 	Array of card values
@@ -55,6 +54,5 @@ Card *get_next_card();
  * @return Number of cards remaining in deck. If no deck defined, will return 0.
  */
 unsigned int get_deck_size();
-
 
 #endif

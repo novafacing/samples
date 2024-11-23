@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 #pragma once
 
-#include "carbonate.h"
 #include "block.h"
+#include "carbonate.h"
 
 #define SET_CELLS 4096
 #define SET_CELL_MASK 4096 - 1

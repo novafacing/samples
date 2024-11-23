@@ -18,24 +18,24 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <errno.h>
+ */
 #include "recv_bytes.h"
+
+#include <errno.h>
+#include <libcgc.h>
+
 #include "libc.h"
 
-
 int recv_bytes(int fd, char *buf, unsigned int size) {
-
   int ret = SUCCESS;
   size_t bytes_left = size;
   size_t rx_bytes_local = 0;
 
   while (bytes_left) {
-
     rx_bytes_local = 0;
 
-    if (SUCCESS != (ret = receive(STDIN, buf+(size-bytes_left), bytes_left, &rx_bytes_local))) {
+    if (SUCCESS != (ret = receive(STDIN, buf + (size - bytes_left), bytes_left,
+                                  &rx_bytes_local))) {
       err("receive() call within recv_bytes() failed\n");
     }
 

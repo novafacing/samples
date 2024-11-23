@@ -25,232 +25,181 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
+
 #include "malloc.h"
-#include "stdlib.h"
 #include "service.h"
+#include "stdlib.h"
 
-
-void makeAirportCode( unsigned char *readPtr, char apCode[4]);
+void makeAirportCode(unsigned char *readPtr, char apCode[4]);
 char *findAirportCodebyNumber(airportInfoType *airports, int connectionNum);
 
 int loadDB(airportInfoType **airports) {
+  unsigned char *readPtr;
+  unsigned char airportCount;
+  unsigned int offset;
+  unsigned int i;
+  char airportCode[4];
+  char *code;
 
+  airportInfoType *tmpPtr;
+  struct connectionList *tmpConnectionPtr;
+  int connectionCount;
+  int connectionNum;
 
-unsigned char *readPtr;
-unsigned char airportCount;
-unsigned int offset;
-unsigned int i;
-char airportCode[4];
-char *code;
+  // this should only be called on an empty database
+  if (*airports != 0) return -1;
 
-airportInfoType *tmpPtr;
-struct connectionList *tmpConnectionPtr;
-int connectionCount;
-int connectionNum;
+  readPtr = (unsigned char *)INITIALIZATION_DATA;
+  offset = 1;
 
+  airportCount = *readPtr % 16 + 5;
 
-	// this should only be called on an empty database
-	if (*airports != 0)
-		return -1;
+  *airports = malloc(sizeof(airportInfoType));
 
-	readPtr = (unsigned char *)INITIALIZATION_DATA;
-	offset = 1;
+  if (*airports == 0) return -1;
 
-	airportCount = *readPtr % 16 + 5;
+  tmpPtr = *airports;
 
+  for (i = 0; i < airportCount; ++i) {
+    while (1) {
+      makeAirportCode(readPtr + offset, airportCode);
+      offset += 3;
 
-	*airports = malloc(sizeof(airportInfoType));
+      if (check4Code(*airports, airportCode) == -1) {
+        continue;
+      } else {
+        break;
+      }
 
-	if (*airports == 0)
-		return -1;
+    }  // while(1)
 
-	tmpPtr = *airports;
+    strcpy(tmpPtr->code, airportCode);
 
-	for (i=0; i < airportCount; ++i) {
+    // if this isn't the last one, malloc memory for the next
+    if (i < airportCount - 1) {
+      tmpPtr->next = malloc(sizeof(airportInfoType));
 
-		while (1) {
+      if (tmpPtr->next == 0) return -1;
 
-			makeAirportCode(readPtr+offset, airportCode);
-			offset+=3;
+      tmpPtr = tmpPtr->next;
+    }
+    // otherewise just terminate the linked list
+    else
+      tmpPtr->next = 0;
+  }
 
-			if (check4Code(*airports, airportCode)== -1) {
+  // now create the connections to other airports.
+  tmpPtr = *airports;
 
-				continue;
-			}
-			else {
-		
-				break;
-			}
+  while (tmpPtr != 0) {
+    connectionCount = *(readPtr + offset) % (airportCount / 2) + 1;
+    offset++;
 
-		} // while(1)	
-		
-		strcpy(tmpPtr->code, airportCode);
+    tmpPtr->connections = malloc(sizeof(connectionListType));
 
-		// if this isn't the last one, malloc memory for the next
-		if (i < airportCount -1 ) {
+    if (tmpPtr->connections == 0) return -1;
 
-			tmpPtr->next = malloc(sizeof(airportInfoType));
+    tmpConnectionPtr = (struct connectionList *)tmpPtr->connections;
 
-			if (tmpPtr->next == 0)
-				return -1;
+    i = 0;
+    do {
+      connectionNum = *(readPtr + offset) % airportCount;
+      offset++;
 
-			tmpPtr = tmpPtr->next;
-		}
-		// otherewise just terminate the linked list
-		else
-			tmpPtr->next = 0;
+      code = findAirportCodebyNumber(*airports, connectionNum);
 
-	}
+      if (check4ConnectionCode(tmpPtr->connections, code) == -1) {
+        strcpy(tmpConnectionPtr->destCode, code);
 
-	// now create the connections to other airports.
-	tmpPtr = *airports;
+        tmpConnectionPtr->cost = *(unsigned char *)(readPtr + offset);
+        ++offset;
 
-	while (tmpPtr != 0) {
+        tmpConnectionPtr->time = *(unsigned char *)(readPtr + offset);
+        ++offset;
 
-		connectionCount = *(readPtr + offset) % (airportCount/2) + 1;
-		offset++;
+        ++i;
 
-		tmpPtr->connections = malloc(sizeof(connectionListType));
+        if (i < connectionCount) {
+          tmpConnectionPtr->next = malloc(sizeof(connectionListType));
 
-		if (tmpPtr->connections == 0)
-			return -1;
+          if (tmpConnectionPtr->next == 0) return -1;
 
-		tmpConnectionPtr = (struct connectionList *)tmpPtr->connections;
+          tmpConnectionPtr = tmpConnectionPtr->next;
+        }
+      }
 
-		i = 0;
-		do {
+    } while (i < connectionCount);
 
-			connectionNum = *(readPtr + offset) % airportCount;
-			offset++;
+    tmpPtr = tmpPtr->next;
 
+  }  // while (tmpPtr != 0)
 
-			code = findAirportCodebyNumber(*airports, connectionNum);
-
-
-			if (check4ConnectionCode(tmpPtr->connections, code) == -1) {
-
-
-				strcpy(tmpConnectionPtr->destCode, code);
-
-				tmpConnectionPtr->cost = *(unsigned char *)(readPtr+offset);
-				++offset;
-
-				tmpConnectionPtr->time = *(unsigned char *)(readPtr+offset);
-				++offset;
-
-				++i;
-
-				if (i < connectionCount) {
-
-					tmpConnectionPtr->next = malloc(sizeof(connectionListType));
-
-					if (tmpConnectionPtr->next == 0)
-						return -1;
-
-					tmpConnectionPtr = tmpConnectionPtr->next;
-				}
-
-			}
-
-
-		} while (i < connectionCount);
-
-		tmpPtr = tmpPtr->next;
-
-	} // while (tmpPtr != 0)
-
-	return 0;
+  return 0;
 }
 
-// map the random bytes from the magic page into the uppercase alphabet to make an airport code
+// map the random bytes from the magic page into the uppercase alphabet to make
+// an airport code
 void makeAirportCode(unsigned char *readPtr, char apCode[4]) {
+  unsigned char tmpchar;
+  int i;
 
-unsigned char tmpchar;
-int i;
+  for (i = 0; i < 3; ++i) {
+    tmpchar = *(char *)(readPtr + i);
+    tmpchar = (tmpchar % 26) + 'A';
 
+    apCode[i] = tmpchar;
+  }
 
-	for (i=0; i< 3; ++i) {
-
-		tmpchar = *(char *)(readPtr+i);
-		tmpchar = (tmpchar % 26) + 'A';
-
-		apCode[i] = tmpchar;
-	}
-
-	apCode[i] = 0;
-
+  apCode[i] = 0;
 }
 
 // returns 0 if its not found in the list, -1 if it is.
 int check4Code(airportInfoType *airports, char apCode[4]) {
+  // if the airport list is empty, this is a fine code obviously
+  if (airports == 0) return 0;
 
+  while (airports != 0) {
+    if (apCode[0] == airports->code[0] && apCode[1] == airports->code[1] &&
+        apCode[2] == airports->code[2])
+      return -1;
+    else
+      airports = airports->next;
+  }
 
-	// if the airport list is empty, this is a fine code obviously
-	if (airports == 0)
-		return 0;
-
-	while (airports != 0) {
-
-		if (apCode[0] == airports->code[0] && 
-				apCode[1] == airports->code[1] &&
-				apCode[2] == airports->code[2] ) 
-			return -1;
-		else
-			airports = airports->next;
-
-	}
-
-	return 0;
-
+  return 0;
 }
 
 // returns -1 if the code is not found, or its position in the list otherwise
 int check4ConnectionCode(connectionListType *connections, char apCode[4]) {
+  int count;
 
-int count;
+  count = 0;
 
-	count = 0;
+  while (connections != 0) {
+    if (connections->destCode[0] == apCode[0] &&
+        connections->destCode[1] == apCode[1] &&
+        connections->destCode[2] == apCode[2])
 
-	while(connections != 0) {
+      return count;
 
+    count++;
+    connections = connections->next;
 
-		if (connections->destCode[0] == apCode[0] &&
-			connections->destCode[1] == apCode[1] &&
-			connections->destCode[2] == apCode[2] )
+  }  // while
 
-			return count;
-
-		count++;
-		connections = connections->next;
-
-	} // while
-
-	return -1;
-
+  return -1;
 }
-
 
 char *findAirportCodebyNumber(airportInfoType *airports, int connectionNum) {
+  int i;
 
-int i;
+  i = 0;
 
-	i = 0;
+  while (i < connectionNum && airports != 0) {
+    airports = airports->next;
 
-	while(i < connectionNum && airports != 0) {
+    ++i;
+  }
 
-
-		airports = airports->next;
-
-		++i;
-
-	}
-
-	return(airports->code);
-
+  return (airports->code);
 }
-
-
-
-
-
-

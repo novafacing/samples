@@ -24,15 +24,12 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-int read_n(int fd, char *buf, size_t len)
-{
+int read_n(int fd, char *buf, size_t len) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      break;
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) break;
     c++;
   }
   return c - buf;

@@ -36,4 +36,4 @@ typedef unsigned char uint8_t;
 typedef signed char int8_t;
 typedef unsigned char BYTE;
 
-#endif // __STDINT_H__
+#endif  // __STDINT_H__

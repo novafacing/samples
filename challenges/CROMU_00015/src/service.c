@@ -25,155 +25,154 @@ THE SOFTWARE.
 */
 
 #include "service.h"
+
 #include "planetParsers.h"
 
 pPlanet solarSystem[10];
 
-int main( void )
-{
-	int choice = 0;
-	char selection[30];
-	pstring tl = NULL;
-	pPlanet pp = NULL;
-	char *temp = NULL;
+int main(void) {
+  int choice = 0;
+  char selection[30];
+  pstring tl = NULL;
+  pPlanet pp = NULL;
+  char *temp = NULL;
 
-	bzero( solarSystem, sizeof(pPlanet) * 10 );
+  bzero(solarSystem, sizeof(pPlanet) * 10);
 
-	while (1) {
-		printf("\nPlanet Markup Language Main\n");
-		printf("1) Print Planets\n");
-		printf("2) Add PML\n");
-		printf("3) Add Planet\n");
-		printf("4) Select Planet\n");
-		printf("5) Exit\n");
-		printf("Selection: ");
+  while (1) {
+    printf("\nPlanet Markup Language Main\n");
+    printf("1) Print Planets\n");
+    printf("2) Add PML\n");
+    printf("3) Add Planet\n");
+    printf("4) Select Planet\n");
+    printf("5) Exit\n");
+    printf("Selection: ");
 
-		bzero(selection, 30);
-		receive_until( selection, '\n', 4 );
+    bzero(selection, 30);
+    receive_until(selection, '\n', 4);
 
-		choice = atoi( selection );
+    choice = atoi(selection);
 
-		switch (choice) {
-			case 1:
-				for ( choice = 0; choice < 10; choice++ ) {
-					if ( solarSystem[choice] != NULL ) {
-						printPlanetInfo( solarSystem[choice] );
-					}
-				}
-				break;
-			case 2:
-				if ( allocate( 4096, 0, (void**)&temp) != 0 ) {
-					temp = NULL;
-					continue;
-				}
-	
-				printf("PML: ");
-				bzero( temp, 4096);
-				receive_until( temp, '\n', 4095);
-				tl = initString( temp );
-				deallocate(temp, 4096);
+    switch (choice) {
+      case 1:
+        for (choice = 0; choice < 10; choice++) {
+          if (solarSystem[choice] != NULL) {
+            printPlanetInfo(solarSystem[choice]);
+          }
+        }
+        break;
+      case 2:
+        if (allocate(4096, 0, (void **)&temp) != 0) {
+          temp = NULL;
+          continue;
+        }
 
-				if ( tl == NULL ) {
-					continue;
-				} else if ( tl->buffer == NULL ) {
-					deallocate( tl, sizeof(string));
-					continue;
-				}
+        printf("PML: ");
+        bzero(temp, 4096);
+        receive_until(temp, '\n', 4095);
+        tl = initString(temp);
+        deallocate(temp, 4096);
 
-				choice = 0;
-				while ( choice < 10 ) {
-					if ( solarSystem[choice] != NULL ) {
-						choice++;
-						continue;
-					}
+        if (tl == NULL) {
+          continue;
+        } else if (tl->buffer == NULL) {
+          deallocate(tl, sizeof(string));
+          continue;
+        }
 
-					solarSystem[choice] = planetTopLevel(tl);
+        choice = 0;
+        while (choice < 10) {
+          if (solarSystem[choice] != NULL) {
+            choice++;
+            continue;
+          }
 
-					if ( solarSystem[choice] == NULL ) {
-						break;
-					}
+          solarSystem[choice] = planetTopLevel(tl);
 
-					choice++;
-				}
-				
-				freeString(tl);
-				break;
-			case 3:
-				printf("\n-> ");
-				bzero(selection, 30);
+          if (solarSystem[choice] == NULL) {
+            break;
+          }
 
-				receive_until( selection, '\n', 29 );
+          choice++;
+        }
 
-				choice = 0;
-				while ( choice < 10 ) {
-					if ( solarSystem[choice] == NULL ) {
-						break;
-					}
-					choice ++;
-				}
+        freeString(tl);
+        break;
+      case 3:
+        printf("\n-> ");
+        bzero(selection, 30);
 
-				if ( choice == 10 ) {
-					continue;
-				}
+        receive_until(selection, '\n', 29);
 
-				if ( allocate( sizeof(Planet), 0, (void**)&pp) != 0 ) {
-					pp = NULL;
-					break;
-				}
+        choice = 0;
+        while (choice < 10) {
+          if (solarSystem[choice] == NULL) {
+            break;
+          }
+          choice++;
+        }
 
-				initPlanet(pp);
+        if (choice == 10) {
+          continue;
+        }
 
+        if (allocate(sizeof(Planet), 0, (void **)&pp) != 0) {
+          pp = NULL;
+          break;
+        }
 
-				solarSystem[choice] = pp;
+        initPlanet(pp);
 
-				choice = 0;
-				while ( isalnum(selection[choice]) ) {
-					pp->name[choice] = selection[choice];
-					choice++;
-				}
-					
-				break;
-			case 4:
-				for (choice=0; choice < 10; choice++) {
-					if ( solarSystem[choice] != NULL ) {
-						printf("@d) @s\n", choice +1, solarSystem[choice]->name);
-					}
-				}
+        solarSystem[choice] = pp;
 
-				bzero( selection, 30);
-				printf("\n-> ");
-				receive_until(selection, '\n', 4 );
+        choice = 0;
+        while (isalnum(selection[choice])) {
+          pp->name[choice] = selection[choice];
+          choice++;
+        }
 
-				choice = atoi(selection);
+        break;
+      case 4:
+        for (choice = 0; choice < 10; choice++) {
+          if (solarSystem[choice] != NULL) {
+            printf("@d) @s\n", choice + 1, solarSystem[choice]->name);
+          }
+        }
 
-				if ( choice < 1 || choice > 10 ) {
-					printf("Invalid\n");
-					continue;
-				}
+        bzero(selection, 30);
+        printf("\n-> ");
+        receive_until(selection, '\n', 4);
 
-				if ( solarSystem[choice-1] == NULL ) {
-					printf("Invalid\n");
-					continue;
-				}
+        choice = atoi(selection);
 
-				if ( planetMenu( solarSystem[choice-1] ) == 0 ) {
-					solarSystem[choice-1] = NULL;
-				}
+        if (choice < 1 || choice > 10) {
+          printf("Invalid\n");
+          continue;
+        }
 
-				break;
-			case 5:
-				printf("Exitting..\n");
-				return 0;
-			default:
-				printf("Invalid...\n");
-				break;
-		};
-	}
+        if (solarSystem[choice - 1] == NULL) {
+          printf("Invalid\n");
+          continue;
+        }
 
-	pPlanet pl = planetTopLevel( tl );
+        if (planetMenu(solarSystem[choice - 1]) == 0) {
+          solarSystem[choice - 1] = NULL;
+        }
 
-	planetMenu(pl);
+        break;
+      case 5:
+        printf("Exitting..\n");
+        return 0;
+      default:
+        printf("Invalid...\n");
+        break;
+    };
+  }
 
-	_terminate(0);
-	return 0;
+  pPlanet pl = planetTopLevel(tl);
+
+  planetMenu(pl);
+
+  _terminate(0);
+  return 0;
 }

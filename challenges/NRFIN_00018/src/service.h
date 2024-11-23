@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #define ERROR_FAILED_RECV 4
 #define ERROR_FAILED_SEND 5
@@ -34,12 +34,12 @@
 #define SHRT_MAX 32767
 
 typedef struct {
-	short value[NUM_VALS];
-	short** result;
+  short value[NUM_VALS];
+  short** result;
 } Message;
 
 typedef struct {
- 	Message* inbox;
- 	Message* outbox;
- 	void (* processMessage)(Message* );
+  Message* inbox;
+  Message* outbox;
+  void (*processMessage)(Message*);
 } Worker;

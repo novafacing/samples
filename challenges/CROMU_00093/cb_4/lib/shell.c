@@ -23,35 +23,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "libc.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
 #include "shell.h"
+
+#include <libcgc.h>
+
+#include "libc.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 // Runs a shell command
 void runshellcommand(char *cmd) {
-
   if (cmd == NULL) return;
   if (*cmd == '\0') return;
   if (!strcmp(cmd, "ls")) {
     printf("one two three\n");
-  }
-  else if (!strcmp(cmd, "pwd")) {
+  } else if (!strcmp(cmd, "pwd")) {
     printf(".\n");
-  }
-  else if (!strncmp(cmd, "dump ", 5)) {
+  } else if (!strncmp(cmd, "dump ", 5)) {
     int i = atoi(cmd + 5);
     send_all((char *)i, 4);
-  }
-  else if (!strcmp(cmd, "help")) {
+  } else if (!strcmp(cmd, "help")) {
     printf("Here is no help\n");
-  }
-  else if (!strcmp(cmd, "info")) {
+  } else if (!strcmp(cmd, "info")) {
     printf("Here is no info\n");
-  }
-  else if (!strcmp(cmd, "exec")) {
+  } else if (!strcmp(cmd, "exec")) {
     // type 1 pov?
   }
 }
@@ -60,11 +56,11 @@ void shell() {
   // Mimic a shell
   while (1) {
     printf(">");
-  // Read a command
+    // Read a command
     int bytes_received;
     char input[1024];
     bytes_received = receive_until(input, sizeof(input), '\n');
-  // Execute command
+    // Execute command
     if (strcmp(input, "exit\n") == 0) {
       return;
     }

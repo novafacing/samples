@@ -25,9 +25,9 @@
 #define CLUSTER_H_
 
 struct cluster_data {
-    unsigned char *data;
-    unsigned int cluster_size;
-    unsigned int cluster_idx;
+  unsigned char *data;
+  unsigned int cluster_size;
+  unsigned int cluster_idx;
 };
 
 #endif

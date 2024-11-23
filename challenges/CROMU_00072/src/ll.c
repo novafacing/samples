@@ -24,12 +24,13 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
+
+#include "graph.h"
+#include "io.h"
+#include "malloc.h"
 #include "stdint.h"
 #include "stdio.h"
-#include "graph.h"
-#include "malloc.h"
-#include "io.h"
+#include "stdlib.h"
 
 extern pNode Nodes;
 extern pEdge Edges;
@@ -38,184 +39,176 @@ extern uint32_t NumEdges;
 
 // add a node to a list
 pNode AddNode(pNode Element) {
+  if (!Element) {
+    return (NULL);
+  }
 
-	if (!Element) {
-		return(NULL);
-	}
+  if (!Nodes) {
+    Nodes = Element;
+    Element->Next = NULL;
+    NumNodes++;
+    return (Element);
+  }
 
-	if (!Nodes) {
-		Nodes = Element;
-		Element->Next = NULL;
-		NumNodes++;
-		return(Element);
-	}
-	
-	Element->Next = Nodes;
-	Nodes = Element;
-	NumNodes++;
+  Element->Next = Nodes;
+  Nodes = Element;
+  NumNodes++;
 
-	return(Element);
-
+  return (Element);
 }
 
 // add an edge to a list
 pEdge AddEdge(pEdge Element) {
+  if (!Element) {
+    return (NULL);
+  }
 
-	if (!Element) {
-		return(NULL);
-	}
-	
-	if (!Edges) {
-		Edges = Element;
-		NumEdges++;
-		return(Element);
-	}
+  if (!Edges) {
+    Edges = Element;
+    NumEdges++;
+    return (Element);
+  }
 
-	Element->Next = Edges;
-	Edges = Element;
-	NumEdges++;
+  Element->Next = Edges;
+  Edges = Element;
+  NumEdges++;
 
-	return(Element);
-
+  return (Element);
 }
 
 // remove a node from a list by pointer
 pNode RemoveNode(pNode Element) {
-	pNode n;
-	pNode prev;
+  pNode n;
+  pNode prev;
 
-	if (!Nodes || !Element) {
-		return(NULL);
-	}
+  if (!Nodes || !Element) {
+    return (NULL);
+  }
 
-	if (Element == Nodes) {
-		Nodes = Element->Next;
-		Element->Next = NULL;
-		return(Nodes);
-	}
+  if (Element == Nodes) {
+    Nodes = Element->Next;
+    Element->Next = NULL;
+    return (Nodes);
+  }
 
-	prev = Nodes;
-	n = Nodes->Next;
-	while (n) {
-		if (n == Element) {
-			prev->Next = n->Next;
-			Element->Next = NULL;
-			return(Nodes);
-		}
-		n = n->Next;
-	}
+  prev = Nodes;
+  n = Nodes->Next;
+  while (n) {
+    if (n == Element) {
+      prev->Next = n->Next;
+      Element->Next = NULL;
+      return (Nodes);
+    }
+    n = n->Next;
+  }
 
-	return(NULL);
-	
+  return (NULL);
 }
 
 // remove an edge from a list by pointer
 pEdge RemoveEdge(pEdge Element) {
-	pEdge e;
-	pEdge prev;
+  pEdge e;
+  pEdge prev;
 
-	if (!Edges || !Element) {
-		return(NULL);
-	}
+  if (!Edges || !Element) {
+    return (NULL);
+  }
 
-	if (Element == Edges) {
-		Edges = Element->Next;
-		Element->Next = NULL;
-		return(Edges);
-	}
+  if (Element == Edges) {
+    Edges = Element->Next;
+    Element->Next = NULL;
+    return (Edges);
+  }
 
-	prev = Edges;
-	e = Edges->Next;
-	while (e) {
-		if (e == Element) {
-			prev->Next = e->Next;
-			Element->Next = NULL;
-			return(Edges);
-		}
-		e = e->Next;
-	}
+  prev = Edges;
+  e = Edges->Next;
+  while (e) {
+    if (e == Element) {
+      prev->Next = e->Next;
+      Element->Next = NULL;
+      return (Edges);
+    }
+    e = e->Next;
+  }
 
-	return(NULL);
-	
+  return (NULL);
 }
 
 // find a node in a list by its Name
 pNode FindNode(uint32_t TargetName) {
-	pNode Curr = Nodes;
+  pNode Curr = Nodes;
 
-	if (!Nodes) {
-		return(NULL);
-	}
+  if (!Nodes) {
+    return (NULL);
+  }
 
-	while (Curr) {
-		if (Curr->Name == TargetName) {
-			return(Curr);
-		}
-		Curr = Curr->Next;
-	}
+  while (Curr) {
+    if (Curr->Name == TargetName) {
+      return (Curr);
+    }
+    Curr = Curr->Next;
+  }
 
-	return(NULL);
-
+  return (NULL);
 }
 
 // find an edge in a list by its starting and ending node
 pEdge FindEdge(pNode NodeA, pNode NodeZ) {
-	pEdge Curr = Edges;
+  pEdge Curr = Edges;
 
-	if (!Edges) {
-		return(NULL);
-	}
+  if (!Edges) {
+    return (NULL);
+  }
 
-	while (Curr) {
-		if ((Curr->NodeA == NodeA) && (Curr->NodeZ == NodeZ)) {
-			return(Curr);
-		}
-		if ((Curr->NodeA == NodeZ) && (Curr->NodeZ == NodeA)) {
-			return(Curr);
-		}
-		Curr = Curr->Next;
-	}
+  while (Curr) {
+    if ((Curr->NodeA == NodeA) && (Curr->NodeZ == NodeZ)) {
+      return (Curr);
+    }
+    if ((Curr->NodeA == NodeZ) && (Curr->NodeZ == NodeA)) {
+      return (Curr);
+    }
+    Curr = Curr->Next;
+  }
 
-	return(NULL);
-
+  return (NULL);
 }
 
 // Destroy a nodes list
 uint8_t DestroyNodes(void) {
-	pNode Curr = Nodes;
-	pNode Next;
+  pNode Curr = Nodes;
+  pNode Next;
 
-	if (!Nodes) {
-		return(0);
-	}
+  if (!Nodes) {
+    return (0);
+  }
 
-	while (Curr) {
-		Next = Curr->Next;
-		free(Curr);
-		Curr = Next;
-	}
+  while (Curr) {
+    Next = Curr->Next;
+    free(Curr);
+    Curr = Next;
+  }
 
-	Nodes = NULL;
+  Nodes = NULL;
 
-	return(1);
+  return (1);
 }
 
 // Destroy a edges list
 uint8_t DestroyEdges(void) {
-	pEdge Curr = Edges;
-	pEdge Next;
+  pEdge Curr = Edges;
+  pEdge Next;
 
-	if (!Edges) {
-		return(0);
-	}
+  if (!Edges) {
+    return (0);
+  }
 
-	while (Curr) {
-		Next = Curr->Next;
-		free(Curr);
-		Curr = Next;
-	}
+  while (Curr) {
+    Next = Curr->Next;
+    free(Curr);
+    Curr = Next;
+  }
 
-	Edges = NULL;
+  Edges = NULL;
 
-	return(1);
+  return (1);
 }

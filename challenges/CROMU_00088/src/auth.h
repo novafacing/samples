@@ -34,5 +34,3 @@ securityIdType authenticate(char *name, char *password);
 securityIdType create_user(char *name, char *password, char *real_name);
 
 #endif
-
-

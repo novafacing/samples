@@ -32,56 +32,50 @@ THE SOFTWARE.
 typedef unsigned long datetime_type;
 
 typedef struct {
-
-    char last_name[21];
-    char first_name[21];
-    char phone[16];
-    char street[30];
-    char city[20];
-    char state[3];
-    char zip[11];
-    char padi_number[20];
-    char cert_date[11];
+  char last_name[21];
+  char first_name[21];
+  char phone[16];
+  char street[30];
+  char city[20];
+  char state[3];
+  char zip[11];
+  char padi_number[20];
+  char cert_date[11];
 
 } diver_info_type;
 
 typedef struct dive_data {
-
-    datetime_type timestamp;
-    unsigned int depth;
-    struct dive_data *next;
+  datetime_type timestamp;
+  unsigned int depth;
+  struct dive_data *next;
 
 } dive_data_type;
 
 typedef struct dive_log {
-
-    char dive_site_name[26];
-    char dive_date[11];
-    char dive_time[9];
-    time_t timestamp;
-    unsigned int max_depth;  // in feet
-    unsigned int avg_depth;  // in feet
-    unsigned int dive_length;  // in minutes
-    unsigned int pressure_in; // psi
-    unsigned int pressure_out; // psi
-    unsigned int O2_percent; // integer percentage of O2
-    char water_type[6];  // fresh or salt
-    unsigned int water_temp; // Celsius
-    unsigned int bincount;
-    char location[26];
-    dive_data_type *data;  // linked list of time/depth
-    struct dive_log *next;
-
+  char dive_site_name[26];
+  char dive_date[11];
+  char dive_time[9];
+  time_t timestamp;
+  unsigned int max_depth;     // in feet
+  unsigned int avg_depth;     // in feet
+  unsigned int dive_length;   // in minutes
+  unsigned int pressure_in;   // psi
+  unsigned int pressure_out;  // psi
+  unsigned int O2_percent;    // integer percentage of O2
+  char water_type[6];         // fresh or salt
+  unsigned int water_temp;    // Celsius
+  unsigned int bincount;
+  char location[26];
+  dive_data_type *data;  // linked list of time/depth
+  struct dive_log *next;
 
 } dive_log_type;
 
 typedef struct {
-
-    diver_info_type diver;
-    dive_log_type *dives;
+  diver_info_type diver;
+  dive_log_type *dives;
 
 } logbook_type;
-
 
 int edit_diver(logbook_type *);
 int log_dives(logbook_type *);
@@ -94,6 +88,5 @@ int print_diver_info(logbook_type *Info);
 int edit_dives(logbook_type *Info);
 int remove_dives(logbook_type *Info);
 int update_dive(dive_log_type *);
-
 
 #endif

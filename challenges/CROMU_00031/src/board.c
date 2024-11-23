@@ -23,58 +23,59 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
 #include "board.h"
 
-void PrintBoard(char b[X_MAX][Y_MAX]) {
-	char x, y;
-	char buf[Y_MAX+1];
-	size_t txcount;
+#include <libcgc.h>
 
-	for (y = Y_MAX-1; y >= 0; y--) {
-		for (x = 0; x < X_MAX; x++) {
-			if (b[x][y] == '\0') {
-				buf[x] = '.';
-			} else {
-				buf[x] = b[x][y];
-			}
-		}
-		buf[x] = '\0';
-		printf("@s\n", buf);
-	}
+#include "stdlib.h"
+
+void PrintBoard(char b[X_MAX][Y_MAX]) {
+  char x, y;
+  char buf[Y_MAX + 1];
+  size_t txcount;
+
+  for (y = Y_MAX - 1; y >= 0; y--) {
+    for (x = 0; x < X_MAX; x++) {
+      if (b[x][y] == '\0') {
+        buf[x] = '.';
+      } else {
+        buf[x] = b[x][y];
+      }
+    }
+    buf[x] = '\0';
+    printf("@s\n", buf);
+  }
 }
 
 void InitBoard(char b[X_MAX][Y_MAX]) {
-	char x, y;
+  char x, y;
 
-	// init white side
-	b[0][0] = b[7][0] = W_ROOK;
-	b[1][0] = b[6][0] = W_KNIGHT;
-	b[2][0] = b[5][0] = W_BISHOP;
-	b[3][0] = W_QUEEN;
-	b[4][0] = W_KING;
-	y = 1;
-	for (x = 0; x < X_MAX; x++) {
-		b[x][y] = W_PAWN;
-	}
+  // init white side
+  b[0][0] = b[7][0] = W_ROOK;
+  b[1][0] = b[6][0] = W_KNIGHT;
+  b[2][0] = b[5][0] = W_BISHOP;
+  b[3][0] = W_QUEEN;
+  b[4][0] = W_KING;
+  y = 1;
+  for (x = 0; x < X_MAX; x++) {
+    b[x][y] = W_PAWN;
+  }
 
-	// init field between
-	for (y = 2; y < 6; y++) {
-		for (x = 0; x < Y_MAX; x++) {
-			b[x][y] = EMPTY;
-		}
-	}
+  // init field between
+  for (y = 2; y < 6; y++) {
+    for (x = 0; x < Y_MAX; x++) {
+      b[x][y] = EMPTY;
+    }
+  }
 
-	// init black side
-	y = 6;
-	for (x = 0; x < X_MAX; x++) {
-		b[x][y] = B_PAWN;
-	}
-	b[0][7] = b[7][7] = B_ROOK;
-	b[1][7] = b[6][7] = B_KNIGHT;
-	b[2][7] = b[5][7] = B_BISHOP;
-	b[3][7] = B_QUEEN;
-	b[4][7] = B_KING;
-
+  // init black side
+  y = 6;
+  for (x = 0; x < X_MAX; x++) {
+    b[x][y] = B_PAWN;
+  }
+  b[0][7] = b[7][7] = B_ROOK;
+  b[1][7] = b[6][7] = B_KNIGHT;
+  b[2][7] = b[5][7] = B_BISHOP;
+  b[3][7] = B_QUEEN;
+  b[4][7] = B_KING;
 }

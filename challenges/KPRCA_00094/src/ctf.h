@@ -24,26 +24,26 @@
 #ifndef CTF_H
 #define CTF_H
 
-#include "user.h"
 #include "challenge.h"
 #include "flgmgr.h"
+#include "user.h"
 
-#define CTF_STAT_DOWN   0
-#define CTF_STAT_LIVE   1
+#define CTF_STAT_DOWN 0
+#define CTF_STAT_LIVE 1
 
 typedef struct {
-    int status;
-    size_t num_chals;
-    size_t num_teams;
-    size_t num_users;
-    size_t sz_chals;
-    size_t sz_teams;
-    size_t sz_users;
-    chal_t **chals;
-    team_t **teams;
-    user_t **users;
-    flgmgr_t flg;
-    user_t *logged_in;
+  int status;
+  size_t num_chals;
+  size_t num_teams;
+  size_t num_users;
+  size_t sz_chals;
+  size_t sz_teams;
+  size_t sz_users;
+  chal_t **chals;
+  team_t **teams;
+  user_t **users;
+  flgmgr_t flg;
+  user_t *logged_in;
 } ctf_t;
 
 error_t ctf_init(ctf_t *ctf);
@@ -51,7 +51,8 @@ error_t ctf_init(ctf_t *ctf);
 /* Feature */
 error_t ctf_submit_flag(ctf_t *ctf, team_t *team, const char *flag);
 error_t ctf_add_user(ctf_t *ctf, user_t *user);
-error_t ctf_auth_user(ctf_t *ctf, user_t **user, const char *nick, const char *pass);
+error_t ctf_auth_user(ctf_t *ctf, user_t **user, const char *nick,
+                      const char *pass);
 error_t ctf_add_team(ctf_t *ctf, team_t *team);
 error_t ctf_add_chal(ctf_t *ctf, chal_t *chal);
 error_t ctf_open_chal(ctf_t *ctf, size_t cid);

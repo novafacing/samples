@@ -26,9 +26,8 @@ THE SOFTWARE.
 #ifndef PACKET_ANALYSIS_H
 #define PACKET_ANALYSIS_H
 
-#include "stdlib.h"
 #include "service.h"
-
+#include "stdlib.h"
 
 #define FILTER_TYPE_INCLUDE 1
 #define FILTER_TYPE_EXCLUDE 2
@@ -48,7 +47,6 @@ THE SOFTWARE.
 #define OPTION_TYPE_MODIFIED 6
 #define OPTION_TYPE_DEVICE 7
 #define OPTION_TYPE_LAST 8
-
 
 typedef struct Statistics_s {
   uint32_t num_packets;
@@ -86,10 +84,10 @@ typedef struct OptionHeader_s {
   char *value;
 } OptionHeader;
 
-
 void TransmitOptionHeader(OptionHeader *header);
 void DisplayStatistics(SystemState *state);
 int AnalyzePacket(SystemState *state, Packet *packet);
-void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match, int *positive_match);
+void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match,
+                       int *positive_match);
 int FilterMatch(PacketFilter *filter, Packet *packet);
 #endif

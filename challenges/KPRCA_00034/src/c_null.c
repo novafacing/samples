@@ -22,34 +22,22 @@
  */
 #include "codes.h"
 
-int null_init(code_t *code, const unsigned char *k)
-{
-    code->priv = NULL;
-    return SUCCESS;
+int null_init(code_t *code, const unsigned char *k) {
+  code->priv = NULL;
+  return SUCCESS;
 }
 
-void null_destroy(code_t *code)
-{
-    return;
-}
+void null_destroy(code_t *code) { return; }
 
-int null_encode(code_t *code, unsigned char *b)
-{
-    return SUCCESS;
-}
+int null_encode(code_t *code, unsigned char *b) { return SUCCESS; }
 
-int null_decode(code_t *code, unsigned char *b)
-{
-    return SUCCESS;
-}
+int null_decode(code_t *code, unsigned char *b) { return SUCCESS; }
 
-const code_def_t null_code = {
-    .name = "Null",
-    .type = C_NULL,
-    .bsize = 32,
-    .ksize = 0,
-    .init = null_init,
-    .destroy = null_destroy,
-    .encode = null_encode,
-    .decode = null_decode
-};
+const code_def_t null_code = {.name = "Null",
+                              .type = C_NULL,
+                              .bsize = 32,
+                              .ksize = 0,
+                              .init = null_init,
+                              .destroy = null_destroy,
+                              .encode = null_encode,
+                              .decode = null_decode};

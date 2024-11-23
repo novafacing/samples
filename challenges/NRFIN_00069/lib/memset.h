@@ -18,16 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 /**
-* Set a specific number of bytes starting at a memory address to a char value
-* 
-* @param dst The memory address to start at
-* @param c The char value to set each proceeding memory address to
-* @param n The number of bytes to set to the char value
-* 
-* @return A pointer to the destination address
-*/
-void * memset(void *dst, char c, size_t n);
+ * Set a specific number of bytes starting at a memory address to a char value
+ *
+ * @param dst The memory address to start at
+ * @param c The char value to set each proceeding memory address to
+ * @param n The number of bytes to set to the char value
+ *
+ * @return A pointer to the destination address
+ */
+void *memset(void *dst, char c, size_t n);

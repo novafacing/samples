@@ -23,98 +23,97 @@ THE SOFTWARE.
 
 #include "service.h"
 
-size_t receiveIt( void *data, size_t length )
-{
-	size_t count = 0;
-	unsigned char *tdata = (unsigned char *)data;
-	int bread = 0;
+size_t receiveIt(void *data, size_t length) {
+  size_t count = 0;
+  unsigned char *tdata = (unsigned char *)data;
+  int bread = 0;
 
-	if ( data == NULL ) {
-		return 0;
-	}
+  if (data == NULL) {
+    return 0;
+  }
 
-	while ( 0 < length ) {
-		if ( receive( 0, tdata + bread, length, &count ) != 0 ) {
-			printf("[ERROR] Failed to receive\n");
-			return 0;
-		}
+  while (0 < length) {
+    if (receive(0, tdata + bread, length, &count) != 0) {
+      printf("[ERROR] Failed to receive\n");
+      return 0;
+    }
 
-		bread += count;
-		length -= count;
-	}
+    bread += count;
+    length -= count;
+  }
 
-	return bread;
+  return bread;
 }
 
 /**
- * This function provides the ability to read in the size of the video stream followed by the specified number of bytes for the image data. The maximum size for a video is 4096 bytes and the minimum is 8
+ * This function provides the ability to read in the size of the video stream
+ *followed by the specified number of bytes for the image data. The maximum size
+ *for a video is 4096 bytes and the minimum is 8
  * @return Returns a readable bitstream of the newly received data.
  **/
-pBitStream readImageData( void )
-{
-	int length = 0;
-	size_t bytes_read = 0;
-	pBitStream npbs = NULL;
-	char *newData = NULL;
+pBitStream readImageData(void) {
+  int length = 0;
+  size_t bytes_read = 0;
+  pBitStream npbs = NULL;
+  char *newData = NULL;
 
-	printf("----------------Stream Me Your Video----------------\n");
+  printf("----------------Stream Me Your Video----------------\n");
 
-	bytes_read = receiveIt( &length, 4 );
+  bytes_read = receiveIt(&length, 4);
 
-	if ( bytes_read != 4 ) {
-		return NULL;
-	}
+  if (bytes_read != 4) {
+    return NULL;
+  }
 
-	if ( length > 4096 ) {
-		printf("[ERROR] Image must be smaller than 4096 bytes\n");
-		return NULL;
-	}
+  if (length > 4096) {
+    printf("[ERROR] Image must be smaller than 4096 bytes\n");
+    return NULL;
+  }
 
-	if ( length < 8 ) {
-		printf("[ERROR] Image must be greater than 8 bytes\n");
-		return NULL;
-	}
+  if (length < 8) {
+    printf("[ERROR] Image must be greater than 8 bytes\n");
+    return NULL;
+  }
 
-	newData = malloc( length );
+  newData = malloc(length);
 
-	if ( newData == NULL ) {
-		return NULL;
-	}
+  if (newData == NULL) {
+    return NULL;
+  }
 
-	memset( newData, 0, length );	
+  memset(newData, 0, length);
 
-	bytes_read = receiveIt( newData, length );
+  bytes_read = receiveIt(newData, length);
 
-	if ( bytes_read != length ) {
-		free( newData );
-		return NULL;
-	}
+  if (bytes_read != length) {
+    free(newData);
+    return NULL;
+  }
 
-	/// This function allocates a new block and copies the existing data 
-	/// into that new buffer without freeing the data buffer
-	npbs = initStream( newData, length );
+  /// This function allocates a new block and copies the existing data
+  /// into that new buffer without freeing the data buffer
+  npbs = initStream(newData, length);
 
-	/// We no longer need the old data so free the buffer.
-	free( newData );
-	newData = NULL;
+  /// We no longer need the old data so free the buffer.
+  free(newData);
+  newData = NULL;
 
-	return npbs;
+  return npbs;
 }
 
-int main(void)
-{
-	unsigned char ba = 0;
+int main(void) {
+  unsigned char ba = 0;
 
-	pBitStream bs;
+  pBitStream bs;
 
-	bs = readImageData( );
+  bs = readImageData();
 
-	if ( bs == NULL ) {
-		return 0;
-	}
+  if (bs == NULL) {
+    return 0;
+  }
 
-	renderCVF( bs );
+  renderCVF(bs);
 
-	freeStream( &bs );
-	return 0;
+  freeStream(&bs);
+  return 0;
 }

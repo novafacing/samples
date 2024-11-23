@@ -25,171 +25,148 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
-#include "stdio.h"
-#include "string.h"
+
 #include "input.h"
 #include "malloc.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
+int receiveMessage(void *message) {
+  unsigned int messageType;
+  unsigned char field_len;
+  int retcode;
+  newUserMessageType *newUser;
+  loginMessageType *loginUser;
+  feedRequestMessageType *newFeedRequest;
+  newPostMessageType *newPost;
+  requestPostMessageType *requestPost;
+  addCommentMessageType *newComment;
 
+  if (receive_bytes((char *)&messageType, sizeof(messageType)) == -1) {
+    return -1;
+  }
 
-int receiveMessage( void *message ) {
+  switch (messageType) {
+    case 0xa0:  // add user
 
-unsigned int messageType;
-unsigned char field_len;
-int retcode;
-newUserMessageType *newUser;
-loginMessageType *loginUser;
-feedRequestMessageType *newFeedRequest;
-newPostMessageType *newPost;
-requestPostMessageType *requestPost;
-addCommentMessageType *newComment;
+      newUser = message;
 
-	if (receive_bytes((char *)&messageType, sizeof(messageType)) == -1)  {
+      if (newUser == 0) {
+        _terminate(-1);
+      }
 
-		return -1;
-	}
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(newUser->name, field_len);
+      newUser->name[field_len] = 0;
 
-	switch (messageType) {
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(newUser->password, field_len);
+      newUser->password[field_len] = 0;
 
-		case 0xa0:  // add user
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(newUser->fullname, field_len);
+      newUser->fullname[field_len] = 0;
 
-			newUser = message;
+      return (messageType);
 
-			if ( newUser == 0 ) {
+      break;
 
-				_terminate(-1);
+    case 0xb0:  // login user
 
-			}
+      loginUser = message;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->name, field_len);
-			newUser->name[field_len] = 0;
+      if (loginUser == 0) {
+        _terminate(-1);
+      }
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->password, field_len);
-			newUser->password[field_len] = 0;
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(loginUser->name, field_len);
+      loginUser->name[field_len] = 0;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->fullname, field_len);
-			newUser->fullname[field_len] = 0;
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(loginUser->password, field_len);
+      loginUser->password[field_len] = 0;
 
-			return(messageType);
+      return (messageType);
 
-			break;
+      break;
 
-		case 0xb0:  // login user
+    case 0xc0:  // get feed item
 
-			loginUser = message;
+      newFeedRequest = message;
 
-			if ( loginUser == 0 ) {
+      if (newFeedRequest == 0) {
+        _terminate(-1);
+      }
 
-				_terminate(-1);
+      receive_bytes((char *)&newFeedRequest->sessionToken,
+                    sizeof(newFeedRequest->sessionToken));
 
-			}
+      return (messageType);
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(loginUser->name, field_len);
-			loginUser->name[field_len] = 0;
+      break;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(loginUser->password, field_len);
-			loginUser->password[field_len] = 0;
-			
-			return(messageType);
+    case 0xd0:  // add post
 
-			break;
+      newPost = message;
 
-		case 0xc0:  // get feed item
+      if (newPost == 0) {
+        _terminate(-1);
+      }
 
-			newFeedRequest = message;
+      receive_bytes((void *)&newPost->sessionToken,
+                    sizeof(newPost->sessionToken));
 
-			if ( newFeedRequest == 0 ) {
+      receive_bytes((char *)&field_len, 1);
 
-				_terminate(-1);
+      receive_bytes(newPost->post, field_len);
+      newPost->post[field_len] = 0;
 
-			}
+      return (messageType);
 
-			receive_bytes((char *)&newFeedRequest->sessionToken, sizeof (newFeedRequest->sessionToken));
+      break;
 
-			return(messageType);
+    case 0xe0:  // add a comment to a post
 
-			break;
+      newComment = message;
 
-		case 0xd0:  // add post
+      if (newComment == 0) {
+        _terminate(-1);
+      }
 
-			newPost = message;
+      receive_bytes((void *)&newComment->postID, sizeof(newComment->postID));
+      receive_bytes((void *)&newComment->commenterID,
+                    sizeof(newComment->commenterID));
+      receive_bytes((char *)&field_len, 1);
+      receive_bytes(newComment->comment, field_len);
 
-			if ( newPost == 0 ) {
+      newComment->comment[field_len] = 0;
 
-				_terminate(-1);
+      return (messageType);
+      break;
 
-			}
+    case 0xf0:  // retrieve specific post from its ID
 
-			receive_bytes((void *)&newPost->sessionToken, sizeof(newPost->sessionToken));
+      requestPost = message;
 
-			receive_bytes((char *)&field_len, 1);
+      if (requestPost == 0) {
+        _terminate(-1);
+      }
 
-			receive_bytes(newPost->post, field_len);
-			newPost->post[field_len] = 0;
-			
-			return(messageType);
+      receive_bytes((char *)&requestPost->postID, sizeof(requestPost->postID));
 
-			break;
+      return (messageType);
+  }
 
-		case 0xe0: // add a comment to a post
-
-			newComment = message;
-
-			if ( newComment == 0 ) {
-
-				_terminate(-1);
-
-			}
-
-			receive_bytes((void *)&newComment->postID, sizeof(newComment->postID));
-			receive_bytes((void *)&newComment->commenterID, sizeof(newComment->commenterID));
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newComment->comment, field_len);
-
-			newComment->comment[field_len] = 0;
-
-			return (messageType);
-			break;
-
-		case 0xf0:  // retrieve specific post from its ID
-
-			requestPost = message;
-			
-			if ( requestPost  == 0 ) {
-
-				_terminate(-1);
-
-			}
-
-			receive_bytes((char *)&requestPost->postID, sizeof (requestPost->postID));
-
-			return(messageType);
-
-	}
-
-	return 0;
-
+  return 0;
 }
 
-
-int sendResponse( void *message, int length ) {
-
-
-	if (write(STDOUT, message, length) != 0 ) {
-
-		return -1;
-	}
-	else {
-
-		return 0;
-	}
-
+int sendResponse(void *message, int length) {
+  if (write(STDOUT, message, length) != 0) {
+    return -1;
+  } else {
+    return 0;
+  }
 }
-

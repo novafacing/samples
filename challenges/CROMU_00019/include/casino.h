@@ -31,34 +31,34 @@ THE SOFTWARE.
 
 #define PLAYER_NAME_LENGTH 32
 
-typedef struct player_info_s{
-	int number;
-	char name[PLAYER_NAME_LENGTH];
-	int blackjack_score;
-	int poker_score;
-	int slots_score;
-	int wallet;
-	struct player_info_s *next;
+typedef struct player_info_s {
+  int number;
+  char name[PLAYER_NAME_LENGTH];
+  int blackjack_score;
+  int poker_score;
+  int slots_score;
+  int wallet;
+  struct player_info_s *next;
 } player_info;
 
-
 enum payout_names {
-	SLOTS_COLUMN_MATCH,
-	SLOTS_ROW_MATCH,
-	POKER_ROYAL_FLUSH,
-	POKER_STRAIGHT_FLUSH,
-	POKER_FLUSH,
-	POKER_FOUR_OF_A_KIND,
-	POKER_FULL_HOUSE,
-	POKER_TWO_PAIR,
-	POKER_THREE_OF_A_KIND,
-	POKER_JACKS_OR_BETTER,
-	POKER_STRAIGHT,
-	BLACKJACK_PUSH,
-	BLACKJACK_BLACKJACK,
-	BLACKJACK_WIN,
-	NUMBER_OF_PAYOUTS };
+  SLOTS_COLUMN_MATCH,
+  SLOTS_ROW_MATCH,
+  POKER_ROYAL_FLUSH,
+  POKER_STRAIGHT_FLUSH,
+  POKER_FLUSH,
+  POKER_FOUR_OF_A_KIND,
+  POKER_FULL_HOUSE,
+  POKER_TWO_PAIR,
+  POKER_THREE_OF_A_KIND,
+  POKER_JACKS_OR_BETTER,
+  POKER_STRAIGHT,
+  BLACKJACK_PUSH,
+  BLACKJACK_BLACKJACK,
+  BLACKJACK_WIN,
+  NUMBER_OF_PAYOUTS
+};
 
 extern int payouts[NUMBER_OF_PAYOUTS];
 
-#endif // CASINO_H
+#endif  // CASINO_H

@@ -30,43 +30,41 @@ THE SOFTWARE.
 #include <string.h>
 
 // Forward declarations
-class CommandHandler
-{
-public:
-    CommandHandler();
-    ~CommandHandler();
+class CommandHandler {
+ public:
+  CommandHandler();
+  ~CommandHandler();
 
-    void ParserLoop( void );
+  void ParserLoop(void);
 
-private:
-    bool CmdChangeDiverInfo( void );
-    bool CmdLogNewDive( void );
-    bool CmdDownloadDiveData( void );
-    bool CmdEditDives( void );
-    bool CmdPrintDiveLogs( void );
-    bool CmdRemoveDives( void );
-    bool CmdDiverStatistics( void );
-    bool CmdExitApplication( void );
+ private:
+  bool CmdChangeDiverInfo(void);
+  bool CmdLogNewDive(void);
+  bool CmdDownloadDiveData(void);
+  bool CmdEditDives(void);
+  bool CmdPrintDiveLogs(void);
+  bool CmdRemoveDives(void);
+  bool CmdDiverStatistics(void);
+  bool CmdExitApplication(void);
 
-    void PrintDiverInfo( void );
+  void PrintDiverInfo(void);
 
-private:
-    typedef bool (CommandHandler::*pCmdFptr)( void );
+ private:
+  typedef bool (CommandHandler::*pCmdFptr)(void);
 
-    typedef struct COMMAND_FUNCTION
-    {
-        char szCommand[128];
-        char szDescription[128];
-        pCmdFptr pCmdFunc;
-    } tCommandFunction;
+  typedef struct COMMAND_FUNCTION {
+    char szCommand[128];
+    char szDescription[128];
+    pCmdFptr pCmdFunc;
+  } tCommandFunction;
 
-    DLQueue m_diveQueue;
-    DiverInfo m_oDiver;
-    bool m_bDiverInitialized;
+  DLQueue m_diveQueue;
+  DiverInfo m_oDiver;
+  bool m_bDiverInitialized;
 
-private:
-    void PrintCommandTable( tCommandFunction * );
-    void PrintDiveList( void );
+ private:
+  void PrintCommandTable(tCommandFunction*);
+  void PrintDiveList(void);
 };
 
-#endif // __COMMANDHANDLER_H__
+#endif  // __COMMANDHANDLER_H__

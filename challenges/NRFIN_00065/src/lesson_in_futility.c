@@ -21,59 +21,45 @@
  */
 
 #include "conv.h"
+#include "games.h"
 #include "stdio.h"
 #include "string.h"
 
-#include "games.h"
-
-static void
-defcon_1(void)
-{
-    printf("A strange game. The only winning move is not to play.\n");
+static void defcon_1(void) {
+  printf("A strange game. The only winning move is not to play.\n");
 }
 
-static void
-defcon_2(void)
-{
-    char buf[40] = { 0 };
-    unsigned int lat, lon;
-    void __attribute__((regparm(1))) (*fnptr)(unsigned int);
+static void defcon_2(void) {
+  char buf[40] = {0};
+  unsigned int lat, lon;
+  void __attribute__((regparm(1))) (*fnptr)(unsigned int);
 
-    printf("Enter target latitude:\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
-        return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &lat) == EXIT_FAILURE)
-        return;
+  printf("Enter target latitude:\n");
+  if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || strtou(buf, 16, &lat) == EXIT_FAILURE) return;
 
-    printf("Enter target longitude:\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
-        return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &lon) == EXIT_FAILURE)
-        return;
+  printf("Enter target longitude:\n");
+  if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || strtou(buf, 16, &lon) == EXIT_FAILURE) return;
 
-    fnptr = (void *)(lat | 0xf0000000);
-    fnptr(lon);
+  fnptr = (void *)(lat | 0xf0000000);
+  fnptr(lon);
 }
 
-int
-do_lesson_in_futility(void)
-{
+int do_lesson_in_futility(void) {
 #ifdef PATCHED_2
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
-        return EXIT_FAILURE;
+  if (!check_cookie(game_state.games.gallon_challenge.cookie))
+    return EXIT_FAILURE;
 #endif
 
-    if (game_state.defcon_level == 0)
-        game_state.defcon_level = 1;
+  if (game_state.defcon_level == 0) game_state.defcon_level = 1;
 
-    if (game_state.defcon_level == 1)
-        defcon_1();
-    else if (game_state.defcon_level == 2)
-        defcon_2();
-    else
-        return EXIT_FAILURE;
+  if (game_state.defcon_level == 1)
+    defcon_1();
+  else if (game_state.defcon_level == 2)
+    defcon_2();
+  else
+    return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
-
+  return EXIT_SUCCESS;
 }
-

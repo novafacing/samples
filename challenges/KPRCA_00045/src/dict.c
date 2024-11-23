@@ -21,50 +21,38 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
 #include "dict.h"
 
-dict_t** dict_new()
-{
-  return calloc(sizeof(dict_t *), TABLE_SIZE);
-}
+#include <stdlib.h>
+#include <string.h>
 
-unsigned int _hash(const char *str)
-{
+dict_t **dict_new() { return calloc(sizeof(dict_t *), TABLE_SIZE); }
+
+unsigned int _hash(const char *str) {
   unsigned int ret = 5419;
-  if (str)
-  {
-    while (*str)
-      ret = ((ret << 5) + (ret << 2) + ret) + *str++;
+  if (str) {
+    while (*str) ret = ((ret << 5) + (ret << 2) + ret) + *str++;
   }
   return ret % TABLE_SIZE;
 }
 
-void* dict_find(dict_t **dict, const char *name)
-{
+void *dict_find(dict_t **dict, const char *name) {
   dict_t *cur = dict[_hash(name)];
-  while (cur)
-  {
-    if (strcmp(cur->name, name) == 0)
-      return cur->value;
+  while (cur) {
+    if (strcmp(cur->name, name) == 0) return cur->value;
     cur = cur->next;
   }
   return NULL;
 }
 
-void dict_insert(dict_t **dict, const char *name, void *value)
-{
+void dict_insert(dict_t **dict, const char *name, void *value) {
   unsigned int hash;
   dict_t *cur = dict_find(dict, name);
-  if (cur == NULL)
-  {
-    cur = (dict_t *) malloc(sizeof(dict_t));
-    if (cur == NULL)
-      goto error;
+  if (cur == NULL) {
+    cur = (dict_t *)malloc(sizeof(dict_t));
+    if (cur == NULL) goto error;
     cur->name = strdup(name);
-    if (cur->name == NULL)
-      goto error;
+    if (cur->name == NULL) goto error;
     cur->value = value;
     hash = _hash(name);
     cur->next = dict[hash];
@@ -73,23 +61,18 @@ void dict_insert(dict_t **dict, const char *name, void *value)
   return;
 
 error:
-  if (cur)
-  {
-    if (cur->name)
-      free(cur->name);
+  if (cur) {
+    if (cur->name) free(cur->name);
     free(cur);
   }
 }
 
-void* dict_remove(dict_t **dict, const char *name)
-{
+void *dict_remove(dict_t **dict, const char *name) {
   void *ret = NULL;
   unsigned int hash = _hash(name);
   dict_t *cur = dict[hash], *prev = NULL;
-  while (cur)
-  {
-    if (strcmp(cur->name, name) == 0)
-    {
+  while (cur) {
+    if (strcmp(cur->name, name) == 0) {
       if (prev == NULL)
         dict[hash] = cur->next;
       else
@@ -104,4 +87,3 @@ void* dict_remove(dict_t **dict, const char *name)
   }
   return ret;
 }
-

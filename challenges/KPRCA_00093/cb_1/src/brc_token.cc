@@ -24,21 +24,16 @@
 
 namespace {
 #ifdef SERVER
-const char g_network_token[] = {1,2,3,4,5,6,7,8,9,11,22,33,44,55,66,77 };
+const char g_network_token[] = {1, 2,  3,  4,  5,  6,  7,  8,
+                                9, 11, 22, 33, 44, 55, 66, 77};
 #else
-const char g_network_token[] = {5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
+const char g_network_token[] = {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 #endif
-}
-
-
+}  // namespace
 
 namespace TokenGenerator {
 
-const char *GetToken() {
-    return g_network_token;
-}
-const unsigned short GetTokenLength() {
-    return sizeof(g_network_token);
-}
+const char *GetToken() { return g_network_token; }
+const unsigned short GetTokenLength() { return sizeof(g_network_token); }
 
-}
+}  // namespace TokenGenerator

@@ -21,20 +21,20 @@
  *
  */
 #include "TrainerBattle.h"
+
 #include "Program.h"
 
 DefineClass(TrainerBattle, Battle)
 
-DefineFunction(TrainerBattle, void, init, TrainerObject *t)
-{
-    this->m_trainer = t;
-    this->m_can_capture = 0;
-    this->m_can_retreat = 1;
+    DefineFunction(TrainerBattle, void, init, TrainerObject *t) {
+  this->m_trainer = t;
+  this->m_can_capture = 0;
+  this->m_can_retreat = 1;
 }
 
-DefineFunction(TrainerBattle, int, run, Player *p)
-{
-    $($io, format, "New challenger! Trainer %s prepares to battle!\n", this->m_trainer->m_name);
-    this->m_enemy_team = this->m_trainer->m_team;
-    return $super(Battle, this, run, p);
+DefineFunction(TrainerBattle, int, run, Player *p) {
+  $($io, format, "New challenger! Trainer %s prepares to battle!\n",
+    this->m_trainer->m_name);
+  this->m_enemy_team = this->m_trainer->m_team;
+  return $super(Battle, this, run, p);
 }

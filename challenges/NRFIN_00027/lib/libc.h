@@ -39,7 +39,7 @@
 
 /**
  * Return the lesser of a and b
- * 
+ *
  * @param a The first value
  * @param b The second value
  * @return a if a < b else b
@@ -72,10 +72,11 @@
  * @param ptr A pointer to a member
  * @return A pointer to the containing structure
  */
-#define CONTAINEROF(type, member, ptr) ({                               \
-    char *__ptr = (char *)(ptr);                                        \
-    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL;          \
-})
+#define CONTAINEROF(type, member, ptr)                         \
+  ({                                                           \
+    char *__ptr = (char *)(ptr);                               \
+    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL; \
+  })
 
 /**
  * Read exactly n bytes from fd to a buffer.
@@ -154,26 +155,26 @@ void *memcpy(void *dst_, const void *src_, size_t n);
 
 /**
  * Return the length of a null-terminated string.
- * 
+ *
  * @param s The string
  * @return The length of s
  */
 size_t strlen(const char *s);
 
-/* The following is verbatim from EAGLE_00004, but isn't included in the 
+/* The following is verbatim from EAGLE_00004, but isn't included in the
  * released binary (DEBUG is not defined), so this reuse shouldn't be a concern.
  */
 #ifdef DEBUG
 
-#define _FILE_STATE_OPEN  1
+#define _FILE_STATE_OPEN 1
 #define _FILE_STATE_ERROR 2
-#define _FILE_STATE_EOF   4
-#define _FILE_HAVE_LAST   8
+#define _FILE_STATE_EOF 4
+#define _FILE_HAVE_LAST 8
 
 typedef struct _FILE {
-   int fd;
-   int state;
-   int last;
+  int fd;
+  int state;
+  int last;
 } FILE;
 
 extern FILE *stdin;
@@ -187,7 +188,7 @@ extern FILE *stderr;
  * @param format The format specifier
  * @return number of bytes written
  */
-int fprintf(FILE * stream, const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
 
 /**
  * Formatted output to stdout.
@@ -201,4 +202,3 @@ int printf(const char *format, ...);
 #endif /* DEBUG */
 
 #endif /* LIBC_H_ */
-

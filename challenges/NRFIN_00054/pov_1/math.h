@@ -80,4 +80,3 @@ double abs(double d);
 double clamp(double d);
 
 #endif /* MATH_H_ */
-

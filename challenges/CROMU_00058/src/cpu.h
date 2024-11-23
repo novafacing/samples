@@ -28,11 +28,11 @@ THE SOFTWARE.
 #define _CPU_H
 
 typedef struct _pruCPU {
-	unsigned int r[32];
-	int pc;
-	int code[0x1000];
-	char carry;
-	unsigned short numExecuted;
+  unsigned int r[32];
+  int pc;
+  int code[0x1000];
+  char carry;
+  unsigned short numExecuted;
 } pruCPU;
 
 #endif

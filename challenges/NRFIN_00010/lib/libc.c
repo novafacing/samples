@@ -19,12 +19,11 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-#include <libcgc.h>
 #include "libc.h"
 
-
+#include <libcgc.h>
 
 // doubly-linked list functions
 // the nodes in the list should all be of the same type to be comparable.
@@ -34,11 +33,13 @@
 //  success: &(the new list)
 //  failure: NULL
 // node_contains_impl is the function used to test if a node contains a value.
-list_t * list_create(node_contains_f node_contains_impl) {
+list_t *list_create(node_contains_f node_contains_impl) {
   list_t *new = NULL;
-  if (SUCCESS != (allocate(sizeof(list_t), 0, (void **)&new))) { return NULL; }
-  node_t * head_nd = node_create(NULL);
-  node_t * tail_nd = node_create(NULL);
+  if (SUCCESS != (allocate(sizeof(list_t), 0, (void **)&new))) {
+    return NULL;
+  }
+  node_t *head_nd = node_create(NULL);
+  node_t *tail_nd = node_create(NULL);
   head_nd->next = tail_nd;
   head_nd->prev = NULL;
   tail_nd->next = NULL;
@@ -56,13 +57,12 @@ list_t * list_create(node_contains_f node_contains_impl) {
 //  success: SUCCESS
 //  failure: ERRNO_LIST_PUSH
 // value is the unique key in node nd to be used in node comparisons.
-int list_push(list_t *lst, node_t *nd, void * value) {
-
+int list_push(list_t *lst, node_t *nd, void *value) {
   int ret = SUCCESS;
 
   // Refuse to add the same value twice
   if (NULL != list_find(lst, value)) {
-      return ERRNO_LIST_PUSH;             
+    return ERRNO_LIST_PUSH;
   }
 
   // setup node pointers
@@ -84,12 +84,11 @@ int list_push(list_t *lst, node_t *nd, void * value) {
 //  found: VA of the matching node
 //  not found: NULL
 
-node_t * list_find(list_t *lst, void * value) {
-
+node_t *list_find(list_t *lst, void *value) {
   node_t *curr = lst->head->next;
 
-  while (curr != lst->tail && lst->node_contains_impl(curr, value)) { 
-    curr = curr->next; 
+  while (curr != lst->tail && lst->node_contains_impl(curr, value)) {
+    curr = curr->next;
   }
   if (curr == lst->tail) {
     return NULL;
@@ -102,11 +101,12 @@ node_t * list_find(list_t *lst, void * value) {
 // RETURNS:
 //  success: VA of the unlinked node
 //  failure: NULL
-node_t * list_remove(list_t *lst, void * value) {
-
+node_t *list_remove(list_t *lst, void *value) {
   node_t *needle = NULL;
 
-  if (NULL == (needle = list_find(lst, value))) { return NULL; }
+  if (NULL == (needle = list_find(lst, value))) {
+    return NULL;
+  }
 
   // reset pointers in adjacent nodes
   needle->prev->next = needle->next;
@@ -122,11 +122,13 @@ node_t * list_remove(list_t *lst, void * value) {
 // RETURNS:
 //  success: VA of new node
 //  failure: NULL
-node_t * node_create(void * data) {
+node_t *node_create(void *data) {
   node_t *new = NULL;
-  if (SUCCESS != (allocate(sizeof(node_t), 0, (void **)&new))) { return NULL; }
+  if (SUCCESS != (allocate(sizeof(node_t), 0, (void **)&new))) {
+    return NULL;
+  }
   new->data = data;
-  new->next = NULL; // these will be set during list insertion
+  new->next = NULL;  // these will be set during list insertion
   new->prev = NULL;
   return new;
 }
@@ -136,7 +138,6 @@ node_t * node_create(void * data) {
 //  success: 0 (SUCCESS)
 //  failue: various ERRNO
 int node_destroy(node_t *nd) {
-
   int ret = SUCCESS;
 
   nd->data = NULL;
@@ -150,71 +151,70 @@ int node_destroy(node_t *nd) {
 
 // libc libs borrowed from EAGLE_00004
 
-
 // I/O functions
 int send(const char *buf, const size_t size) {
-    if(transmit_all(STDOUT, buf, size)) {
-        _terminate(111);
-    }
+  if (transmit_all(STDOUT, buf, size)) {
+    _terminate(111);
+  }
 
-    return 0;
+  return 0;
 }
 
 int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
-    int ret;
+  size_t sent = 0;
+  size_t sent_now = 0;
+  int ret;
 
-    if (!buf)
-        return 1;
+  if (!buf) return 1;
 
-    if (!size)
-        return 2;
+  if (!size) return 2;
 
-    while (sent < size) {
-        ret = transmit(fd, buf + sent, size - sent, &sent_now);
-        if (ret != 0) {
-            return 3;
-        }
-        sent += sent_now;
+  while (sent < size) {
+    ret = transmit(fd, buf + sent, size - sent, &sent_now);
+    if (ret != 0) {
+      return 3;
     }
+    sent += sent_now;
+  }
 
-    return 0;
+  return 0;
 }
 
 // returns number of bytes received
 unsigned int recv_all(char *res_buf, size_t res_buf_size) {
-    return read_all(STDIN, res_buf, res_buf_size);
+  return read_all(STDIN, res_buf, res_buf_size);
 }
 
 unsigned int read_all(int fd, char *buf, unsigned int size) {
-   char ch;
-   unsigned int total = 0;
-   size_t nbytes;
-   while (size) {
-      if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
-         break;
-      }
-      buf[total++] = ch;
-      size--;
-   }
-   return total;
+  char ch;
+  unsigned int total = 0;
+  size_t nbytes;
+  while (size) {
+    if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
+      break;
+    }
+    buf[total++] = ch;
+    size--;
+  }
+  return total;
 }
 
 // stdlib functions
 
 // return number of chars in str, not counting the '\0'
 size_t strlen(const char *str) {
-   size_t res = 0;
-   while (*str++) {res++;}
-   return res;
+  size_t res = 0;
+  while (*str++) {
+    res++;
+  }
+  return res;
 }
 
 // overwrites the first n chars of dst with char c.
 void *memset(void *dst, int c, unsigned int n) {
-   char *d = (char*)dst;
-   while (n--) {*d++ = (char)c;}
-   return dst;
+  char *d = (char *)dst;
+  while (n--) {
+    *d++ = (char)c;
+  }
+  return dst;
 }
-
-

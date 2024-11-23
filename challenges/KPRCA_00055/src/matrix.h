@@ -10,29 +10,28 @@
 
 #define GET_OFFSET(_row, _col, _num_cols) (((_row) * (_num_cols)) + (_col))
 
-typedef enum  { SHORT = 1, INT = 2, FLOAT = 4 } mtype_e;
+typedef enum { SHORT = 1, INT = 2, FLOAT = 4 } mtype_e;
 
 typedef struct matrix matrix_t;
 struct matrix {
-    int num_rows;
-    int num_cols;
-    mtype_e ptype;
-    union {
-        short *psdata;
-        int *pldata;
-        float *pfdata;
-    };
+  int num_rows;
+  int num_cols;
+  mtype_e ptype;
+  union {
+    short *psdata;
+    int *pldata;
+    float *pfdata;
+  };
 
-    int (*get_cell)(matrix_t *, unsigned int, unsigned int);
-    float (*get_fcell)(matrix_t *, unsigned int, unsigned int);
-    int (*set_cell)(matrix_t *, unsigned int, unsigned int, int);
-    int (*set_fcell)(matrix_t *, unsigned int, unsigned int, float);
-    int (*set_rows_cols)(matrix_t *, unsigned int, unsigned int);
-    void (*print_matrix)(matrix_t *);
+  int (*get_cell)(matrix_t *, unsigned int, unsigned int);
+  float (*get_fcell)(matrix_t *, unsigned int, unsigned int);
+  int (*set_cell)(matrix_t *, unsigned int, unsigned int, int);
+  int (*set_fcell)(matrix_t *, unsigned int, unsigned int, float);
+  int (*set_rows_cols)(matrix_t *, unsigned int, unsigned int);
+  void (*print_matrix)(matrix_t *);
 
-    char data[];
+  char data[];
 };
-
 
 matrix_t *create_matrix(mtype_e ptype, char *data);
 

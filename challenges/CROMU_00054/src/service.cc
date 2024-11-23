@@ -25,28 +25,27 @@ THE SOFTWARE.
 */
 #define ENABLE_BUFFERED_PRINTF
 
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
 }
 
 #include <cutil_list.h>
 #include <cutil_string.h>
-#include "simulation.h"
-#include "ecm.h"
-#include "tcm.h"
+
 #include "common.h"
+#include "ecm.h"
+#include "simulation.h"
+#include "tcm.h"
 
-void RunSimulation( uint8_t *pSecretPage )
-{
-	CSimulation oSim;
+void RunSimulation(uint8_t *pSecretPage) {
+  CSimulation oSim;
 
-	uint64_t ecmEquipmentID = *((uint64_t*)(pSecretPage));
-	uint64_t tcmEquipmentID = *((uint64_t*)(pSecretPage+8));
+  uint64_t ecmEquipmentID = *((uint64_t *)(pSecretPage));
+  uint64_t tcmEquipmentID = *((uint64_t *)(pSecretPage + 8));
 
 #if 0 
 	printf( "Equipment ID ECM: " );
@@ -55,60 +54,53 @@ void RunSimulation( uint8_t *pSecretPage )
 	PrintHexBytes( pSecretPage+8, 8 );
 #endif
 
-	oSim.AddSimulationComponent( new CECM( oSim.GetLanBus(), ecmEquipmentID ) );
-	oSim.AddSimulationComponent( new CTCM( oSim.GetLanBus(), tcmEquipmentID ) );
+  oSim.AddSimulationComponent(new CECM(oSim.GetLanBus(), ecmEquipmentID));
+  oSim.AddSimulationComponent(new CTCM(oSim.GetLanBus(), tcmEquipmentID));
 
-	oSim.SetupSimulation();
+  oSim.SetupSimulation();
 
-	// Run simulation
-	oSim.RunSimulation();	
+  // Run simulation
+  oSim.RunSimulation();
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
-{
-	void *secret_page = (void *)secret_page_i;
+int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+  void *secret_page = (void *)secret_page_i;
 
-	uint32_t *pPageArray = (uint32_t*)secret_page;
-	uint32_t ts = pPageArray[0] + pPageArray[1] + pPageArray[2] + pPageArray[3];
-	uint32_t idx = 0;
+  uint32_t *pPageArray = (uint32_t *)secret_page;
+  uint32_t ts = pPageArray[0] + pPageArray[1] + pPageArray[2] + pPageArray[3];
+  uint32_t idx = 0;
 
-	ts &= 0x7FFFF;
+  ts &= 0x7FFFF;
 
-	printf( "START::TS=$d\n", ts+1452975600 );
-	
-	bool bDone = false;
-	do
-	{
-		RunSimulation( (uint8_t*)secret_page );
+  printf("START::TS=$d\n", ts + 1452975600);
 
-		for (;;)
-		{
-			if ( idx >= 1024 )
-				idx = 0;
+  bool bDone = false;
+  do {
+    RunSimulation((uint8_t *)secret_page);
 
-			ts += pPageArray[idx];
-			
-			ts &= 0x7FFFF;
+    for (;;) {
+      if (idx >= 1024) idx = 0;
 
-			idx++;
+      ts += pPageArray[idx];
 
-			printf( "Run another simulation (TS=$d) (y/n)? ", ts+1452975600 );
-			CUtil::String sLine;
+      ts &= 0x7FFFF;
 
-			sLine = ReadLine();
+      idx++;
 
-			if ( sLine[0] == 'n' )
-			{
-				bDone = true;
-				break;
-			}
-			else if ( sLine[0] == 'y' )
-			{
-				bDone = false;
-				break;
-			}
-		}	
-	} while ( !bDone );
+      printf("Run another simulation (TS=$d) (y/n)? ", ts + 1452975600);
+      CUtil::String sLine;
 
-	return 0;
+      sLine = ReadLine();
+
+      if (sLine[0] == 'n') {
+        bDone = true;
+        break;
+      } else if (sLine[0] == 'y') {
+        bDone = false;
+        break;
+      }
+    }
+  } while (!bDone);
+
+  return 0;
 }

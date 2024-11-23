@@ -27,10 +27,10 @@ THE SOFTWARE.
 #define _GAMESTATE_H
 
 typedef struct _gamestate {
-	unsigned int gamerand;
-	char name[256];
-	int hugcount;
-	unsigned char hangmanguess;
+  unsigned int gamerand;
+  char name[256];
+  int hugcount;
+  unsigned char hangmanguess;
 } gamestate;
 
 #endif

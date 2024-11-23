@@ -22,7 +22,4 @@
  */
 #include "malloc_private.h"
 
-void *malloc(size_t n)
-{
-    return malloc_alloc(&g_heap, n);
-}
+void *malloc(size_t n) { return malloc_alloc(&g_heap, n); }

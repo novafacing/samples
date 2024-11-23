@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define L2_H
 
 #include <libcgc.h>
+
 #include "stdint.h"
 
 #define FD_CRS (1)
@@ -40,22 +41,22 @@ THE SOFTWARE.
 #define L2_ADJACENCY_DISCOVERY_TYPE (0x02)
 #define L2_ADJACENCY_RESPONSE_TYPE (0x03)
 typedef struct __attribute__((__packed__)) _L2Hdr {
-	uint16_t Dst;
-	uint16_t Src;
-	uint8_t Len; // num bytes after L2Hdr including checksum footer
-	uint8_t NxtHdr;
-	uint8_t Vlan;
+  uint16_t Dst;
+  uint16_t Src;
+  uint8_t Len;  // num bytes after L2Hdr including checksum footer
+  uint8_t NxtHdr;
+  uint8_t Vlan;
 } L2Hdr, *pL2Hdr;
 
 typedef struct __attribute__((__packed__)) _L2Ftr {
-	uint32_t Chksum;
+  uint32_t Chksum;
 } L2Ftr, *pL2Ftr;
 
 #define MAX_L2_CAM_ENTRIES (255)
 typedef struct _L2CAM {
-	uint16_t L2Addr;
-	uint8_t Vlan;
-	uint8_t L2Port;
+  uint16_t L2Addr;
+  uint8_t Vlan;
+  uint8_t L2Port;
 } L2CAM, *pL2CAM;
 
 void L2_InitCAM(void);

@@ -18,30 +18,30 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /**
-* Calculate the length of a null-terminated string
-* 
-* @param str null-teriminated string to determine the length of
-* @return The number of characters before the first null byte
-*/
-unsigned int strlen(const char *str);
+ * Calculate the length of a null-terminated string
+ *
+ * @param str null-teriminated string to determine the length of
+ * @return The number of characters before the first null byte
+ */
+unsigned int strlen(const char* str);
 
 /**
-* Set all bytes in buffer to zero
-* 
-* @param buf The buffer to zeroize
-* @param num The number of bytes to set to zero
-*
-* @return None
-*/
+ * Set all bytes in buffer to zero
+ *
+ * @param buf The buffer to zeroize
+ * @param num The number of bytes to set to zero
+ *
+ * @return None
+ */
 void bzero(char* buf, unsigned int num);
 
 /**
-* Convert a hex string of the form '0x00' into a hex value
-* 
-* @param buf The buffer that holds the hext string
-* @return The value of the hex string
-*/
+ * Convert a hex string of the form '0x00' into a hex value
+ *
+ * @param buf The buffer that holds the hext string
+ * @return The value of the hex string
+ */
 unsigned char atox(char* buf);

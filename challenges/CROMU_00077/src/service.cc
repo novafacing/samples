@@ -23,53 +23,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
+#include <fs.h>
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
-#include <fs.h>
 }
 
 #include <cutil_string.h>
 
-#include "timegen.h"
 #include "comms.h"
 #include "networkfs.h"
+#include "timegen.h"
 
-#define PAGE_SIZE	(4096)
+#define PAGE_SIZE (4096)
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
-{
-	CTimeGen *pTimeGen;
+int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+  CTimeGen *pTimeGen;
 
-	pTimeGen = new CTimeGen( (uint32_t *)secret_page_i, (PAGE_SIZE / sizeof(uint32_t)) );	
+  pTimeGen =
+      new CTimeGen((uint32_t *)secret_page_i, (PAGE_SIZE / sizeof(uint32_t)));
 
-	CNetworkComm oComms( STDIN, STDOUT );
+  CNetworkComm oComms(STDIN, STDOUT);
 
-	CNetworkFS oNFS( pTimeGen );
+  CNetworkFS oNFS(pTimeGen);
 
-	if ( !oNFS.Init( &oComms, 10 ) )
-	{
-		printf( "Failed to initialize!\n" );
+  if (!oNFS.Init(&oComms, 10)) {
+    printf("Failed to initialize!\n");
 
-		delete pTimeGen;
-		return (-1);
-	}
+    delete pTimeGen;
+    return (-1);
+  }
 
-	if ( !oNFS.Run( ) )
-	{
-		if ( oNFS.HasError() )
-		{
-			printf( "Network File System error: %s\n", oNFS.GetError().c_str() );
-		
-			delete pTimeGen;
-			return (-1);
-		}
-	}
+  if (!oNFS.Run()) {
+    if (oNFS.HasError()) {
+      printf("Network File System error: %s\n", oNFS.GetError().c_str());
 
-	delete pTimeGen;
-	return 0;
+      delete pTimeGen;
+      return (-1);
+    }
+  }
+
+  delete pTimeGen;
+  return 0;
 }

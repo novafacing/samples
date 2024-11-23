@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 #ifndef NARF_LIBC_H
@@ -31,7 +31,6 @@ typedef unsigned char uint8_t;
 
 #define SUCCESS 0
 #define ERRNO_ALLOC 505
-
 
 // libc libs borrowed from EAGLE_00004
 

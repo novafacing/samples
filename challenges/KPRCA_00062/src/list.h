@@ -24,17 +24,18 @@
 #define LIST_H_
 
 #include <libcgc.h>
+
 #include "bool.h"
 
 typedef struct list list_t;
-struct list
-{
-    list_t *next;
-    void *item;
+struct list {
+  list_t *next;
+  void *item;
 };
 
 bool insert(list_t **list, void *item);
-bool insert_in_order(list_t **list, void *item, int (*compare)(void *a, void *b));
+bool insert_in_order(list_t **list, void *item,
+                     int (*compare)(void *a, void *b));
 bool append(list_t **list, void *item);
 void *popfront(list_t **list);
 void *popback(list_t **list);

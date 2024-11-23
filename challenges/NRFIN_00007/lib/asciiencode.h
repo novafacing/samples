@@ -18,20 +18,19 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef ASCIIENCODE_H
 #define ASCIIENCODE_H
 #define ABETSZ 64
 #include <libcgc.h>
-static char * ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#";
+static char* ALPHABET =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#";
 
 static const int BLOCK_SZ = 2;
 static const int divisor = 5;
 
-
-
-char * encode(char * input, size_t size);
-char * decode(char * input, size_t size);
+char* encode(char* input, size_t size);
+char* decode(char* input, size_t size);
 
 #endif

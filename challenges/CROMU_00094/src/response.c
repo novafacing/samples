@@ -24,51 +24,44 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "libc.h"
 #include "malloc.h"
+#include "service.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "service.h"
 
-response *DestroyResponse(response *pResponse)
-{
-  if (pResponse == NULL) 
-  {
+response *DestroyResponse(response *pResponse) {
+  if (pResponse == NULL) {
     return NULL;
   }
 
-  if (pResponse->data != NULL) 
-  {
+  if (pResponse->data != NULL) {
     free(pResponse->data);
   }
   free(pResponse);
   return NULL;
 }
 
-response *GenerateBlankResponse() 
-{
+response *GenerateBlankResponse() {
   response *pResponse;
   pResponse = calloc(sizeof(response));
   return pResponse;
 }
 
-int AddToResponse(response *pResponse, char *pString) 
-{
-  if (pString == NULL) 
-  {
+int AddToResponse(response *pResponse, char *pString) {
+  if (pString == NULL) {
     return -1;
   }
   int newLength = strlen(pString);
-  if (pResponse->data != NULL) 
-  {
+  if (pResponse->data != NULL) {
     newLength += pResponse->size;
   }
   char *newData = calloc(newLength + 1);
   char *newDataPtr = newData;
 
-  if (pResponse->data != NULL) 
-  {
+  if (pResponse->data != NULL) {
     strncpy(newData, (char *)pResponse->data, pResponse->size);
     newDataPtr += pResponse->size;
   }
@@ -79,10 +72,8 @@ int AddToResponse(response *pResponse, char *pString)
   return 1;
 }
 
-int DumpResponse(response *pResponse) 
-{
-  if (pResponse == NULL) 
-  {
+int DumpResponse(response *pResponse) {
+  if (pResponse == NULL) {
     return -1;
   }
   printf("Response Length: $d\n", pResponse->size);
@@ -90,27 +81,21 @@ int DumpResponse(response *pResponse)
   return 0;
 }
 
-int SendResponse(response *pResponse) 
-{
-  if (pResponse == NULL) 
-  {
+int SendResponse(response *pResponse) {
+  if (pResponse == NULL) {
     return -1;
   }
   char byte = RESPONSE;
-  if (SendBytes(&byte, 1) != 1) 
-  {
+  if (SendBytes(&byte, 1) != 1) {
     return -1;
   }
-  if (SendBytes((char *)&(pResponse->size), sizeof(pResponse->size)) != 2)
-  {
+  if (SendBytes((char *)&(pResponse->size), sizeof(pResponse->size)) != 2) {
     return -1;
   }
-  if (SendBytes((char *)pResponse->data, pResponse->size) != pResponse->size) 
-  {
+  if (SendBytes((char *)pResponse->data, pResponse->size) != pResponse->size) {
     return -1;
   }
-  if (SendBytes("\0", 1) != 1) 
-  {
+  if (SendBytes("\0", 1) != 1) {
     return -1;
   }
   return 0;

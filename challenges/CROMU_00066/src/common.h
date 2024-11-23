@@ -33,48 +33,45 @@ THE SOFTWARE.
 
 // print to the screen in human-readible format
 // disable to return in binary format for polling
-//#define HUMAN_PRINT 1
-//#define TEST_VER 1
-//#define DEBUG 1
+// #define HUMAN_PRINT 1
+// #define TEST_VER 1
+// #define DEBUG 1
 
 //
 // Possible commands the CRS can send to this program
 //
-enum 
-{
-	GENERAL = 0,
-	REGISTER_SENSOR = 1,
-	REGISTER_USER = 2,
-	CHANGE_CURRENT_USER = 3,
-	INPUT_SENSOR_DATA = 4,
-	INPUT_MANUAL = 9,
-	INPUT_SETTINGS = 0x0a,
-	REQUEST_SENSORS = 0x0b,
-	REMOVE_SENSOR = 0x0c,
-	//TEST_VERIFY = 0x0d, // \r
-	REQUEST_HW_IDS = 0x33,
-	END = 0xff
+enum {
+  GENERAL = 0,
+  REGISTER_SENSOR = 1,
+  REGISTER_USER = 2,
+  CHANGE_CURRENT_USER = 3,
+  INPUT_SENSOR_DATA = 4,
+  INPUT_MANUAL = 9,
+  INPUT_SETTINGS = 0x0a,
+  REQUEST_SENSORS = 0x0b,
+  REMOVE_SENSOR = 0x0c,
+  // TEST_VERIFY = 0x0d, // \r
+  REQUEST_HW_IDS = 0x33,
+  END = 0xff
 } PacketType;
 
 //
 // Possible errors to send CRS
 //
-enum errorCodes 
-{ 
-	NO_ERROR = 0,
-	ERROR_DUPLICATE_SENSOR = 1,
-	ERROR_BAD_VALUE = 2,
-	ERROR_NO_USER = 3,
-	ERROR_SENSOR_NOT_REGISTERED = 4,
-	ERROR_REG_OTHER_USER = 5,
-	ERROR_REG_THIS_USER = 6,
-	ERROR_BAD_SENSOR_MAC = 7,
-	ERROR_USER_FULL = 8,
-	ERROR_DUPLICATE_USER = 9, // \t
-	ERROR_TEST_MAGIC_MISMATCH = 10,
-	ERROR_TEST_MAGIC_MATCH = 11,
-	ERROR_FULL_SENSORS = 12
+enum errorCodes {
+  NO_ERROR = 0,
+  ERROR_DUPLICATE_SENSOR = 1,
+  ERROR_BAD_VALUE = 2,
+  ERROR_NO_USER = 3,
+  ERROR_SENSOR_NOT_REGISTERED = 4,
+  ERROR_REG_OTHER_USER = 5,
+  ERROR_REG_THIS_USER = 6,
+  ERROR_BAD_SENSOR_MAC = 7,
+  ERROR_USER_FULL = 8,
+  ERROR_DUPLICATE_USER = 9,  // \t
+  ERROR_TEST_MAGIC_MISMATCH = 10,
+  ERROR_TEST_MAGIC_MATCH = 11,
+  ERROR_FULL_SENSORS = 12
 };
 
-
-#endif // __COMMON_H__
+#endif  // __COMMON_H__

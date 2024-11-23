@@ -27,15 +27,15 @@ THE SOFTWARE.
 #define IO_H
 #include <libcgc.h>
 
-// command 
+// command
 #define CMD_SEND_NODES (1)
 #define CMD_SEND_EDGES (2)
 #define CMD_RUN_SPT (3)
 typedef struct __attribute__((__packed__)) _command {
-	uint8_t Action;
-	uint32_t NumElements;
-	uint32_t StartingNode;
-	uint32_t EndingNode;
+  uint8_t Action;
+  uint32_t NumElements;
+  uint32_t StartingNode;
+  uint32_t EndingNode;
 } Command, *pCommand;
 
 #define RESP_ERROR_DUPLICATE_NODE (1)
@@ -46,16 +46,16 @@ typedef struct __attribute__((__packed__)) _command {
 #define RESP_NODE_SET (6)
 #define RESP_ERROR_SPT_FAIL (7)
 typedef struct __attribute__((__packed__)) _response {
-	uint8_t Code;
-	uint8_t NumElements;
+  uint8_t Code;
+  uint8_t NumElements;
 } Response, *pResponse;
 
 typedef struct _edgearray {
-	uint32_t NodeA;
-	uint32_t NodeZ;
-	uint32_t Weight;
+  uint32_t NodeA;
+  uint32_t NodeZ;
+  uint32_t Weight;
 } EdgeArray, *pEdgeArray;
 
 uint8_t ReadCmd(void);
 
-#endif // #ifndef IO_H
+#endif  // #ifndef IO_H

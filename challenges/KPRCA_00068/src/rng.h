@@ -24,12 +24,12 @@
 
 #include <cstdint.h>
 
-class Random
-{
-public:
-    Random();
-    void addEntropy(const uint8_t *entropy, unsigned int count);
-    int32_t randomInt32();
-private:
-    unsigned long long state;
+class Random {
+ public:
+  Random();
+  void addEntropy(const uint8_t *entropy, unsigned int count);
+  int32_t randomInt32();
+
+ private:
+  unsigned long long state;
 };

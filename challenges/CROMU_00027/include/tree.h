@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef TREE_H
 #define TREE_H
 
-
 struct InitialPageInfo {
   char name[64];
   char *data;
@@ -46,4 +45,4 @@ TreeNode *LookupNode(char *name);
 int InsertNodeInTree(TreeNode *node);
 int InitializeTree();
 
-#endif // TREE_H
+#endif  // TREE_H

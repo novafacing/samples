@@ -1,4 +1,4 @@
- /*
+/*
 
 Author: Debbie Nuttall <debbie@cromulence.com>
 
@@ -23,140 +23,133 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include "stdio.h"
-#include "ctype.h"
-#include "libc.h"
 #include "crackaddr.h"
 
-
+#include "ctype.h"
+#include "libc.h"
+#include "stdio.h"
 
 char *crackaddr(char *addr, char *output) {
-	char *outp = output;
-	char *endp = output + MAX_NAME - 5;
-	char c;
+  char *outp = output;
+  char *endp = output + MAX_NAME - 5;
+  char c;
 
-	if (addr == NULL) {
-		return NULL;
-	}
+  if (addr == NULL) {
+    return NULL;
+  }
 
-	// strip whitespace
-	while (*addr && isspace(*addr))
-		addr++;
-	
-	// Setup state
-	int inA, inC;
-	inA = inC = 0;
-	int Blevel, Blevelout;
-	Blevel = Blevelout = 0;
-	int full;
-	int Dmode = 0;
-	int outputLevel = 0;
+  // strip whitespace
+  while (*addr && isspace(*addr)) addr++;
 
-	while (*addr != '\0') {
-		c = *addr++;
-		full = outp >= endp;
+  // Setup state
+  int inA, inC;
+  inA = inC = 0;
+  int Blevel, Blevelout;
+  Blevel = Blevelout = 0;
+  int full;
+  int Dmode = 0;
+  int outputLevel = 0;
 
-		if ((!full) && (outputLevel > 0)){
-			*outp++ = c;
-		}
+  while (*addr != '\0') {
+    c = *addr++;
+    full = outp >= endp;
 
-		if (c == 'A') {
-		 	outputLevel = 0;
-		 	if (!inA) {
-				inA = TRUE;
-				endp--;
-			}
-		}
-		if (c == 'a') {
-			outputLevel++;
-			if (outputLevel <= 1) {
-				 *outp++ = c;
-			}
-			if (inA) {
-				inA = FALSE;
-				endp++;
-			}
-		}
+    if ((!full) && (outputLevel > 0)) {
+      *outp++ = c;
+    }
 
-		// Equivalent to parents from original crackaddr
-		// Bb can be embedded in other Bb
-		if (c == 'B') {
-			Blevel++;
-			if (!full) {
-				Blevelout++;
-				endp--;
-				outputLevel++;
-			}
-		}
-		if ((c == 'b') && (Blevel > 0)) {
-			Blevel--;
-			outputLevel--;
-			if (!full) {
-				Blevelout--;
-				endp++;
-			}
-			continue;
-		} else if (c == 'b') {
-			// Syntax error unmatched 'b'
-			if ((!full) && (outputLevel > 0)){
-				outp--;
-			}
-		}
+    if (c == 'A') {
+      outputLevel = 0;
+      if (!inA) {
+        inA = TRUE;
+        endp--;
+      }
+    }
+    if (c == 'a') {
+      outputLevel++;
+      if (outputLevel <= 1) {
+        *outp++ = c;
+      }
+      if (inA) {
+        inA = FALSE;
+        endp++;
+      }
+    }
 
-		// Equivalent to angle brackets from original crackaddr
-		if ((c == 'C') && (!inC)) {
-			inC = TRUE;
+    // Equivalent to parents from original crackaddr
+    // Bb can be embedded in other Bb
+    if (c == 'B') {
+      Blevel++;
+      if (!full) {
+        Blevelout++;
+        endp--;
+        outputLevel++;
+      }
+    }
+    if ((c == 'b') && (Blevel > 0)) {
+      Blevel--;
+      outputLevel--;
+      if (!full) {
+        Blevelout--;
+        endp++;
+      }
+      continue;
+    } else if (c == 'b') {
+      // Syntax error unmatched 'b'
+      if ((!full) && (outputLevel > 0)) {
+        outp--;
+      }
+    }
+
+    // Equivalent to angle brackets from original crackaddr
+    if ((c == 'C') && (!inC)) {
+      inC = TRUE;
 #ifdef PATCHED_1
-			endp--;
+      endp--;
 #endif
-		}
-		if ((c == 'c') && (inC)) {
-			inC = FALSE;
-			endp++;
-		}
+    }
+    if ((c == 'c') && (inC)) {
+      inC = FALSE;
+      endp++;
+    }
 
-		if (c == 'D') {
-			Dmode = !Dmode;
-		}
+    if (c == 'D') {
+      Dmode = !Dmode;
+    }
 
+    // Escapes next char
+    if ((c == 'F') && (!full)) {
+      if (*addr != '\0') {
+        *outp++ = *addr++;
+      }
+      continue;
+    }
 
-		// Escapes next char
-		if ((c == 'F') && (!full)) {
-			if (*addr != '\0') { 
-				*outp++ = *addr++;
-			}
-			continue;
-		}
+    // Skips next char
+    if (c == 'G') {
+      if (*addr != '\0') {
+        addr++;
+      }
+      continue;
+    }
+  }
 
-		// Skips next char
-		if (c == 'G') {
-			if (*addr != '\0') { 
-				addr++;
-			}
-			continue;
-		}
+  if (inA) {
+    *outp++ = 'a';
+  }
+  while ((Blevelout-- > 0) && (outp < endp - 2)) {
+    *outp++ = 'b';
+  }
 
-	}
+  if (inC) {
+    *outp++ = 'c';
+  }
 
-	if (inA) {
-		*outp++ = 'a';
-	}
-	while((Blevelout-- > 0)&&(outp < endp - 2)) {
-		*outp++ = 'b';
-	}
-	
-	if (inC) {
-		*outp++ = 'c';
-	}
+  if (Dmode) {
+    *outp++ = 'D';
+  }
 
-	if (Dmode) {
-		*outp++ = 'D';
-	}
+  *outp++ = '\0';
 
-	*outp++ = '\0';
-
-	return output;
-
-	}	
-
-
+  return output;
+}

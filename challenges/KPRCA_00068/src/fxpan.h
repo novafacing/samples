@@ -23,12 +23,12 @@
 #pragma once
 #include "audiotrack.h"
 
-class FxPan
-{
-public:
-    FxPan(int32_t pan);
-    void apply(AudioTrack &) const;
-private:
-    void apply(AudioStream &stream, Gain gain) const;
-    int32_t pan;
+class FxPan {
+ public:
+  FxPan(int32_t pan);
+  void apply(AudioTrack &) const;
+
+ private:
+  void apply(AudioStream &stream, Gain gain) const;
+  int32_t pan;
 };

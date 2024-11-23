@@ -26,99 +26,66 @@
 
 // XXX not really an implementation of unqiue_ptr, just something simple
 template <class T>
-class unique_ptr
-{
-public:
-    unique_ptr() : _p(nullptr) {}
-    unique_ptr(T* p) : _p(p) {}
-    ~unique_ptr()
-    {
-        if (_p != nullptr)
-            delete _p;
-    }
-    unique_ptr(const unique_ptr& other) = delete;
-    unique_ptr& operator=(const unique_ptr& other) = delete;
-    unique_ptr(unique_ptr&& other)
-    {
-        reset(other.release());
-    }
-    unique_ptr& operator=(unique_ptr&& other)
-    {
-        reset(other.release());
-        return *this;
-    }
-    T* release()
-    {
-        T* p = _p;
-        _p = nullptr;
-        return p;
-    }
-    T* get() const
-    {
-        return _p;
-    }
-    void reset(T* p)
-    {
-        T* old = _p;
-        _p = p;
-        if (old != nullptr)
-            delete old;
-    }
-    T* operator->() const
-    {
-        return _p;
-    }
-    explicit operator bool() const
-    {
-        return _p != nullptr;
-    }
-private:
-    T* _p;
+class unique_ptr {
+ public:
+  unique_ptr() : _p(nullptr) {}
+  unique_ptr(T* p) : _p(p) {}
+  ~unique_ptr() {
+    if (_p != nullptr) delete _p;
+  }
+  unique_ptr(const unique_ptr& other) = delete;
+  unique_ptr& operator=(const unique_ptr& other) = delete;
+  unique_ptr(unique_ptr&& other) { reset(other.release()); }
+  unique_ptr& operator=(unique_ptr&& other) {
+    reset(other.release());
+    return *this;
+  }
+  T* release() {
+    T* p = _p;
+    _p = nullptr;
+    return p;
+  }
+  T* get() const { return _p; }
+  void reset(T* p) {
+    T* old = _p;
+    _p = p;
+    if (old != nullptr) delete old;
+  }
+  T* operator->() const { return _p; }
+  explicit operator bool() const { return _p != nullptr; }
+
+ private:
+  T* _p;
 };
 
 template <class T>
-class unique_ptr<T[]>
-{
-public:
-    unique_ptr() : _p(nullptr) {}
-    unique_ptr(T* p) : _p(p) {}
-    ~unique_ptr()
-    {
-        if (_p != nullptr)
-            delete[] _p;
-    }
-    unique_ptr(const unique_ptr& other) = delete;
-    unique_ptr& operator=(const unique_ptr& other) = delete;
-    unique_ptr(unique_ptr&& other)
-    {
-        reset(other.release());
-    }
-    unique_ptr& operator=(unique_ptr&& other)
-    {
-        reset(other.release());
-        return *this;
-    }
-    T* release()
-    {
-        T* p = _p;
-        _p = nullptr;
-        return p;
-    }
-    T* get() const
-    {
-        return _p;
-    }
-    void reset(T* p)
-    {
-        T* old = _p;
-        _p = p;
-        if (old != nullptr)
-            delete[] old;
-    }
-    explicit operator bool() const
-    {
-        return _p != nullptr;
-    }
-private:
-    T* _p;
+class unique_ptr<T[]> {
+ public:
+  unique_ptr() : _p(nullptr) {}
+  unique_ptr(T* p) : _p(p) {}
+  ~unique_ptr() {
+    if (_p != nullptr) delete[] _p;
+  }
+  unique_ptr(const unique_ptr& other) = delete;
+  unique_ptr& operator=(const unique_ptr& other) = delete;
+  unique_ptr(unique_ptr&& other) { reset(other.release()); }
+  unique_ptr& operator=(unique_ptr&& other) {
+    reset(other.release());
+    return *this;
+  }
+  T* release() {
+    T* p = _p;
+    _p = nullptr;
+    return p;
+  }
+  T* get() const { return _p; }
+  void reset(T* p) {
+    T* old = _p;
+    _p = p;
+    if (old != nullptr) delete[] old;
+  }
+  explicit operator bool() const { return _p != nullptr; }
+
+ private:
+  T* _p;
 };

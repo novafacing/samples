@@ -27,20 +27,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-void *calloc(size_t nmemb, size_t size)
-{
-  if (nmemb == 0 || size == 0)
-    return NULL;
+void *calloc(size_t nmemb, size_t size) {
+  if (nmemb == 0 || size == 0) return NULL;
 
   size_t tot = nmemb * size;
 
   // Overflow
-  if (tot / size != nmemb)
-    return NULL;
+  if (tot / size != nmemb) return NULL;
 
   void *ptr = malloc(tot);
-  if (ptr == NULL)
-    return NULL;
+  if (ptr == NULL) return NULL;
 
   return memset(ptr, 0, tot);
 }

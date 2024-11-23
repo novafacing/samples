@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 */
 #ifndef LINKEDLIST_H
-#define  LINKEDLIST_H
+#define LINKEDLIST_H
 
 typedef struct link_s {
   void *object;
@@ -34,8 +34,8 @@ typedef struct link_s {
 } link;
 
 typedef struct linkedList_s {
-  int   type;
-  link  *root;
+  int type;
+  link *root;
 } linkedList;
 
 linkedList *NewList(int type);

@@ -18,15 +18,15 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SEND_H
 #define SEND_H 1
 
-#include <libcgc.h>
 #include <errno.h>
+#include <libcgc.h>
 #include <stdint.h>
- 
+
 /**
  * Send bytes from buffer to STDOUT.
  * Terminates with ERRNO_SEND on error.
@@ -36,6 +36,5 @@
  * @returns SUCCESS
  */
 int send(const char *buf, const size_t size);
-
 
 #endif

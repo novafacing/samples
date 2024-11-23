@@ -23,64 +23,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
+#include <fs.h>
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
-#include <fs.h>
 }
 
 #include "timegen.h"
 
-CTimeGen::CTimeGen( uint32_t *pGeneratorSource, uint32_t generatorSize )
-	: m_lastTimestamp( START_UNIX_TIMESTAMP ), m_lastMix( 0 ), m_pGeneratorSource( pGeneratorSource ), m_generatorSize( generatorSize ), m_lastPos( 0 )
-{
-	m_pGeneratorSource = new uint32_t[generatorSize];
+CTimeGen::CTimeGen(uint32_t *pGeneratorSource, uint32_t generatorSize)
+    : m_lastTimestamp(START_UNIX_TIMESTAMP),
+      m_lastMix(0),
+      m_pGeneratorSource(pGeneratorSource),
+      m_generatorSize(generatorSize),
+      m_lastPos(0) {
+  m_pGeneratorSource = new uint32_t[generatorSize];
 
-	memcpy( m_pGeneratorSource, pGeneratorSource, sizeof(uint32_t)*generatorSize );
+  memcpy(m_pGeneratorSource, pGeneratorSource,
+         sizeof(uint32_t) * generatorSize);
 }
 
-CTimeGen::~CTimeGen( )
-{
-	if ( m_pGeneratorSource )
-		delete m_pGeneratorSource;
+CTimeGen::~CTimeGen() {
+  if (m_pGeneratorSource) delete m_pGeneratorSource;
 }
 
-uint32_t CTimeGen::GetUnixTimestamp( void )
-{
-	uint32_t newDelta = (GetGeneratorMix());
+uint32_t CTimeGen::GetUnixTimestamp(void) {
+  uint32_t newDelta = (GetGeneratorMix());
 
-	newDelta = (newDelta % 120);	// Up to 2 minutes max deltas
-	
-	m_lastTimestamp = (m_lastTimestamp + newDelta);
+  newDelta = (newDelta % 120);  // Up to 2 minutes max deltas
 
-	return (m_lastTimestamp);	
+  m_lastTimestamp = (m_lastTimestamp + newDelta);
+
+  return (m_lastTimestamp);
 }
 
-uint32_t CTimeGen::GetGeneratorMix( void )
-{
-	uint32_t a = m_lastMix;
-	uint32_t b = 0;
-	uint32_t c = 0;
+uint32_t CTimeGen::GetGeneratorMix(void) {
+  uint32_t a = m_lastMix;
+  uint32_t b = 0;
+  uint32_t c = 0;
 
-	// Do some random math
-	uint32_t pos = m_lastPos;
-	for ( uint32_t i = 0; i < GENERATOR_ROUNDS; i++ )
-	{
-		if ( pos >= m_generatorSize )
-			pos = 0;
+  // Do some random math
+  uint32_t pos = m_lastPos;
+  for (uint32_t i = 0; i < GENERATOR_ROUNDS; i++) {
+    if (pos >= m_generatorSize) pos = 0;
 
-		c = (a * 3);
-		b = (c << 7) ^ b;
-		a = b + (m_pGeneratorSource[pos++] & 0xAA11AA11) % 731;			
-	}
+    c = (a * 3);
+    b = (c << 7) ^ b;
+    a = b + (m_pGeneratorSource[pos++] & 0xAA11AA11) % 731;
+  }
 
-	m_lastPos = pos;
+  m_lastPos = pos;
 
-	m_lastMix = ((a >> 13 | (b << 13)) ^ c);
+  m_lastMix = ((a >> 13 | (b << 13)) ^ c);
 
-	return (m_lastMix);
+  return (m_lastMix);
 }

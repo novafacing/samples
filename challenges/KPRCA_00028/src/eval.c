@@ -21,7 +21,6 @@
  *
  */
 #include <libcgc.h>
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,10 +29,8 @@
 
 static exp_t *eval(exp_t *e, sym_list *s);
 
-static exp_t *parse(tok_list *toks,  tok_list **adv)
-{
-  if (!toks)
-    return NULL;
+static exp_t *parse(tok_list *toks, tok_list **adv) {
+  if (!toks) return NULL;
 
   if (strncmp(toks->value, "(", strlen("(")) == 0) {
     tok_list *nt = NULL;
@@ -41,41 +38,33 @@ static exp_t *parse(tok_list *toks,  tok_list **adv)
     exp_t *e1 = parse(toks, &nt);
     toks = nt;
     exp_t *e2 = parse(toks, &nt);
-    if (adv)
-      *adv = nt;
+    if (adv) *adv = nt;
     exp_t *c;
     CONZ(&c, e1, e2);
-    if (!c)
-      exit(1);
+    if (!c) exit(1);
     return c;
   } else if (strncmp(toks->value, ")", strlen(")")) == 0) {
-    if (adv)
-      *adv = toks->next;
+    if (adv) *adv = toks->next;
     return NULL;
   } else {
     tok_list *nt = NULL;
     exp_t *a = NEWE();
-    if (!a)
-      exit(1);
+    if (!a) exit(1);
     a->t = ATOM;
     a->name = toks->value;
     toks = toks->next;
     exp_t *e2 = parse(toks, &nt);
-    if (adv)
-      *adv = nt;
+    if (adv) *adv = nt;
     exp_t *c;
     CONZ(&c, a, e2);
-    if (!c)
-      exit(1);
+    if (!c) exit(1);
 
     return c;
   }
 }
 
-static void print(exp_t *e)
-{
-  if (!e)
-    return;
+static void print(exp_t *e) {
+  if (!e) return;
 
   if (ATOMP(e)) {
     printf("%s", e->name);
@@ -85,24 +74,21 @@ static void print(exp_t *e)
     while (e) {
       print(CAR(e));
       e = CDR(e);
-      if (!e || !CONSP(e))
-        break;
+      if (!e || !CONSP(e)) break;
       printf(" ");
     }
     printf(")");
   }
 }
 
-static exp_t *find_sym(sym_list *s, char *sym)
-{
+static exp_t *find_sym(sym_list *s, char *sym) {
   if (!s || !sym) {
     return NULL;
   }
 
   sym_list *c = s;
   while (c && c->value && c->value->key) {
-    if (strcmp(c->value->key, sym) == 0)
-      return c->value->e;
+    if (strcmp(c->value->key, sym) == 0) return c->value->e;
     c = c->next;
   }
 
@@ -111,49 +97,41 @@ static exp_t *find_sym(sym_list *s, char *sym)
 
 DEF_LIST_APPEND(sym, sym_t *);
 
-static sym_t *make_fp(char *name, void *f)
-{
+static sym_t *make_fp(char *name, void *f) {
   sym_t *cf = malloc(sizeof(sym_list));
-  if (!cf)
-    exit(1);
+  if (!cf) exit(1);
   cf->key = calloc(1, strlen(name) + 1);
   strncpy(cf->key, name, strlen(name));
   cf->e = NEWE();
-  if (!cf->e)
-    exit(1);
+  if (!cf->e) exit(1);
   cf->e->t = FUNC;
   cf->e->f = f;
-  if (!cf->key || !cf->e)
-    exit(1);
+  if (!cf->key || !cf->e) exit(1);
   return cf;
 }
 
-exp_t *quote_fn(exp_t *e, sym_list *s)
-{
+exp_t *quote_fn(exp_t *e, sym_list *s) {
   if (!e) {
     return NULL;
   }
   return CAR(e);
 }
 
-exp_t *car_fn(exp_t *e, sym_list *s)
-{
+exp_t *car_fn(exp_t *e, sym_list *s) {
   if (!e || !CAR(e) || !CONSP(CAR(e))) {
     return NULL;
   }
   return CAR(CAR(e));
 }
 
-exp_t *cdr_fn(exp_t *e, sym_list *s)
-{
+exp_t *cdr_fn(exp_t *e, sym_list *s) {
   if (!e || !CAR(e)) {
     return NULL;
   }
   return CDR(CAR(e));
 }
 
-exp_t *cons_fn(exp_t *e, sym_list *s)
-{
+exp_t *cons_fn(exp_t *e, sym_list *s) {
   if (!e || !s) {
     return NULL;
   }
@@ -180,22 +158,19 @@ exp_t *cons_fn(exp_t *e, sym_list *s)
   return cons;
 }
 
-exp_t *equal_fn(exp_t *e, sym_list *s)
-{
-  if (!e || !CAR(e) || !CDR(e) ||
-      !CAR(e)->name || !CAR(CDR(e)) ||
+exp_t *equal_fn(exp_t *e, sym_list *s) {
+  if (!e || !CAR(e) || !CDR(e) || !CAR(e)->name || !CAR(CDR(e)) ||
       !CAR(CDR(e))->name) {
     return NULL;
   }
 
   if (strcmp(CAR(e)->name, CAR(CDR(e))->name) == 0)
-      return find_sym(s, "t");
+    return find_sym(s, "t");
   else
-      return find_sym(s, "nil");
+    return find_sym(s, "nil");
 }
 
-exp_t *atom_fn(exp_t *e, sym_list *s)
-{
+exp_t *atom_fn(exp_t *e, sym_list *s) {
   if (!e || !CAR(e)) {
     return NULL;
   }
@@ -206,8 +181,7 @@ exp_t *atom_fn(exp_t *e, sym_list *s)
     return find_sym(s, "nil");
 }
 
-exp_t *cond_fn(exp_t *e, sym_list *s)
-{
+exp_t *cond_fn(exp_t *e, sym_list *s) {
   if (!e) {
     return NULL;
   }
@@ -215,12 +189,10 @@ exp_t *cond_fn(exp_t *e, sym_list *s)
   exp_t *res = NULL;
 
   for (;;) {
-    if (!e || !CAR(e) || !CONSP(CAR(e)))
-      break;
+    if (!e || !CAR(e) || !CONSP(CAR(e))) break;
 
     exp_t *cond = CAR(CAR(e));
-    if (!CDR(CAR(e)))
-        break;
+    if (!CDR(CAR(e))) break;
     exp_t *resp = CAR(CDR(CAR(e)));
 
     if (eval(cond, s) == find_sym(s, "t")) {
@@ -234,8 +206,7 @@ exp_t *cond_fn(exp_t *e, sym_list *s)
   return res;
 }
 
-static exp_t *get(size_t n, exp_t *l)
-{
+static exp_t *get(size_t n, exp_t *l) {
   exp_t *li = l;
 
   while (li && n--) {
@@ -250,8 +221,7 @@ static exp_t *get(size_t n, exp_t *l)
 }
 
 // :: [(ATOM, EXP)] -> EXP -> EXP
-static exp_t *subst(exptup_list *z, exp_t *e)
-{
+static exp_t *subst(exptup_list *z, exp_t *e) {
   if (!z || !e) {
     return NULL;
   }
@@ -259,7 +229,8 @@ static exp_t *subst(exptup_list *z, exp_t *e)
   if (ATOMP(e)) {
     while (z) {
 #ifdef PATCHED
-      if (z->value && z->value->fst && z->value->fst->name && strcmp(e->name, z->value->fst->name) == 0)
+      if (z->value && z->value->fst && z->value->fst->name &&
+          strcmp(e->name, z->value->fst->name) == 0)
 #else
       if (strcmp(e->name, z->value->fst->name) == 0)
 #endif
@@ -272,8 +243,7 @@ static exp_t *subst(exptup_list *z, exp_t *e)
   }
 
   exp_t *ne = NEWE();
-  if (!ne)
-    exit(1);
+  if (!ne) exit(1);
 
   while (e && CONSP(e)) {
     APPEND(ne, subst(z, CAR(e)));
@@ -285,48 +255,44 @@ static exp_t *subst(exptup_list *z, exp_t *e)
 
 DEF_LIST_APPEND(exptup, exptup_t *);
 
-exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
-{
+exp_t *lambda(exp_t *l, exp_t *e, sym_list *s) {
   if (!l || !e || !s) {
     return NULL;
   }
 
   // Zip up bound vars with args
   exptup_list *z = malloc(sizeof(exptup_list));
-  if (!z)
-    exit(1);
+  if (!z) exit(1);
 
   size_t n = 0;
   for (;;) {
-      exp_t *cur_bnd = get(n, l->bound_vars);
-      exp_t *cur_arg = get(n, e);
-      if (!cur_bnd && !cur_arg)
-        break;
+    exp_t *cur_bnd = get(n, l->bound_vars);
+    exp_t *cur_arg = get(n, e);
+    if (!cur_bnd && !cur_arg) break;
 
-      exptup_t *ele = malloc(sizeof(exptup_t));
-      if (!ele)
-        exit(1);
+    exptup_t *ele = malloc(sizeof(exptup_t));
+    if (!ele) exit(1);
 
-      ele->fst = cur_bnd;
-      ele->snd = cur_arg;
-      if (!ele->fst || !ele->snd) {
-        return NULL;
-      }
+    ele->fst = cur_bnd;
+    ele->snd = cur_arg;
+    if (!ele->fst || !ele->snd) {
+      return NULL;
+    }
 
-      exptup_list_append(z, ele);
-      n++;
+    exptup_list_append(z, ele);
+    n++;
   }
 
   exp_t *sub = subst(z->next, l->exp);
   exp_t *ret = eval(sub, s);
 
-  if (!ret)
-    return NULL;
+  if (!ret) return NULL;
 
   size_t cnt = 0;
   exp_t *cake = ret;
   for (cnt = 0; cnt < 4; cnt++) {
-    if (cake && CAR(cake) && ATOMP(CAR(cake)) && strncmp(CAR(cake)->name, "CAKE", strlen("CAKE")) == 0) {
+    if (cake && CAR(cake) && ATOMP(CAR(cake)) &&
+        strncmp(CAR(cake)->name, "CAKE", strlen("CAKE")) == 0) {
       if (cake && CDR(cake) && CONSP(CDR(cake))) {
         cake = CDR(cake);
         continue;
@@ -339,8 +305,7 @@ exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
   if (cnt == 4) {
     exp_t *n = NEWE();
     exp_t *a = NEWE();
-    if (!n || !a)
-      exit(1);
+    if (!n || !a) exit(1);
 
     a->t = ATOM;
     a->name = "That's a lot of CAKE!";
@@ -357,7 +322,6 @@ exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
 
   return ret;
 }
-
 
 static sym_list *make_syms(void) {
   sym_list *s = malloc(sizeof(sym_list));
@@ -388,28 +352,22 @@ static sym_list *make_syms(void) {
   sym_list_append(s, cf);
 
   sym_t *nil = malloc(sizeof(sym_list));
-  if (!nil)
-    exit(1);
+  if (!nil) exit(1);
   nil->key = calloc(1, strlen("nil") + 1);
-  if (!nil->key)
-    exit(1);
+  if (!nil->key) exit(1);
   strncpy(nil->key, "nil", strlen("nil"));
   nil->e = NEWE();
-  if (!nil->e)
-    exit(1);
+  if (!nil->e) exit(1);
   nil->e->t = CONS;
   sym_list_append(s, nil);
 
   sym_t *t = malloc(sizeof(sym_list));
-  if (!t)
-    exit(1);
+  if (!t) exit(1);
   t->key = calloc(1, strlen("t") + 1);
-  if (!t->key)
-    exit(1);
+  if (!t->key) exit(1);
   strncpy(t->key, "t", strlen("t"));
   t->e = malloc(sizeof(exp_t));
-  if (!t->e)
-    exit(1);
+  if (!t->e) exit(1);
   t->e->t = ATOM;
   t->e->name = t->key;
   sym_list_append(s, t);
@@ -417,8 +375,7 @@ static sym_list *make_syms(void) {
   return s->next;
 }
 
-static exp_t *eval(exp_t *e, sym_list *s)
-{
+static exp_t *eval(exp_t *e, sym_list *s) {
   if (!e) {
     return NULL;
   }
@@ -431,16 +388,14 @@ static exp_t *eval(exp_t *e, sym_list *s)
       return le;
   }
 
-  if (!CAR(e))
-    return NULL;
+  if (!CAR(e)) return NULL;
 
   if (ATOMP(CAR(e)) && strncmp(CAR(e)->name, "lambda", strlen("lambda")) == 0) {
     if (!CDR(e) || !CDR(CDR(e)) || !CAR(CDR(CDR(e)))) {
       return NULL;
     }
     exp_t *le = NEWE();
-    if (!le)
-      exit(1);
+    if (!le) exit(1);
     le->t = LAMB;
     le->bound_vars = CAR(CDR(e));
     le->exp = CAR(CDR(CDR(e)));
@@ -476,15 +431,14 @@ static exp_t *eval(exp_t *e, sym_list *s)
   return l;
 }
 
-int repl(char *expr)
-{
+int repl(char *expr) {
   tok_list *toks = tokenize(expr);
-  if (toks && toks->value && strncmp(toks->value, "(", strlen(toks->value)) == 0) {
+  if (toks && toks->value &&
+      strncmp(toks->value, "(", strlen(toks->value)) == 0) {
     exp_t *prog = parse(toks->next, NULL);
     sym_list *syms = make_syms();
     exp_t *ed = eval(prog, syms);
-    if (!ed)
-      return -1;
+    if (!ed) return -1;
     print(eval(prog, syms));
     return 0;
   } else {

@@ -29,18 +29,18 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "string.h"
-#include "service.h"
-#include "helper.h"
-#include "genericParsers.h"
 
-int cityMenu( pCity ci);
-void initCity( pCity ci );
-void freeCity( pCity ci );
-void printCityInfo( pCity ci );
-pCity cityTopLevel( pstring str);
-char *extractUrl( pstring str );
-char *extractMayor( pstring str );
+#include "genericParsers.h"
+#include "helper.h"
+#include "service.h"
+#include "string.h"
+
+int cityMenu(pCity ci);
+void initCity(pCity ci);
+void freeCity(pCity ci);
+void printCityInfo(pCity ci);
+pCity cityTopLevel(pstring str);
+char *extractUrl(pstring str);
+char *extractMayor(pstring str);
 
 #endif
-

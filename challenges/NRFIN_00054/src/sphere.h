@@ -29,11 +29,12 @@
 struct ray;
 
 struct sphere {
-    struct shape shape;
-    void *data;
-    float radius;
-    double __attribute__((regparm(3))) (*intersect)(struct sphere *, struct ray *ray, void *data);
-    unsigned int id;
+  struct shape shape;
+  void *data;
+  float radius;
+  double __attribute__((regparm(3))) (*intersect)(struct sphere *,
+                                                  struct ray *ray, void *data);
+  unsigned int id;
 };
 
 /**
@@ -45,4 +46,3 @@ struct sphere {
 void sphere_init(struct sphere *sphere, double radius);
 
 #endif /* SPHERE_H_ */
-

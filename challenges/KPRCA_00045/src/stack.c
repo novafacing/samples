@@ -21,66 +21,52 @@
  *
  */
 
-#include <stdlib.h>
 #include "stack.h"
 
-stack_t* stack_new(unsigned int size)
-{
+#include <stdlib.h>
+
+stack_t *stack_new(unsigned int size) {
   stack_t *stack = malloc(sizeof(stack_t));
-  if (stack == NULL)
-    return NULL;
+  if (stack == NULL) return NULL;
   stack->length = 0;
   stack->size = size;
-  stack->elems = (void **) malloc(size * sizeof(void *));
+  stack->elems = (void **)malloc(size * sizeof(void *));
   return stack;
 }
 
-void _stack_resize(stack_t *stack, unsigned int size)
-{
+void _stack_resize(stack_t *stack, unsigned int size) {
   void *new = realloc(stack->elems, size * sizeof(void *));
-  if (new)
-  {
+  if (new) {
     stack->elems = new;
     stack->size = size;
   }
 }
 
-void stack_push(stack_t *stack, void *elem)
-{
-  if (stack->length == stack->size)
-    _stack_resize(stack, stack->size * 2);
+void stack_push(stack_t *stack, void *elem) {
+  if (stack->length == stack->size) _stack_resize(stack, stack->size * 2);
   stack->elems[stack->length] = elem;
   stack->length++;
 }
 
-void* stack_pop(stack_t *stack)
-{
-  if (stack->length > 0)
-  {
-    if (stack->length == stack->size / 2)
-      _stack_resize(stack, stack->size / 2);
+void *stack_pop(stack_t *stack) {
+  if (stack->length > 0) {
+    if (stack->length == stack->size / 2) _stack_resize(stack, stack->size / 2);
     stack->length--;
     return stack->elems[stack->length];
   }
   return NULL;
 }
 
-void* stack_peek(stack_t *stack)
-{
-  if (stack->length > 0)
-    return stack->elems[stack->length - 1];
+void *stack_peek(stack_t *stack) {
+  if (stack->length > 0) return stack->elems[stack->length - 1];
   return NULL;
 }
 
-void stack_destroy(stack_t *stack)
-{
-  if (stack)
-  {
-    if (stack->elems)
-      free(stack->elems);
+void stack_destroy(stack_t *stack) {
+  if (stack) {
+    if (stack->elems) free(stack->elems);
     stack->length = 0;
     stack->size = 0;
     stack->elems = NULL;
   }
 }
-

@@ -18,12 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
 #include <stdint.h>
-#include "libc.h"
+
 #include "cttp.h"
+#include "libc.h"
 
 /**
  * Make some backups of the flag page
@@ -32,46 +33,44 @@
  * @param np Number of times to copy it
  */
 void initialize(char *s, size_t np) {
-    size_t i;
+  size_t i;
 
-    if (np > 16)
-        return;
+  if (np > 16) return;
 
-    for (i = 0; i < np; i++)
-        memcpy(s+(i*PAGE_SIZE), (char *)FLAG_PAGE, PAGE_SIZE);
+  for (i = 0; i < np; i++)
+    memcpy(s + (i * PAGE_SIZE), (char *)FLAG_PAGE, PAGE_SIZE);
 }
 
 int main() {
-    char stack[PAGE_SIZE*16];
+  char stack[PAGE_SIZE * 16];
 
-    int fd;
-    fd_set readfds;
-    int numready = 0;
-    struct timeval timeout = {2, 0};
-    size_t i, res, recvd = 0;
+  int fd;
+  fd_set readfds;
+  int numready = 0;
+  struct timeval timeout = {2, 0};
+  size_t i, res, recvd = 0;
 
-    //lets be nice and make some backup copies of the flag page :)
-    initialize(stack, 16);
+  // lets be nice and make some backup copies of the flag page :)
+  initialize(stack, 16);
 
-    //get our stack cookies ready
-    __stack_cookie_init();
+  // get our stack cookies ready
+  __stack_cookie_init();
 
-    while (1) {
-        FD_ZERO(&readfds);
-        FD_SET(fd, &readfds);
+  while (1) {
+    FD_ZERO(&readfds);
+    FD_SET(fd, &readfds);
 
-        res = fdwait(fd+1, &readfds, NULL, &timeout, &numready);
+    res = fdwait(fd + 1, &readfds, NULL, &timeout, &numready);
 
-        if (!res && numready) {
-            if (!handle_request())
-                break;
-        } else {
-            break;
-        }
+    if (!res && numready) {
+      if (!handle_request()) break;
+    } else {
+      break;
     }
+  }
 
-    //send stats!
-    print_stats();
+  // send stats!
+  print_stats();
 
-    return 0;
+  return 0;
 }

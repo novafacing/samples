@@ -18,18 +18,18 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
 #include "libc.h"
 #include "viewscript.h"
 
 int main(void) {
-    char buf[4096] = {0};
+  char buf[4096] = {0};
 
-    int res = recvuntil(STDIN, buf, sizeof(buf), '\0');
-    if (res < 0)
-        return res;
+  int res = recvuntil(STDIN, buf, sizeof(buf), '\0');
+  if (res < 0) return res;
 
-    return run_viewscript(buf);
+  return run_viewscript(buf);
 }

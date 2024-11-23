@@ -27,8 +27,6 @@ THE SOFTWARE.
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-
-
 #define COMMAND_MAX_LEN 1024
 
 #define COMMAND_OK 0
@@ -42,6 +40,4 @@ THE SOFTWARE.
 
 #define UNRECOVERABLE_ERROR -100
 
-
 #endif
-

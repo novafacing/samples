@@ -22,89 +22,71 @@
  */
 #include "audiotrack.h"
 
-AudioTrack::AudioTrack()
-{
-    pan = 0;
-    mute = false;
+AudioTrack::AudioTrack() {
+  pan = 0;
+  mute = false;
 }
 
-AudioTrack::AudioTrack(AudioStream *left) : AudioTrack()
-{
-    stereo = false;
-    channels[0] = left;
+AudioTrack::AudioTrack(AudioStream *left) : AudioTrack() {
+  stereo = false;
+  channels[0] = left;
 }
 
-AudioTrack::AudioTrack(AudioStream *left, AudioStream *right) : AudioTrack()
-{
-    stereo = true;
-    channels[0] = left;
-    channels[1] = right;
+AudioTrack::AudioTrack(AudioStream *left, AudioStream *right) : AudioTrack() {
+  stereo = true;
+  channels[0] = left;
+  channels[1] = right;
 
-    // make sure both channels are the same length
-    if (left->getLength() < right->getLength())
-        left->setLength(right->getLength());
-    else if (right->getLength() < left->getLength())
-        right->setLength(left->getLength());
+  // make sure both channels are the same length
+  if (left->getLength() < right->getLength())
+    left->setLength(right->getLength());
+  else if (right->getLength() < left->getLength())
+    right->setLength(left->getLength());
 }
 
-AudioTrack::~AudioTrack()
-{
-    if (channels[0])
-        delete channels[0];
-    if (stereo)
-        if (channels[1])
-            delete channels[1];
+AudioTrack::~AudioTrack() {
+  if (channels[0]) delete channels[0];
+  if (stereo)
+    if (channels[1]) delete channels[1];
 }
 
-void AudioTrack::setLength(unsigned int length)
-{
-    channels[0]->setLength(length);
-    if (stereo)
-        channels[1]->setLength(length);
+void AudioTrack::setLength(unsigned int length) {
+  channels[0]->setLength(length);
+  if (stereo) channels[1]->setLength(length);
 }
 
-void AudioTrack::mix(const AudioTrack &src)
-{
-    if (getLength() < src.getLength())
-        setLength(src.getLength());
+void AudioTrack::mix(const AudioTrack &src) {
+  if (getLength() < src.getLength()) setLength(src.getLength());
 
-    if (!stereo)
-    {
-        // XXX we don't currently support down-mixing stereo to mono
-        if (src.stereo)
-            return;
+  if (!stereo) {
+    // XXX we don't currently support down-mixing stereo to mono
+    if (src.stereo) return;
 
-        // ignore pan since we are mixing mono to mono
-        channels[0]->mix(*src.channels[0], src.gain);
-    }
-    else if (!src.stereo)
-    {
-        // mix src into both channels using pan
-        channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
-        channels[1]->mix(*src.channels[0], src.gain * Gain::fromPanRight(src.pan));
-    }
-    else
-    {
-        // mix channels independently
-        channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
-        channels[1]->mix(*src.channels[1], src.gain * Gain::fromPanRight(src.pan));
-    }
+    // ignore pan since we are mixing mono to mono
+    channels[0]->mix(*src.channels[0], src.gain);
+  } else if (!src.stereo) {
+    // mix src into both channels using pan
+    channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
+    channels[1]->mix(*src.channels[0], src.gain * Gain::fromPanRight(src.pan));
+  } else {
+    // mix channels independently
+    channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
+    channels[1]->mix(*src.channels[1], src.gain * Gain::fromPanRight(src.pan));
+  }
 }
 
-bool AudioTrack::toStereo(AudioTrack *other)
-{
-    if (stereo || other->stereo)
-        return false;
+bool AudioTrack::toStereo(AudioTrack *other) {
+  if (stereo || other->stereo) return false;
 
-    stereo = true;
-    channels[1] = other->channels[0];
-    other->channels[0] = NULL;
-    delete other;
+  stereo = true;
+  channels[1] = other->channels[0];
+  other->channels[0] = NULL;
+  delete other;
 
-    // make sure both channels are the same length
-    if (channels[0]->getLength() < channels[1]->getLength())
-        channels[0]->setLength(channels[1]->getLength());
-    else if (channels[1]->getLength() < channels[0]->getLength())
-        channels[1]->setLength(channels[0]->getLength());
-    return true;
+  // make sure both channels are the same length
+  if (channels[0]->getLength() < channels[1]->getLength())
+    channels[0]->setLength(channels[1]->getLength());
+  else if (channels[1]->getLength() < channels[0]->getLength())
+    channels[1]->setLength(channels[0]->getLength());
+  return true;
 }

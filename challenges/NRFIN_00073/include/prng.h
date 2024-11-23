@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef PRNG_H
 #define PRNG_H
 #include "stdint.h"
@@ -27,4 +27,3 @@ uint32_t randint();
 
 uint32_t rand(void *buf, size_t s, size_t *out);
 #endif
-

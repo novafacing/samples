@@ -22,96 +22,88 @@
 
 #include <libcgc.h>
 
+#include "ai.h"
+#include "bitboard.h"
 #include "stdio.h"
 #include "string.h"
 
-#include "ai.h"
-#include "bitboard.h"
+static unsigned int calculate_csum(unsigned int x) {
+  unsigned int ret = 0;
+  unsigned int i;
 
-static unsigned int
-calculate_csum(unsigned int x)
-{
-    unsigned int ret = 0;
-    unsigned int i;
+  for (i = 0; i < 1024; i++) ret ^= get_flag_byte(i);
 
-    for (i = 0; i < 1024; i++)
-        ret ^= get_flag_byte(i);
-
-    return ret ^ x;
+  return ret ^ x;
 }
 
-int
-main(void)
-{
-    struct ai_state ai_state;
-    struct bitboard board;
-    enum color cur_player;
-    struct move move;
+int main(void) {
+  struct ai_state ai_state;
+  struct bitboard board;
+  enum color cur_player;
+  struct move move;
 
-    enum result result;
-    int gameover = 1;
+  enum result result;
+  int gameover = 1;
 
-    static char buf[4096];
-    char *p;
+  static char buf[4096];
+  char *p;
 
-    seed_ai(&ai_state);
+  seed_ai(&ai_state);
 
-    while (1) {
-        if (gameover) {
-            init_bitboard(&board);
-            cur_player = WHITE;
-            gameover = 0;
-        }
-
-        print_bitboard(&board, cur_player);
-
-        printf("%s>%s ", cur_player == WHITE ? "\033[1;36m" : "\033[0;35m",
-                "\033[0m");
-        fflush(stdout);
-
-        fread_until((unsigned char *)buf, '\n', sizeof(buf), stdin);
-        if ((p = strchr(buf, '\n')) != NULL)
-            *p = '\0';
-        else
-            continue;
-
-        if (strcmp(buf, "quit") == 0)
-            break;
-
-        if (parse_san(&board, cur_player, buf, &move) != 0 ||
-                (result = make_move(&board, &move)) == ERROR) {
-            printf("INVALID MOVE!\n");
-            continue;
-        }
-
-#ifdef PATCHED_1
-        printf("\n%s\n%x\n", buf, calculate_csum(result));
-#else
-        printf("\n");
-        printf(buf);
-        printf("\n%x\n", calculate_csum(result));
-#endif
-
-        switch (result) {
-        case CHECK:
-            printf("CHECK!\n");
-            break;
-        case CHECKMATE:
-            printf("CHECKMATE!\n");
-            gameover = 1;
-            break;
-        case STALEMATE:
-            printf("STALEMATE!\n");
-            gameover = 1;
-            break;
-        case CONTINUE:
-        default:
-            break;
-        }
-
-        cur_player = (cur_player == WHITE ? BLACK : WHITE);
+  while (1) {
+    if (gameover) {
+      init_bitboard(&board);
+      cur_player = WHITE;
+      gameover = 0;
     }
 
-    return 0;
-}
+    print_bitboard(&board, cur_player);
 
+    printf("%s>%s ", cur_player == WHITE ? "\033[1;36m" : "\033[0;35m",
+           "\033[0m");
+    fflush(stdout);
+
+    fread_until((unsigned char *)buf, '\n', sizeof(buf), stdin);
+    if ((p = strchr(buf, '\n')) != NULL)
+      *p = '\0';
+    else
+      continue;
+
+    if (strcmp(buf, "quit") == 0) break;
+
+    if (parse_san(&board, cur_player, buf, &move) != 0 ||
+        (result = make_move(&board, &move)) == ERROR) {
+      printf("INVALID MOVE!\n");
+      continue;
+    }
+
+#ifdef PATCHED_1
+    printf("\n%s\n%x\n", buf, calculate_csum(result));
+#else
+    printf("\n");
+    printf(buf);
+    printf("\n%x\n", calculate_csum(result));
+#endif
+
+    switch (result) {
+      case CHECK:
+        printf("CHECK!\n");
+        break;
+      case CHECKMATE:
+        printf("CHECKMATE!\n");
+        gameover = 1;
+        break;
+      case STALEMATE:
+        printf("STALEMATE!\n");
+        gameover = 1;
+        break;
+      case CONTINUE:
+      default:
+        break;
+    }
+
+    cur_player = (cur_player == WHITE ? BLACK : WHITE);
+  }
+
+  return 0;
+}

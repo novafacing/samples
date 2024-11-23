@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 // #define DEBUG 1
@@ -27,12 +27,12 @@
 #include "pipes.h"
 
 // libc
-#include "memset.h"
-#include "memcpy.h"
-#include "send_bytes.h"
-#include "recv_bytes.h"
-#include "debug.h"
-#include "crypto.h"
 #include "compress.h"
- 
+#include "crypto.h"
+#include "debug.h"
+#include "memcpy.h"
+#include "memset.h"
+#include "recv_bytes.h"
+#include "send_bytes.h"
+
 #define VA_FLAG 0x4347C000

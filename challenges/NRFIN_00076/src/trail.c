@@ -18,16 +18,17 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "trail.h"
 
 #include <libcgc.h>
 #include <stdint.h>
-#include "libc.h"
 
-#include "trail.h"
-#include "rider.h"
 #include "decider.h"
+#include "libc.h"
 #include "resort.h"
+#include "rider.h"
 
 /**
  * Start the rider on the trail
@@ -36,8 +37,8 @@
  * @param r 	Rider
  */
 void trail_embark(Trail *t, Rider *r) {
-	rider_append(&t->riders, r);
-	t->rider_total++;
+  rider_append(&t->riders, r);
+  t->rider_total++;
 }
 
 /**
@@ -46,15 +47,15 @@ void trail_embark(Trail *t, Rider *r) {
  * @param t 	Trail
  */
 void trail_one_step(Trail *t) {
-	Rider *r;
-	// remove completed riders
-	t->disembark(t);
-	// update remaining riders
-	r = t->riders;
-	while (NULL != r) {
-		r->trail_distance++;
-		r = r->next;
-	}
+  Rider *r;
+  // remove completed riders
+  t->disembark(t);
+  // update remaining riders
+  r = t->riders;
+  while (NULL != r) {
+    r->trail_distance++;
+    r = r->next;
+  }
 }
 
 /**
@@ -65,31 +66,29 @@ void trail_one_step(Trail *t) {
  * @return Count of disembarked riders
  */
 uint32_t trail_disembark(Trail *t) {
+  uint32_t count = 0;
+  Decider *d = get_decider_by_id(t->end_decider);
+  if (NULL == d) {
+    return count;
+  }
+  // Rider *riders = t->riders;
+  Rider *r = t->riders;
+  while (NULL != r) {
+    if (t->length == r->trail_distance) {
+      r = rider_pop(&t->riders);
+      r->trail_distance = 0;
+      r->trail_count++;
+      r->energy_level -= t->difficulty;
 
-	uint32_t count = 0;
-	Decider *d = get_decider_by_id(t->end_decider);
-	if (NULL == d) {
-		return count;
-	}
-	// Rider *riders = t->riders;
-	Rider *r = t->riders;
-	while (NULL != r) {
-		if (t->length == r->trail_distance) {
+      d->embark(d, r);
+      count++;
+      r = t->riders;
+    } else {
+      break;
+    }
+  }
 
-			r = rider_pop(&t->riders);
-			r->trail_distance = 0;
-			r->trail_count++;
-			r->energy_level -= t->difficulty;
-
-			d->embark(d, r);
-			count++;
-			r = t->riders;
-		} else {
-			break;
-		}
-	}
-
-	return count;
+  return count;
 }
 
 /**
@@ -100,28 +99,26 @@ uint32_t trail_disembark(Trail *t) {
  * @return trail's ID on success, else -1
  */
 int32_t trail_new(Trail **t, uint32_t settings[5]) {
+  Trail *new = calloc(sizeof(Trail));
+  MALLOC_OK(new);
 
-	Trail *new = calloc(sizeof(Trail));
-	MALLOC_OK(new);
+  new->id = settings[0];
+  new->start_decider = settings[1];
+  new->end_decider = settings[2];
+  new->difficulty = settings[3];
+  new->length = settings[4];
+  new->embark = trail_embark;
+  new->step = trail_one_step;
+  new->disembark = trail_disembark;
 
-	new->id = settings[0];
-	new->start_decider = settings[1];
-	new->end_decider = settings[2];
-	new->difficulty = settings[3];
-	new->length = settings[4];
-	new->embark = trail_embark;
-	new->step = trail_one_step;
-	new->disembark = trail_disembark;
+  if ((new->length == 0) || (new->start_decider == new->end_decider) ||
+      (new->difficulty == 0)) {
+    free(new);
+    return -1;
+  }
 
-	if ((new->length == 0) ||
-		(new->start_decider == new->end_decider) ||
-		(new->difficulty == 0)) {
-		free(new);
-		return -1;
-	}
-
-	*t = new;
-	return new->id;
+  *t = new;
+  return new->id;
 }
 
 /**
@@ -131,12 +128,11 @@ int32_t trail_new(Trail **t, uint32_t settings[5]) {
  * @param riders 	List of riders to store riders removed from lift.
  */
 void trail_reset(Trail *t, Rider **riders) {
+  // remove riders from queue
+  rider_append(riders, t->riders);
+  t->riders = NULL;
 
-	// remove riders from queue
-	rider_append(riders, t->riders);
-	t->riders = NULL;
-
-	t->rider_total = 0;
+  t->rider_total = 0;
 }
 
 /**
@@ -145,10 +141,9 @@ void trail_reset(Trail *t, Rider **riders) {
  * @param t 	Trail
  */
 void trail_destroy(Trail **t, Rider **riders) {
-	Trail *this = *t;
-	// return all riders
-	rider_append(riders, this->riders);
-	free(*t);
-	*t = NULL;
+  Trail *this = *t;
+  // return all riders
+  rider_append(riders, this->riders);
+  free(*t);
+  *t = NULL;
 }
-

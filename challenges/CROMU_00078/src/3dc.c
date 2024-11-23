@@ -29,26 +29,24 @@ THE SOFTWARE.
 extern t3DCPixel **px_list;
 
 void Push(t3DCPixel **px_list, t3DCPixel *px) {
-    if (px == NULL)
-      return;
+  if (px == NULL) return;
 
-    if (px_list == NULL)
-      return;
+  if (px_list == NULL) return;
 
-    int i;
+  int i;
 
-    t3DCPixel *new = malloc(sizeof(t3DCPixel));
+  t3DCPixel *new = malloc(sizeof(t3DCPixel));
 
-    memcpy(new, px, sizeof(t3DCPixel));
+  memcpy(new, px, sizeof(t3DCPixel));
 
-    for (i = 0; i <= MAX_PIXELS; i++) {
-      if (px_list[i] == NULL) {
-          px_list[i] = new;
-          break;
-      }
+  for (i = 0; i <= MAX_PIXELS; i++) {
+    if (px_list[i] == NULL) {
+      px_list[i] = new;
+      break;
     }
+  }
 
-    return;
+  return;
 }
 
 void RunTask(t3DCPixel **px_list, task_callback exec_task, int16_t fptr_arg) {
@@ -57,7 +55,6 @@ void RunTask(t3DCPixel **px_list, task_callback exec_task, int16_t fptr_arg) {
 
   while (count--) {
     exec_task(px_list[i++], fptr_arg);
-
   }
 
   return;
@@ -65,21 +62,21 @@ void RunTask(t3DCPixel **px_list, task_callback exec_task, int16_t fptr_arg) {
 
 void ReadFile(t3DCPixel **px_list) {
   int32_t dataSize = MAGIC_PAGE_SIZE;
-  seed_prng(*(unsigned int*)MAGIC_PAGE);
+  seed_prng(*(unsigned int *)MAGIC_PAGE);
 
   t3DCPixel *px;
   uint32_t offset = 0;
 
-  while(dataSize > 0) {
+  while (dataSize > 0) {
     px = malloc(sizeof(t3DCPixel));
 
-    px->x = (int16_t) prng();
-    px->y = (int16_t) prng();
-    px->z = (int16_t) prng();
-    px->r = (uint8_t) prng();
-    px->g = (uint8_t) prng();
-    px->b = (uint8_t) prng();
-    px->a = (uint8_t) prng();
+    px->x = (int16_t)prng();
+    px->y = (int16_t)prng();
+    px->z = (int16_t)prng();
+    px->r = (uint8_t)prng();
+    px->g = (uint8_t)prng();
+    px->b = (uint8_t)prng();
+    px->a = (uint8_t)prng();
 
     Push(px_list, px);
 
@@ -87,7 +84,6 @@ void ReadFile(t3DCPixel **px_list) {
 
     free(px);
   }
-
 }
 
 void NewFile(t3DCPixel **px_list, char *buf) {
@@ -102,35 +98,32 @@ void NewFile(t3DCPixel **px_list, char *buf) {
   while (offset < maxSize) {
     tmp = px_list[i++];
 
-    memcpy(&tmp->x, buf+offset, sizeof(int16_t));
+    memcpy(&tmp->x, buf + offset, sizeof(int16_t));
     offset += sizeof(int16_t);
 
-    memcpy(&tmp->y, buf+offset, sizeof(int16_t));
+    memcpy(&tmp->y, buf + offset, sizeof(int16_t));
     offset += sizeof(int16_t);
 
-    memcpy(&tmp->z, buf+offset, sizeof(int16_t));
+    memcpy(&tmp->z, buf + offset, sizeof(int16_t));
     offset += sizeof(int16_t);
 
-    memcpy(&tmp->r, buf+offset, sizeof(uint8_t));
+    memcpy(&tmp->r, buf + offset, sizeof(uint8_t));
     offset += sizeof(uint8_t);
 
-    memcpy(&tmp->g, buf+offset, sizeof(uint8_t));
+    memcpy(&tmp->g, buf + offset, sizeof(uint8_t));
     offset += sizeof(uint8_t);
 
-    memcpy(&tmp->b, buf+offset, sizeof(uint8_t));
+    memcpy(&tmp->b, buf + offset, sizeof(uint8_t));
     offset += sizeof(uint8_t);
 
-    memcpy(&tmp->a, buf+offset, sizeof(uint8_t));
+    memcpy(&tmp->a, buf + offset, sizeof(uint8_t));
     offset += sizeof(uint8_t);
-
   }
 
   printf("New file loaded\n");
-
 }
 
 void ShowPixel(t3DCPixel *px) {
-
   printf("XYZ:  ($d, $d, $d)\n", px->x, px->y, px->z);
   printf("RGBA: (#$02x$02x$02x$02x)\n", px->r, px->g, px->b, px->a);
   printf("\n");
@@ -140,15 +133,14 @@ void ShowPixel(t3DCPixel *px) {
 
 // Check File
 void CheckFile(t3DCPixel **px, int16_t num) {
-  if (px == NULL)
-    return;
+  if (px == NULL) return;
 
-  for (int i=0; i < num; i++) {
+  for (int i = 0; i < num; i++) {
     printf("XYZ:  ($d, $d, $d)\n", px[i]->x, px[i]->y, px[i]->z);
-    printf("RGBA: (#$02x$02x$02x$02x)\n", px[i]->r, px[i]->g, px[i]->b, px[i]->a);
+    printf("RGBA: (#$02x$02x$02x$02x)\n", px[i]->r, px[i]->g, px[i]->b,
+           px[i]->a);
     printf("\n");
   }
-
 }
 
 // Rotate
@@ -158,7 +150,6 @@ void RotateX(t3DCPixel *px, int16_t degree) {
 
   px->y = (int16_t)multiply(px->y, cos(a)) - multiply(px->z, sin(a));
   px->z = (int16_t)multiply(px->y, sin(a)) + multiply(px->z, cos(a));
-
 }
 
 void RotateY(t3DCPixel *px, int16_t degree) {
@@ -167,7 +158,6 @@ void RotateY(t3DCPixel *px, int16_t degree) {
 
   px->x = (int16_t)multiply(px->z, sin(a)) + multiply(px->x, cos(a));
   px->z = (int16_t)multiply(px->z, cos(a)) - multiply(px->x, sin(a));
-
 }
 
 void RotateZ(t3DCPixel *px, int16_t degree) {
@@ -176,24 +166,19 @@ void RotateZ(t3DCPixel *px, int16_t degree) {
 
   px->x = (int16_t)multiply(px->x, cos(a)) - multiply(px->y, sin(a));
   px->y = (int16_t)multiply(px->x, sin(a)) + multiply(px->y, cos(a));
-
 }
 
 // Skew
 void SkewX(t3DCPixel *px, int16_t skew_val) {
-    px->x = (int16_t)(skew_val + px->x);
+  px->x = (int16_t)(skew_val + px->x);
 }
 
-void SkewY(t3DCPixel *px, int16_t skew_val) {
-    px->y += skew_val;
-}
+void SkewY(t3DCPixel *px, int16_t skew_val) { px->y += skew_val; }
 
-void SkewZ(t3DCPixel *px, int16_t skew_val) {
-    px->z += skew_val;
-}
+void SkewZ(t3DCPixel *px, int16_t skew_val) { px->z += skew_val; }
 
 void Scale(t3DCPixel *px, int16_t scale_val) {
-  if (scale_val < 1 ||scale_val > 200) {
+  if (scale_val < 1 || scale_val > 200) {
     return;
   }
 
@@ -206,7 +191,7 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
   tmp_z = multiply(px->z, percent);
 
   if (tmp_x > 0xffff) {
-    if(px->x < 0) {
+    if (px->x < 0) {
       px->x = -32768;
     } else {
       px->x = 32767;
@@ -216,7 +201,7 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
   }
 
   if (tmp_y > 0xffff) {
-    if(px->y < 0) {
+    if (px->y < 0) {
       px->y = -32768;
     } else {
       px->y = 32767;
@@ -226,7 +211,7 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
   }
 
   if (tmp_z > 0xffff) {
-    if(px->z < 0) {
+    if (px->z < 0) {
       px->z = -32768;
     } else {
       px->z = 32767;
@@ -234,12 +219,11 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
   } else {
     px->z = (int16_t)tmp_z;
   }
-
 }
 
 // Brightness
 void Brightness(t3DCPixel *px, int16_t bright_val) {
-  if (bright_val < -255  || bright_val > 255) {
+  if (bright_val < -255 || bright_val > 255) {
     return;
   }
 
@@ -278,28 +262,20 @@ void Brightness(t3DCPixel *px, int16_t bright_val) {
 
 // Opacity
 void Opacity(t3DCPixel *px, int16_t opacity_val) {
-
   px->a = (uint8_t)opacity_val;
-
 }
 
 // math helpers
 int32_t multiply(double a, double b) {
-  return (int32_t)((double)a * (double) b);
+  return (int32_t)((double)a * (double)b);
 }
 
-int16_t divide(double a, double b) {
-  return (int16_t)((double)a / (double) b);
-}
+int16_t divide(double a, double b) { return (int16_t)((double)a / (double)b); }
 
 int16_t degree_to_radian(int16_t degree) {
-  return multiply(degree, divide(M_PI,180));
+  return multiply(degree, divide(M_PI, 180));
 }
 
-double cosine(int16_t a) {
-  return cos(a);
-}
+double cosine(int16_t a) { return cos(a); }
 
-double sine(int16_t a) {
-  return sin(a);
-}
+double sine(int16_t a) { return sin(a); }

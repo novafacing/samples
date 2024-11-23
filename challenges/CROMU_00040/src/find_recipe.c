@@ -25,92 +25,76 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 
+#include "service.h"
+#include "stdlib.h"
 
 void find_recipe(Recipe_Type *book) {
+  char **temp;
+  Ingredient_Type *ingredient;
+  char buffer[1024];
+  char answer[5];
+  size_t size;
 
-char **temp;
-Ingredient_Type *ingredient;
-char buffer[1024];
-char answer[5];
-size_t size;
+  printf("Enter search term: ");
 
+  size = getline(buffer, sizeof(buffer));
 
-	printf("Enter search term: ");
+  if (size <= 1) return;
 
-	size=getline(buffer, sizeof(buffer));
+  printf("\n");
 
-	if (size <=1 ) 
-		return;
+  while (book) {
+    if (match_str(buffer, book->Title)) {
+      print_recipe(book);
 
+      printf("Would you like to tag this recipe? ");
 
-	printf("\n");
+      size = getline(answer, sizeof(answer));
 
-	while(book) {
+      if (size < 1) {
+        book = book->next;
+        continue;
+      }
 
+      if (answer[0] == 'y' || answer[0] == 'Y') {
+        book->Tagged = 1;
+      }
 
-		if (match_str(buffer, book->Title)) {
+      book = book->next;
+      continue;
+    }
 
-			print_recipe(book);
+    ingredient = book->Ingredient_List;
 
-			printf("Would you like to tag this recipe? ");
-
-			size=getline(answer, sizeof(answer));
-
-			if (size <1 )  {
-				book=book->next;
-				continue;
-			}
-
-			if (answer[0] == 'y' || answer[0] == 'Y') {
-
-				book->Tagged = 1;
-			}
-
-			book=book->next;
-			continue;
-
-		}
-
-		ingredient = book->Ingredient_List;
-
-		while (ingredient) {
-
-			if (match_str(buffer, ingredient->item)) {
-
-				print_recipe(book);
+    while (ingredient) {
+      if (match_str(buffer, ingredient->item)) {
+        print_recipe(book);
 
 #ifdef PATCHED
-			if ( book == NULL ) {
-				return;
-			}
+        if (book == NULL) {
+          return;
+        }
 #endif
 
-				printf("Would you like to tag this recipe? ");
+        printf("Would you like to tag this recipe? ");
 
-				size=getline(answer, sizeof(answer));
+        size = getline(answer, sizeof(answer));
 
-				if (size <1 )  {
-					book=book->next;
-					continue;
-				}
+        if (size < 1) {
+          book = book->next;
+          continue;
+        }
 
-				if (answer[0] == 'y' || answer[0] == 'Y') {
+        if (answer[0] == 'y' || answer[0] == 'Y') {
+          book->Tagged = 1;
+        }
+        break;
+      }
 
-					book->Tagged = 1;
-				}
-				break;
+      ingredient = ingredient->next;
+    }
 
-			}
-
-			ingredient=ingredient->next;
-		}
-
-		book = book->next;
-
-	}
-
-
+    book = book->next;
+  }
 }

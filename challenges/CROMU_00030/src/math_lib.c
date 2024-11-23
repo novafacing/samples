@@ -24,34 +24,28 @@ THE SOFTWARE.
 
 */
 
-
 #include "math_lib.h"
 
 // Accepts user input to seed the prng
-int seed_prng()
-{
-	char buf[256];
-	bzero(buf, sizeof(buf));
- 	int status;
- 	size_t bytes_received;
- 	printf("Enter crypto seed\n");
+int seed_prng() {
+  char buf[256];
+  bzero(buf, sizeof(buf));
+  int status;
+  size_t bytes_received;
+  printf("Enter crypto seed\n");
 
- 	status = receive_until(buf, '\n', 255);
-	if (status < 2)
-	{
-		// Error on receive
-		return FAIL;
-	}
+  status = receive_until(buf, '\n', 255);
+  if (status < 2) {
+    // Error on receive
+    return FAIL;
+  }
 
-	// create the seed number here
-	uint64_t seed = -1;
-	for (int p = 0; p<status; p++)
-	{
-		seed = ((seed << 4) | (seed >> 60)) ^ buf[p];
-	}
-	sprng(seed);
+  // create the seed number here
+  uint64_t seed = -1;
+  for (int p = 0; p < status; p++) {
+    seed = ((seed << 4) | (seed >> 60)) ^ buf[p];
+  }
+  sprng(seed);
 
-	return status;
+  return status;
 }
-
-

@@ -5,9 +5,9 @@
 
 typedef struct FILE FILE;
 
-extern FILE * const stdin;
-extern FILE * const stdout;
-extern FILE * const stderr;
+extern FILE *const stdin;
+extern FILE *const stdout;
+extern FILE *const stderr;
 
 int printf(const char *fmt, ...);
 int fprintf(FILE *stream, const char *fmt, ...);

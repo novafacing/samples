@@ -24,15 +24,18 @@ THE SOFTWARE.
 
 */
 
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 #include "lexer.h"
-#include "types.h"
+
+#include <malloc.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "char.h"
+#include "types.h"
 
 #define streq(s1, s2) (0 == strcmp(s1, s2))
-#define flmatch(s1,s2, flav) if streq(s1, s2) return flav;
+#define flmatch(s1, s2, flav) \
+  if streq (s1, s2) return flav;
 
 typedef enum character_class_enum {
   C_LETTER,
@@ -79,33 +82,33 @@ lexer_list* lex_string(uint16 len, char* str) {
   st.total_length = len;
   st.entire = st.remainder = str;
   st.head = st.tail = calloc(sizeof(lexer_list));
-    
+
   while (remaining_bytes(st) > 0) {
     char peek = st.remainder[0];
     switch (classify(peek)) {
-    case C_WHITESPACE:
-      st.remainder++;
-      break;
-    case C_PLUS:
-    case C_MINUS:
-    case C_ASTERISK:
-    case C_SOLIDUS:
-    case C_COMMA:
-    case C_OPEN_PAREN:
-    case C_CLOSE_PAREN:
-      st = lex_single_byte(st);
-      break;
-    case C_APOSTROPHE:
-      st = lex_character_literal(st);
-      break;
-    case C_LETTER:
-      st = lex_word(st);
-      break;
-    case C_DIGIT:
-      st = lex_number(st);
-      break;
-    default:
-      st = lexer_error(st);
+      case C_WHITESPACE:
+        st.remainder++;
+        break;
+      case C_PLUS:
+      case C_MINUS:
+      case C_ASTERISK:
+      case C_SOLIDUS:
+      case C_COMMA:
+      case C_OPEN_PAREN:
+      case C_CLOSE_PAREN:
+        st = lex_single_byte(st);
+        break;
+      case C_APOSTROPHE:
+        st = lex_character_literal(st);
+        break;
+      case C_LETTER:
+        st = lex_word(st);
+        break;
+      case C_DIGIT:
+        st = lex_number(st);
+        break;
+      default:
+        st = lexer_error(st);
     }
   }
 
@@ -114,16 +117,26 @@ lexer_list* lex_string(uint16 len, char* str) {
 
 character_class classify(char c) {
   switch (c) {
-  case ' ': return C_WHITESPACE;
-  case '+': return C_PLUS;
-  case '-': return C_MINUS;
-  case '*': return C_ASTERISK;
-  case '/': return C_SOLIDUS;
-  case '_': return C_UNDERSCORE;
-  case ',': return C_COMMA;
-  case '(': return C_OPEN_PAREN;
-  case ')': return C_CLOSE_PAREN;
-  case '\'': return C_APOSTROPHE;
+    case ' ':
+      return C_WHITESPACE;
+    case '+':
+      return C_PLUS;
+    case '-':
+      return C_MINUS;
+    case '*':
+      return C_ASTERISK;
+    case '/':
+      return C_SOLIDUS;
+    case '_':
+      return C_UNDERSCORE;
+    case ',':
+      return C_COMMA;
+    case '(':
+      return C_OPEN_PAREN;
+    case ')':
+      return C_CLOSE_PAREN;
+    case '\'':
+      return C_APOSTROPHE;
   }
 
   if (char_is_num(c)) return C_DIGIT;
@@ -143,7 +156,7 @@ void free_lexer_list(lexer_list* to_free) {
 
 void free_lexeme(lexeme* to_free) {
   if (NULL == to_free) return;
-  
+
   free(to_free->bytes);
   free(to_free);
 }
@@ -152,22 +165,21 @@ lexeme_flavor get_single_byte_flavor(char first_byte);
 
 lexeme_flavor get_flavor(lexeme* to_flavor) {
   char* b = to_flavor->bytes;
-  
+
   if (to_flavor->bytes_len == 2) {
     return get_single_byte_flavor(b[0]);
   }
-  
+
   flmatch("FIND", b, F_FIND);
   flmatch("FROM", b, F_FROM);
 
   lexeme_flavor candidate = get_single_byte_flavor(b[0]);
 
-  if ((candidate != F_INTEGER_LITERAL) &&
-      (candidate != F_IDENTIFIER)) {
+  if ((candidate != F_INTEGER_LITERAL) && (candidate != F_IDENTIFIER)) {
     // no multiple-byte types other than these
     return F_ERROR;
   }
-  
+
   for (uint16 i = 1; i < (to_flavor->bytes_len - 1); i++) {
     char c = b[i];
     if (!char_is_num(c) && (candidate == F_INTEGER_LITERAL)) {
@@ -175,9 +187,7 @@ lexeme_flavor get_flavor(lexeme* to_flavor) {
       return F_ERROR;
     }
 
-    if (!char_is_alpha(c) &&
-        !char_is_num(c) &&
-        (c != '_') &&
+    if (!char_is_alpha(c) && !char_is_num(c) && (c != '_') &&
         (candidate == F_IDENTIFIER)) {
       // non-alphanumeric or underscore in identifier
       return F_ERROR;
@@ -190,13 +200,20 @@ lexeme_flavor get_flavor(lexeme* to_flavor) {
 lexeme_flavor get_single_byte_flavor(char first_byte) {
   // catch symbols
   switch (first_byte) {
-  case '+': return F_PLUS;
-  case '-': return F_MINUS;
-  case '*': return F_ASTERISK;
-  case '/': return F_SOLIDUS;
-  case ',': return F_COMMA;
-  case '(': return F_OPEN_PAREN;
-  case ')': return F_CLOSE_PAREN;
+    case '+':
+      return F_PLUS;
+    case '-':
+      return F_MINUS;
+    case '*':
+      return F_ASTERISK;
+    case '/':
+      return F_SOLIDUS;
+    case ',':
+      return F_COMMA;
+    case '(':
+      return F_OPEN_PAREN;
+    case ')':
+      return F_CLOSE_PAREN;
   }
 
   // single digit integers
@@ -204,8 +221,8 @@ lexeme_flavor get_single_byte_flavor(char first_byte) {
 
   // single-letter identifiers
   if (char_is_alpha(first_byte)) return F_IDENTIFIER;
-  
-  return F_ERROR;  
+
+  return F_ERROR;
 }
 
 lexer_state lex_single_byte(lexer_state in) {
@@ -219,7 +236,7 @@ lexer_state lex_single_byte(lexer_state in) {
   content->bytes = calloc(2);
   content->bytes[0] = b;
   out.remainder++;
-  
+
   return out;
 }
 
@@ -242,11 +259,11 @@ lexer_state lex_character_literal(lexer_state in) {
   content->bytes = calloc(bytes_len + 1);
 
   for (uint16 i = 0; i < bytes_len; i++) {
-    content->bytes[i] = apostrophe[i+1];
+    content->bytes[i] = apostrophe[i + 1];
   }
 
   out.remainder += bytes_len + 2;
-  
+
   return out;
 }
 
@@ -270,7 +287,7 @@ lexer_state lex_word(lexer_state in) {
   content->flavor = get_flavor(content);
 
   out.remainder += bytes_len;
-  
+
   return out;
 }
 
@@ -313,7 +330,7 @@ lexer_state lexer_error(lexer_state in) {
 
 sint16 remaining_bytes(lexer_state st) {
   if (st.error) return 0;
-  
+
   uint16 so_far = st.remainder - st.entire;
   return st.total_length - so_far;
 }
@@ -336,7 +353,8 @@ void assert_lex(lexeme_flavor desired, char* str) {
   }
 }
 
-#define assert_chase(des, count) assert_lexeme_flavor(des, lex_chase(lexed, count));
+#define assert_chase(des, count) \
+  assert_lexeme_flavor(des, lex_chase(lexed, count));
 
 lexeme* lex_chase(lexer_list* list, uint16 count) {
   if (count == 0) return list->content;
@@ -346,7 +364,7 @@ lexeme* lex_chase(lexer_list* list, uint16 count) {
 void lexer_test() {
   lexeme blank;
   lexeme* l = &blank;
-  
+
   assert_lex(F_FIND, "FIND");
   assert_lex(F_INTEGER_LITERAL, "5");
   assert_lex(F_INTEGER_LITERAL, "12345");

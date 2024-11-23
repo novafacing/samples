@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H
@@ -35,38 +35,37 @@
 
 #define uint8_t unsigned char
 #define uint16_t unsigned short
-#define uint32_t unsigned int 
+#define uint32_t unsigned int
 
 // Fragmentation related
 int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
 int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
 
 ////
-// The following is verbatim from EAGLE_00004, but isn't included in the 
+// The following is verbatim from EAGLE_00004, but isn't included in the
 // released binary (DEBUG is not defined), so this reuse shouldn't be a concern.
 ////
 #ifdef DEBUG
 
-#define _FILE_STATE_OPEN  1
+#define _FILE_STATE_OPEN 1
 #define _FILE_STATE_ERROR 2
-#define _FILE_STATE_EOF   4
-#define _FILE_HAVE_LAST   8
+#define _FILE_STATE_EOF 4
+#define _FILE_HAVE_LAST 8
 
 typedef struct _FILE {
-   int fd;
-   int state;
-   int last;
+  int fd;
+  int state;
+  int last;
 } FILE;
 
 extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
 
-int fprintf(FILE * stream, const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
 
 #endif
 // ^ DEBUG
 
 #endif
 // ^ LIBC_H
-

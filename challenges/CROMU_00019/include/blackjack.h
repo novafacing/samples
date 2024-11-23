@@ -30,17 +30,17 @@ THE SOFTWARE.
 #include "casino.h"
 
 static const int bj_value[SIZE_OF_DECK + 1] = {
-    0, // Placeholder for non-card
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2D - 10D
+    0,                              // Placeholder for non-card
+    2,  3,  4,  5, 6, 7, 8, 9, 10,  // 2D - 10D
     10, 10, 10, 1,                  // JD - AD
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2S - 10S
+    2,  3,  4,  5, 6, 7, 8, 9, 10,  // 2S - 10S
     10, 10, 10, 1,                  // JS - AS
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2H - 10H
+    2,  3,  4,  5, 6, 7, 8, 9, 10,  // 2H - 10H
     10, 10, 10, 1,                  // JH - AH
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2C - 10C
+    2,  3,  4,  5, 6, 7, 8, 9, 10,  // 2C - 10C
     10, 10, 10, 1                   // JC - AC
 };
 
 void blackjack(player_info *player);
 
-#endif // BLACKJACK_H
+#endif  // BLACKJACK_H

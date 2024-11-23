@@ -26,14 +26,12 @@
 #include <libcgc.h>
 #include <stdint.h>
 
-extern void *memchr(const void *s, int c, size_t n)
-{
+extern void *memchr(const void *s, int c, size_t n) {
   size_t i = 0;
   while (i < n) {
-    if (*((uint8_t *)s + i) == c)
-      return (void *)((intptr_t)s + i);
+    if (*((uint8_t *)s + i) == c) return (void *)((intptr_t)s + i);
 
     i++;
   }
-    return NULL;
+  return NULL;
 }

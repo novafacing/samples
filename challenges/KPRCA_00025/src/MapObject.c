@@ -21,6 +21,7 @@
  *
  */
 #include "MapObject.h"
+
 #include "NameChangeObject.h"
 #include "TrainerObject.h"
 #include "TreasureObject.h"
@@ -28,46 +29,41 @@
 
 DefineClass(MapObject, Object)
 
-DefineFunction(MapObject, int, on_collide, Player *p)
-{
-    return 1;
+    DefineFunction(MapObject, int, on_collide, Player *p) {
+  return 1;
 }
 
-DefineFunction(MapObject, void, deserialize, Buffer *buf)
-{
-    raise(EXC_NOT_IMPLEMENTED);
+DefineFunction(MapObject, void, deserialize, Buffer *buf) {
+  raise(EXC_NOT_IMPLEMENTED);
 }
 
-DefineFunction(MapObject, void, serialize, Buffer *buf)
-{
-    raise(EXC_NOT_IMPLEMENTED);
+DefineFunction(MapObject, void, serialize, Buffer *buf) {
+  raise(EXC_NOT_IMPLEMENTED);
 }
 
-MapObject *MapObject_deserialize(Buffer *buf)
-{
-    MapObject *o = NULL;
-    size_t pos = $(buf, tell);
-    int type = $(buf, read_number);
-    $(buf, seek, pos);
+MapObject *MapObject_deserialize(Buffer *buf) {
+  MapObject *o = NULL;
+  size_t pos = $(buf, tell);
+  int type = $(buf, read_number);
+  $(buf, seek, pos);
 
-    switch(type)
-    {
+  switch (type) {
     case 0:
-        o = new(VetObject)->super;
-        break;
+      o = new (VetObject)->super;
+      break;
     case 1:
-        o = new(TreasureObject)->super;
-        break;
+      o = new (TreasureObject)->super;
+      break;
     case 2:
-        o = new(TrainerObject)->super;
-        break;
+      o = new (TrainerObject)->super;
+      break;
     case 3:
-        o = new(NameChangeObject)->super;
-        break;
-    }
+      o = new (NameChangeObject)->super;
+      break;
+  }
 
-    ASSERT_OR_RAISE(o != NULL, EXC_BAD_STATE);
+  ASSERT_OR_RAISE(o != NULL, EXC_BAD_STATE);
 
-    $(o, deserialize, buf);
-    return o;
+  $(o, deserialize, buf);
+  return o;
 }

@@ -28,4 +28,4 @@ THE SOFTWARE.
 
 #define offsetof(t, d) __builtin_offsetof(t, d)
 
-#endif // __STDDEF_H__
+#endif  // __STDDEF_H__

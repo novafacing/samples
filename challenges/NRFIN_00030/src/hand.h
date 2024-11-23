@@ -18,18 +18,17 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef HAND_H
 #define HAND_H 1
 
 struct hand {
-	uint8_t count;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
-	uint8_t unk3; // push size to mult of 4 bytes
-	struct card *cards[52];
+  uint8_t count;
+  uint8_t unk1;  // push size to mult of 4 bytes
+  uint8_t unk2;  // push size to mult of 4 bytes
+  uint8_t unk3;  // push size to mult of 4 bytes
+  struct card *cards[52];
 };
 
 /**
@@ -51,7 +50,8 @@ extern void consolidate_hand(struct hand *h);
  *
  * @param h A hand
  * @param c A card
- * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_HAND_FULL on error
+ * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_HAND_FULL on
+ * error
  */
 extern int add_card_to_hand(struct hand *h, struct card *c);
 
@@ -61,7 +61,7 @@ extern int add_card_to_hand(struct hand *h, struct card *c);
  * @param h A hand
  * @param cards[] Array of card pointers
  * @param qty Number of cards in cards array
- * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, 
+ * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD,
  * 	ERR_INVALID_QTY, ERR_HAND_FULL on error
  */
 extern int add_cards_to_hand(struct hand *h, struct card *cards[], uint8_t qty);
@@ -73,7 +73,7 @@ extern int add_cards_to_hand(struct hand *h, struct card *cards[], uint8_t qty);
  * @param idx Index of card to remove from hand (0-51)
  * @param c Pointer to a card pointer to return the removed card.
  * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_INVALID_CARD,
- 	ERR_NULL_CARD on error
+        ERR_NULL_CARD on error
  */
 extern int rm_card_from_hand(struct hand *h, uint8_t idx, struct card **c);
 
@@ -96,16 +96,18 @@ extern int qty_of_rank_in_hand(struct hand *h, uint8_t rank);
  * @param h A hand
  * @param rank Rank of cards to serach for in hand
  * @param cards[] Array to store card pointers.
- * @return Number of cards matching rank (0/1/2/3/4) or 
+ * @return Number of cards matching rank (0/1/2/3/4) or
  *	ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_INVALID_CARD on error
  */
-extern int get_all_of_rank_from_hand(struct hand *h, uint8_t rank, struct card *cards[]);
+extern int get_all_of_rank_from_hand(struct hand *h, uint8_t rank,
+                                     struct card *cards[]);
 
 /**
  * Get the number of cards in the hand.
  *
  * @param h A hand
- * @return Number of cards in the hand (0 - 45) or ERR_UNINITIALIZED_HAND on error
+ * @return Number of cards in the hand (0 - 45) or ERR_UNINITIALIZED_HAND on
+ * error
  */
 extern int get_count_cards_in_hand(struct hand *h);
 

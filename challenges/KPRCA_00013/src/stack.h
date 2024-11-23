@@ -3,8 +3,8 @@
 
 typedef struct stack stack_t;
 struct stack {
-    char *data;
-    stack_t *next;
+  char *data;
+  stack_t *next;
 };
 
 char *peek_top(stack_t *stack);

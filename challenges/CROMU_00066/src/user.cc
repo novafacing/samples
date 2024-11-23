@@ -26,26 +26,18 @@ THE SOFTWARE.
 
 #include "user.h"
 
-User::User( uint16_t id )
-{
-	m_id = id;
+User::User(uint16_t id) { m_id = id; }
+
+bool User::SetBloodPressure(uint16_t bp) {
+  if (bp < BLOOD_PRESSURE_MIN || bp > BLOOD_PRESSURE_MAX) return false;
+
+  this->m_bloodPressure = bp;
+  return true;
 }
 
-bool User::SetBloodPressure( uint16_t bp )
-{
-	if ( bp < BLOOD_PRESSURE_MIN || bp > BLOOD_PRESSURE_MAX )
-		return false;
+bool User::SetBodyFat(uint16_t bf) {
+  if (bf < 0 || bf > 100) return false;
 
-	this->m_bloodPressure = bp;
-	return true;
+  this->m_bodyFat = bf;
+  return true;
 }
-
-bool User::SetBodyFat( uint16_t bf )
-{
-	if ( bf < 0 || bf > 100 )
-		return false;
-
-	this->m_bodyFat = bf;
-	return true;
-}
-

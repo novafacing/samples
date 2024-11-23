@@ -28,30 +28,29 @@ THE SOFTWARE.
 
 #include <cutil_list.h>
 
+#include "cpu.h"
 #include "dma.h"
 #include "mmu.h"
-#include "cpu.h"
 
 class CCLF;
 
-class CVM
-{
-public:
-	CVM( void *secret_page );
-	~CVM( );
+class CVM {
+ public:
+  CVM(void *secret_page);
+  ~CVM();
 
-	bool Init( CCLF *pFile );
+  bool Init(CCLF *pFile);
 
-	bool Run( void );
+  bool Run(void);
 
-private:
-	CMMU	m_oMMU;
-	CCPU	m_oCPU;
-	CDMA 	m_oDMA;
+ private:
+  CMMU m_oMMU;
+  CCPU m_oCPU;
+  CDMA m_oDMA;
 
-	void *m_pMagicPage;
+  void *m_pMagicPage;
 
-	CUtil::DLL_LIST( CPeripheral, m_peripheralListLink ) m_oPeripheralList;
+  CUtil::DLL_LIST(CPeripheral, m_peripheralListLink) m_oPeripheralList;
 };
 
-#endif // __VM_H__
+#endif  // __VM_H__

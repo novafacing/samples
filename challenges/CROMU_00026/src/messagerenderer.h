@@ -27,18 +27,17 @@ THE SOFTWARE.
 #define __MESSAGE_RENDERER_H__
 
 // Renders messages to HTML
-class CMessageRenderer
-{
-public:
-    CMessageRenderer() : m_messageRenderCount( 0 ) { };
-    ~CMessageRenderer() { };
+class CMessageRenderer {
+ public:
+  CMessageRenderer() : m_messageRenderCount(0) {};
+  ~CMessageRenderer() {};
 
-    bool RenderHeader( void );
-    bool RenderFooter( void );
-    bool RenderMessage( CFullMessage *pMessage );
+  bool RenderHeader(void);
+  bool RenderFooter(void);
+  bool RenderMessage(CFullMessage *pMessage);
 
-private:
-    uint32_t m_messageRenderCount;
+ private:
+  uint32_t m_messageRenderCount;
 };
 
-#endif // __MESSAGE_RENDERER_H__
+#endif  // __MESSAGE_RENDERER_H__

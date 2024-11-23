@@ -6,4 +6,4 @@ typedef __builtin_va_list va_list;
 #define va_end(_va_list) __builtin_va_end(_va_list)
 #define va_arg(_va_list, _type) __builtin_va_arg(_va_list, _type)
 
-#endif//STDARG_H
+#endif  // STDARG_H

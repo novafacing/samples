@@ -26,21 +26,18 @@ THE SOFTWARE.
 
 #include "common.h"
 
-
-typedef struct 
-{
-	char name[MAX_NAME_LEN];
-	char password[MAX_PASS_LEN];
-	int index; // index into the listOfMessages
-	int first_login;
-	int msg_count;
+typedef struct {
+  char name[MAX_NAME_LEN];
+  char password[MAX_PASS_LEN];
+  int index;  // index into the listOfMessages
+  int first_login;
+  int msg_count;
 } User;
 
 extern User *current_user;
 
 extern User *listOfUsers[MAX_USERS];
 extern int user_count;
-
 
 int login();
 int logout();

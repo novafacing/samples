@@ -25,24 +25,20 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 #include "string.h"
 
-
 unsigned int calc_version() {
+  int i;
+  unsigned int total;
 
-int i;
-unsigned int total;
+  total = 0;
 
+  for (i = 0; i < INIT_DATA_LEN / sizeof(int); ++i) {
+    total += *(unsigned int *)(INITIALIZATION_DATA + i * sizeof(int));
+  }
 
-	total = 0;
-
-	for (i=0; i < INIT_DATA_LEN/sizeof(int); ++i)  {
-
-	 	total += *(unsigned int *)(INITIALIZATION_DATA+i*sizeof(int));
-
-	}
-
-	return total;
+  return total;
 }

@@ -14,6 +14,6 @@ extern char *strcpy(char *dest, const char *src);
 extern char *strncpy(char *dest, const char *src, size_t n);
 extern char *strchr(const char *s, int c);
 extern char *strsep(char **stringp, const char *delim);
-extern int strcmp(const char* a, const char *b);
+extern int strcmp(const char *a, const char *b);
 
 #endif /* !STRING_H_ */

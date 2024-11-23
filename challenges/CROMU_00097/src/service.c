@@ -24,40 +24,37 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
+#include "application.h"
+#include "malloc.h"
+#include "msls.h"
+#include "sls.h"
 #include "stdint.h"
 #include "stdio.h"
-#include "malloc.h"
-#include "sls.h"
-#include "msls.h"
-#include "application.h"
 
-int main(void)
-{
+int main(void) {
   // Setup server state
   SERVER_STATE *state = calloc(sizeof(SERVER_STATE));
 
-  state->functions =  msls_get_sls_functions();
+  state->functions = msls_get_sls_functions();
   state->functions->set_cookie(state);
   state->is_initialized = 1;
 
   // Run Server
-  while (!state->should_exit)
-  {
+  while (!state->should_exit) {
     SLS_MESSAGE *msg = state->functions->receive_msg(state);
 
-    if (msg == NULL)
-    {
+    if (msg == NULL) {
       debug_print("Skipping invalid MSG\n");
       continue;
     }
 
-    CLIENT_CONTEXT *connection = state->functions->lookup_context(state, msg->connection_id);
+    CLIENT_CONTEXT *connection =
+        state->functions->lookup_context(state, msg->connection_id);
 
-    switch(msg->type)
-    {
+    switch (msg->type) {
       case SLS_TYPE_CHANGESPEC:
-        if (connection && connection->is_connected)
-        {
+        if (connection && connection->is_connected) {
           state->functions->handle_changespec(state, connection, msg);
         }
         break;
@@ -68,19 +65,16 @@ int main(void)
         state->functions->handle_handshake(state, msg);
         break;
       case SLS_TYPE_APPLICATION:
-        if (connection && connection->is_connected)
-        {
+        if (connection && connection->is_connected) {
           state->functions->handle_application(state, connection, msg);
         }
         break;
       case SLS_TYPE_HEARTBEAT:
-        if (!connection || !connection->in_handshake)
-        {
+        if (!connection || !connection->in_handshake) {
           state->functions->handle_heartbeat(msg);
         }
         break;
-      case SLS_TYPE_SHUTDOWN:
-      {
+      case SLS_TYPE_SHUTDOWN: {
         state->should_exit = 1;
         break;
       }

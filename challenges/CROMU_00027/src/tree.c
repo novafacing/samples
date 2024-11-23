@@ -23,73 +23,97 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "malloc.h"
-#include "error.h"
 #include "tree.h"
+
+#include <libcgc.h>
+
+#include "error.h"
+#include "malloc.h"
+#include "stdlib.h"
 
 TreeNode *root;
 
 #define NUM_INITIAL_PAGES 20
 struct InitialPageInfo InitialInfo[NUM_INITIAL_PAGES] = {
-  { "Hello", "Hello, World!~n" },
-  { "Hello.Name", "Hello, #name#!~n"
-                  "This page outputs the value of a variable called name.~n"
-                  "If the variable is not passed to the page (via the INTERACT method), it has no value and prints nothing.~n" },
-  { "Server", "The ACS Server responds to the following messages:~n"
-              "~tACS-0.1~[COMMAND~] (indicates no commands follow)~n"
-              "~tACS+0.1~[COMMAND~] (indicates another command follows)~n"},
-  { "Server.Commands", "Commands all share the form:~n"
-                "~tCOMMAND:page_name:length:data~n"
-                "The Commands are REQUEST, QUERY, SEND, REMOVE, VISUALIZE, and INTERACT.~n"},
-  { "Server.Commands.REQUEST", "The REQUEST command fetches a page.~n"
-                        "~t~[REQUEST:somepage::~]~n"},
-  { "Server.Commands.QUERY", "The QUERY command retrieves a listing of the pages on the server.~n"
-                      "To retrieve the entire list of all pages:~n"
-                      "~t~[QUERY:::~]~n"
-                      "To retrieve a subset of the page tree:~n"
-                      "~t~[QUERY:somepage::~]~n"},
-  { "Server.Commands.SEND", "Upload a page to the server~n"
-                      "~t~[SEND:newpage:length:pagedata~]~n"},
-  { "Server.Commands.REMOVE", "Remove a page from the server~n"
-                        "~t~[REMOVE:pagename::~]~n"},
-  { "Server.Commands.VISUALIZE", "Process and display page data without uploading it to the server~n"
-                          "~t~[VISUALIZE::length:pagedata~]~n"},
-  { "Server.Commands.INTERACT", "Fetch a page from the server using variable substitution.~n"
-                          "~t~[INTERACT:pagename:length:variabledata~]~n"
-                          "~tvariabledata is in the form: ~[var:name:value~]~[var:name:value~]...~n"},
-  { "AML", "ASCII Markup Language"},
-  { "AML.Commands", "ASCII Markup Language uses the ~~ character as a command code~n"
-                    "~t~~n converts to newline~n"
-                    "~t~~t converts to tab~n"},
-  { "AML.Literals", "AML uses certain characters as control codes~n"
-                    "Those characters can be inserted as literals using the escape character ~~~n"
-                    "~t~~~[ inserts left bracket~n"
-                    "~t~~~] inserts right bracket~n"
-                    "~t~~~~ inserts tilde~n"
-                    "~t~~~# inserts hash~n"},
-  { "AML.Variables", "AML supports string variables.~n"
-                      "Variables are created within a script (see AML.Scripts)~n"
-                      "and referenced with this syntax:~n"
-                      "~t~#variable~#~n"},  
-  { "AML.Scripts",  "AML supports additional commands within script tags ~[~]~n"
-                    "~t~[var:name:value~] - sets a variable~n"
-                    "~t~[line:character:length~] - insert a line of characters~n"
-                    "~t~[box:pagedata~] - put the page data inside a box outlined with *'s~n" },
-  { "AML.Examples", "AML examples~n"},
-  { "AML.Examples.Line", "Draw some lines~n[line:X:80]~n"
-                        "[line:A:42]~n"
-                        "[line:B:1][line:C:2][line:*:100]~n"
-                        "[line:~:5][line:*:1][line:[:5]~n" },
-  { "AML.Examples.Variableset", "Set a variable [var:name:Sterling]~n"
-                                "Then get the variable: #name#~n" },
-  { "AML.Examples.ManyVariables", "[var:var0:value0][var:var1:value1][var:var2:value2][var:var3:value3][var:var4:value4][var:var5:value5][var:var6:value6][var:var7:value7][var:var8:value8][var:var9:value9]~n"
-                                  "#var0##var1##var2##var3##var4##var5##var6##var7##var8##var9#~n" },
-  { "AML.Examples.Box", "Test putting some stuff in a box~n"
-                        "[box:Help, I'm trapped in a box!]~n"
-                        "[box:~nLine in a box[line:X:15]~n]"}
-};
+    {"Hello", "Hello, World!~n"},
+    {"Hello.Name",
+     "Hello, #name#!~n"
+     "This page outputs the value of a variable called name.~n"
+     "If the variable is not passed to the page (via the INTERACT method), it "
+     "has no value and prints nothing.~n"},
+    {"Server",
+     "The ACS Server responds to the following messages:~n"
+     "~tACS-0.1~[COMMAND~] (indicates no commands follow)~n"
+     "~tACS+0.1~[COMMAND~] (indicates another command follows)~n"},
+    {"Server.Commands",
+     "Commands all share the form:~n"
+     "~tCOMMAND:page_name:length:data~n"
+     "The Commands are REQUEST, QUERY, SEND, REMOVE, VISUALIZE, and "
+     "INTERACT.~n"},
+    {"Server.Commands.REQUEST",
+     "The REQUEST command fetches a page.~n"
+     "~t~[REQUEST:somepage::~]~n"},
+    {"Server.Commands.QUERY",
+     "The QUERY command retrieves a listing of the pages on the server.~n"
+     "To retrieve the entire list of all pages:~n"
+     "~t~[QUERY:::~]~n"
+     "To retrieve a subset of the page tree:~n"
+     "~t~[QUERY:somepage::~]~n"},
+    {"Server.Commands.SEND",
+     "Upload a page to the server~n"
+     "~t~[SEND:newpage:length:pagedata~]~n"},
+    {"Server.Commands.REMOVE",
+     "Remove a page from the server~n"
+     "~t~[REMOVE:pagename::~]~n"},
+    {"Server.Commands.VISUALIZE",
+     "Process and display page data without uploading it to the server~n"
+     "~t~[VISUALIZE::length:pagedata~]~n"},
+    {"Server.Commands.INTERACT",
+     "Fetch a page from the server using variable substitution.~n"
+     "~t~[INTERACT:pagename:length:variabledata~]~n"
+     "~tvariabledata is in the form: "
+     "~[var:name:value~]~[var:name:value~]...~n"},
+    {"AML", "ASCII Markup Language"},
+    {"AML.Commands",
+     "ASCII Markup Language uses the ~~ character as a command code~n"
+     "~t~~n converts to newline~n"
+     "~t~~t converts to tab~n"},
+    {"AML.Literals",
+     "AML uses certain characters as control codes~n"
+     "Those characters can be inserted as literals using the escape character "
+     "~~~n"
+     "~t~~~[ inserts left bracket~n"
+     "~t~~~] inserts right bracket~n"
+     "~t~~~~ inserts tilde~n"
+     "~t~~~# inserts hash~n"},
+    {"AML.Variables",
+     "AML supports string variables.~n"
+     "Variables are created within a script (see AML.Scripts)~n"
+     "and referenced with this syntax:~n"
+     "~t~#variable~#~n"},
+    {"AML.Scripts",
+     "AML supports additional commands within script tags ~[~]~n"
+     "~t~[var:name:value~] - sets a variable~n"
+     "~t~[line:character:length~] - insert a line of characters~n"
+     "~t~[box:pagedata~] - put the page data inside a box outlined with *'s~n"},
+    {"AML.Examples", "AML examples~n"},
+    {"AML.Examples.Line",
+     "Draw some lines~n[line:X:80]~n"
+     "[line:A:42]~n"
+     "[line:B:1][line:C:2][line:*:100]~n"
+     "[line:~:5][line:*:1][line:[:5]~n"},
+    {"AML.Examples.Variableset",
+     "Set a variable [var:name:Sterling]~n"
+     "Then get the variable: #name#~n"},
+    {"AML.Examples.ManyVariables",
+     "[var:var0:value0][var:var1:value1][var:var2:value2][var:var3:value3][var:"
+     "var4:value4][var:var5:value5][var:var6:value6][var:var7:value7][var:var8:"
+     "value8][var:var9:value9]~n"
+     "#var0##var1##var2##var3##var4##var5##var6##var7##var8##var9#~n"},
+    {"AML.Examples.Box",
+     "Test putting some stuff in a box~n"
+     "[box:Help, I'm trapped in a box!]~n"
+     "[box:~nLine in a box[line:X:15]~n]"}};
 
 // Initializes the server by loading pages into memory
 int InitializeTree() {
@@ -106,7 +130,7 @@ int InitializeTree() {
       free(node->page);
       free(node);
       return -1;
-    } 
+    }
   }
   return 0;
 }
@@ -133,8 +157,8 @@ void WalkTree(TreeNode *nodein) {
     // Pop node
     indent = (int)node_stack[--index];
     node = node_stack[--index];
-    
-    for (int i=0; i<indent; i++) {
+
+    for (int i = 0; i < indent; i++) {
       printf("    ");
     }
     printf("@s\n", node);
@@ -143,7 +167,7 @@ void WalkTree(TreeNode *nodein) {
       node_stack[index++] = node->peer;
       node_stack[index++] = (TreeNode *)indent;
     }
-    
+
     if (node->child) {
       node_stack[index++] = node->child;
       node_stack[index++] = (TreeNode *)(indent + 1);
@@ -153,7 +177,7 @@ void WalkTree(TreeNode *nodein) {
 
 int PrintTree(char *name) {
   TreeNode *start;
-  if (name == NULL || name[0]=='\0') {
+  if (name == NULL || name[0] == '\0') {
     start = root;
   } else {
     start = LookupNode(name);
@@ -223,9 +247,9 @@ int DeleteNode(char *name) {
   return 0;
 }
 
-// Finds a node in the tree by name. 
+// Finds a node in the tree by name.
 // Returns pointer to the node or NULL
-TreeNode *LookupNode(char *name) {  
+TreeNode *LookupNode(char *name) {
   TreeNode *node = root->child;
   // Make a local copy of the name and walk its subparts
   char local_name[64];
@@ -236,8 +260,7 @@ TreeNode *LookupNode(char *name) {
     next_part[0] = '\0';
   }
   while (node != NULL) {
-    if (strcmp(node->name, part) == 0)
-    {
+    if (strcmp(node->name, part) == 0) {
       if (next_part == NULL) {
         return node;
       } else {
@@ -272,7 +295,7 @@ int InsertNodeInTree(TreeNode *node) {
     printf("ERROR: Name cannot be blank\n");
     return -1;
   }
-   // Lookup parent node
+  // Lookup parent node
   char local_name[64];
   memcpy(local_name, node->name, sizeof(local_name));
   char *last_part = strrchr(local_name, '.');
@@ -289,9 +312,9 @@ int InsertNodeInTree(TreeNode *node) {
       insert_location->peer = node;
     }
     return 0;
-  } 
+  }
   // Strip leading portion of name
-  strncpy(node->name, last_part + 1, sizeof(node->name));  
+  strncpy(node->name, last_part + 1, sizeof(node->name));
   last_part[0] = '\0';
   insert_location = LookupNode(local_name);
   if (insert_location == NULL) {

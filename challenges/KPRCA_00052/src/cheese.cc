@@ -21,68 +21,54 @@
  *
  */
 extern "C" {
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 };
 
 #include "cheese.h"
 
 namespace {
-    struct cheese_lut {
-        const char *name;
-        int calories;
-        int carbs;
-    };
+struct cheese_lut {
+  const char *name;
+  int calories;
+  int carbs;
+};
 
-    cheese_lut cheeses[] = {
-        {"Mozzarella", 460, 26},
-        {"Cheddar", 330, 19},
-        {"Parmesan", 280, 16},
-        {"Monterey", 380, 21},
-        {"Provolone", 350, 22},
-        {"Romano", 250, 18},
-    };
+cheese_lut cheeses[] = {
+    {"Mozzarella", 460, 26}, {"Cheddar", 330, 19},   {"Parmesan", 280, 16},
+    {"Monterey", 380, 21},   {"Provolone", 350, 22}, {"Romano", 250, 18},
+};
 
-    cheese_lut *find_cheese_entry(const char *cheese_name)
-    {
-        size_t i;
-        for (i = 0; i < sizeof(cheeses) / sizeof(cheeses[0]); i++) {
-            if (strcasecmp(cheeses[i].name, cheese_name) == 0)
-                return &cheeses[i];
-        }
+cheese_lut *find_cheese_entry(const char *cheese_name) {
+  size_t i;
+  for (i = 0; i < sizeof(cheeses) / sizeof(cheeses[0]); i++) {
+    if (strcasecmp(cheeses[i].name, cheese_name) == 0) return &cheeses[i];
+  }
 
-        return NULL;
-    }
-
-    void print_list()
-    {
-        size_t i;
-        for (i = 0; i < sizeof(cheeses) / sizeof(cheeses[0]); i++)
-            printf("%d. %s\n", i + 1, cheeses[i].name);
-    }
+  return NULL;
 }
 
-Cheese::Cheese(const char *_name, int _calories, int _carbs)
-{
-    name = _name;
-    calories = _calories;
-    carbs = _carbs;
+void print_list() {
+  size_t i;
+  for (i = 0; i < sizeof(cheeses) / sizeof(cheeses[0]); i++)
+    printf("%d. %s\n", i + 1, cheeses[i].name);
+}
+}  // namespace
+
+Cheese::Cheese(const char *_name, int _calories, int _carbs) {
+  name = _name;
+  calories = _calories;
+  carbs = _carbs;
 }
 
-Cheese::~Cheese()
-{
+Cheese::~Cheese() {}
+
+Cheese *Cheese::select_cheese(const char *cheese_name) {
+  cheese_lut *cheese_entry = find_cheese_entry(cheese_name);
+  if (!cheese_entry) return NULL;
+
+  return new Cheese(cheese_entry->name, cheese_entry->calories,
+                    cheese_entry->carbs);
 }
 
-Cheese *Cheese::select_cheese(const char *cheese_name)
-{
-    cheese_lut *cheese_entry = find_cheese_entry(cheese_name);
-    if (!cheese_entry)
-        return NULL;
-
-    return new Cheese(cheese_entry->name, cheese_entry->calories, cheese_entry->carbs);
-}
-
-void Cheese::list_options()
-{
-    print_list();
-}
+void Cheese::list_options() { print_list(); }

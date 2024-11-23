@@ -26,24 +26,20 @@ THE SOFTWARE.
 
 #include "stdlib.h"
 
-unsigned long str_token( char *str) {
-	
-	unsigned long tmp_token;
-	int i;
+unsigned long str_token(char *str) {
+  unsigned long tmp_token;
+  int i;
 
-	if (str==0)
-		return 0;
+  if (str == 0) return 0;
 
-	// seed the token algorithm
-	tmp_token = 5381;
+  // seed the token algorithm
+  tmp_token = 5381;
 
-	while (*str) { 
+  while (*str) {
+    tmp_token = ((tmp_token << 5) + tmp_token) + *str;
 
-		tmp_token = ((tmp_token << 5)+ tmp_token) + *str;
+    ++str;
+  }
 
-		++str;
-
-	}
-
-	return tmp_token;
+  return tmp_token;
 }

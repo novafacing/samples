@@ -25,121 +25,99 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
-
-
+#include "stdlib.h"
 
 Shopping_List_Type *build_shopping_list(Recipe_Type *book) {
+  Shopping_List_Type *list, *previous;
+  Shopping_List_Type *list_head;
+  Ingredient_Type *ingredient;
 
-Shopping_List_Type *list, *previous;
-Shopping_List_Type *list_head;
-Ingredient_Type *ingredient;
+  list_head = 0;
+  list = 0;
+  previous = 0;
 
-	list_head = 0;
-	list = 0;
-	previous = 0;
+  while (book) {
+    if (book->Tagged != 1) {
+      book = book->next;
+      continue;
+    }
 
-	while(book) {
+    if (list_head == 0) {
+      list_head = malloc(sizeof(Shopping_List_Type));
 
+      if (list_head == 0) {
+        printf("unable to malloc memory\n");
+        _terminate(-1);
+      }
 
-		if (book->Tagged != 1 ) {
+      list = list_head;
+      list->next = 0;
+    }
 
-			book = book->next;
-			continue;
+    ingredient = book->Ingredient_List;
 
-		}
+    while (ingredient) {
+      list->item = ingredient->item;
+      ingredient = ingredient->next;
 
-		if (list_head==0) {
+      list->next = malloc(sizeof(Shopping_List_Type));
 
-			list_head = malloc(sizeof(Shopping_List_Type));
+      if (list->next == 0) {
+        printf("unable to malloc memory\n");
+        _terminate(-1);
+      }
 
-			if (list_head == 0) {
+      previous = list;
+      list = list->next;
+      list->next = 0;
+    }
 
-				printf("unable to malloc memory\n");
-				_terminate(-1);
-			}
+    book = book->next;
+  }
 
-			list = list_head;
-			list->next = 0;
+  if (list) {
+    free(list);
+    list = previous;
+    list->next = 0;
+  }
 
-		}
-		
-		ingredient = book->Ingredient_List;
-
-		while (ingredient) {
-
-			list->item = ingredient->item;
-			ingredient=ingredient->next;
-
-			list->next = malloc(sizeof(Shopping_List_Type));
-
-			if (list->next == 0) {
-
-				printf("unable to malloc memory\n");
-				_terminate(-1);
-
-			}
-
-			previous = list;
-			list = list->next;
-			list->next = 0;
-		}
-
-		book = book->next;
-
-	}
-
-	if (list) {
-		free(list);
-		list = previous;
-		list->next = 0;
-	}
-
-	return(list_head);
-
+  return (list_head);
 }
 
-
 void print_shopping_list(Recipe_Type *book) {
+  Shopping_List_Type *my_list;
+  Shopping_List_Type *tmp_list;
 
-Shopping_List_Type *my_list;
-Shopping_List_Type *tmp_list;
+  // first build a linked list of items from tagged recipes
+  my_list = build_shopping_list(book);
 
-	// first build a linked list of items from tagged recipes
-	my_list = build_shopping_list(book);
+  printf("\n");
+  printf("Shopping List\n");
+  printf("-------------\n");
 
-	printf("\n");
-	printf("Shopping List\n");
-	printf("-------------\n");
+  if (my_list != 0) {
+    sort_shopping_list(my_list);
+    tmp_list = my_list;
 
-	if (my_list != 0) {
+    while (tmp_list) {
+      printf("@s\n", tmp_list->item);
 
-		sort_shopping_list(my_list);
-		tmp_list = my_list;
+      tmp_list = tmp_list->next;
+    }
 
-		while (tmp_list) {
+    // now free the linked list to hold the shopping list
+    tmp_list = my_list->next;
 
-			printf("@s\n", tmp_list->item);
+    while (my_list) {
+      free(my_list);
 
-			tmp_list= tmp_list->next;
-		}
+      my_list = tmp_list;
 
-		// now free the linked list to hold the shopping list
-		tmp_list = my_list->next;
+      if (tmp_list != 0) tmp_list = tmp_list->next;
+    }
+  }
 
-		while( my_list) {
-
-			free(my_list);
-
-			my_list = tmp_list;
-
-			if (tmp_list != 0)
-				tmp_list = tmp_list->next;
-
-		}
-
-	}
-
-	printf("\n");
+  printf("\n");
 }

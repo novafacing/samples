@@ -33,31 +33,31 @@
 
 #define MAX_FILE_NAME_LENGTH 16
 #define ROOT_UID 0
-#define INVALID_UID ((uid_t)-1)
+#define INVALID_UID ((uid_t) - 1)
 
 typedef unsigned int uid_t;
 
 struct directory {
-    char name[MAX_FILE_NAME_LENGTH];
-    uid_t owner;
-    struct directory *parent;
-    struct list subdirectories;
-    struct list files;
-    struct list_node list;
+  char name[MAX_FILE_NAME_LENGTH];
+  uid_t owner;
+  struct directory *parent;
+  struct list subdirectories;
+  struct list files;
+  struct list_node list;
 };
 
 struct file {
-    char name[MAX_FILE_NAME_LENGTH];
-    uid_t owner;
-    int is_symlink;
-    struct directory *parent;
-    size_t size;
-    unsigned char *contents;
-    struct list_node list;
+  char name[MAX_FILE_NAME_LENGTH];
+  uid_t owner;
+  int is_symlink;
+  struct directory *parent;
+  size_t size;
+  unsigned char *contents;
+  struct list_node list;
 };
 
 struct vfs {
-    struct directory *root;
+  struct directory *root;
 };
 
 /**
@@ -83,7 +83,8 @@ void vfs_destroy(struct vfs *vfs);
  * @param follow_links Whether or not to follow symbolic links
  * @return A pointer to the directory structure, or NULL if not found
  */
-struct directory *lookup_dir(const struct vfs *vfs, const char *path, int follow_links);
+struct directory *lookup_dir(const struct vfs *vfs, const char *path,
+                             int follow_links);
 
 /**
  * Lookup a file in a virtual file system by path.
@@ -93,7 +94,8 @@ struct directory *lookup_dir(const struct vfs *vfs, const char *path, int follow
  * @param follow_links Whether or not to follow symbolic links
  * @return A pointer to the file structure, or NULL if not found
  */
-struct file *lookup_file(const struct vfs *vfs, const char *path, int follow_links);
+struct file *lookup_file(const struct vfs *vfs, const char *path,
+                         int follow_links);
 
 /**
  * Get the path from the root of a directory structure.
@@ -133,7 +135,8 @@ uid_t get_owner(const struct vfs *vfs, const char *path);
  * @param contents Set to the contents of the file on success
  * @return 0 on success, -1 on failure
  */
-int read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char **contents);
+int read_file(const struct vfs *vfs, uid_t user, const char *path,
+              unsigned char **contents);
 
 /**
  * Write the contents of a file, respecting permissions.
@@ -146,7 +149,8 @@ int read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char
  * @param size The new size of the file
  * @return 0 on success, -1 on failure
  */
-int write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *contents, size_t size);
+int write_file(struct vfs *vfs, uid_t user, const char *path,
+               unsigned char *contents, size_t size);
 
 /**
  * Create a new directory at the given path.
@@ -165,7 +169,8 @@ struct directory *create_dir(struct vfs *vfs, const char *path);
  * @param name The name of the new directory
  * @return A pointer to the new directory structure, or NULL on failure
  */
-struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
+struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir,
+                                    const char *name);
 
 /**
  * Create a new file at the given path.
@@ -184,7 +189,8 @@ struct file *create_file(struct vfs *vfs, const char *path);
  * @param name The name of the new file
  * @return A pointer to the new file structure, or NULL on failure
  */
-struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
+struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir,
+                                const char *name);
 
 /**
  * Create a new symbolic link, respecting permissions.
@@ -195,7 +201,8 @@ struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const ch
  * @param dst_path The path to point the link at
  * @return 0 on success, -1 on failure
  */
-int create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *dst_path);
+int create_symlink(struct vfs *vfs, uid_t user, const char *src_path,
+                   const char *dst_path);
 
 /**
  * Delete a file, respecting permissions.
@@ -212,4 +219,3 @@ void dump_vfs(const struct vfs *vfs);
 #endif
 
 #endif /* VFS_H_ */
-

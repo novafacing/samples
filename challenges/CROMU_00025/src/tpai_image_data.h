@@ -30,25 +30,25 @@ THE SOFTWARE.
 #define TPAI_MAGIC 0xcb590f31
 
 typedef struct tpai_image_data {
-	char *buffer;
-	int max;
-	int cbyte;
-	int cbit;
-	int width;
-	int height;
-	int load_direction;
-	int checksum;
+  char *buffer;
+  int max;
+  int cbyte;
+  int cbit;
+  int width;
+  int height;
+  int load_direction;
+  int checksum;
 } tpai_image_data, *ptpai_image_data;
 
-int tpai_calc_checksum( ptpai_image_data tid );
-int tpai_read_nbits( ptpai_image_data tid, int bitcount, int *value );
-int tpai_read_check( ptpai_image_data tid, int bitcount );
-int tpai_read_magic( ptpai_image_data tid );
-int tpai_read_width( ptpai_image_data tid );
-int tpai_read_height( ptpai_image_data tid );
-int tpai_read_loadd( ptpai_image_data tid, unsigned int *dir);
-int tpai_skip_rsrvd( ptpai_image_data tid );
-int tpai_display_image( ptpai_image_data tid );
-int tpai_read_pixel( ptpai_image_data tid, unsigned int *pixel);
+int tpai_calc_checksum(ptpai_image_data tid);
+int tpai_read_nbits(ptpai_image_data tid, int bitcount, int *value);
+int tpai_read_check(ptpai_image_data tid, int bitcount);
+int tpai_read_magic(ptpai_image_data tid);
+int tpai_read_width(ptpai_image_data tid);
+int tpai_read_height(ptpai_image_data tid);
+int tpai_read_loadd(ptpai_image_data tid, unsigned int *dir);
+int tpai_skip_rsrvd(ptpai_image_data tid);
+int tpai_display_image(ptpai_image_data tid);
+int tpai_read_pixel(ptpai_image_data tid, unsigned int *pixel);
 
 #endif

@@ -28,48 +28,43 @@
 
 DefineClass(Random, Object)
 
-DefineFunction(Random, void, $init)
-{
-    this->m_state0 = 1;
-    this->m_state1 = 1;
+    DefineFunction(Random, void, $init) {
+  this->m_state0 = 1;
+  this->m_state1 = 1;
 }
 
-DefineFunction(Random, void, init, unsigned int seed)
-{
-    this->m_state0 = seed;
-    this->m_state1 = 1;
+DefineFunction(Random, void, init, unsigned int seed) {
+  this->m_state0 = seed;
+  this->m_state1 = 1;
 }
 
 // returns a number (0, upper]
-DefineFunction(Random, unsigned int, randint, unsigned int upper)
-{
-    unsigned int r;
+DefineFunction(Random, unsigned int, randint, unsigned int upper) {
+  unsigned int r;
 
-    do {
-        r = $(this, _rand);
-    } while (r > ((RAND_MAX + 1) / upper * upper - 1));
+  do {
+    r = $(this, _rand);
+  } while (r > ((RAND_MAX + 1) / upper * upper - 1));
 
-    // r is a random number (0, upper*M]
-    return r % upper;
+  // r is a random number (0, upper*M]
+  return r % upper;
 }
 
 // returns a number (0, RAND_MAX)
-DefineFunction(Random, unsigned int, _rand)
-{
-    $(this, _update);
-    return (this->m_state0 ^ this->m_state1) & 0xFFFF;
+DefineFunction(Random, unsigned int, _rand) {
+  $(this, _update);
+  return (this->m_state0 ^ this->m_state1) & 0xFFFF;
 }
 
 // mixes up the state
-DefineFunction(Random, void, _update)
-{
-    if (this->m_state0 & 1)
-        this->m_state0 = (this->m_state0 >> 1) ^ POLYNOMIAL_0;
-    else
-        this->m_state0 >>= 1;
+DefineFunction(Random, void, _update) {
+  if (this->m_state0 & 1)
+    this->m_state0 = (this->m_state0 >> 1) ^ POLYNOMIAL_0;
+  else
+    this->m_state0 >>= 1;
 
-    if (this->m_state1 & 1)
-        this->m_state1 = (this->m_state1 >> 1) ^ POLYNOMIAL_1;
-    else
-        this->m_state1 >>= 1;
+  if (this->m_state1 & 1)
+    this->m_state1 = (this->m_state1 >> 1) ^ POLYNOMIAL_1;
+  else
+    this->m_state1 >>= 1;
 }

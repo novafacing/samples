@@ -23,9 +23,6 @@ extern void free(void *ptr);
 extern size_t malloc_size(void *ptr);
 int send_n_bytes(int fd, size_t n, char *buf);
 
-static void exit(int ret)
-{
-    _terminate(ret);
-}
+static void exit(int ret) { _terminate(ret); }
 
 #endif /* !STDLIB_H_ */

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 /**
  * @file stock.h
  *
@@ -34,10 +34,7 @@
 #define HASH_TABLE_NUM_BUCKETS 251
 #define STOCK_NAME_MAX_LEN 4
 
-enum order_type {
-    BUY,
-    SELL
-};
+enum order_type { BUY, SELL };
 
 typedef LIST_OF(struct order) order_list_t;
 typedef LIST_OF(struct stock) stock_list_t;
@@ -46,48 +43,45 @@ struct stock;
 
 // Type confusion
 #ifdef PATCHED
-enum object_type {
-    ORDER,
-    STOCK
-};
+enum object_type { ORDER, STOCK };
 #endif
 
 struct order {
 // Type confusion
 #ifdef PATCHED
-    enum object_type obj_type;
+  enum object_type obj_type;
 #else
-    int dummy;
+  int dummy;
 #endif
-    void (*on_complete)(struct order *order);
-    unsigned int id, price, quantity;
-    LIST_ELEMS(struct order) global_list, stock_list;
-    enum order_type type;
-    struct stock *stock;
+  void (*on_complete)(struct order *order);
+  unsigned int id, price, quantity;
+  LIST_ELEMS(struct order) global_list, stock_list;
+  enum order_type type;
+  struct stock *stock;
 };
 
 struct stock {
 // Type confusion
 #ifdef PATCHED
-    enum object_type obj_type;
+  enum object_type obj_type;
 #else
-    int dummy;
+  int dummy;
 #endif
-    char name[STOCK_NAME_MAX_LEN];
-    unsigned int num_orders;
-    LIST_ELEMS(struct stock) bucket_list, global_list;
-    order_list_t buy_orders, sell_orders;
+  char name[STOCK_NAME_MAX_LEN];
+  unsigned int num_orders;
+  LIST_ELEMS(struct stock) bucket_list, global_list;
+  order_list_t buy_orders, sell_orders;
 };
 
 struct stock_state {
 // Use after free
 #ifdef PATCHED
-    int stock_freed;
+  int stock_freed;
 #endif
-    struct pool stock_pool;
-    stock_list_t stocks_list;
-    order_list_t orders_list;
-    stock_list_t stock_hash_table[HASH_TABLE_NUM_BUCKETS];
+  struct pool stock_pool;
+  stock_list_t stocks_list;
+  order_list_t orders_list;
+  stock_list_t stock_hash_table[HASH_TABLE_NUM_BUCKETS];
 };
 
 /**
@@ -132,7 +126,7 @@ int cmd_list_orders(const struct stock_state *state, const char *name);
  * @return id of new order on success, -1 on failure
  */
 int cmd_place_order(struct stock_state *state, const char *name, int type,
-        unsigned int quantity, unsigned int price);
+                    unsigned int quantity, unsigned int price);
 
 /**
  * Process a command to check the status of an order, printing to stdout.

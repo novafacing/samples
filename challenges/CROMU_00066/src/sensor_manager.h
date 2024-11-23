@@ -27,15 +27,14 @@ THE SOFTWARE.
 #ifndef SENSOR_MANAGER_H
 #define SENSOR_MANAGER_H
 
-extern "C"
-{
-	#include <libcgc.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include "string.h"
+extern "C" {
+#include <libcgc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "string.h"
 }
-#include "cutil_list.h"
 #include "common.h"
+#include "cutil_list.h"
 #include "sensor.h"
 #include "user.h"
 
@@ -46,40 +45,38 @@ extern "C"
 #define MAX_SENSORS_PER_USER 3
 #define MAX_USERS 7
 
-class SensorManager
-{
-private:
-	CUtil::DLL_LIST( FitnessSensor, m_sensorLink ) m_sensorList;
+class SensorManager {
+ private:
+  CUtil::DLL_LIST(FitnessSensor, m_sensorLink) m_sensorList;
 
-	uint16_t m_currentUser;
-	CUtil::DLL_LIST( User, m_userLink ) m_userList;
-	
-	//
-	// Is this a proper fitness sensor?
-	//
-	bool Validate ( FitnessSensor );
+  uint16_t m_currentUser;
+  CUtil::DLL_LIST(User, m_userLink) m_userList;
 
-public:
-	SensorManager() {}
-	~SensorManager();
+  //
+  // Is this a proper fitness sensor?
+  //
+  bool Validate(FitnessSensor);
 
-	// SENSOR management
-	int AddSensor( FitnessSensor *sensor );
-	FitnessSensor* GetSensor( uint16_t id );
+ public:
+  SensorManager() {}
+  ~SensorManager();
 
-	bool RemoveSensor( uint16_t id, uint16_t user );
-	bool VerifySensor( uint16_t id );
-	void PrintSensors(); // TEST ONLY
-	uint8_t *ListSensors( uint16_t &len );
-	bool ListHwIds( uint16_t &len, uint8_t* buff );
+  // SENSOR management
+  int AddSensor(FitnessSensor *sensor);
+  FitnessSensor *GetSensor(uint16_t id);
 
+  bool RemoveSensor(uint16_t id, uint16_t user);
+  bool VerifySensor(uint16_t id);
+  void PrintSensors();  // TEST ONLY
+  uint8_t *ListSensors(uint16_t &len);
+  bool ListHwIds(uint16_t &len, uint8_t *buff);
 
-	// USER management
-	uint16_t GetCurrentUser() { return m_currentUser; }
-	uint8_t SetCurrentUser( uint16_t user );
-	uint8_t AddUser( User* new_user );
+  // USER management
+  uint16_t GetCurrentUser() { return m_currentUser; }
+  uint8_t SetCurrentUser(uint16_t user);
+  uint8_t AddUser(User *new_user);
 
-	bool AddDistance( uint16_t new_dist, uint16_t user );
+  bool AddDistance(uint16_t new_dist, uint16_t user);
 };
 
 #endif

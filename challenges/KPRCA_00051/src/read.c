@@ -20,40 +20,36 @@
  * THE SOFTWARE.
  *
  */
-#include <stdlib.h>
 #include "read.h"
 
-int readline(char *buf, size_t buf_size)
-{
-    if (!buf || buf_size < 2)
-        return -1;
+#include <stdlib.h>
 
-    size_t rx, i = 0;
+int readline(char *buf, size_t buf_size) {
+  if (!buf || buf_size < 2) return -1;
+
+  size_t rx, i = 0;
 #ifdef PATCHED
-    while (i < buf_size && receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1) {
+  while (i < buf_size && receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1) {
 #else
-    while (receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1 && i < buf_size) {
+  while (receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1 && i < buf_size) {
 #endif
-        if(buf[i] == '\n') {
-            buf[i] = '\0';
-            break;
-        }
-
-        i++;
+    if (buf[i] == '\n') {
+      buf[i] = '\0';
+      break;
     }
 
-    if (i == 0)
-        return -1;
-    else if (i == buf_size)
-        return -2;
-    return 0;
+    i++;
+  }
+
+  if (i == 0)
+    return -1;
+  else if (i == buf_size)
+    return -2;
+  return 0;
 }
 
-int readnum(char *buf, size_t buf_size)
-{
-    if (readline(buf, buf_size))
-        return -1;
+int readnum(char *buf, size_t buf_size) {
+  if (readline(buf, buf_size)) return -1;
 
-    return strtol(&buf[0], NULL, 10);
+  return strtol(&buf[0], NULL, 10);
 }
-

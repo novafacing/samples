@@ -21,54 +21,50 @@
  *
  */
 
-#include <cstdio.h>
-#include <cstring.h>
 #include "req.h"
 
-CRequirement::CRequirement(CRequirement::Type type, int level, int supply, int duration, int group)
-    : m_type(type), m_level(level), m_supply(supply), m_duration(duration), m_group(group)
-{
-}
+#include <cstdio.h>
+#include <cstring.h>
 
-CRequirement::~CRequirement()
-{
-}
+CRequirement::CRequirement(CRequirement::Type type, int level, int supply,
+                           int duration, int group)
+    : m_type(type),
+      m_level(level),
+      m_supply(supply),
+      m_duration(duration),
+      m_group(group) {}
 
-char* CRequirement::ReqTypeToString(CRequirement::Type type)
-{
-    char *typeString = static_cast<char *>(malloc(512));
-    char *p = typeString;
-    memset(typeString, 0, 512);
-    if ((type & CRequirement::Type::GROUND_OP) == CRequirement::Type::GROUND_OP)
-    {
-        strcpy(p, "GROUND,");
-        p += strlen("GROUND,");
-    }
-    if ((type & CRequirement::Type::AERIAL_OP) == CRequirement::Type::AERIAL_OP)
-    {
-        strcpy(p, "AERIAL,");
-        p += strlen("AERIAL,");
-    }
-    if ((type & CRequirement::Type::NAVAL_OP) == CRequirement::Type::NAVAL_OP)
-    {
-        strcpy(p, "NAVAL,");
-        p += strlen("NAVAL,");
-    }
-    if ((type & CRequirement::Type::INTEL_OP) == CRequirement::Type::INTEL_OP)
-    {
-        strcpy(p, "INTEL,");
-        p += strlen("INTEL,");
-    }
-    if ((type & CRequirement::Type::SPECIAL_OP) == CRequirement::Type::SPECIAL_OP)
-    {
-        strcpy(p, "SPECIAL,");
-        p += strlen("SPECIAL,");
-    }
-    if ((type & CRequirement::Type::RESCUE_OP) == CRequirement::Type::RESCUE_OP)
-    {
-        strcpy(p, "RESCUE,");
-        p += strlen("RESCUE,");
-    }
-    typeString[strlen(typeString) - 1] = '\0';
-    return typeString;
+CRequirement::~CRequirement() {}
+
+char *CRequirement::ReqTypeToString(CRequirement::Type type) {
+  char *typeString = static_cast<char *>(malloc(512));
+  char *p = typeString;
+  memset(typeString, 0, 512);
+  if ((type & CRequirement::Type::GROUND_OP) == CRequirement::Type::GROUND_OP) {
+    strcpy(p, "GROUND,");
+    p += strlen("GROUND,");
+  }
+  if ((type & CRequirement::Type::AERIAL_OP) == CRequirement::Type::AERIAL_OP) {
+    strcpy(p, "AERIAL,");
+    p += strlen("AERIAL,");
+  }
+  if ((type & CRequirement::Type::NAVAL_OP) == CRequirement::Type::NAVAL_OP) {
+    strcpy(p, "NAVAL,");
+    p += strlen("NAVAL,");
+  }
+  if ((type & CRequirement::Type::INTEL_OP) == CRequirement::Type::INTEL_OP) {
+    strcpy(p, "INTEL,");
+    p += strlen("INTEL,");
+  }
+  if ((type & CRequirement::Type::SPECIAL_OP) ==
+      CRequirement::Type::SPECIAL_OP) {
+    strcpy(p, "SPECIAL,");
+    p += strlen("SPECIAL,");
+  }
+  if ((type & CRequirement::Type::RESCUE_OP) == CRequirement::Type::RESCUE_OP) {
+    strcpy(p, "RESCUE,");
+    p += strlen("RESCUE,");
+  }
+  typeString[strlen(typeString) - 1] = '\0';
+  return typeString;
 }

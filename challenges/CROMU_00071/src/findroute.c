@@ -25,185 +25,131 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
+
 #include "commands.h"
 #include "printf.h"
+#include "service.h"
+#include "stdlib.h"
 
 int findRoutes(airportInfoType *airports, char *command) {
+  char fromAirport[4];
+  char destAirport[4];
+  int offset;
+  int i;
+  int delimiter_count;
+  airportInfoType *srcAirport;
+  connectionListType *tmpConnectingAirport;
+  airportInfoType *connectionAirport;
+  connectionListType *nextHopAirport;
 
-char fromAirport[4];
-char destAirport[4];
-int offset;
-int i;
-int delimiter_count;
-airportInfoType *srcAirport;
-connectionListType *tmpConnectingAirport;
-airportInfoType *connectionAirport;
-connectionListType *nextHopAirport;
+  unsigned int cost;
+  unsigned int duration;
+  int results;
 
-unsigned int cost;
-unsigned int duration;
-int results;
+  if (airports == 0) return DATABASE_EMPTY;
 
+  results = 0;
 
+  // make sure the command line is semi formatted properly by having enough
+  // fields
+  delimiter_count = 0;
 
-	if (airports == 0)
-		return DATABASE_EMPTY;
+  for (i = 0; i < strlen(command); ++i) {
+    if (command[i] == '/') ++delimiter_count;
+  }
 
-	results = 0;
+  if (delimiter_count < 2) return BAD_COMMAND;
 
-	// make sure the command line is semi formatted properly by having enough fields
-	delimiter_count = 0;
+  // first parse the command to get the from/to airports
+  offset = 0;
 
-	for (i=0; i < strlen(command); ++i) {
+  while (command[offset] != '/') ++offset;
 
-		if (command[i] == '/')
-			++delimiter_count;
-	}
+  ++offset;
 
-	if (delimiter_count < 2)
-		return BAD_COMMAND;
-	
-	//first parse the command to get the from/to airports
-	offset = 0;
+  strncpy(fromAirport, command + offset, 3);
 
-	while (command[offset] != '/')
-		++offset;
+  fromAirport[3] = 0;
 
-	++offset;
+  if (check4Code(airports, fromAirport) == 0) return UNKN_CODE;
 
-	strncpy(fromAirport, command+offset, 3);
+  offset += 3;
 
-	fromAirport[3] = 0;
+  if (command[offset] != '/') return BAD_COMMAND;
 
-	if (check4Code(airports, fromAirport) == 0)
-		return UNKN_CODE;
+  ++offset;
 
-	offset+=3;
+  strncpy(destAirport, command + offset, 3);
 
-	if (command[offset] != '/')
-		return BAD_COMMAND;
+  destAirport[3] = 0;
 
-	++offset;
+  if (check4Code(airports, destAirport) == 0) return UNKN_CODE;
 
-	strncpy(destAirport, command+offset, 3);
+  srcAirport = airports;
 
-	destAirport[3] = 0;
+  while (srcAirport != 0) {
+    if (strcmp(srcAirport->code, fromAirport) == 0) break;
 
-	if (check4Code(airports, destAirport) == 0)
-		return UNKN_CODE;
+    srcAirport = srcAirport->next;
+  }
 
-	srcAirport = airports;
+  // this shouldn't happen since we previously made sure the code existed
+  if (srcAirport == 0) return UNKN_CODE;
 
-	while(srcAirport!= 0) {
+  tmpConnectingAirport = srcAirport->connections;
 
-		if (strcmp(srcAirport->code, fromAirport) == 0)
-			break;
+  while (tmpConnectingAirport != 0) {
+    cost = tmpConnectingAirport->cost;
+    duration = tmpConnectingAirport->time;
 
-		srcAirport = srcAirport->next;
-	}
+    // first see if the connecting airport is actually the desired destination
+    // (direct flight)
 
-	// this shouldn't happen since we previously made sure the code existed
-	if (srcAirport == 0)
-		return UNKN_CODE;
+    if (strcmp(tmpConnectingAirport->destCode, destAirport) == 0) {
+      results = 1;
 
+      printf("@s - @s: (@d, @d)\n", fromAirport, destAirport, cost, duration);
 
-	tmpConnectingAirport = srcAirport->connections;
+      tmpConnectingAirport = tmpConnectingAirport->next;
+      continue;
+    }
 
-	while(tmpConnectingAirport != 0) {
+    // now check the connection's connections for a match with the destination
 
-		cost = tmpConnectingAirport->cost;
-		duration = tmpConnectingAirport->time;
+    connectionAirport = airports;
 
-		// first see if the connecting airport is actually the desired destination (direct flight)
+    while (connectionAirport != 0) {
+      if (strcmp(tmpConnectingAirport->destCode, connectionAirport->code) == 0)
+        break;
 
-		if (strcmp(tmpConnectingAirport->destCode, destAirport) == 0) {
+      connectionAirport = connectionAirport->next;
+    }
 
-			results = 1;
+    if (connectionAirport == 0) return UNKN_CODE;
 
-			printf("@s - @s: (@d, @d)\n", fromAirport, destAirport, cost, duration);
+    nextHopAirport = connectionAirport->connections;
 
-			tmpConnectingAirport = tmpConnectingAirport->next;
-			continue;
-		}
+    while (nextHopAirport != 0) {
+      if (strcmp(nextHopAirport->destCode, destAirport) == 0) {
+        results = 1;
 
-		// now check the connection's connections for a match with the destination
+        printf("@s - @s - @s: (@d, @d)\n", fromAirport,
+               tmpConnectingAirport->destCode, destAirport,
+               cost + nextHopAirport->cost, duration + nextHopAirport->time);
+        break;
+      }
 
-		connectionAirport = airports;
+      nextHopAirport = nextHopAirport->next;
 
-		while (connectionAirport !=0 ) {
+    }  // while(nextHopAirport)
 
-			if (strcmp(tmpConnectingAirport->destCode, connectionAirport->code)==0)
-				break;
+    tmpConnectingAirport = tmpConnectingAirport->next;
+  }
 
-			connectionAirport = connectionAirport->next;
+  printf("\n");
 
-		}
-
-		if (connectionAirport == 0)
-			return UNKN_CODE;
-
-
-		nextHopAirport = connectionAirport->connections;
-
-		while (nextHopAirport != 0) {
-
-			if (strcmp(nextHopAirport->destCode, destAirport) == 0) {
-
-
-				results = 1;
-
-				printf("@s - @s - @s: (@d, @d)\n", fromAirport, tmpConnectingAirport->destCode, destAirport,
-													cost+nextHopAirport->cost, duration+nextHopAirport->time);
-				break;
-
-			}
-
-			nextHopAirport = nextHopAirport->next;
-
-		} // while(nextHopAirport)
-
-
-		tmpConnectingAirport = tmpConnectingAirport->next;
-
-	}
-
-	printf("\n");
-
-	if (results)
-		return COMMAND_OK;
-	else
-		return NO_RESULTS;
+  if (results)
+    return COMMAND_OK;
+  else
+    return NO_RESULTS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

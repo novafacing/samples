@@ -27,28 +27,29 @@ THE SOFTWARE.
 #define __STDLIB_H__
 
 #include <libcgc.h>
+
 #include "malloc.h"
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
-int tolower( int c );
-int toupper( int c );
+int isspace(int c);
+int isdigit(int c);
+int isnan(double val);
+int isinf(double val);
+int tolower(int c);
+int toupper(int c);
 double atof(const char *str);
 int atoi(const char *str);
-int abs( int );
+int abs(int);
 
-int strcmp( char *str1, char *str2 );
-char *strcpy( char *dest, char *src );
-char *strncpy( char *dest, const char *src, size_t num );
-size_t strlen( const char *str );
-int printf( const char *fmt, ... );
-int sprintf( char *str, const char *fmt, ... );
-size_t getline( char *buffer, size_t len );
-size_t receive_until( char *, char, size_t );
+int strcmp(char *str1, char *str2);
+char *strcpy(char *dest, char *src);
+char *strncpy(char *dest, const char *src, size_t num);
+size_t strlen(const char *str);
+int printf(const char *fmt, ...);
+int sprintf(char *str, const char *fmt, ...);
+size_t getline(char *buffer, size_t len);
+size_t receive_until(char *, char, size_t);
 
-void* memcpy( void *dest, void *src, size_t numbytes );
-void* memset( void *dest, int value, size_t num );
+void *memcpy(void *dest, void *src, size_t numbytes);
+void *memset(void *dest, int value, size_t num);
 
-#endif // __STDLIB_H__
+#endif  // __STDLIB_H__

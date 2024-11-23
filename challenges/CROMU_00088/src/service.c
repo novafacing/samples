@@ -24,247 +24,224 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
+
+#include <libcgc.h>
+
 #include "filesystem.h"
-#include "stdio.h"
-#include "string.h"
 #include "input.h"
 #include "malloc.h"
-
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 extern fileHandleType securityIDFileHandle;
 
 int main(void) {
+  int retcode;
+  unsigned int count;
+  fileHandleType fh;
+  int useraccount;
+  void *message;
+  int messagetype;
+  newUserMessageType *newuser;
+  loginMessageType *loginuser;
+  newPostMessageType *newPost;
+  addCommentMessageType *newComment;
+  unsigned int postID;
+  int responseCode;
+  unsigned int nextPostID = 100;
+  unsigned int sessionToken;
+  char *postText;
+  int postSize;
+  int endIt;
+
+  // using a small blocksize of 256 bytes because postings are small and this is
+  // more efficient
+  retcode = initFileSystem(512, 512, 512 * 2000);
 
-int retcode;
-unsigned int count;
-fileHandleType fh;
-int useraccount;
-void *message;
-int messagetype;
-newUserMessageType *newuser;
-loginMessageType *loginuser;
-newPostMessageType *newPost;
-addCommentMessageType *newComment;
-unsigned int postID;
-int responseCode;
-unsigned int nextPostID = 100;
-unsigned int sessionToken;
-char *postText;
-int postSize;
-int endIt;
-    
-    // using a small blocksize of 256 bytes because postings are small and this is more efficient
-    retcode = initFileSystem(512, 512, 512*2000);
+  securityIDFileHandle = -1;
 
-    securityIDFileHandle = -1;
+  if (retcode != 0) {
+    printf("Error making filesystem.\n");
+    _terminate(-1);
+  }
 
-    if (retcode != 0) {
+  retcode =
+      makeMemoryFile("sticky.posts", 0x4347C000 + 1536, 160 * 16, 1, ROOT_ID);
 
-        printf("Error making filesystem.\n");
-        _terminate(-1);
-    }
+  if (retcode != 0) {
+    printf("Error making posts.log\n");
+    _terminate(-1);
+  }
 
-    retcode = makeMemoryFile("sticky.posts", 0x4347C000 + 1536, 160*16,  1,  ROOT_ID );
+  retcode = makeMemoryFile("initialPostID.mem", 0x4347C000, 4, 1, ROOT_ID);
 
-    if ( retcode != 0 ) {
+  if (retcode != 0) {
+    printf("Error making posts.log\n");
+    _terminate(-1);
+  }
 
-        printf("Error making posts.log\n");
-        _terminate(-1);
-    }
+  retcode = createFile("Users.db", REGULAR, ROOT_ID);
 
-    retcode = makeMemoryFile("initialPostID.mem", 0x4347C000, 4, 1, ROOT_ID );
+  if (retcode != 0) {
+    printf("Error making Users.db\n");
+    _terminate(-1);
+  }
 
-    if ( retcode != 0 ) {
+  retcode = createFile("posts.log", REGULAR, ROOT_ID);
 
-        printf("Error making posts.log\n");
-        _terminate(-1);
-    }
+  if (retcode != 0) {
+    printf("Error making posts.log\n");
+    _terminate(-1);
+  }
 
-	retcode = createFile("Users.db", REGULAR, ROOT_ID);	
-    
-    if ( retcode != 0 ) {
+  // seed the first postID with magic page data.  After this they just increase
+  // by 1 each time
+  fh = openFile("initialPostID.mem", ROOT_ID);
 
-        printf("Error making Users.db\n");
-        _terminate(-1);
-    }
+  if (fh < 0) {
+    printf("Error opening initialPostID.mem\n");
+    _terminate(-1);
+  }
+  readFile(fh, (void *)&nextPostID, sizeof(nextPostID), 0, 0, ROOT_ID);
+  nextPostID &= 0x0fffffff;
 
-    retcode = createFile("posts.log", REGULAR, ROOT_ID);
+  // we'll never re-seed the postID so just delete the file
+  deleteFile(fh, ROOT_ID);
 
-    if ( retcode != 0 ) {
+  // this file will allow us to get semi-random userID's from the magic page. It
+  // is kept open and a new ID is read whenever a new account is created
+  retcode = makeMemoryFile("UserIDs.mem", 0x4347C004, 1532, 1, ROOT_ID);
 
-        printf("Error making posts.log\n");
-        _terminate(-1);
-    }
+  if (retcode != 0) {
+    printf("Error making UserIDs.mem\n");
+    _terminate(-1);
+  }
 
-    // seed the first postID with magic page data.  After this they just increase by 1 each time
-    fh = openFile("initialPostID.mem", ROOT_ID);
+  retcode = allocate(1024, 0, &message);
 
-    if ( fh < 0 ) {
+  if (retcode != 0) {
+    _terminate(-1);
+  }
 
-        printf("Error opening initialPostID.mem\n");
-        _terminate(-1);
-    }
-    readFile(fh, (void *)&nextPostID, sizeof(nextPostID), 0, 0, ROOT_ID);
-    nextPostID &= 0x0fffffff;
+  endIt = 0;
 
-    // we'll never re-seed the postID so just delete the file
-    deleteFile(fh, ROOT_ID);
+  while (!endIt) {
+    messagetype = receiveMessage(message);
 
-    // this file will allow us to get semi-random userID's from the magic page.  It is kept open and a new ID is 
-    // read whenever a new account is created
-    retcode = makeMemoryFile("UserIDs.mem", 0x4347C004, 1532, 1, ROOT_ID );
+    switch (messagetype) {
+        // add a new user
+      case 0xa0:
 
-    if ( retcode != 0 ) {
+        newuser = (newUserMessageType *)message;
 
-        printf("Error making UserIDs.mem\n");
-        _terminate(-1);
-    }
+        if (create_user(newuser->name, newuser->password, newuser->fullname) >=
+            0) {
+          responseCode = 0;
 
-    retcode = allocate(1024, 0, &message);
+        } else {
+          responseCode = -1;
+        }
 
-    if (retcode != 0) {
+        sendResponse((void *)&responseCode, sizeof(responseCode));
 
-        _terminate(-1);
-    }
+        break;
 
-    endIt = 0;
+        // authenticate a user
+      case 0xb0:
 
-    while (!endIt) {
+        loginuser = (loginMessageType *)message;
+        useraccount = authenticate(loginuser->name, loginuser->password);
 
-    	messagetype = receiveMessage(message);
+        sendResponse((void *)&useraccount, sizeof(useraccount));
 
-    	switch (messagetype) {
+        break;
 
-    			// add a new user
-    		case 0xa0:
+        // retrieve a single post to this user's feed
+      case 0xc0:
 
-    			newuser = (newUserMessageType *)message;
+        sessionToken = *(unsigned int *)message;
 
-    			if (create_user(newuser->name, newuser->password, newuser->fullname) >= 0 ) {
+        retcode = newFeedPost(sessionToken, &postText, &postSize);
 
-    				responseCode = 0;
-    				
-    			}
-    			else {
+        if (retcode == 0) {
+          sendResponse((void *)postText, postSize);
+          deallocate((void *)postText, postSize);
+        } else {
+          retcode = -1;
+          sendResponse((void *)&retcode, sizeof(retcode));
+        }
+        break;
 
-    				responseCode = -1;
+        // record a new post from the user
+      case 0xd0:
 
-    			}
+        newPost = (newPostMessageType *)message;
 
-    			sendResponse((void *)&responseCode, sizeof(responseCode));
+        retcode = savePost(nextPostID, newPost->sessionToken, newPost->post);
 
-    			break;
+        if (retcode == 0) {
+          retcode = nextPostID;
+          ++nextPostID;
+        } else {
+          retcode = -1;
+        }
 
-    			// authenticate a user
-    		case 0xb0:
+        sendResponse((void *)&retcode, sizeof(retcode));
 
-    			loginuser = (loginMessageType *)message;
-    			useraccount = authenticate(loginuser->name, loginuser->password);
+        break;
 
-    			sendResponse((void *)&useraccount, sizeof(useraccount));
+        // comment on a post
+      case 0xe0:
 
-    			break;
+        newComment = (addCommentMessageType *)message;
 
-    			// retrieve a single post to this user's feed
-    		case 0xc0:
+        retcode = saveComment(newComment->postID, newComment->commenterID,
+                              newComment->comment);
 
-                sessionToken = *(unsigned int *)message;
+        sendResponse((void *)&retcode, sizeof(retcode));
 
-                retcode = newFeedPost(sessionToken, &postText, &postSize);
+        break;
 
-                if (retcode == 0 ) {
+        // retrieve a specific post by its ID--this will include any comments as
+        // well
+      case 0xf0:
 
-                    sendResponse((void *)postText, postSize);
-                    deallocate((void *)postText, postSize);
-                }
-                else {
+        postID = *(unsigned int *)message;
 
-                    retcode = -1;
-                    sendResponse((void *)&retcode, sizeof(retcode));
+        if (postID < 16) {
+          retcode = sendStickPost(postID);
+        } else {
+          retcode = retrievePost(postID, 1, &postText, &postSize);
 
-                }
-    			break;
+          if (retcode == 0) {
+            sendResponse((void *)postText, postSize);
+            deallocate((void *)postText, postSize);
+          }
+        }
 
-    			 // record a new post from the user
-    		case 0xd0:
+        if (retcode == -1) {
+          sendResponse((void *)&retcode, sizeof(retcode));
+        }
+        // response sent by the retrievePost() function
+        break;
 
-                newPost = (newPostMessageType *)message;
+      case 100:
 
-                retcode = savePost(nextPostID, newPost->sessionToken, newPost->post);
+        endIt = 1;
+        break;
 
-                if (retcode == 0) {
+      default:
 
-                    retcode = nextPostID;
-                    ++nextPostID;
-                }
-                else {
+        endIt = 1;
 
-                    retcode = -1;
-                }
+        break;
 
-                sendResponse((void *)&retcode, sizeof(retcode));
+    }  // switch
 
-    			break;
+  }  // while (1)
 
-                // comment on a post
-            case 0xe0:
+  printf("BYE!\n");
 
-                newComment = (addCommentMessageType *)message;
-
-                retcode = saveComment(newComment->postID, newComment->commenterID, newComment->comment);
-
-                sendResponse((void *)&retcode, sizeof(retcode));
-
-                break;
-
-                // retrieve a specific post by its ID--this will include any comments as well
-            case 0xf0:
-
-                postID = *(unsigned int *)message;
-
-                if ( postID < 16 ) {
-
-                     retcode = sendStickPost( postID );
-                }
-                else {
-
-                    retcode = retrievePost( postID, 1 , &postText, &postSize);
-
-                    if (retcode == 0) {
-
-                        sendResponse((void *)postText, postSize);
-                        deallocate((void *)postText, postSize);
-                    }
-                }
-
-                if ( retcode == -1 ) {
-
-                    sendResponse((void *)&retcode, sizeof(retcode));
-
-                }
-                // response sent by the retrievePost() function
-                break;
-
-            case 100:
-
-                endIt = 1;
-                break;
-
-    		default:
-
-                endIt = 1;
-
-    			break;
-
-    	} //switch
-
-
-    } // while (1)
-
-    printf("BYE!\n");
-
-}  // main  
-
+}  // main

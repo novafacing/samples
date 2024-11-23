@@ -25,8 +25,9 @@ THE SOFTWARE.
 */
 
 // Generated at 2015-01-04 15:03:31 -0500
-#include "protocol.h"
 #include "messages.h"
+
+#include "protocol.h"
 
 void* extract_seed_req(protocol_frame* frame) {
   if (frame->type != 1) _terminate(-1);

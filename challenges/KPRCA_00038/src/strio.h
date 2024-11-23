@@ -2,9 +2,9 @@
 #define STRIO_H_
 
 typedef struct {
-    char *buf;
-    int pos;
-    int length;
+  char *buf;
+  int pos;
+  int length;
 } strio_t;
 
 int strio_init(strio_t *s);

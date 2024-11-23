@@ -23,64 +23,55 @@
 #include "MonsterData.h"
 
 const kind_data_t builtin_kinds[NUM_BUILTIN_KINDS] = {
-    {
-        0, // id
-        TYPE_EARTH, // type
-        "Pheapxalm", // name
-        100, // base health
-         90, // base attack
-        100, // base defense
-        2, // number of attacks
-        { // attacks
-            { "Scratch", 20 },
-            { "Cutting Leaf", 30 },
-        }
-    },
-    {
-        1, // id
-        TYPE_WIND, // type
-        "Eashtel", // name
-        110, // base health
-         90, // base attack
-         90, // base defense
-        2, // number of attacks
-        { // attacks
-            { "Scratch", 20 },
-            { "Tornado", 40 },
-        }
-    },
-    {
-        2, // id
-        TYPE_FIRE, // type
-        "Tacalm", // name
-        120, // base health
-        100, // base attack
-         60, // base defense
-        2, // number of attacks
-        { // attacks
-            { "Scratch", 20 },
-            { "Bonfire", 50 },
-        }
-    },
+    {0,            // id
+     TYPE_EARTH,   // type
+     "Pheapxalm",  // name
+     100,          // base health
+     90,           // base attack
+     100,          // base defense
+     2,            // number of attacks
+     {
+         // attacks
+         {"Scratch", 20},
+         {"Cutting Leaf", 30},
+     }},
+    {1,          // id
+     TYPE_WIND,  // type
+     "Eashtel",  // name
+     110,        // base health
+     90,         // base attack
+     90,         // base defense
+     2,          // number of attacks
+     {
+         // attacks
+         {"Scratch", 20},
+         {"Tornado", 40},
+     }},
+    {2,          // id
+     TYPE_FIRE,  // type
+     "Tacalm",   // name
+     120,        // base health
+     100,        // base attack
+     60,         // base defense
+     2,          // number of attacks
+     {
+         // attacks
+         {"Scratch", 20},
+         {"Bonfire", 50},
+     }},
 };
 
-unsigned int attack_multiplier(const kind_data_t *attacker, const kind_data_t *defender)
-{
-    // strengths
-    if (attacker->type == TYPE_EARTH && defender->type == TYPE_WIND)
-        return 200;
-    if (attacker->type == TYPE_WIND && defender->type == TYPE_FIRE)
-        return 200;
-    if (attacker->type == TYPE_FIRE && defender->type == TYPE_EARTH)
-        return 200;
+unsigned int attack_multiplier(const kind_data_t *attacker,
+                               const kind_data_t *defender) {
+  // strengths
+  if (attacker->type == TYPE_EARTH && defender->type == TYPE_WIND) return 200;
+  if (attacker->type == TYPE_WIND && defender->type == TYPE_FIRE) return 200;
+  if (attacker->type == TYPE_FIRE && defender->type == TYPE_EARTH) return 200;
 
-    // weaknesses
-    if (attacker->type == TYPE_EARTH && defender->type == TYPE_FIRE)
-        return 50;
-    if (attacker->type == TYPE_WIND && defender->type == TYPE_EARTH)
-        return 50;
-    if (attacker->type == TYPE_FIRE && defender->type == TYPE_WIND)
-        return 50;
+  // weaknesses
+  if (attacker->type == TYPE_EARTH && defender->type == TYPE_FIRE) return 50;
+  if (attacker->type == TYPE_WIND && defender->type == TYPE_EARTH) return 50;
+  if (attacker->type == TYPE_FIRE && defender->type == TYPE_WIND) return 50;
 
-    return 100;
+  return 100;
 }

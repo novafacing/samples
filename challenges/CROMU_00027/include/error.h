@@ -29,4 +29,4 @@ THE SOFTWARE.
 void PrintErrorAndTerminate(char *message);
 void VerifyPointerOrTerminate(void *ptr, char *message);
 
-#endif // ERROR_H
+#endif  // ERROR_H

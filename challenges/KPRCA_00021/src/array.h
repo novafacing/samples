@@ -24,7 +24,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-typedef void (free_element_fn) (void *e);
+typedef void(free_element_fn)(void *e);
 
 typedef struct array {
   unsigned int length;
@@ -33,9 +33,9 @@ typedef struct array {
   free_element_fn *free_element;
 } array_t;
 
-array_t* array_create(int size, free_element_fn *fptr);
+array_t *array_create(int size, free_element_fn *fptr);
 int array_append(array_t *arr, void *e);
-void* array_get(array_t *arr, int idx);
+void *array_get(array_t *arr, int idx);
 int array_length(array_t *arr);
 void array_destroy(array_t *arr);
 

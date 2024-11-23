@@ -18,14 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
 #include <libcgc.h>
-#include "libc.h"
 
+#include "libc.h"
 
 #define LIST_PUSH_MSG "Failed to extend list."
 #define LIST_RM_MSG "Failed to remove node from list."
@@ -46,37 +45,37 @@
 #define RECV_FAIL_MSG "Receive failed."
 #define UNK_ERROR_MSG "Unknown Error."
 
-#define ALLOC(len, is_x, addr) \
-		if (SUCCESS != (allocate(len, is_x, addr))) \
-			{ return ERRNO_MP_ALLOC; }
+#define ALLOC(len, is_x, addr)                  \
+  if (SUCCESS != (allocate(len, is_x, addr))) { \
+    return ERRNO_MP_ALLOC;                      \
+  }
 
 #define RET_ON_FAIL(ret_val) \
-		if(SUCCESS != ret_val) \
-			{return ret_val;}
-
+  if (SUCCESS != ret_val) {  \
+    return ret_val;          \
+  }
 
 // this enum is used as 1 byte (0-255)
 typedef enum {
-	OK = 0,
-	ERRNO_MP_LIST_PUSH,		// Failed to add node to list
-	ERRNO_MP_LIST_RM,		// Failed to rm node from list
-	ERRNO_MP_ALLOC,			// Failed to allocate memory
-	ERRNO_MP_DEALLOC,		// Failed to deallocate memory
-	ERRNO_MP_PURCHASE_ISF,		// Insufficient Funds
-	ERRNO_MP_RECHARGE_FULL,	// Recharge would cause card balance to wrap
-	ERRNO_MP_REFUND_FULL,	// Refund would cause card balance to wrap
-	ERRNO_MP_NO_HISTORY,	// No matching transaction history in transaction list.
-	ERRNO_MP_INVALID_OPCODE,	// Invalid Op_code
-	ERRNO_MP_INVALID_P_TYPE,	// Invalid Packet Type
-	ERRNO_MP_INVALID_V_TYPE,	// Invalid Vendor Type
-	ERRNO_MP_NO_AUTH,		// Transaction did not complete AUTH step
-	ERRNO_MP_NO_INIT,		// Transaction did not complete INIT step
-	ERRNO_MP_NO_OPS,		// Transaction did not complete OPS step
-	ERRNO_MP_NOT_FOUND,		// When the card or transaction is not in the list
-	ERRNO_MP_INVALID_CARD,	// Card does not exist or is invalid
-	ERRNO_MP_RECV,			// Failed to receive expected number of bytes
-	ERRNO_MP_UNK			// Unknown error
+  OK = 0,
+  ERRNO_MP_LIST_PUSH,      // Failed to add node to list
+  ERRNO_MP_LIST_RM,        // Failed to rm node from list
+  ERRNO_MP_ALLOC,          // Failed to allocate memory
+  ERRNO_MP_DEALLOC,        // Failed to deallocate memory
+  ERRNO_MP_PURCHASE_ISF,   // Insufficient Funds
+  ERRNO_MP_RECHARGE_FULL,  // Recharge would cause card balance to wrap
+  ERRNO_MP_REFUND_FULL,    // Refund would cause card balance to wrap
+  ERRNO_MP_NO_HISTORY,  // No matching transaction history in transaction list.
+  ERRNO_MP_INVALID_OPCODE,  // Invalid Op_code
+  ERRNO_MP_INVALID_P_TYPE,  // Invalid Packet Type
+  ERRNO_MP_INVALID_V_TYPE,  // Invalid Vendor Type
+  ERRNO_MP_NO_AUTH,         // Transaction did not complete AUTH step
+  ERRNO_MP_NO_INIT,         // Transaction did not complete INIT step
+  ERRNO_MP_NO_OPS,          // Transaction did not complete OPS step
+  ERRNO_MP_NOT_FOUND,       // When the card or transaction is not in the list
+  ERRNO_MP_INVALID_CARD,    // Card does not exist or is invalid
+  ERRNO_MP_RECV,            // Failed to receive expected number of bytes
+  ERRNO_MP_UNK              // Unknown error
 } STATUS;
-
 
 #endif

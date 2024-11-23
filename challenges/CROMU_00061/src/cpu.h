@@ -32,93 +32,92 @@ class CDMA;
 class CMMU;
 class CVM;
 
-#define MAX_INSTRUCTION_COUNT	(400)
+#define MAX_INSTRUCTION_COUNT (400)
 
-#define MAX_CPU_REGISTERS	16
-#define REG_PC			15
-#define REG_SP			14
+#define MAX_CPU_REGISTERS 16
+#define REG_PC 15
+#define REG_SP 14
 
-class CCPU
-{
-public:
-	CCPU( void *pMagicPage );
-	~CCPU( );
+class CCPU {
+ public:
+  CCPU(void *pMagicPage);
+  ~CCPU();
 
-	bool Init( CMMU *pMMU, CVM *pVM, CDMA *pDMA, uint16_t entryAddress );
-	bool Run( void );
+  bool Init(CMMU *pMMU, CVM *pVM, CDMA *pDMA, uint16_t entryAddress);
+  bool Run(void);
 
-	bool HasException( void ) { return m_bException; };
-	CUtil::String GetExceptionText( void ) { return m_sExceptionText; };
+  bool HasException(void) { return m_bException; };
+  CUtil::String GetExceptionText(void) { return m_sExceptionText; };
 
-	CUtil::String DumpRegisters( void );
+  CUtil::String DumpRegisters(void);
 
-protected:
-	bool RunSingleInstruction( void );
+ protected:
+  bool RunSingleInstruction(void);
 
-	uint16_t FetchNextInstruction( void );
+  uint16_t FetchNextInstruction(void);
 #if 0	
 	uint16_t Read16( uint16_t address );
 	void Write16( uint16_t address, uint16_t value );
 #endif
 
-	void LoadImmediateHI( uint8_t reg, uint8_t immediate );
-	void LoadImmediateLO( uint8_t reg, uint8_t immediate );
+  void LoadImmediateHI(uint8_t reg, uint8_t immediate);
+  void LoadImmediateLO(uint8_t reg, uint8_t immediate);
 
-	void AddReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void SubReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void MulReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void DivReg( uint8_t regD, uint8_t regL, uint8_t regR );
+  void AddReg(uint8_t regD, uint8_t regL, uint8_t regR);
+  void SubReg(uint8_t regD, uint8_t regL, uint8_t regR);
+  void MulReg(uint8_t regD, uint8_t regL, uint8_t regR);
+  void DivReg(uint8_t regD, uint8_t regL, uint8_t regR);
 
-	void AddImm( uint8_t reg, uint8_t immediate );
-	void SubImm( uint8_t reg, uint8_t immediate );
-	void MulImm( uint8_t reg, uint8_t immediate );
-	void DivImm( uint8_t reg, uint8_t immediate );
+  void AddImm(uint8_t reg, uint8_t immediate);
+  void SubImm(uint8_t reg, uint8_t immediate);
+  void MulImm(uint8_t reg, uint8_t immediate);
+  void DivImm(uint8_t reg, uint8_t immediate);
 
-	void MovReg( uint8_t regL, uint8_t regR );
-	void SwapReg( uint8_t regL, uint8_t regR );
+  void MovReg(uint8_t regL, uint8_t regR);
+  void SwapReg(uint8_t regL, uint8_t regR);
 
-	void JumpOffsetZero( uint8_t reg, uint8_t sign, uint8_t imm );
-	void JumpOffsetNotZero( uint8_t reg, uint8_t sign, uint8_t imm );
+  void JumpOffsetZero(uint8_t reg, uint8_t sign, uint8_t imm);
+  void JumpOffsetNotZero(uint8_t reg, uint8_t sign, uint8_t imm);
 
-	void JumpLTReg( uint8_t regL, uint8_t regR, uint8_t offsetReg );
-	void JumpGTReg( uint8_t regL, uint8_t regR, uint8_t offsetReg );
+  void JumpLTReg(uint8_t regL, uint8_t regR, uint8_t offsetReg);
+  void JumpGTReg(uint8_t regL, uint8_t regR, uint8_t offsetReg);
 
-	void JumpReg( uint8_t offsetReg );
-	void JumpOffset( uint8_t sign, uint16_t offset );
+  void JumpReg(uint8_t offsetReg);
+  void JumpOffset(uint8_t sign, uint16_t offset);
 
-	void JumpRegZero( uint8_t reg, uint8_t offsetReg );
-	void JumpRegNotZero( uint8_t reg, uint8_t offsetReg );
+  void JumpRegZero(uint8_t reg, uint8_t offsetReg);
+  void JumpRegNotZero(uint8_t reg, uint8_t offsetReg);
 
-	void DMAInit( uint8_t deviceID );
-	void DMARead( uint8_t regFrom, uint8_t regLen );
-	void DMAWrite( uint8_t regFrom, uint8_t regLen );
+  void DMAInit(uint8_t deviceID);
+  void DMARead(uint8_t regFrom, uint8_t regLen);
+  void DMAWrite(uint8_t regFrom, uint8_t regLen);
 
-	void GetInstructionCount( uint8_t regL, uint8_t regR );
+  void GetInstructionCount(uint8_t regL, uint8_t regR);
 
-	void GetRand( uint8_t reg );
-	void GetSeedMaterial( uint8_t reg );
+  void GetRand(uint8_t reg);
+  void GetSeedMaterial(uint8_t reg);
 
-	void LoadRegister( uint8_t regD, uint8_t regAddr );
-	void StoreRegister( uint8_t regD, uint8_t regAddr );
+  void LoadRegister(uint8_t regD, uint8_t regAddr);
+  void StoreRegister(uint8_t regD, uint8_t regAddr);
 
-private:
-	uint16_t GetMagicPageSeed( void );
+ private:
+  uint16_t GetMagicPageSeed(void);
 
-private:
-	CDMA *m_pDMA;
-	CMMU *m_pMMU;
-	CVM *m_pVM;
+ private:
+  CDMA *m_pDMA;
+  CMMU *m_pMMU;
+  CVM *m_pVM;
 
-	uint16_t m_regs[MAX_CPU_REGISTERS];
+  uint16_t m_regs[MAX_CPU_REGISTERS];
 
-	uint32_t m_instrCount;	// Counts number of instructions executed
-	bool m_bException;
+  uint32_t m_instrCount;  // Counts number of instructions executed
+  bool m_bException;
 
-	CUtil::String m_sExceptionText;	// Exception text
+  CUtil::String m_sExceptionText;  // Exception text
 
-	void *m_pMagicPage;
+  void *m_pMagicPage;
 
-	uint8_t m_dmaDeviceID;
+  uint8_t m_dmaDeviceID;
 };
 
-#endif // _CPU_H__
+#endif  // _CPU_H__

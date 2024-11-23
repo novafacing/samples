@@ -23,34 +23,22 @@
 
 #include "command_manager.h"
 
-CommandManager::CommandManager(FileManager *fm)
-{
+CommandManager::CommandManager(FileManager *fm) {
   this->fm = fm;
   commands = new List<Command *>(0);
 }
 
-CommandManager::~CommandManager()
-{
-}
+CommandManager::~CommandManager() {}
 
-List<Command *>* CommandManager::GetCommands()
-{
-  return commands;
-}
+List<Command *> *CommandManager::GetCommands() { return commands; }
 
-void CommandManager::InstallCommand(Command *cmd)
-{
-  commands->add(cmd);
-}
+void CommandManager::InstallCommand(Command *cmd) { commands->add(cmd); }
 
-void CommandManager::UninstallCommand(const char* name)
-{
+void CommandManager::UninstallCommand(const char *name) {
   int i;
-  for (i = 0; i < commands->length(); ++i)
-  {
+  for (i = 0; i < commands->length(); ++i) {
     Command *cmd = commands->get(i);
-    if (strcmp(cmd->GetName(), name) == 0)
-    {
+    if (strcmp(cmd->GetName(), name) == 0) {
       commands->remove(cmd);
       delete cmd;
       return;
@@ -58,16 +46,14 @@ void CommandManager::UninstallCommand(const char* name)
   }
 }
 
-int CommandManager::ExecuteCommand(const char* name, int argc, char** argv)
-{
+int CommandManager::ExecuteCommand(const char *name, int argc, char **argv) {
   int i;
-  for (i = 0; i < commands->length(); ++i)
-  {
+  for (i = 0; i < commands->length(); ++i) {
     Command *cmd = commands->get(i);
-    if (strcmp(cmd->GetName(), name) == 0 || strcmp(cmd->GetAlias(), name) == 0)
-    {
+    if (strcmp(cmd->GetName(), name) == 0 ||
+        strcmp(cmd->GetAlias(), name) == 0) {
       if (cmd->GetType() == Command::CT_HELP)
-        cmd->Execute((FileManager *) this, argc, argv); 	// HACKZ
+        cmd->Execute((FileManager *)this, argc, argv);  // HACKZ
       else
         cmd->Execute(fm, argc, argv);
       return 0;
@@ -75,4 +61,3 @@ int CommandManager::ExecuteCommand(const char* name, int argc, char** argv)
   }
   return -1;
 }
-

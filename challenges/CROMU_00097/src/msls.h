@@ -33,27 +33,23 @@ THE SOFTWARE.
 #define MAX_CIPHER_SUITES 12
 #define MSLS_COOKIE_SIZE 128
 
-
-
 #define MSLS_MAX_MSG_LENGTH 2048
 
-#define MSLS_ERROR_LENGTH         0xe0
-#define MSLS_ERROR_VERSION        0xe1
-#define MSLS_ERROR_CHECKSUM       0xe2
-#define MSLS_ERROR_CONNECTION     0xe3
+#define MSLS_ERROR_LENGTH 0xe0
+#define MSLS_ERROR_VERSION 0xe1
+#define MSLS_ERROR_CHECKSUM 0xe2
+#define MSLS_ERROR_CONNECTION 0xe3
 #define MSLS_ERROR_HANDSHAKE_TYPE 0xe4
-#define MSLS_ERROR_OUTOFORDER     0xe5
-#define MSLS_ERROR_SEQUENCE       0xe6
-#define MSLS_ERROR_HASH           0xe7
+#define MSLS_ERROR_OUTOFORDER 0xe5
+#define MSLS_ERROR_SEQUENCE 0xe6
+#define MSLS_ERROR_HASH 0xe7
 
-#define MSLS_SEVERITY_WARNING  0xa0
+#define MSLS_SEVERITY_WARNING 0xa0
 #define MSLS_SEVERITY_CRITICAL 0xa1
-#define MSLS_SEVERITY_FATAL    0xa2
+#define MSLS_SEVERITY_FATAL 0xa2
 
-#define MSLS_HEARTBEAT_REQUEST  0x41
+#define MSLS_HEARTBEAT_REQUEST 0x41
 #define MSLS_HEARTBEAT_RESPONSE 0x42
-
-
 
 SLS_FUNCTION_PTRS *msls_get_sls_functions();
 SLS_MESSAGE *msls_receive_msg(SERVER_STATE *state);
@@ -67,10 +63,10 @@ uint32_t msls_generate_checksum_outgoing(SLS_MESSAGE *msg);
 void msls_handle_heartbeat(SLS_MESSAGE *msg);
 void msls_handle_handshake(SERVER_STATE *state, SLS_MESSAGE *msg);
 void msls_handle_error(SERVER_STATE *state, SLS_MESSAGE *msg);
-void msls_handle_changespec(SERVER_STATE *state,CLIENT_CONTEXT *connection, SLS_MESSAGE *msg);
-void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection, SLS_MESSAGE *msg);
-
-
+void msls_handle_changespec(SERVER_STATE *state, CLIENT_CONTEXT *connection,
+                            SLS_MESSAGE *msg);
+void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection,
+                             SLS_MESSAGE *msg);
 
 uint32_t get_random();
 #endif

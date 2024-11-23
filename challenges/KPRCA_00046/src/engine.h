@@ -3,27 +3,19 @@
 
 #include <stdint.h>
 
-enum {
-    WHITE,
-    BLACK
-};
+enum { WHITE, BLACK };
+
+enum { WHITE_WON, BLACK_WON, DRAW, UNFINISHED };
 
 enum {
-    WHITE_WON,
-    BLACK_WON,
-    DRAW,
-    UNFINISHED
-};
-
-enum {
-    PAWN,
-    KNIGHT,
-    BISHOP,
-    ROOK,
-    QUEEN,
-    KING,
-    NUM_PIECES = KING + 1,
-    EMPTY = NUM_PIECES
+  PAWN,
+  KNIGHT,
+  BISHOP,
+  ROOK,
+  QUEEN,
+  KING,
+  NUM_PIECES = KING + 1,
+  EMPTY = NUM_PIECES
 };
 
 typedef uint64_t bboard_t;
@@ -32,8 +24,8 @@ typedef uint8_t piece_t;
 #define COLOR_SHIFT 7
 #define PIECE_COLOR(p) ((piece_t)(p) >> COLOR_SHIFT)
 typedef struct {
-    int8_t sr, sc, dr, dc;
-    uint8_t p, op, cap, prio;
+  int8_t sr, sc, dr, dc;
+  uint8_t p, op, cap, prio;
 } move_t;
 
 void engine_destroy();

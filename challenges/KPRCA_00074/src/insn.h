@@ -25,114 +25,82 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-enum {
-    TYPE_LDX,
-    TYPE_ST,
-    TYPE_STX,
-    TYPE_ALU,
-    TYPE_JMP
-};
+enum { TYPE_LDX, TYPE_ST, TYPE_STX, TYPE_ALU, TYPE_JMP };
 
 enum {
-    ALU_ADD,
-    ALU_SUB,
-    ALU_MUL,
-    ALU_DIV,
-    ALU_MOD,
-    ALU_OR,
-    ALU_AND,
-    ALU_XOR,
-    ALU_LSH,
-    ALU_RSH,
-    ALU_NEG,
-    ALU_MOV,
-    ALU_END,
-    ALU__COUNT
+  ALU_ADD,
+  ALU_SUB,
+  ALU_MUL,
+  ALU_DIV,
+  ALU_MOD,
+  ALU_OR,
+  ALU_AND,
+  ALU_XOR,
+  ALU_LSH,
+  ALU_RSH,
+  ALU_NEG,
+  ALU_MOV,
+  ALU_END,
+  ALU__COUNT
 };
 
-enum {
-    JMP_EQ,
-    JMP_NE,
-    JMP_GT,
-    JMP_GTE,
-    JMP_CALL,
-    JMP_RET
-};
+enum { JMP_EQ, JMP_NE, JMP_GT, JMP_GTE, JMP_CALL, JMP_RET };
+
+enum { SRC_REG, SRC_IMM };
+
+enum { S_B, S_H, S_W, S__COUNT };
+
+enum { MODE_MEM, MODE_STACK, MODE__COUNT };
 
 enum {
-    SRC_REG,
-    SRC_IMM
+  VALUE_UNKNOWN = 0x01,
+  VALUE_NUMBER = 0x02,
+  VALUE_PTR_CTX = 0x04,
+  VALUE_PTR_FRAME = 0x08
 };
 
-enum {
-    S_B,
-    S_H,
-    S_W,
-    S__COUNT
-};
-
-enum {
-    MODE_MEM,
-    MODE_STACK,
-    MODE__COUNT
-};
-
-enum {
-    VALUE_UNKNOWN = 0x01,
-    VALUE_NUMBER = 0x02,
-    VALUE_PTR_CTX = 0x04,
-    VALUE_PTR_FRAME = 0x08
-};
-
-enum {
-    REG_FRAME = 15
-};
+enum { REG_FRAME = 15 };
 
 typedef union {
-    struct {
-        unsigned char type : 3;
-        unsigned char source : 1;
-        unsigned char code : 4;
-    } alu;
-    struct {
-        unsigned char type : 3;
-        unsigned char size : 2;
-        unsigned char mode : 3;
-    } mem;
+  struct {
+    unsigned char type : 3;
+    unsigned char source : 1;
+    unsigned char code : 4;
+  } alu;
+  struct {
+    unsigned char type : 3;
+    unsigned char size : 2;
+    unsigned char mode : 3;
+  } mem;
 } op_t;
 
 typedef struct {
-    op_t op;
-    unsigned char dst : 4;
-    unsigned char src : 4;
-    unsigned short offset;
-    unsigned int extra;
+  op_t op;
+  unsigned char dst : 4;
+  unsigned char src : 4;
+  unsigned short offset;
+  unsigned int extra;
 } insn_t;
 
 typedef struct {
-    unsigned int length;
-    insn_t insn[0];
+  unsigned int length;
+  insn_t insn[0];
 } filter_t;
 
-static inline filter_t *filter_alloc(unsigned int length)
-{
-    filter_t *result;
+static inline filter_t *filter_alloc(unsigned int length) {
+  filter_t *result;
 
-    if (length > (INT_MAX / sizeof(insn_t) - 1))
-        return NULL;
+  if (length > (INT_MAX / sizeof(insn_t) - 1)) return NULL;
 
-    result = malloc(sizeof(filter_t) + length * sizeof(insn_t));
-    if (result != NULL)
-    {
-        result->length = length;
-    }
-    return result;
+  result = malloc(sizeof(filter_t) + length * sizeof(insn_t));
+  if (result != NULL) {
+    result->length = length;
+  }
+  return result;
 }
 
-static inline void filter_free(filter_t *filter)
-{
-    free(filter);
-}
+static inline void filter_free(filter_t *filter) { free(filter); }
 
 int filter_validate(filter_t *filter);
-unsigned int filter_execute(filter_t *filter, unsigned char *ctx, unsigned int ctx_len);
+unsigned int filter_execute(filter_t *filter, unsigned char *ctx,
+                            unsigned int ctx_len);

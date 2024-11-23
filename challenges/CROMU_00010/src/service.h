@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 */
 
-
 #ifndef PAGESIZE
 #define PAGESIZE 4096
 #endif
@@ -34,4 +33,4 @@ THE SOFTWARE.
 
 #include "llist.h"
 
-#endif 
+#endif

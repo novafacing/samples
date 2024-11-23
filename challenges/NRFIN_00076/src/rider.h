@@ -18,32 +18,32 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef RIDER_H
 #define RIDER_H 1
 #include <stdint.h>
 
-typedef enum {SKIER, BOARDER} rider_t;
+typedef enum { SKIER, BOARDER } rider_t;
 
 typedef struct rider Rider;
 
-typedef void __attribute__((regparm(2))) (*rider_health_ins_fn)(Rider *, uint32_t);
+typedef void
+    __attribute__((regparm(2))) (*rider_health_ins_fn)(Rider *, uint32_t);
 
 struct rider {
-	uint32_t id;
-	rider_t r_type;					// SKIER or BOARDER
-	uint32_t energy_level;			// remaining energy
-	uint32_t initial_energy_level; 	// initial energy level
-	uint32_t trail_count;			// number of trails completed
-	uint32_t trail_distance;		// distance travelled on current trail
-	uint32_t health_code;
-	rider_health_ins_fn health_check;
-	Rider *next;
+  uint32_t id;
+  rider_t r_type;                 // SKIER or BOARDER
+  uint32_t energy_level;          // remaining energy
+  uint32_t initial_energy_level;  // initial energy level
+  uint32_t trail_count;           // number of trails completed
+  uint32_t trail_distance;        // distance travelled on current trail
+  uint32_t health_code;
+  rider_health_ins_fn health_check;
+  Rider *next;
 };
 
-#define RIDER_IO_ELEMENTS	4
-#define RIDER_IO_SZ 	(RIDER_IO_ELEMENTS * sizeof(uint32_t))
-
+#define RIDER_IO_ELEMENTS 4
+#define RIDER_IO_SZ (RIDER_IO_ELEMENTS * sizeof(uint32_t))
 
 int32_t rider_new(Rider **rider, uint32_t settings[3]);
 void rider_destroy(Rider **rider);

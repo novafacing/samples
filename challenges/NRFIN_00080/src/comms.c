@@ -18,70 +18,68 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
+#include "comms.h"
+
+#include <errno.h>
 #include <libcgc.h>
 #include <stdint.h>
-#include <errno.h>
+
 #include "libc.h"
 #include "memcmp.h"
 #include "memcpy.h"
 
-#include "comms.h"
-
-
 void session_append(Session **s_list, Session *s) {
-	Session *tmp = *s_list;
-	Session *prev = *s_list;
-	Session *new = calloc(sizeof(Session));
-	MALLOC_OK(new);
-	memcpy(new, s, sizeof(Session) - 2*sizeof(char *));
+  Session *tmp = *s_list;
+  Session *prev = *s_list;
+  Session *new = calloc(sizeof(Session));
+  MALLOC_OK(new);
+  memcpy(new, s, sizeof(Session) - 2 * sizeof(char *));
 
-	if (NULL == tmp) {
-		*s_list = new;
-	} else {
-		while (NULL != tmp) {
-			prev = tmp;
-			tmp = tmp->next;
-		}
-		prev->next = new;
-	}
+  if (NULL == tmp) {
+    *s_list = new;
+  } else {
+    while (NULL != tmp) {
+      prev = tmp;
+      tmp = tmp->next;
+    }
+    prev->next = new;
+  }
 }
 
 Session *session_remove(Session **s_list, Session *s) {
-	Session *tmp = *s_list;
-	Session *prev = *s_list;
-	while (NULL != tmp) {
+  Session *tmp = *s_list;
+  Session *prev = *s_list;
+  while (NULL != tmp) {
+    if (0 == memcmp(s->login.key, tmp->login.key, sizeof(tmp->login.key))) {
+      if (tmp == prev) {  // first node in list
+        *s_list = tmp->next;
+      } else {
+        prev->next = tmp->next;
+      }
 
-	    if (0 == memcmp(s->login.key, tmp->login.key, sizeof(tmp->login.key))) {
+      return tmp;
+    }
 
-	    	if (tmp == prev) { // first node in list
-	    		*s_list = tmp->next;
-	    	} else {
-	    		prev->next = tmp->next;
-	    	}
-	    	
-			return tmp;
-	    }
+    prev = tmp;
+    tmp = tmp->next;
+  }
 
-		prev = tmp;
-		tmp = tmp->next;
-	}
-
-	return NULL;
+  return NULL;
 }
 
 Session *session_get_by_username(Session *s_list, Session *s) {
-    Session *s_result = NULL;
-    Session *tmp = s_list;
-	while (NULL != tmp) {
-	    if (0 == memcmp(s->login.username, tmp->login.username, sizeof(tmp->login.username))) {
-	    	s_result = tmp;
-			break;
-	    }
-
-		tmp = tmp->next;
+  Session *s_result = NULL;
+  Session *tmp = s_list;
+  while (NULL != tmp) {
+    if (0 == memcmp(s->login.username, tmp->login.username,
+                    sizeof(tmp->login.username))) {
+      s_result = tmp;
+      break;
     }
-    return s_result;
-}
 
+    tmp = tmp->next;
+  }
+  return s_result;
+}

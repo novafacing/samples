@@ -25,138 +25,120 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
-#include "filesystem.h"
-#include "stdio.h"
-#include "string.h"
+
 #include "ctype.h"
+#include "filesystem.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 #define INITIALIZATION_DATA 0x4347C000
 
-// authenticates from the magic page.  Returns a security ID on success, or 0 on failure
+// authenticates from the magic page.  Returns a security ID on success, or 0 on
+// failure
 securityIdType authenticate(char *name, unsigned int token) {
+  int i;
+  int x;
+  int offset;
+  unsigned char tmpchar;
+  char userID[8];
+  unsigned int tmp_token;
+  securityIdType security_ID;
+  unsigned char *readPtr;
+  unsigned int maxEntries;
 
-int i;
-int x;
-int offset;
-unsigned char tmpchar;
-char userID[8];
-unsigned int tmp_token;
-securityIdType security_ID;
-unsigned char *readPtr;
-unsigned int maxEntries;
+  readPtr = (unsigned char *)INITIALIZATION_DATA;
+  maxEntries = 4096 / 32;
 
+  for (i = 0; i < maxEntries; ++i) {
+    offset = i * 32;
 
-	readPtr = (unsigned char *)INITIALIZATION_DATA;
-	maxEntries = 4096/32;
+    for (x = 0; x < 7; ++x) {
+      tmpchar = *(readPtr + offset + x);
+      tmpchar = (tmpchar % 26) + 'a';
+      userID[x] = tmpchar;
+    }
 
-	for (i = 0; i < maxEntries; ++i) {
+    userID[7] = 0;
 
-		offset = i * 32;
+    if (strncmp(name, userID, 7) == 0) {
+      tmp_token = 0;
 
-		for (x = 0; x < 7; ++x) {
+      for (x = 14; x < 28; ++x) {
+        tmp_token += *(unsigned char *)(readPtr + offset + x);
+      }
 
-			tmpchar = *(readPtr+offset+x);
-			tmpchar = (tmpchar % 26) + 'a';
-			userID[x] = tmpchar;
-		}
+      if (tmp_token == token) {
+        security_ID = *(unsigned int *)(readPtr + offset + 28);
 
-		userID[7] = 0;
+        // make sure none are negative
+        security_ID = security_ID & 0x7fffffff;
 
-		if (strncmp(name, userID, 7) == 0) {
-			
-			tmp_token = 0;
+        return security_ID;
+      }
+    }
+  }
 
-			for (x = 14; x < 28; ++x ) {
+  if (strcmp(name, "GUEST") == 0) {
+    if (token > 1 & token < 8 && token % 2 == 0) {
+      return token;
+    }
+  }
 
-				tmp_token += *(unsigned char *)(readPtr+offset+x);
-			}
-
-			if (tmp_token == token) {
-
-				security_ID = *(unsigned int *)(readPtr+offset+28);
-
-				// make sure none are negative
-				security_ID = security_ID & 0x7fffffff;
-
-				return security_ID;
-
-			}
-		}
-	}
-
-	if (strcmp(name, "GUEST") == 0) {
-
-		if ( token > 1 & token < 8 && token % 2 == 0 ) {
-		
-			return token;
-
-		}
-	}
-
-	return 0;
-
+  return 0;
 }
 
-int lookupName( char *name, securityIdType ID ) {
+int lookupName(char *name, securityIdType ID) {
+  int i;
+  int x;
+  int offset;
+  unsigned char tmpchar;
+  char userID[8];
+  securityIdType security_ID;
+  unsigned char *readPtr;
+  unsigned int maxEntries;
 
-int i;
-int x;
-int offset;
-unsigned char tmpchar;
-char userID[8];
-securityIdType security_ID;
-unsigned char *readPtr;
-unsigned int maxEntries;
+  if (name == 0) {
+    return -1;
+  }
 
-	if (name == 0) {
+  readPtr = (unsigned char *)INITIALIZATION_DATA;
+  maxEntries = 4096 / 32;
 
-		return -1;
+  for (i = 0; i < maxEntries; ++i) {
+    offset = i * 32;
 
-	}
+    security_ID = *(unsigned int *)(readPtr + offset + 28);
 
-	readPtr = (unsigned char *)INITIALIZATION_DATA;
-	maxEntries = 4096/32;
+    // make sure its not negative
+    security_ID = security_ID & 0x7fffffff;
 
-	for (i = 0; i < maxEntries; ++i) {
+    if (ID == security_ID) {
+      for (x = 0; x < 7; ++x) {
+        tmpchar = *(readPtr + offset + x);
+        tmpchar = (tmpchar % 26) + 'a';
+        userID[x] = tmpchar;
+      }
 
-		offset = i * 32;
+      userID[7] = 0;
 
-		security_ID = *(unsigned int *)(readPtr+offset+28);
+      strcpy(name, userID);
 
-		// make sure its not negative
-		security_ID = security_ID & 0x7fffffff;
+      return 0;
 
-		if ( ID == security_ID ) {
+    }  // if ( ID == security_ID )
 
-			for (x = 0; x < 7; ++x) {
+  }  // for
 
-				tmpchar = *(readPtr+offset+x);
-				tmpchar = (tmpchar % 26) + 'a';
-				userID[x] = tmpchar;
-			}
+  if (ID > 2 && ID < 8) {
+    strcpy(name, "GUEST");
+    name[5] = ID + '0';
+    name[6] = 0;
 
-			userID[7] = 0;
+    return 0;
+  }
 
-			strcpy(name, userID);
-
-			return 0;
-
-		} // if ( ID == security_ID )
-
-
-	} // for
-
-	if (ID > 2 && ID < 8 ) {
-
-		strcpy(name, "GUEST");
-		name[5] = ID + '0';
-		name[6] = 0;
-
-		return 0;
-	}
-
-	// if we get here, the ID wasn't found
-	return -1;
+  // if we get here, the ID wasn't found
+  return -1;
 }

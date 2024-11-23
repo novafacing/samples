@@ -24,17 +24,17 @@ THE SOFTWARE.
 
 */
 struct pcm_header {
-    unsigned int ID;
-    unsigned int DataSize;
-    unsigned int NumSamples;
+  unsigned int ID;
+  unsigned int DataSize;
+  unsigned int NumSamples;
 };
 
 #define PCM 0x204d4350
 
 // error codes
-#define READ_ERROR          1
-#define INVALID_PCM_LEN     2
-#define ALLOC_FAIL          3
-#define INVALID_PCM_FMT     4
-#define TRANSMIT_FAILED     5
+#define READ_ERROR 1
+#define INVALID_PCM_LEN 2
+#define ALLOC_FAIL 3
+#define INVALID_PCM_FMT 4
+#define TRANSMIT_FAILED 5
 #define UNABLE_TO_PARSE_PCM 6

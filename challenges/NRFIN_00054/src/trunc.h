@@ -43,4 +43,3 @@ double float_trunc(double d);
 struct vector vector_trunc(struct vector v);
 
 #endif /* TRUNC_H_ */
-

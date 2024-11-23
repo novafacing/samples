@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef SHELL_H
 #define SHELL_H
 #include <libcgc.h>
+
 #include "stdint.h"
 
 #define MAX_CMD_HISTORY (16)
@@ -33,15 +34,15 @@ THE SOFTWARE.
 #define MAX_ARGS (8)
 #define MAX_ARGLEN (63)
 typedef struct _command {
-	uint32_t argc;
-	char argv[8][64];
+  uint32_t argc;
+  char argv[8][64];
 } Command, *pCommand;
 
 typedef struct _env {
-        uint8_t NumCommandHistory;
-        char CommandHistory[MAX_CMD_HISTORY][MAX_CMD_LEN];
-        char User[32];
-        char Group[32];
+  uint8_t NumCommandHistory;
+  char CommandHistory[MAX_CMD_HISTORY][MAX_CMD_LEN];
+  char User[32];
+  char Group[32];
 } environment;
 
 void PrintPrompt(void);

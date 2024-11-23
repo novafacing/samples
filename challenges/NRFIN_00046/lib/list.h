@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIST_H
 #define LIST_H 1
@@ -27,7 +27,7 @@
  * Doubly-linked list
  *
  * This linked list has an empty head node in the initial list.
- * 
+ *
  * The list stores a count of the nodes it contains in 'length'
  */
 
@@ -39,15 +39,15 @@
 typedef void (*nodeDataFreeFn)(void *);
 
 struct node {
-	void *data;
-	struct node *next;
-	struct node *prev;
+  void *data;
+  struct node *next;
+  struct node *prev;
 };
 
 struct list {
-	unsigned int length;
-	struct node dummy;
-	nodeDataFreeFn ndf;
+  unsigned int length;
+  struct node dummy;
+  nodeDataFreeFn ndf;
 };
 
 /**
@@ -59,7 +59,7 @@ struct list {
 struct node *list_create_node(void *data);
 
 /**
- * Destroy the node and its data element. 
+ * Destroy the node and its data element.
  *  If node is still in the list, remove from list first.
  *
  * @param l List containing node n
@@ -162,7 +162,7 @@ unsigned int list_length(struct list *l);
  * @param data Pointer to data element to pass into predicate fn
  * @return VA of node or NULL if not found
  */
-struct node *list_find_node_with_data(struct list *l, unsigned char (*predFn)(const void *, void *), void *data);
-
+struct node *list_find_node_with_data(
+    struct list *l, unsigned char (*predFn)(const void *, void *), void *data);
 
 #endif

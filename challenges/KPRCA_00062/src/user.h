@@ -23,9 +23,9 @@
 #ifndef USER_H_
 #define USER_H_
 
-#include "list.h"
 #include "bool.h"
 #include "calendar.h"
+#include "list.h"
 
 #define MAX_USERNAME 128
 #define MAX_ABOUT 512
@@ -34,15 +34,15 @@ typedef struct user user_t;
 typedef struct user_list user_list_t;
 
 struct user {
-    int id;
-    char username[MAX_USERNAME];
-    char about[MAX_ABOUT];
-    calendar_t calendar;
+  int id;
+  char username[MAX_USERNAME];
+  char about[MAX_ABOUT];
+  calendar_t calendar;
 };
 
 struct user_list {
-    user_list_t *next;
-    user_t *user;
+  user_list_t *next;
+  user_t *user;
 };
 
 user_t *create_user(char *username, char *about);
@@ -53,9 +53,10 @@ void print_simple(void *_user);
 void clear_list(user_list_t **users);
 
 /* List Functions */
-user_t *find_user_from_list(char *buf, size_t buflen, int *recv_status, user_list_t *list, int num_users);
-bool add_user_to_list(char *buf, size_t buflen, int *recv_status, user_list_t *all_users, user_list_t **list);
+user_t *find_user_from_list(char *buf, size_t buflen, int *recv_status,
+                            user_list_t *list, int num_users);
+bool add_user_to_list(char *buf, size_t buflen, int *recv_status,
+                      user_list_t *all_users, user_list_t **list);
 void print_user_list(char *msg, user_list_t *list);
 
 #endif
-

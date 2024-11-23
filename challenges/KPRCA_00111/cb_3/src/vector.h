@@ -25,20 +25,19 @@
 #include <cstdlib.h>
 #include <stdint.h>
 
-class vector
-{
-  public:
-    int len;
-    int cap;
-    void** data;
-    vector(int len = 64);
-    bool set(int idx, void* datum);
-    void add(void* datum);
-    void* get(int idx);
-    int length(void);
-    bool contains(void* e);
-    void remove(int idx);
-    int index_of(void* e);
+class vector {
+ public:
+  int len;
+  int cap;
+  void** data;
+  vector(int len = 64);
+  bool set(int idx, void* datum);
+  void add(void* datum);
+  void* get(int idx);
+  int length(void);
+  bool contains(void* e);
+  void remove(int idx);
+  int index_of(void* e);
 
-    const static int NOT_FOUND = UINT32_MAX;
+  const static int NOT_FOUND = UINT32_MAX;
 };

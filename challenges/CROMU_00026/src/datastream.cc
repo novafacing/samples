@@ -25,66 +25,51 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CDataStream::CDataStream()
-    : m_bitpos( 0 ), m_bytesRxCount( 0 )
-{
+CDataStream::CDataStream() : m_bitpos(0), m_bytesRxCount(0) {}
 
+CDataStream::~CDataStream() {}
+
+void CDataStream::Setup(int32_t socketNumber) {
+  m_socketNumber = socketNumber;
+  m_bitpos = 0;
+  m_buffer = 0;
 }
 
-CDataStream::~CDataStream()
-{
+uint8_t CDataStream::ReadBit(void) {
+  uint8_t value = 0;
 
+  if (m_bitpos >= 8) RefillBuffer();
+
+  value = (m_buffer & (1 << (7 - m_bitpos))) >> (7 - m_bitpos);
+
+  m_bitpos++;
+
+  return (value);
 }
 
-void CDataStream::Setup( int32_t socketNumber )
-{
-    m_socketNumber = socketNumber;
-    m_bitpos = 0;
-    m_buffer = 0;
+uint8_t CDataStream::ReadByte(void) {
+  uint8_t value = 0;
+  uint8_t idx;
+
+  for (idx = 0; idx < 8; idx++) value |= (ReadBit() << (7 - idx));
+
+  return (value);
 }
 
-uint8_t CDataStream::ReadBit( void )
-{
-    uint8_t value = 0;
+void CDataStream::RefillBuffer(void) {
+  int32_t retvalue;
+  uint8_t value;
+  size_t rx_count = 1;
 
-    if ( m_bitpos >= 8 )
-        RefillBuffer();
+  if (m_bytesRxCount >= MAX_BYTES_RECEIVED) _terminate(0);
 
-    value = (m_buffer & (1<<(7-m_bitpos))) >> (7-m_bitpos);
+  if ((retvalue = receive(m_socketNumber, &value, 1, &rx_count)) != 0)
+    _terminate(-1);
 
-    m_bitpos++;
+  if (rx_count != 1) _terminate(-1);
 
-    return (value);
-}
+  m_bytesRxCount++;
 
-uint8_t CDataStream::ReadByte( void )
-{
-    uint8_t value = 0;
-    uint8_t idx;
-
-    for ( idx = 0; idx < 8; idx++ )
-        value |= (ReadBit() << (7-idx));
-
-    return (value);
-}
-
-void CDataStream::RefillBuffer( void )
-{
-    int32_t retvalue;
-    uint8_t value;
-    size_t rx_count = 1;
-
-    if ( m_bytesRxCount >= MAX_BYTES_RECEIVED )
-        _terminate( 0 );
-
-    if  ( (retvalue = receive( m_socketNumber, &value, 1, &rx_count )) != 0 )
-        _terminate( -1 );
-
-    if ( rx_count != 1 )
-        _terminate( -1 );
-
-    m_bytesRxCount++;
-
-    m_buffer = value;
-    m_bitpos = 0;
+  m_buffer = value;
+  m_bitpos = 0;
 }

@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef PAGE_H
 #define PAGE_H
 
-typedef struct sPageVar{
+typedef struct sPageVar {
   char name[64];
   char *value;
   struct sPageVar *next;
@@ -39,4 +39,4 @@ int InteractWithPage(char *page, int page_size, char *override_data);
 int ServePage(char *page, int page_size);
 int ServePageWithOverride(char *page, int page_size, PageVar *override_list);
 
-#endif // PAGE_H
+#endif  // PAGE_H

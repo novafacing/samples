@@ -18,12 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
 
 #include <libcgc.h>
+
 #include "libc.h"
 
 #define SZ_BUF_RECV 65535
@@ -38,15 +39,8 @@
 
 #define SZ_INDEX_PATH 16
 
-
-int canonicalize_path(char * cp, char * rp, size_t rp_len);
-int request_document(char * path, size_t recusion_depth);
+int canonicalize_path(char* cp, char* rp, size_t rp_len);
+int request_document(char* path, size_t recusion_depth);
 int main(void);
 
-
 #endif
-
-
-
-
-

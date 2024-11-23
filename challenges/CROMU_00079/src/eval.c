@@ -24,16 +24,23 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "eval.h"
+
+#include <libcgc.h>
+
 #include "func.h"
 #include "lexer.h"
+#include "protocol.h"
 #include "stack.h"
 #include "string.h"
-#include "protocol.h"
 
-#define POP_POP second = stack_pop_sint32(stk); first = stack_pop_sint32(stk)
-#define POP_POP_OP(op) POP_POP; stack_push_sint32(stk, first op second); break;
+#define POP_POP                   \
+  second = stack_pop_sint32(stk); \
+  first = stack_pop_sint32(stk)
+#define POP_POP_OP(op)                     \
+  POP_POP;                                 \
+  stack_push_sint32(stk, first op second); \
+  break;
 
 sint32 eval(compiler* clr) {
   operation* op = clr->find_list;
@@ -41,30 +48,30 @@ sint32 eval(compiler* clr) {
 
   do {
     sint32 first, second;
-    
+
     switch (op->type) {
-    case OP_PUSH_SINT32:
-      stack_push_sint32(stk, op->sint32_value);
-      break;
-    case OP_ADD:
-      POP_POP_OP(+);
-    case OP_SUBTRACT:
-      POP_POP_OP(-);
-    case OP_MULTIPLY:
-      POP_POP_OP(*);
-    case OP_DIVIDE:
-      POP_POP_OP(/);
-    case OP_PUSH_CHARACTER_LITERAL:
-      stack_push_str(stk, op->character_literal_value);
-      break;
-    case OP_FUNCALL:
-      func_dispatch(stk, op->function_name);
-      break;
-    case OP_NOP:
-      break;
-    default:
-      protocol_send_str("eval error, unrecognized operation");
-      _terminate(-1);
+      case OP_PUSH_SINT32:
+        stack_push_sint32(stk, op->sint32_value);
+        break;
+      case OP_ADD:
+        POP_POP_OP(+);
+      case OP_SUBTRACT:
+        POP_POP_OP(-);
+      case OP_MULTIPLY:
+        POP_POP_OP(*);
+      case OP_DIVIDE:
+        POP_POP_OP(/);
+      case OP_PUSH_CHARACTER_LITERAL:
+        stack_push_str(stk, op->character_literal_value);
+        break;
+      case OP_FUNCALL:
+        func_dispatch(stk, op->function_name);
+        break;
+      case OP_NOP:
+        break;
+      default:
+        protocol_send_str("eval error, unrecognized operation");
+        _terminate(-1);
     }
 
     op = op->next;

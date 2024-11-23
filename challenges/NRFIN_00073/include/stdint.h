@@ -18,18 +18,17 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STDINT_H
 #define STDINT_H 1
 
-#define	false 0
-#define	true 1
-
+#define false 0
+#define true 1
 
 typedef unsigned char uint8_t;
 typedef uint8_t byte_t;
-typedef unsigned short uint16_t; 
+typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 

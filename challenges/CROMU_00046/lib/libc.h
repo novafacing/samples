@@ -28,7 +28,7 @@ THE SOFTWARE.
 int put(char *string);
 void bzero(char *what, int howmany);
 int recvUntil(int fd, char *buf, int max, char delim);
-int strlen(char * string);
+int strlen(char *string);
 unsigned int atoi(char *number);
 char *itoa(unsigned int number);
 int memcpy(char *dst, char *src, int size);

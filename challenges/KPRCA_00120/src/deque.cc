@@ -21,34 +21,29 @@
  *
  */
 #include "deque.h"
+
+#include <cstdio.h>
 #include <cstdlib.h>
 #include <cstring.h>
-#include <cstdio.h>
 
-Deque::Deque()
-{
-    idx_0_ = 0;
-    size_ = 0;
-    cap_ = 8;
-    tickets_ = new Ticket*[cap_];
+Deque::Deque() {
+  idx_0_ = 0;
+  size_ = 0;
+  cap_ = 8;
+  tickets_ = new Ticket *[cap_];
 }
 
-Deque::~Deque()
-{
-    for (int i = 0; i < size_; i++)
-    {
-        int idx = (idx_0_ + i) % cap_;
-        Ticket::DeleteTicket(tickets_[idx]);
-    }
-    delete tickets_;
+Deque::~Deque() {
+  for (int i = 0; i < size_; i++) {
+    int idx = (idx_0_ + i) % cap_;
+    Ticket::DeleteTicket(tickets_[idx]);
+  }
+  delete tickets_;
 }
 
-Ticket* Deque::Find(uint32_t ID)
-{
-  for (size_t i = 0; i < cap_; i++)
-  {
-    if (tickets_[i] && tickets_[i]->id() == ID)
-    {
+Ticket *Deque::Find(uint32_t ID) {
+  for (size_t i = 0; i < cap_; i++) {
+    if (tickets_[i] && tickets_[i]->id() == ID) {
       return tickets_[i];
     }
   }
@@ -56,105 +51,82 @@ Ticket* Deque::Find(uint32_t ID)
   return nullptr;
 }
 
-bool Deque::Remove(Ticket* ticket)
-{
-  return false;
+bool Deque::Remove(Ticket *ticket) { return false; }
+
+void Deque::Append(Ticket *ticket) {
+  if (!ticket) return;
+
+  if (size_ == cap_) Expand();
+
+  uint32_t idx_f = (idx_0_ + size_) % cap_;
+  tickets_[idx_f] = ticket;
+  ++size_;
 }
 
-void Deque::Append(Ticket *ticket)
-{
-    if (!ticket)
-        return;
+void Deque::AppendLeft(Ticket *ticket) {
+  if (!ticket) return;
 
-    if (size_ == cap_)
-        Expand();
+  if (size_ == cap_) Expand();
 
-    uint32_t idx_f = (idx_0_ + size_) % cap_;
-    tickets_[idx_f] = ticket;
-    ++size_;
+  idx_0_ = (idx_0_ + (cap_ - 1)) % cap_;
+  tickets_[idx_0_] = ticket;
+  ++size_;
 }
 
-void Deque::AppendLeft(Ticket *ticket)
-{
-    if (!ticket)
-        return;
+Ticket *Deque::Pop() {
+  if (!size_) return nullptr;
 
-    if (size_ == cap_)
-        Expand();
-
-    idx_0_ = (idx_0_ + (cap_ - 1)) % cap_;
-    tickets_[idx_0_] = ticket;
-    ++size_;
+  uint32_t idx_f = (idx_0_ + (size_ - 1)) % cap_;
+  Ticket *ticket = tickets_[idx_f];
+  --size_;
+  TryShrink();
+  return ticket;
 }
 
-Ticket *Deque::Pop()
-{
-    if (!size_)
-        return nullptr;
-
-    uint32_t idx_f = (idx_0_ + (size_ - 1)) % cap_;
-    Ticket *ticket = tickets_[idx_f];
-    --size_;
-    TryShrink();
-    return ticket;
+Ticket *Deque::PopLeft() {
+  if (!size_) return nullptr;
+  Ticket *ticket = tickets_[idx_0_];
+  idx_0_ = (idx_0_ + 1) % cap_;
+  --size_;
+  TryShrink();
+  return ticket;
 }
 
-Ticket *Deque::PopLeft()
-{
-    if (!size_)
-      return nullptr;
-    Ticket *ticket = tickets_[idx_0_];
-    idx_0_ = (idx_0_ + 1) % cap_;
-    --size_;
-    TryShrink();
-    return ticket;
+uint32_t Deque::Count() { return size_; }
+
+void Deque::Expand() {
+  uint32_t new_cap = cap_ << 1;
+  Ticket **new_array = new Ticket *[new_cap];
+
+  if (idx_0_ + size_ > cap_) {
+    memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
+    memcpy(&new_array[cap_ - idx_0_], tickets_,
+           sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
+  } else {
+    memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
+  }
+  delete tickets_;
+  tickets_ = new_array;
+  idx_0_ = 0;
+  cap_ = new_cap;
 }
 
-uint32_t Deque::Count()
-{
-    return size_;
-}
+void Deque::TryShrink() {
+  if (size_ >= (cap_ >> 1) || cap_ <= 8) return;
 
-void Deque::Expand()
-{
-    uint32_t new_cap = cap_ << 1;
-    Ticket **new_array = new Ticket*[new_cap];
+  uint32_t new_cap = cap_ >> 1;
+  Ticket **new_array = new Ticket *[new_cap];
 
-    if (idx_0_ + size_ > cap_)
-    {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
-        memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
-    }
-    else
-    {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
-    }
-    delete tickets_;
-    tickets_ = new_array;
-    idx_0_ = 0;
-    cap_ = new_cap;
-}
+  if (idx_0_ + size_ > cap_) {
+    memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
+    memcpy(&new_array[cap_ - idx_0_], tickets_,
+           sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
+  } else {
+    memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
+  }
 
-void Deque::TryShrink()
-{
-    if (size_ >= (cap_ >> 1) || cap_ <= 8)
-        return;
-
-    uint32_t new_cap = cap_ >> 1;
-    Ticket **new_array = new Ticket*[new_cap];
-
-    if (idx_0_ + size_ > cap_)
-    {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
-        memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
-    }
-    else
-    {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
-    }
-
-    delete tickets_;
-    tickets_ = new_array;
-    idx_0_ = 0;
-    cap_ = new_cap;
+  delete tickets_;
+  tickets_ = new_array;
+  idx_0_ = 0;
+  cap_ = new_cap;
 }

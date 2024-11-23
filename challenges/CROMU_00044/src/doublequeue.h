@@ -28,136 +28,104 @@ THE SOFTWARE.
 
 class CDoubleItemLink;
 
-class CDoubleItemList
-{
-public:
-    CDoubleItemList();
-    ~CDoubleItemList();
+class CDoubleItemList {
+ public:
+  CDoubleItemList();
+  ~CDoubleItemList();
 
-    void DeleteAll();
+  void DeleteAll();
 
-    CDoubleItemLink *GetFirst( void )
-    {
-        return (m_pFirst);
-    }
+  CDoubleItemLink *GetFirst(void) { return (m_pFirst); }
 
-    CDoubleItemLink *GetLast( void )
-    {
-        return (m_pLast);
-    }
+  CDoubleItemLink *GetLast(void) { return (m_pLast); }
 
-    CDoubleItemLink *GetNext( CDoubleItemLink *pItem );
-    CDoubleItemLink *GetPrev( CDoubleItemLink *pItem );
+  CDoubleItemLink *GetNext(CDoubleItemLink *pItem);
+  CDoubleItemLink *GetPrev(CDoubleItemLink *pItem);
 
-    CDoubleItemLink *RemoveFirst( void );
-    CDoubleItemLink *RemoveLast( void );
+  CDoubleItemLink *RemoveFirst(void);
+  CDoubleItemLink *RemoveLast(void);
 
-    CDoubleItemLink *RemoveItem( CDoubleItemLink *pItem );
+  CDoubleItemLink *RemoveItem(CDoubleItemLink *pItem);
 
-    CDoubleItemLink *AddFirst( CDoubleItemLink *pItem );
-    CDoubleItemLink *AddAfter( CDoubleItemLink *pPrev, CDoubleItemLink *pItem );
-    CDoubleItemLink *AddLast( CDoubleItemLink *pItem );
+  CDoubleItemLink *AddFirst(CDoubleItemLink *pItem);
+  CDoubleItemLink *AddAfter(CDoubleItemLink *pPrev, CDoubleItemLink *pItem);
+  CDoubleItemLink *AddLast(CDoubleItemLink *pItem);
 
-protected:
-    CDoubleItemLink *m_pFirst;
-    CDoubleItemLink *m_pLast;
+ protected:
+  CDoubleItemLink *m_pFirst;
+  CDoubleItemLink *m_pLast;
 };
 
-class CDoubleItemLink
-{
-friend class CDoubleItemList;
+class CDoubleItemLink {
+  friend class CDoubleItemList;
 
-public:
-    CDoubleItemLink();
-    ~CDoubleItemLink();
+ public:
+  CDoubleItemLink();
+  ~CDoubleItemLink();
 
-    void Unlink( void );
+  void Unlink(void);
 
-private:
-    void AddList( CDoubleItemList *pList )
-    {
-        m_pList = pList;
-    }
+ private:
+  void AddList(CDoubleItemList *pList) { m_pList = pList; }
 
-    void ClearList( void )
-    {
-        m_pList = NULL;
-    }
+  void ClearList(void) { m_pList = NULL; }
 
-private:
-    CDoubleItemLink *m_pNext;
-    CDoubleItemLink *m_pPrev;
-    CDoubleItemList *m_pList;
+ private:
+  CDoubleItemLink *m_pNext;
+  CDoubleItemLink *m_pPrev;
+  CDoubleItemList *m_pList;
 };
 
-class CDoubleQueue : public CDoubleItemList
-{
-public:
-    CDoubleQueue();
-    ~CDoubleQueue();
+class CDoubleQueue : public CDoubleItemList {
+ public:
+  CDoubleQueue();
+  ~CDoubleQueue();
 
-    uint32_t GetCount( void ) const
-    {
-        return (m_itemCount);
-    }
+  uint32_t GetCount(void) const { return (m_itemCount); }
 
-    CDoubleItemLink *PopFront( void )
-    {
-        CDoubleItemLink *pItem;
+  CDoubleItemLink *PopFront(void) {
+    CDoubleItemLink *pItem;
 
-        if ( (pItem = RemoveFirst()) )
-            m_itemCount--;
+    if ((pItem = RemoveFirst())) m_itemCount--;
 
-        return (pItem);
-    }
+    return (pItem);
+  }
 
-    CDoubleItemLink *PopBack( void )
-    {
-        CDoubleItemLink *pItem;
+  CDoubleItemLink *PopBack(void) {
+    CDoubleItemLink *pItem;
 
-        if ( (pItem = RemoveLast()) )
-            m_itemCount--;
+    if ((pItem = RemoveLast())) m_itemCount--;
 
-        return (pItem);
-    }
+    return (pItem);
+  }
 
-    void PushFront( CDoubleItemLink *pItem )
-    {
-        if ( AddFirst( pItem ) )
-            m_itemCount++;
-    }
+  void PushFront(CDoubleItemLink *pItem) {
+    if (AddFirst(pItem)) m_itemCount++;
+  }
 
-    void PushBack( CDoubleItemLink *pItem )
-    {
-        if ( AddLast( pItem ) )
-            m_itemCount++;
-    }
+  void PushBack(CDoubleItemLink *pItem) {
+    if (AddLast(pItem)) m_itemCount++;
+  }
 
-    CDoubleItemLink *GetFront( void )
-    {
-        return (m_pFirst);
-    }
+  CDoubleItemLink *GetFront(void) { return (m_pFirst); }
 
-    CDoubleItemLink *GetBack( void )
-    {
-        return (m_pLast);
-    }
+  CDoubleItemLink *GetBack(void) { return (m_pLast); }
 
-    bool DeleteItem( CDoubleItemLink *pItem )
-    {
-        CDoubleItemLink *pRemovedItem = CDoubleItemList::RemoveItem( pItem );
+  bool DeleteItem(CDoubleItemLink *pItem) {
+    CDoubleItemLink *pRemovedItem = CDoubleItemList::RemoveItem(pItem);
 
-        if ( pRemovedItem )
-            m_itemCount--;
-        else
-            return (false);
+    if (pRemovedItem)
+      m_itemCount--;
+    else
+      return (false);
 
-        delete pItem;
+    delete pItem;
 
-        return (true);
-    }
-private:
-    uint32_t m_itemCount;
+    return (true);
+  }
+
+ private:
+  uint32_t m_itemCount;
 };
 
-#endif // __DOUBLE_QUEUE_H__
+#endif  // __DOUBLE_QUEUE_H__

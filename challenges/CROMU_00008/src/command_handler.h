@@ -28,49 +28,45 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-#define MAX_COMMAND_LENGTH      (32)
-#define MAX_USER_NAME           (8)
-#define MAX_PASSWORD            (8)
+#define MAX_COMMAND_LENGTH (32)
+#define MAX_USER_NAME (8)
+#define MAX_PASSWORD (8)
 
-#define CMD_FLAG_NOAUTH         (0)
-#define CMD_FLAG_AUTH           (1)
-#define CMD_FLAG_EXIT           (2)
+#define CMD_FLAG_NOAUTH (0)
+#define CMD_FLAG_AUTH (1)
+#define CMD_FLAG_EXIT (2)
 
-#define USER_STATE_NOAUTH       (0)
-#define USER_STATE_AUTH         (1)
+#define USER_STATE_NOAUTH (0)
+#define USER_STATE_AUTH (1)
 
-
-typedef struct _USER_STATE_STRUCT
-{
-    uint32_t    state;
+typedef struct _USER_STATE_STRUCT {
+  uint32_t state;
 } tUserState;
 
 // Command Function Pointer type
-typedef int8_t (*fpCommandHandler)( uint8_t *pszCommandString, tUserState *pState );
+typedef int8_t (*fpCommandHandler)(uint8_t *pszCommandString,
+                                   tUserState *pState);
 
-
-typedef struct _COMMAND_HANDLER_TABLE
-{
-    uint8_t szCommand[MAX_COMMAND_LENGTH+1];
-    fpCommandHandler pCmdHandler;
-    uint8_t flags;
+typedef struct _COMMAND_HANDLER_TABLE {
+  uint8_t szCommand[MAX_COMMAND_LENGTH + 1];
+  fpCommandHandler pCmdHandler;
+  uint8_t flags;
 } tCommandHandlerTable;
 
-
 // User handlers
-void init_user( tUserState *pState );
+void init_user(tUserState *pState);
 
 // Parses a command string
-int8_t parse_command( uint8_t *pszCommandLine, tUserState *pState );
+int8_t parse_command(uint8_t *pszCommandLine, tUserState *pState);
 
 // Command Handlers
-int8_t command_insert( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_remove( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_update( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_print( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_find( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_login( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_logout( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_exit( uint8_t *pszCommandString, tUserState *pState );
+int8_t command_insert(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_remove(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_update(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_print(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_find(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_login(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_logout(uint8_t *pszCommandString, tUserState *pState);
+int8_t command_exit(uint8_t *pszCommandString, tUserState *pState);
 
-#endif // __COMMAND_HANDLER_H__
+#endif  // __COMMAND_HANDLER_H__

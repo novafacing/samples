@@ -24,9 +24,10 @@ THE SOFTWARE.
 
 */
 #ifndef USER_H
-#define USER_H 
+#define USER_H
 
 #include <libcgc.h>
+
 #include "stdint.h"
 
 #define MAX_USERS (128)
@@ -34,11 +35,11 @@ THE SOFTWARE.
 #define PIN_LEN (5)
 #define ACCESS_CODE_LEN (31)
 typedef struct _user {
-	char Username[32];
-	char FirstName[32];
-	char LastName[32];
-	char Pin[PIN_LEN+1];
-	char AccessCode[ACCESS_CODE_LEN+1];
+  char Username[32];
+  char FirstName[32];
+  char LastName[32];
+  char Pin[PIN_LEN + 1];
+  char AccessCode[ACCESS_CODE_LEN + 1];
 } User, *pUser;
 
 uint8_t FindUsername(char *Username);

@@ -23,12 +23,12 @@
 #pragma once
 #include "audiotrack.h"
 
-class FxReverb
-{
-public:
-    FxReverb(unsigned int delay);
-    void apply(AudioTrack &) const;
-private:
-    void apply(AudioStream &) const;
-    unsigned int delay;
+class FxReverb {
+ public:
+  FxReverb(unsigned int delay);
+  void apply(AudioTrack &) const;
+
+ private:
+  void apply(AudioStream &) const;
+  unsigned int delay;
 };

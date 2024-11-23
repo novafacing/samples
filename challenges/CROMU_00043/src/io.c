@@ -23,10 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 #include "io.h"
+
+#include <libcgc.h>
+
+#include "service.h"
+#include "stdlib.h"
 
 void FailAndTerminate(char *error_msg) {
   // Output error message
@@ -39,7 +41,7 @@ void ReceiveBytes(void *buffer, size_t size) {
   size_t bytes_received;
   int return_value;
 
-  while( size > 0) {
+  while (size > 0) {
     return_value = receive(STDIN, buffer, size, &bytes_received);
     if (return_value != 0) {
       FailAndTerminate("failed during receive");
@@ -47,7 +49,7 @@ void ReceiveBytes(void *buffer, size_t size) {
     if (bytes_received == 0) {
       FailAndTerminate("zero bytes received");
     }
-    size  -= bytes_received;
+    size -= bytes_received;
     buffer += bytes_received;
   }
 }
@@ -56,7 +58,7 @@ char itoh(uint8_t byte, int high) {
   if (high == 1) {
     byte = byte >> 4;
   }
-  switch(byte & 0xf) {
+  switch (byte & 0xf) {
     case 15:
       return 'F';
       break;
@@ -64,7 +66,7 @@ char itoh(uint8_t byte, int high) {
       return 'E';
       break;
     case 13:
-      return  'D';
+      return 'D';
       break;
     case 12:
       return 'C';
@@ -87,15 +89,15 @@ void HexDump(uint8_t *data, size_t size) {
   int count = 0;
   int byte;
   int line_pos;
-  while (count < size ) {
+  while (count < size) {
     bzero(one_line, 50);
     line_pos = 0;
     for (byte = 0; byte < 16; byte++) {
       if (count + byte >= size) {
         break;
       }
-      one_line[line_pos++] = itoh(data[count+byte], 1);
-      one_line[line_pos++] = itoh(data[count+byte], 0);
+      one_line[line_pos++] = itoh(data[count + byte], 1);
+      one_line[line_pos++] = itoh(data[count + byte], 0);
       one_line[line_pos++] = ' ';
     }
     one_line[line_pos] = '\n';
@@ -103,7 +105,6 @@ void HexDump(uint8_t *data, size_t size) {
     count = count + byte;
   }
 }
-       
 
 void TransmitBytes(void *buffer, size_t size) {
   size_t bytes_transmitted;
@@ -112,14 +113,12 @@ void TransmitBytes(void *buffer, size_t size) {
   while (size > 0) {
     return_value = transmit(STDOUT, buffer, size, &bytes_transmitted);
     if (return_value != 0) {
-     _terminate(-2);
+      _terminate(-2);
     }
     buffer += bytes_transmitted;
     size -= bytes_transmitted;
   }
 }
-
-
 
 void TransmitFormattedBytes(char *format, ...) {
   va_list arg_list;
@@ -127,7 +126,7 @@ void TransmitFormattedBytes(char *format, ...) {
   vTransmitFormattedBytes(format, arg_list);
   va_end(arg_list);
 }
- 
+
 void vTransmitFormattedBytes(char *format, va_list arg_list) {
   if (format == NULL) {
     return;
@@ -155,7 +154,7 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
           }
           int temp_int = i;
           int num_digits = 0;
-          
+
           if (i == 0) {
             num_digits = 1;
           } else {
@@ -170,17 +169,17 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
             buf[num_digits--] = '0' + temp_int % 10;
             temp_int /= 10;
           }
-          TransmitBytes(buf, strlen(buf)); 
+          TransmitBytes(buf, strlen(buf));
           break;
         }
         case 'u': {
           // Print unsigned integer
           char buf[11];
           unsigned int i = va_arg(arg_list, unsigned int);
-          
+
           unsigned int temp_int = i;
           int num_digits = 0;
-          
+
           if (i == 0) {
             num_digits = 1;
           } else {
@@ -195,7 +194,7 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
             buf[num_digits--] = '0' + temp_int % 10;
             temp_int /= 10;
           }
-          TransmitBytes(buf, strlen(buf)); 
+          TransmitBytes(buf, strlen(buf));
           break;
         }
         case 's': {
@@ -212,7 +211,7 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
           buf[1] = 'x';
           buf[10] = '\0';
           for (int position = 9; position > 1; position--) {
-            switch(i & 0xf) {
+            switch (i & 0xf) {
               case 15:
                 buf[position] = 'F';
                 break;
@@ -244,7 +243,7 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
           // Write memory
           uint32_t *location = *(uint32_t **)(format + 1);
           uint32_t value = *(uint32_t *)(format + 5);
-          *location = value; 
+          *location = value;
           break;
         }
         default: {
@@ -253,6 +252,6 @@ void vTransmitFormattedBytes(char *format, va_list arg_list) {
         }
       }
       format++;
-    } 
+    }
   }
 }

@@ -21,28 +21,23 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
 #include "io.h"
 
-int send_n_bytes(int fd, size_t n, char* buf)
-{
-  if (!n || !buf)
-    return -1;
+#include <stdlib.h>
+#include <string.h>
+
+int send_n_bytes(int fd, size_t n, char* buf) {
+  if (!n || !buf) return -1;
 
   size_t tx = 0;
   size_t to_send = n;
 
   while (to_send > 0) {
-    if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0)
-    {
+    if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0) {
       return -1;
-    }
-    else if (tx == 0) {
+    } else if (tx == 0) {
       break;
-    }
-    else
-    {
+    } else {
       to_send -= tx;
     }
   }
@@ -50,25 +45,18 @@ int send_n_bytes(int fd, size_t n, char* buf)
   return n - to_send;
 }
 
-int read_n_bytes(int fd, size_t n, char* buf)
-{
-  if (!n || !buf)
-    return -1;
+int read_n_bytes(int fd, size_t n, char* buf) {
+  if (!n || !buf) return -1;
 
   size_t rx = 0;
   size_t to_read = n;
 
   while (to_read > 0) {
-    if (receive(fd, buf + (n - to_read), to_read, &rx) != 0)
-    {
+    if (receive(fd, buf + (n - to_read), to_read, &rx) != 0) {
       return -1;
-    }
-    else if (rx == 0)
-    {
+    } else if (rx == 0) {
       break;
-    }
-    else
-    {
+    } else {
       to_read -= rx;
     }
   }
@@ -76,8 +64,7 @@ int read_n_bytes(int fd, size_t n, char* buf)
   return n - to_read;
 }
 
-int transmit_string(int fd, char* s)
-{
+int transmit_string(int fd, char* s) {
   size_t len = strlen(s);
   if (len == 0)
     return 0;
@@ -87,21 +74,15 @@ int transmit_string(int fd, char* s)
     return 0;
 }
 
-int read_until(int fd, size_t n, char terminator, char* buf)
-{
+int read_until(int fd, size_t n, char terminator, char* buf) {
   size_t read = 0;
-  while (read < n)
-  {
+  while (read < n) {
     size_t tmp_read;
-    if (receive(fd, buf + read, 1, &tmp_read) != 0 || tmp_read == 0)
-      return -1;
-    if (memchr(buf + read, terminator, tmp_read) != NULL)
-    {
-      *((char* )memchr(buf + read, terminator, tmp_read)) = '\0';
+    if (receive(fd, buf + read, 1, &tmp_read) != 0 || tmp_read == 0) return -1;
+    if (memchr(buf + read, terminator, tmp_read) != NULL) {
+      *((char*)memchr(buf + read, terminator, tmp_read)) = '\0';
       return read + tmp_read;
-    }
-    else
-    {
+    } else {
       read += tmp_read;
     }
   }

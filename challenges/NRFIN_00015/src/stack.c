@@ -18,77 +18,73 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
+ */
 #include "stack.h"
 
+#include <libcgc.h>
+
+#include "libc.h"
+
 void initStack(Stack *stack, int numElements, int elementSize) {
+  int ret;
 
-	int ret;
+  if (numElements > MAX_STACK_SIZE / elementSize) {
+    stack->elements = NULL;
+    return;
+  }
 
-	if(numElements > MAX_STACK_SIZE/elementSize) {
-		stack->elements = NULL;
-		return;
-	}
+  ret = allocate(elementSize * numElements, 0, (void **)&stack->elements);
+  if (ret != 0) _terminate(16);
 
-	ret = allocate(elementSize * numElements, 0, (void**) &stack->elements);
-	if (ret != 0)
-		_terminate(16);
-
-	stack->numElements = numElements;
-	stack->elementSize = elementSize;
-	stack->top = -1;
+  stack->numElements = numElements;
+  stack->elementSize = elementSize;
+  stack->top = -1;
 }
 
 void destroyStack(Stack *stack) {
-	
-	int ret;
+  int ret;
 
-	ret = deallocate(stack->elements, stack->numElements*stack->elementSize);
-	if (ret != 0)
-		_terminate(17);
+  ret = deallocate(stack->elements, stack->numElements * stack->elementSize);
+  if (ret != 0) _terminate(17);
 
-	stack->elements = NULL;
-	stack->numElements = 0;
-	stack->elementSize = 0;
-	stack->top = -1;
+  stack->elements = NULL;
+  stack->numElements = 0;
+  stack->elementSize = 0;
+  stack->top = -1;
 }
 
 int isStackFull(Stack *stack) {
 #ifdef PATCHED
-	return stack->top >= stack->numElements - 1;
+  return stack->top >= stack->numElements - 1;
 #else
-	return stack->top >= stack->numElements;
+  return stack->top >= stack->numElements;
 #endif
 }
 
-int isStackEmpty(Stack *stack) {
-	return stack->top < 0;
+int isStackEmpty(Stack *stack) { return stack->top < 0; }
+
+void pushElement(Stack *stack, void *element) {
+  int ret;
+
+  if (isStackFull(stack)) {
+    ret = transmit_all(STDOUT, TOO_MANY_ELEM_STR, sizeof(TOO_MANY_ELEM_STR));
+    if (ret != 0) _terminate(18);
+    _terminate(19);
+  }
+  stack->top++;
+  memcpy(&stack->elements[stack->elementSize * stack->top], element,
+         stack->elementSize);
 }
 
-void pushElement(Stack *stack, void* element) {
-	int ret;
+void *popElement(Stack *stack) {
+  int ret;
 
-	if(isStackFull(stack)) {
-		ret = transmit_all(STDOUT, TOO_MANY_ELEM_STR, sizeof(TOO_MANY_ELEM_STR));
-    	if (ret != 0)
-        	_terminate(18);
-        _terminate(19);
-	}
-	stack->top++;
-	memcpy(&stack->elements[stack->elementSize*stack->top], element, stack->elementSize);
-}
+  if (isStackEmpty(stack)) {
+    ret =
+        transmit_all(STDOUT, NOT_ENOUGH_ELEM_STR, sizeof(NOT_ENOUGH_ELEM_STR));
+    if (ret != 0) _terminate(20);
+    _terminate(21);
+  }
 
-void* popElement(Stack *stack) {
-	int ret;
-
-	if(isStackEmpty(stack)) {
-		ret = transmit_all(STDOUT, NOT_ENOUGH_ELEM_STR, sizeof(NOT_ENOUGH_ELEM_STR));
-    	if (ret != 0)
-        	_terminate(20);
-        _terminate(21);
-	}
-
-	return &stack->elements[stack->elementSize*stack->top--];
+  return &stack->elements[stack->elementSize * stack->top--];
 }

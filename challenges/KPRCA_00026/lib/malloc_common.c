@@ -23,47 +23,36 @@
  *
  */
 
-#include "wrapper.h"
 #include "libcgc.h"
 #include "malloc.h"
 #include "stdlib.h"
+#include "wrapper.h"
 
 #ifdef FILAMENTS
 mutex_t malloc_mutex;
 #endif
 
 size_t size_class_limits[NUM_FREE_LISTS] = {
-  2, 3, 4, 8,
-  16, 24, 32, 48,
-  64, 96, 128, 192,
-  256, 384, 512, 768,
-  1024, 1536, 2048, 3072,
-  4096, 6144, 8192, 12288,
-  16384, 24576, 32768, 49152,
-  65536, 98304, 131072, INT32_MAX
-};
+    2,     3,     4,     8,     16,    24,    32,     48,
+    64,    96,    128,   192,   256,   384,   512,    768,
+    1024,  1536,  2048,  3072,  4096,  6144,  8192,   12288,
+    16384, 24576, 32768, 49152, 65536, 98304, 131072, INT32_MAX};
 
 struct blk_t *free_lists[NUM_FREE_LISTS] = {0};
 
-static void remove_from_blist(struct blk_t *blk)
-{
-  if (blk->prev)
-    blk->prev->next = blk->next;
+static void remove_from_blist(struct blk_t *blk) {
+  if (blk->prev) blk->prev->next = blk->next;
 
-  if (blk->next)
-    blk->next->prev = blk->prev;
+  if (blk->next) blk->next->prev = blk->prev;
 }
 
-int get_size_class(size_t size)
-{
+int get_size_class(size_t size) {
   int i;
   for (i = 0; i < NUM_FREE_LISTS && size > size_class_limits[i]; i++);
   return i;
 }
 
-
-void insert_into_flist(struct blk_t *blk)
-{
+void insert_into_flist(struct blk_t *blk) {
   int sc_i = get_size_class(blk->size);
   blk->free = 1;
 
@@ -78,26 +67,21 @@ void insert_into_flist(struct blk_t *blk)
   blk->fpred = NULL;
 }
 
-void remove_from_flist(struct blk_t *blk)
-{
+void remove_from_flist(struct blk_t *blk) {
   int sc_i = get_size_class(blk->size);
 
-  if (blk->fpred)
-    blk->fpred->fsucc = blk->fsucc;
+  if (blk->fpred) blk->fpred->fsucc = blk->fsucc;
 
-  if (blk->fsucc)
-    blk->fsucc->fpred = blk->fpred;
+  if (blk->fsucc) blk->fsucc->fpred = blk->fpred;
 
-  if (free_lists[sc_i] == blk)
-    free_lists[sc_i] = blk->fsucc;
+  if (free_lists[sc_i] == blk) free_lists[sc_i] = blk->fsucc;
 
   blk->fsucc = NULL;
   blk->fpred = NULL;
   blk->free = 0;
 }
 
-void coalesce(struct blk_t *blk)
-{
+void coalesce(struct blk_t *blk) {
   /* prev and next are free */
   if (blk->prev && blk->prev->free && blk->next && blk->next->free) {
     remove_from_flist(blk->prev);
@@ -110,7 +94,7 @@ void coalesce(struct blk_t *blk)
     remove_from_blist(blk);
 
     insert_into_flist(blk->prev);
-  /* Just prev is free */
+    /* Just prev is free */
   } else if (blk->prev && blk->prev->free) {
     remove_from_flist(blk->prev);
     remove_from_flist(blk);
@@ -119,7 +103,7 @@ void coalesce(struct blk_t *blk)
     remove_from_blist(blk);
 
     insert_into_flist(blk->prev);
-  /* Just next is free */
+    /* Just next is free */
   } else if (blk->next && blk->next->free) {
     remove_from_flist(blk->next);
     remove_from_flist(blk);

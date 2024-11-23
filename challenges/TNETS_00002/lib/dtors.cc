@@ -29,64 +29,60 @@
  */
 
 extern "C" {
-#include "libcgc.h"
 #include "cgc_malloc.h"
+#include "libcgc.h"
 };
 
 #undef NULL
 #define NULL 0L
 
 extern "C" {
-	int __cxa_atexit(void (*func)(void *), void *, void *);
-	void *__dso_handle;
+int __cxa_atexit(void (*func)(void *), void *, void *);
+void *__dso_handle;
 };
 
 struct __cxa_exits {
-	struct __cxa_exits *next;
-	void (*func)(void *);
-	void *arg;
-	void *dso;
+  struct __cxa_exits *next;
+  void (*func)(void *);
+  void *arg;
+  void *dso;
 } *__cxa_exits;
 
 /*
  * a function with this signature is required for static destructors to
  * work properly
  */
-int
-__cxa_atexit(void (*func)(void *), void *arg, void *dso) {
-	struct __cxa_exits *p, *q;
+int __cxa_atexit(void (*func)(void *), void *arg, void *dso) {
+  struct __cxa_exits *p, *q;
 
-	q = (struct __cxa_exits *)malloc(sizeof(*q));
-	if (q == NULL)
-		return (-1);
-	q->next = NULL;
-	q->func = func;
-	q->arg = arg;
-	q->dso = dso;
+  q = (struct __cxa_exits *)malloc(sizeof(*q));
+  if (q == NULL) return (-1);
+  q->next = NULL;
+  q->func = func;
+  q->arg = arg;
+  q->dso = dso;
 
-	if (__cxa_exits == NULL)
-		__cxa_exits = q;
-	else {
-		for (p = __cxa_exits; p->next != NULL; p = p->next)
-			/* EMPTY */;
-		p->next = q;
-	}
+  if (__cxa_exits == NULL)
+    __cxa_exits = q;
+  else {
+    for (p = __cxa_exits; p->next != NULL; p = p->next) /* EMPTY */;
+    p->next = q;
+  }
 
-	return (0);
+  return (0);
 }
 
-void
-terminate(int ex) {
-	struct __cxa_exits *p;
-	void (*fn)(void *), *arg;
+void terminate(int ex) {
+  struct __cxa_exits *p;
+  void (*fn)(void *), *arg;
 
-	while (__cxa_exits != NULL) {
-		p = __cxa_exits->next;
-		fn = __cxa_exits->func;
-		arg = __cxa_exits->arg;
-		free(__cxa_exits);
-		__cxa_exits = p;
-		fn(arg);
-	}
-	_terminate(ex);
+  while (__cxa_exits != NULL) {
+    p = __cxa_exits->next;
+    fn = __cxa_exits->func;
+    arg = __cxa_exits->arg;
+    free(__cxa_exits);
+    __cxa_exits = p;
+    fn(arg);
+  }
+  _terminate(ex);
 }

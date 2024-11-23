@@ -31,36 +31,36 @@ THE SOFTWARE.
 #define _ALU_H
 
 enum aluEnum {
-	ADD,
-	ADC,
-	SUB,
-	SUC,
-	LSL,
-	LSR,
-	RSB,
-	RSC,
-	AND,
-	OR,
-	XOR,
-	NOT,
-	MIN,
-	MAX,
-	CLR,
-	SET
+  ADD,
+  ADC,
+  SUB,
+  SUC,
+  LSL,
+  LSR,
+  RSB,
+  RSC,
+  AND,
+  OR,
+  XOR,
+  NOT,
+  MIN,
+  MAX,
+  CLR,
+  SET
 };
 
 typedef struct _aluInstruction {
-	unsigned int opFmt:3;
-	enum aluEnum aluOp:4;
-	unsigned int io:1;
-	union _arg2 {
-		regTarget rs2;
-		unsigned char imm;
-	} arg2;
-	unsigned int rs1Sel:3;
-	unsigned int rs1:5;
-	unsigned int rdSel:3;
-	unsigned int rd:5;
+  unsigned int opFmt : 3;
+  enum aluEnum aluOp : 4;
+  unsigned int io : 1;
+  union _arg2 {
+    regTarget rs2;
+    unsigned char imm;
+  } arg2;
+  unsigned int rs1Sel : 3;
+  unsigned int rs1 : 5;
+  unsigned int rdSel : 3;
+  unsigned int rd : 5;
 } aluInstruction;
 
 void doAdd(pruCPU *cpu, aluInstruction inst);

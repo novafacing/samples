@@ -2,13 +2,12 @@
 #define DEPARTMENT_H_
 typedef struct department department_t;
 
-#include "ptrlist.h"
 #include "course.h"
+#include "ptrlist.h"
 
-struct department
-{
-    char *name;
-    ptrlist_t *courses_available;
+struct department {
+  char *name;
+  ptrlist_t *courses_available;
 };
 
 department_t *create_department(char *name);

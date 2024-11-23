@@ -2,11 +2,12 @@
 #define BN_H_
 
 #include <stdint.h>
+
 #include "rng.h"
 
 typedef struct {
-    uint32_t *data;
-    unsigned int length;
+  uint32_t *data;
+  unsigned int length;
 } bn_t;
 
 void bn_init(bn_t *bn);

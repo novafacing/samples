@@ -24,28 +24,29 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "stdint.h"
+#include "stdlib.h"
 
 /*
 The filesystem is shown graphically below.  The superblock
-contiains an array of pointers to the inode pages.  Each inode 
+contiains an array of pointers to the inode pages.  Each inode
 page contains 16 inodes.  Each inode can describe a file
-or directory (based on the type var).  Files are made up of 
+or directory (based on the type var).  Files are made up of
 multiple 512 byte blocks.  A single inode can describe up to
 8 of those blocks for a total of 4096 bytes.  If more space
 is needed for a given file, the indirect pointer can point
-to another inode which provides another 8 blocks and, if 
+to another inode which provides another 8 blocks and, if
 necessary, another indirect pointer.  Directories use a single
 block in the inode.  That block contains an array of
 up to 128 inodes describing files or subdirectories.  So, a given
-directory is limited to 128 files or subdirectories.  
+directory is limited to 128 files or subdirectories.
 ------------------
 | superblock     |
 ------------------
-| magic          | 
+| magic          |
 | blocksize      |
-| fs_size        |    -------------- 
+| fs_size        |    --------------
 | inode_page[64] | -> | inode_page |
 ------------------    --------------    ------------------
                       | inode[0]   | -> | inode          |
@@ -70,7 +71,7 @@ Directory as defined above.
 
 
 An array of 256 elements called the free_list contains pointers
-to all of the allocated data pages.  Each page contains 
+to all of the allocated data pages.  Each page contains
 8 blocks (4096 page size / 8 blocks = 512 byte block size).
 As a block is used in an inode, the free_mask is marked with a
 '1' in the corresponding bit position for the block in the page.
@@ -84,7 +85,7 @@ value of 0x80.
 -------------    -------------
                  | block[0]  |
                  | ...       |
-                 | block[15] |    
+                 | block[15] |
                  -------------
 
 */
@@ -103,12 +104,12 @@ typedef unsigned char block[DATA_BLOCK_SIZE];
 #define MAX_FILE_NAME_LEN 208
 // sizeof(inode) = 256 for convenience of 4096 byte page sizes
 typedef struct _inode {
-	char fname[MAX_FILE_NAME_LEN];
-	uint32_t type;
-	uint32_t fsize;
-	uint32_t num_blocks;
-	struct _inode *indirect_inode;
-	block *blocks[INODE_DATA_BLOCKS];
+  char fname[MAX_FILE_NAME_LEN];
+  uint32_t type;
+  uint32_t fsize;
+  uint32_t num_blocks;
+  struct _inode *indirect_inode;
+  block *blocks[INODE_DATA_BLOCKS];
 } inode;
 
 // superblock
@@ -116,10 +117,10 @@ typedef struct _inode {
 #define MAX_INODE_PAGES 64
 #define INODES_PER_PAGE 16
 typedef struct _superblock {
-	uint32_t magic;
-	uint32_t blocksize;
-	uint32_t fs_size;
-	inode *inode_pages[MAX_INODE_PAGES];
+  uint32_t magic;
+  uint32_t blocksize;
+  uint32_t fs_size;
+  inode *inode_pages[MAX_INODE_PAGES];
 } superblock;
 
 // global pointer to our filesystem
@@ -127,18 +128,18 @@ superblock fs;
 
 // free blocks
 #define MAX_FREE_PAGES 256
-#define MAX_FS_SIZE PAGE_SIZE*MAX_FREE_PAGES
+#define MAX_FS_SIZE PAGE_SIZE *MAX_FREE_PAGES
 #define BLOCKS_PER_PAGE 8
 typedef struct _free_t {
-	uint8_t in_use;
-	block *page;
+  uint8_t in_use;
+  block *page;
 } free_t;
 free_t free_list[MAX_FREE_PAGES];
 
 // directory
 #define MAX_DIR_INODES 128
 typedef struct _directory {
-	inode *inodes[MAX_DIR_INODES];
+  inode *inodes[MAX_DIR_INODES];
 } directory;
 
 // FILE struct
@@ -146,12 +147,12 @@ typedef struct _directory {
 #define WRITE 1
 #define APPEND 2
 typedef struct _FILE {
-	inode *i;
-	uint32_t pos;
-	uint32_t mode;
-	inode *curr_pos_inode;
-	uint32_t index;
-	uint32_t b_index;
+  inode *i;
+  uint32_t pos;
+  uint32_t mode;
+  inode *curr_pos_inode;
+  uint32_t index;
+  uint32_t b_index;
 } FILE;
 
 int InitFS(uint32_t);

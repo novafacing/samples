@@ -31,33 +31,32 @@ THE SOFTWARE.
 extern gamestate *state;
 
 void coinflip() {
-	char got[4];
-	char choice;
-	unsigned int wager = 0;
+  char got[4];
+  char choice;
+  unsigned int wager = 0;
 
-	bzero(got, 4);
+  bzero(got, 4);
 
-	wager = getBet(state);
-	if(wager == -1)
-		return;
+  wager = getBet(state);
+  if (wager == -1) return;
 
-	put("Flipping a coin. Do you think it's going to be (h)eads or (t)ails?\n");
-	recvUntil(0, got, 3, '\n');
+  put("Flipping a coin. Do you think it's going to be (h)eads or (t)ails?\n");
+  recvUntil(0, got, 3, '\n');
 
-	switch(got[0]) {
-		case 'h':
-		case 't':
-			break;
-		default:
-			put("Invalid choice. Pay the hug tax.");
-			state->hugcount-=wager;
-			return;
-	}
+  switch (got[0]) {
+    case 'h':
+    case 't':
+      break;
+    default:
+      put("Invalid choice. Pay the hug tax.");
+      state->hugcount -= wager;
+      return;
+  }
 
-	choice = (got[0] == 'h' ?  1 :  0);
+  choice = (got[0] == 'h' ? 1 : 0);
 
-	if(choice == (hugsnextrand(state) % 2))
-		handleOutcome(state, 1, wager);
-	else
-		handleOutcome(state, 0, wager);
+  if (choice == (hugsnextrand(state) % 2))
+    handleOutcome(state, 1, wager);
+  else
+    handleOutcome(state, 0, wager);
 }

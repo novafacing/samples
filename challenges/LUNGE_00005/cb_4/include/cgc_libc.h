@@ -2,11 +2,17 @@
 #define _EXTERNAL_API_H
 
 #include <libcgc.h>
+
 #include "cgc_types.h"
 #include "printf.h"
 
-#define assert(x) \
-    do { if (!(x)) { printf(STDERR, "fail: " #x " at %s (%u)\n", __FILE__, __LINE__); _terminate(1); } } while(0)
+#define assert(x)                                                      \
+  do {                                                                 \
+    if (!(x)) {                                                        \
+      printf(STDERR, "fail: " #x " at %s (%u)\n", __FILE__, __LINE__); \
+      _terminate(1);                                                   \
+    }                                                                  \
+  } while (0)
 
 char *strchr(const char *s, int c);
 char *strdup(const char *src);
@@ -24,7 +30,7 @@ size_t strlcpy(char *dst, const char *src, const size_t size);
 size_t strlen(const char *s);
 size_t strspn(const char *s1, const char *s2);
 void *calloc(size_t count, size_t size);
-void err(unsigned int id, char *str); // __attribute__((noreturn));
+void err(unsigned int id, char *str);  // __attribute__((noreturn));
 void *memcpy(void *dst, const void *src, size_t size);
 void *memset(void *b, int c, size_t len);
 void sleep(int amount);

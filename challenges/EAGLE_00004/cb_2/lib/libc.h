@@ -24,30 +24,30 @@ int transmit_all(int fd, const char *buf, const size_t size);
 
 extern int errno;
 
-#define EOF                  -1
+#define EOF -1
 
 #ifndef NULL
-#define NULL ((void*)0)
+#define NULL ((void *)0)
 #endif
 
-#define _FILE_STATE_OPEN  1
+#define _FILE_STATE_OPEN 1
 #define _FILE_STATE_ERROR 2
-#define _FILE_STATE_EOF   4
-#define _FILE_HAVE_LAST   8
+#define _FILE_STATE_EOF 4
+#define _FILE_HAVE_LAST 8
 
 typedef struct _FILE {
-   int fd;
-   int state;
-   int last;
+  int fd;
+  int state;
+  int last;
 } FILE;
 
 extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
 
-int  fgetc(FILE *);
-int  getc(FILE *);
-int  getchar(void);
+int fgetc(FILE *);
+int getc(FILE *);
+int getchar(void);
 
 char *fgets(char *, int, FILE *);
 
@@ -55,7 +55,7 @@ int ferror(FILE *stream);
 int feof(FILE *stream);
 
 int printf(const char *format, ...);
-int fprintf(FILE * stream, const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
 int snprintf(char *str, size_t size, const char *format, ...);
 
 #endif

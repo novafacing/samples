@@ -25,8 +25,8 @@
 
 /** Contains the state of the AI */
 struct ai_state {
-    /** Random seed for AI */
-    unsigned int seed;
+  /** Random seed for AI */
+  unsigned int seed;
 };
 
 /**
@@ -37,4 +37,3 @@ struct ai_state {
 void seed_ai(struct ai_state *state);
 
 #endif /* AI_H_ */
-

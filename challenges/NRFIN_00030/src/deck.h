@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef DECK_H
 #define DECK_H 1
@@ -27,11 +26,11 @@
 #include "card.h"
 
 struct deck {
-	uint8_t count;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
-	uint8_t unk3; // push size to mult of 4 bytes
-	struct card *cards[52];
+  uint8_t count;
+  uint8_t unk1;  // push size to mult of 4 bytes
+  uint8_t unk2;  // push size to mult of 4 bytes
+  uint8_t unk3;  // push size to mult of 4 bytes
+  struct card *cards[52];
 };
 
 /**
@@ -77,6 +76,5 @@ extern struct card *pop(struct deck *d);
  * @return TRUE if yes, FALSE if no or ERR_UNINITIALIZED_DECK on error
  */
 extern int is_deck_empty(struct deck *d);
-
 
 #endif

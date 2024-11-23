@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #define BALANCE_RECORD 0
 #define NO_MORE_RECORDS -1
@@ -40,28 +40,28 @@
 #define DEALLOCATE_ERROR 4
 
 typedef struct {
-	unsigned short x;
-	unsigned short y;
-} Record; 
+  unsigned short x;
+  unsigned short y;
+} Record;
 
 typedef struct {
-	int sampleSize;
-	float mean;
-	float Q;
-	float variance;
-	float stdDev;
+  int sampleSize;
+  float mean;
+  float Q;
+  float variance;
+  float stdDev;
 } Dataset;
 
 typedef struct {
-	char symbol;
-	unsigned short currentPrice;
-	unsigned short purchasedPrice;
+  char symbol;
+  unsigned short currentPrice;
+  unsigned short purchasedPrice;
 } Stock;
 
 typedef struct {
-	unsigned short cashBalance;
-	unsigned short assetBalance;
-	unsigned short goal;
-	unsigned short numEntries;
-	Stock* stocks;
+  unsigned short cashBalance;
+  unsigned short assetBalance;
+  unsigned short goal;
+  unsigned short numEntries;
+  Stock* stocks;
 } Portfolio;

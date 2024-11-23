@@ -22,13 +22,10 @@
  */
 #include "string.h"
 
-char *strchr(const char *s, int c)
-{
-    unsigned int i;
-    for (i = 0; s[i] != 0; i++)
-        if (s[i] == c)
-            return (char *)&s[i];
-    if (c == 0)
-        return (char *)&s[i];
-    return NULL;
+char *strchr(const char *s, int c) {
+  unsigned int i;
+  for (i = 0; s[i] != 0; i++)
+    if (s[i] == c) return (char *)&s[i];
+  if (c == 0) return (char *)&s[i];
+  return NULL;
 }

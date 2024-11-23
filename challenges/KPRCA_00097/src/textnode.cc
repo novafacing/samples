@@ -23,18 +23,13 @@
 #include "textnode.h"
 
 TextNode::TextNode(const String *ns, const String *tag)
-    : Node(ns, tag, NodeClass::TEXTNODE), d_text(nullptr)
-{
+    : Node(ns, tag, NodeClass::TEXTNODE), d_text(nullptr) {}
+
+const String *TextNode::text() {
+  return d_text == nullptr ? String::intern("") : d_text;
 }
 
-const String *TextNode::text()
-{
-    return d_text == nullptr ? String::intern("") : d_text;
-}
-
-void TextNode::set_text(String *text)
-{
-    if (d_text)
-        d_text->destroy();
-    d_text = text;
+void TextNode::set_text(String *text) {
+  if (d_text) d_text->destroy();
+  d_text = text;
 }

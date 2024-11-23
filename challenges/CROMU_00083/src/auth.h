@@ -30,10 +30,7 @@ THE SOFTWARE.
 #ifndef AUTH_H
 #define AUTH_H
 
-
 securityIdType authenticate(char *name, unsigned int token);
-int lookupName( char *name, securityIdType ID );
+int lookupName(char *name, securityIdType ID);
 
 #endif
-
-

@@ -18,12 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 // cb_id is the ID of the cb that owns the pipe containing the resulting fd
-#define IPC_READ_FD(cb_id) 		(((cb_id * 2) + 3) + 1)
-#define IPC_WRITE_FD(cb_id) 	((cb_id * 2) + 3)
+#define IPC_READ_FD(cb_id) (((cb_id * 2) + 3) + 1)
+#define IPC_WRITE_FD(cb_id) ((cb_id * 2) + 3)
 
 /*
 in graphic form...

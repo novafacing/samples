@@ -18,21 +18,22 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
- 
+ */
+
 #ifndef LIBC_H
 #define LIBC_H
 
-typedef unsigned char uint8_t; // NRFIN_00001
+typedef unsigned char uint8_t;  // NRFIN_00001
 #define MAX_WIDTH 16
 
-extern int transmit_all(int fd, const char *buf, const size_t size); // NRFIN_00002
-int recvline(int fd, char *buf, size_t size); // NRFIN_00001
+extern int transmit_all(int fd, const char *buf,
+                        const size_t size);    // NRFIN_00002
+int recvline(int fd, char *buf, size_t size);  // NRFIN_00001
 int strncmp(const char *s1, const char *s2, size_t n);
-int strn2int(const char* str_buf, size_t max_chars); // NRFIN_00001 - modified
-void * memcpy(void* dst, const void* src, size_t cnt); // NRFIN_00001
-size_t strnlen(const char *string, size_t max_len); // NRFIN_00009 - modified
-size_t strlen(const char *string); // NRFIN_00009
-char * itoaB10(int value); // NRFIN_00007
-void * memset(void* str, int ch, size_t n); // NRFIN_00001
+int strn2int(const char *str_buf, size_t max_chars);   // NRFIN_00001 - modified
+void *memcpy(void *dst, const void *src, size_t cnt);  // NRFIN_00001
+size_t strnlen(const char *string, size_t max_len);    // NRFIN_00009 - modified
+size_t strlen(const char *string);                     // NRFIN_00009
+char *itoaB10(int value);                              // NRFIN_00007
+void *memset(void *str, int ch, size_t n);             // NRFIN_00001
 #endif

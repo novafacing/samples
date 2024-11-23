@@ -29,30 +29,27 @@
  */
 
 extern "C" {
-#include "libcgc.h"
 #include "cgc_libc.h"
+#include "libcgc.h"
 };
 
 #define __hidden __attribute__((__visibility__("hidden")))
 
 extern "C" {
-	extern void (*__init_array_start[])(int, char **, char **) __hidden;
-	extern void (*__init_array_end[])(int, char **, char **) __hidden;
+extern void (*__init_array_start[])(int, char **, char **) __hidden;
+extern void (*__init_array_end[])(int, char **, char **) __hidden;
 };
 
 /*
  * call static constructors
  */
-void
-call_inits(void) {
-	size_t asize, n;
-	void (*fn)(int, char **, char **);
+void call_inits(void) {
+  size_t asize, n;
+  void (*fn)(int, char **, char **);
 
-	printf("ctors called...\n");
-	for (asize = __init_array_end - __init_array_start, n = 0;
-	     n < asize; n++) {
-		fn = __init_array_start[n];
-		if (fn && (long)fn != 1)
-			fn(0, (char **)NULL, (char **)NULL);
-	}
+  printf("ctors called...\n");
+  for (asize = __init_array_end - __init_array_start, n = 0; n < asize; n++) {
+    fn = __init_array_start[n];
+    if (fn && (long)fn != 1) fn(0, (char **)NULL, (char **)NULL);
+  }
 }

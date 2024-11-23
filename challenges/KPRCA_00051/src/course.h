@@ -4,32 +4,31 @@ typedef struct course course_t;
 
 #include <stdlib.h>
 
-#include "time.h"
-#include "ptrlist.h"
-#include "professor.h"
 #include "department.h"
+#include "professor.h"
+#include "ptrlist.h"
+#include "time.h"
 
-struct course
-{
-    unsigned int course_id;
-    professor_t *prof;
-    department_t *dept;
-    short course_num;
+struct course {
+  unsigned int course_id;
+  professor_t *prof;
+  department_t *dept;
+  short course_num;
 
-    short credits;
-    short current_enrollment;
-    short max_enrollment;
-    days_t days;
-    time_t start;
-    time_t end;
-    char *title;
+  short credits;
+  short current_enrollment;
+  short max_enrollment;
+  days_t days;
+  time_t start;
+  time_t end;
+  char *title;
 
-    void (*print_course)(course_t *);
+  void (*print_course)(course_t *);
 };
 
-
-course_t *create_course(unsigned int course_id, char *prof_name, char *dept_name, short course_num,
-                        short credits, short current_enrollment, short max_enrollment,
+course_t *create_course(unsigned int course_id, char *prof_name,
+                        char *dept_name, short course_num, short credits,
+                        short current_enrollment, short max_enrollment,
                         days_t days, time_t start, time_t end, char *title);
 ptrlist_t *get_course(int course_id);
 

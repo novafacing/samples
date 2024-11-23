@@ -21,114 +21,96 @@
  *
  */
 
+#include "mgc_file.h"
+
 #include <cstring.h>
 
-#include "mgc_file.h"
-#include "print.h"
 #include "mgc_header_info.h"
+#include "print.h"
 
-MgcFile::MgcFile()
-{
+MgcFile::MgcFile() {
+  frames_ = (mgc_frame **)NULL;
+  num_frames_ = 0;
+  size_ = 0;
+}
+
+bool MgcFile::ReadMgcFile(FILE *stream) {
+  unsigned char frame_buffer[6400];
+  mgc_frame temp_frame;
+  do {
+    fread(&temp_frame, sizeof(temp_frame), stream);
+    if (!MgcHeaderInfo::Synced(&temp_frame) ||
+        !MgcHeaderInfo::SongV1(&temp_frame)) {
+      Clear();
+      return false;
+    }
+
+    fread(frame_buffer, MgcHeaderInfo::CalcFrameSize(&temp_frame), stream);
+    mgc_frame *new_frame = (mgc_frame *)malloc(
+        sizeof(mgc_frame) + MgcHeaderInfo::CalcFrameSize(&temp_frame));
+    memcpy(new_frame, &temp_frame, sizeof(temp_frame));
+    memcpy(new_frame->data, frame_buffer,
+           MgcHeaderInfo::CalcFrameSize(&temp_frame));
+    AddFrame(new_frame);
+  } while (temp_frame.num_frames_left);
+
+  return true;
+}
+
+const mgc_frame *MgcFile::GetFrame(unsigned int idx) const {
+  if (idx < num_frames_) return frames_[idx];
+  return (mgc_frame *)NULL;
+}
+
+void MgcFile::Clear() {
+  if (frames_) {
+    for (unsigned int i = 0; i < num_frames_; i++) free(frames_[i]);
+
+    delete[] frames_;
     frames_ = (mgc_frame **)NULL;
-    num_frames_ = 0;
-    size_ = 0;
+  }
+  num_frames_ = 0;
+  size_ = 0;
 }
 
-bool MgcFile::ReadMgcFile(FILE *stream)
+void MgcFile::Remix(unsigned char *mix_buf, unsigned int *idx,
+                    const unsigned int buf_size)  // idx incrememts by 33
 {
-    unsigned char frame_buffer[6400];
-    mgc_frame temp_frame;
-    do
-    {
-        fread(&temp_frame, sizeof(temp_frame), stream);
-        if (!MgcHeaderInfo::Synced(&temp_frame) || !MgcHeaderInfo::SongV1(&temp_frame))
-        {
-            Clear();
-            return false;
-        }
-
-        fread(frame_buffer, MgcHeaderInfo::CalcFrameSize(&temp_frame), stream);
-        mgc_frame *new_frame = (mgc_frame *)malloc(sizeof(mgc_frame) + MgcHeaderInfo::CalcFrameSize(&temp_frame));
-        memcpy(new_frame, &temp_frame, sizeof(temp_frame));
-        memcpy(new_frame->data, frame_buffer, MgcHeaderInfo::CalcFrameSize(&temp_frame));
-        AddFrame(new_frame);
-    } while(temp_frame.num_frames_left);
-
-    return true;
-}
-
-const mgc_frame *MgcFile::GetFrame(unsigned int idx) const
-{
-    if (idx < num_frames_)
-        return frames_[idx];
-    return (mgc_frame *)NULL;
-}
-
-void MgcFile::Clear()
-{
-    if (frames_)
-    {
-        for (unsigned int i = 0; i < num_frames_; i++)
-            free(frames_[i]);
-
-        delete[] frames_;
-        frames_ = (mgc_frame **)NULL;
+  for (unsigned int i = 0; i < num_frames_; i++) {
+    for (unsigned int j = 0; j < MgcHeaderInfo::CalcFrameSize(frames_[i]);
+         j++) {
+      unsigned char *pframe_data = (unsigned char *)(&frames_[i]->data[j]);
+      *pframe_data *= mix_buf[*idx];
+      *idx = (*idx + 33) % buf_size;
     }
-    num_frames_ = 0;
-    size_ = 0;
+  }
 }
 
-void MgcFile::Remix(unsigned char *mix_buf, unsigned int *idx, const unsigned int buf_size) //idx incrememts by 33
-{
-    for (unsigned int i = 0; i < num_frames_; i++)
-    {
-        for (unsigned int j = 0; j < MgcHeaderInfo::CalcFrameSize(frames_[i]); j++)
-        {
-            unsigned char *pframe_data = (unsigned char *)(&frames_[i]->data[j]);
-            *pframe_data *= mix_buf[*idx];
-            *idx = (*idx + 33) % buf_size;
-        }
-    }
+void MgcFile::PrintFrameData() {
+  printf("---Raw Frames---" NL);
+  for (unsigned int i = 0; i < num_frames_; i++) {
+    PRINT_ARR_HEX(frames_[i]->data, MgcHeaderInfo::CalcFrameSize(frames_[i]));
+  }
+  printf(NL "----------------" NL);
+  fflush(stdout);
 }
 
-void MgcFile::PrintFrameData()
-{
+unsigned MgcFile::TotalFrames() { return num_frames_; }
 
-    printf("---Raw Frames---" NL);
-    for (unsigned int i = 0; i < num_frames_; i++)
-    {
-        PRINT_ARR_HEX(frames_[i]->data, MgcHeaderInfo::CalcFrameSize(frames_[i]));
-    }
-    printf(NL "----------------" NL);
-    fflush(stdout);
+bool MgcFile::AddFrame(mgc_frame *mframe) {
+  if (!mframe) return false;
 
-}
-
-unsigned MgcFile::TotalFrames()
-{
-    return num_frames_;
-}
-
-bool MgcFile::AddFrame(mgc_frame *mframe)
-{
-    if (!mframe)
-        return false;
-
-    if (!frames_)
-    {
-        size_ = 16;
-        frames_ = new mgc_frame*[size_];
-    }
-    if (num_frames_ == size_)
-    {
-        size_ *= 2;
-        mgc_frame **doubled_list = new mgc_frame*[size_];
-        memcpy(doubled_list, frames_, sizeof(mgc_frame *) * num_frames_);
-        delete frames_;
-        frames_ = doubled_list;
-    }
-    frames_[num_frames_++] = mframe;
-    return true;
-
-
+  if (!frames_) {
+    size_ = 16;
+    frames_ = new mgc_frame *[size_];
+  }
+  if (num_frames_ == size_) {
+    size_ *= 2;
+    mgc_frame **doubled_list = new mgc_frame *[size_];
+    memcpy(doubled_list, frames_, sizeof(mgc_frame *) * num_frames_);
+    delete frames_;
+    frames_ = doubled_list;
+  }
+  frames_[num_frames_++] = mframe;
+  return true;
 }

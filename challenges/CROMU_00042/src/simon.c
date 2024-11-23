@@ -25,23 +25,25 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
+
 #include "prng.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 #define MAX_ROUNDS 256
 #define DIFFERENCE 20
 #define BREAK_ROUND 100
 
-enum colors {RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET, NUM_COLORS};
-char *color_names[NUM_COLORS] = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
+enum colors { RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET, NUM_COLORS };
+char *color_names[NUM_COLORS] = {"RED",  "ORANGE", "YELLOW", "GREEN",
+                                 "BLUE", "INDIGO", "VIOLET"};
 
 int keep_receiving_until(char *dst, char delim, size_t max) {
   char c;
   size_t rx;
   size_t len = 0;
   do {
-    if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
+    if (receive(STDIN, &c, 1, &rx) != 0) {
       len = 0;
       break;
     }
@@ -60,7 +62,6 @@ int keep_receiving_until(char *dst, char delim, size_t max) {
   } while (c != delim);
   return len;
 }
-
 
 void simon_command(char *t) {
 #ifdef PATCHED
@@ -84,7 +85,6 @@ void simon_command(char *t) {
   int rounds = 0;
 
   while (rounds < MAX_ROUNDS) {
-
     if (rounds == BREAK_ROUND) {
       printf("You're doing great! Continue?(y/n):");
       char response;

@@ -23,22 +23,21 @@
 #pragma once
 #include "enums.h"
 
-class NumGen
-{
-  public:
-    NumGen(unsigned char *pool);
-    int GetRandomNumber();
-    bool ReinstateNumber(int number);
-    void CacheNumber(int number);
-    void FlushCache(int flush_count);
-    void Reset();
-    int AvailableNumbers();
-  private:
-    unsigned char *rand_pool_;
-    int rand_idx_;
-    int numbers_[NUM_CELLS];
-    int nums_available_;
-    int cached_numbers_[NUM_CELLS];
-    int cache_len_;
-};
+class NumGen {
+ public:
+  NumGen(unsigned char *pool);
+  int GetRandomNumber();
+  bool ReinstateNumber(int number);
+  void CacheNumber(int number);
+  void FlushCache(int flush_count);
+  void Reset();
+  int AvailableNumbers();
 
+ private:
+  unsigned char *rand_pool_;
+  int rand_idx_;
+  int numbers_[NUM_CELLS];
+  int nums_available_;
+  int cached_numbers_[NUM_CELLS];
+  int cache_len_;
+};

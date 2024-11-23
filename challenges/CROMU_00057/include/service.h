@@ -31,53 +31,44 @@ THE SOFTWARE.
 #define INITIALIZATION_DATA 0x4347C000
 #define INIT_DATA_LEN 4096
 
-
 typedef struct backlogItem {
+  unsigned short ID;
+  unsigned short story_points;
+  unsigned short status;
 
-	unsigned short ID;
-	unsigned short story_points;
-	unsigned short status;
+  char *description;
 
-	char *description;
-
-	struct backlogItem *next;
+  struct backlogItem *next;
 
 } backlogItemType;
 
-
 typedef struct sprintEntry {
+  unsigned short ID;
+  char *title;
+  unsigned short duration;
+  unsigned short total_points;
+  unsigned short velocity_required;
 
-	unsigned short ID;
-	char *title;
-	unsigned short duration;
-	unsigned short total_points;
-	unsigned short velocity_required;
+  backlogItemType *sprintBacklogList;
 
-	backlogItemType *sprintBacklogList;
-
-	struct sprintEntry *next;
+  struct sprintEntry *next;
 
 } sprintEntryType;
 
-
 typedef struct productDef {
+  unsigned short ID;
+  char *title;
+  backlogItemType *productBacklog;
+  sprintEntryType *sprintList;
 
-	unsigned short ID;
-	char *title;
-	backlogItemType *productBacklog;
-	sprintEntryType *sprintList;
-
-	struct productDef *next;
+  struct productDef *next;
 
 } productDefType;
 
-
-int init_database( productDefType **database );
-int destroy_database ( productDefType **database );
+int init_database(productDefType **database);
+int destroy_database(productDefType **database);
 unsigned int calc_version();
-int receive_commands( productDefType **database );
-int receive_bytes (unsigned char *buffer, size_t count);
+int receive_commands(productDefType **database);
+int receive_bytes(unsigned char *buffer, size_t count);
 
 #endif
-
-

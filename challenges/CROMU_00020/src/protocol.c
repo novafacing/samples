@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "protocol.h"
+
+#include <libcgc.h>
 
 #define MAX_FRAME_SIZE 65536
 
@@ -66,8 +67,7 @@ protocol_frame* receive_frame() {
   size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
   size_t actual_received = 0;
 
-  if (receive(STDIN,
-              &candidate,
+  if (receive(STDIN, &candidate,
               sizeof(candidate.type) + sizeof(candidate.length),
               &actual_received)) {
     _terminate(-1);
@@ -79,10 +79,7 @@ protocol_frame* receive_frame() {
 
   if (payload->length == 0) return payload;
 
-  if (receive(STDIN,
-              payload->value,
-              payload->length,
-              &actual_received)) {
+  if (receive(STDIN, payload->value, payload->length, &actual_received)) {
     _terminate(-1);
   }
 
@@ -98,19 +95,14 @@ void send_frame(protocol_frame* payload) {
     _terminate(-1);
   }
 
-  transmit(STDOUT,
-           (char*)(payload),
-           sizeof(payload->type) + sizeof(payload->length),
-           &sent_bytes);
+  transmit(STDOUT, (char*)(payload),
+           sizeof(payload->type) + sizeof(payload->length), &sent_bytes);
 
   if (sent_bytes != sizeof(payload->type) + sizeof(payload->length)) {
     _terminate(-1);
   }
 
-  transmit(STDOUT,
-           (char*)(payload->value),
-           payload->length,
-           &sent_bytes);
+  transmit(STDOUT, (char*)(payload->value), payload->length, &sent_bytes);
 
   if (sent_bytes != payload->length) _terminate(-1);
 }

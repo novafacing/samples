@@ -29,26 +29,25 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdarg.h>
 
-int putchar( int c );
+int putchar(int c);
 
-int printf( const char *format, ... );
-int vprintf( const char *format, va_list args );
-int sprintf( char *buf, const char *format, ... );
-int vsprintf( char *buf, const char *format, va_list args );
-int puts( const char *s );
+int printf(const char *format, ...);
+int vprintf(const char *format, va_list args);
+int sprintf(char *buf, const char *format, ...);
+int vsprintf(char *buf, const char *format, va_list args);
+int puts(const char *s);
 
 // Receive length number of bytes into buffer
-// Returns number of bytes read or -1 for error. 
+// Returns number of bytes read or -1 for error.
 int ReceiveBytes(char *buffer, int length);
 
-// Sends length bytes from buffer. 
-// Returns number of bytes sent or -1 for error. 
+// Sends length bytes from buffer.
+// Returns number of bytes sent or -1 for error.
 int SendBytes(char *buffer, int length);
- 
-// Receives bytes from STDIN until delim is found. 
+
+// Receives bytes from STDIN until delim is found.
 // Returns num bytes in buffer (not including null)
-// buffer will be null terminated and not contain delim 
+// buffer will be null terminated and not contain delim
 int ReceiveUntil(char *buffer, int length, char delim);
 
-
-#endif // __STDIO_H__
+#endif  // __STDIO_H__

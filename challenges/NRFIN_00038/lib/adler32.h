@@ -35,4 +35,3 @@
 unsigned int adler32ish(unsigned char *buf, size_t n);
 
 #endif /* ADLER32_H_ */
-

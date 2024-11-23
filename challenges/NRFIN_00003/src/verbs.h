@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef VERBS_H
 #define VERBS_H
 
-#include "service.h"
-#include "libc.h"
 #include "fixups.h"
+#include "libc.h"
+#include "service.h"
 
 // FASTLANE
 int do_tip(char *uri);

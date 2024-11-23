@@ -39,8 +39,8 @@ typedef struct pkk {
   pixel_t *pixels;
 } pkk_t;
 
-pkk_t* parse_pkk(char *, unsigned int len);
-char* output_pkk(pkk_t *, int *);
+pkk_t *parse_pkk(char *, unsigned int len);
+char *output_pkk(pkk_t *, int *);
 void free_pkk(pkk_t *);
 
 #endif

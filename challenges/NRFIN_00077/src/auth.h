@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "subscription.h"
 #define VALID_TOKEN 1
 
@@ -31,18 +31,18 @@
 #define INVALID_SIG_MESSAGE "Invalid Signature.\n"
 
 typedef struct {
-	char* token;
-	char* name;
-	char* password;
-	unsigned char* signingKey;
-	Subscription* subscriptions;
-	void* next;
+  char* token;
+  char* name;
+  char* password;
+  unsigned char* signingKey;
+  Subscription* subscriptions;
+  void* next;
 } User;
 
 typedef struct {
-	char* name;
-	unsigned char* signature;
-	Subscription* subscriptions;
+  char* name;
+  unsigned char* signature;
+  Subscription* subscriptions;
 } AuthResponse;
 
 unsigned int authenticateToken(User* users, char* token);

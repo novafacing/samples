@@ -18,91 +18,90 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "common.h"
+ */
 #include "gofish.h"
 
+#include <libcgc.h>
+
+#include "common.h"
+#include "libc.h"
 
 struct game_state *create_game(char *player_name) {
-	struct game_state *game = NULL;
-	game = calloc(sizeof(struct game_state));
+  struct game_state *game = NULL;
+  game = calloc(sizeof(struct game_state));
 
-	game->whos_turn =  0; // remote player goes first
-	uint8_t seed = 0;
-	// would be a good vuln, but too easy for fuzzer to hit.
-	if ('\0' != player_name[0]) {
-		seed = player_name[0];
-	}
-	game->pool = get_shuffled_deck(seed); // seed: first byte of player_name
-	game->p_remote = create_player(0, player_name);
-	char *bot = NULL;
-	bot = calloc(4);
-	strncpy(bot, "Bot", 3);
+  game->whos_turn = 0;  // remote player goes first
+  uint8_t seed = 0;
+  // would be a good vuln, but too easy for fuzzer to hit.
+  if ('\0' != player_name[0]) {
+    seed = player_name[0];
+  }
+  game->pool = get_shuffled_deck(seed);  // seed: first byte of player_name
+  game->p_remote = create_player(0, player_name);
+  char *bot = NULL;
+  bot = calloc(4);
+  strncpy(bot, "Bot", 3);
 
-	game->p_bot = create_player(1, bot);
+  game->p_bot = create_player(1, bot);
 
-	return game;
+  return game;
 }
 
 int deal(struct game_state *game) {
-	if (NULL == game) {
-		return ERR_UNINITIALIZED_GAME;
-	}
+  if (NULL == game) {
+    return ERR_UNINITIALIZED_GAME;
+  }
 
-	int ret = 0;
+  int ret = 0;
 
-	for (uint8_t card_cnt = 0; card_cnt < get_hand_size(); card_cnt++) {
-		ret = take_top_card(game->p_remote, game->pool);
-		if (0 > ret) {
-			return ret;
-		}
-		ret = take_top_card(game->p_bot, game->pool);
-		if (0 > ret) {
-			return ret;
-		}
-	}
+  for (uint8_t card_cnt = 0; card_cnt < get_hand_size(); card_cnt++) {
+    ret = take_top_card(game->p_remote, game->pool);
+    if (0 > ret) {
+      return ret;
+    }
+    ret = take_top_card(game->p_bot, game->pool);
+    if (0 > ret) {
+      return ret;
+    }
+  }
 
-	return SUCCESS;
+  return SUCCESS;
 }
 
-int get_hand_size() {
-	return 7;
-}
+int get_hand_size() { return 7; }
 
 int turn_complete(struct game_state *game) {
-	if (NULL == game) {
-		return ERR_UNINITIALIZED_GAME;
-	}
+  if (NULL == game) {
+    return ERR_UNINITIALIZED_GAME;
+  }
 
-	game->whos_turn = (game->whos_turn + 1) % 2;
-	return SUCCESS;
+  game->whos_turn = (game->whos_turn + 1) % 2;
+  return SUCCESS;
 }
 
 int is_player_turn(struct game_state *game) {
-	if (NULL == game) {
-		return ERR_UNINITIALIZED_GAME;
-	}
+  if (NULL == game) {
+    return ERR_UNINITIALIZED_GAME;
+  }
 
-	// remote player is always player 0
-	if (0 == game->whos_turn) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  // remote player is always player 0
+  if (0 == game->whos_turn) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 int is_game_over(struct game_state *game) {
-	if (NULL == game) {
-		return ERR_UNINITIALIZED_GAME;
-	}
+  if (NULL == game) {
+    return ERR_UNINITIALIZED_GAME;
+  }
 
-	if ((TRUE == is_deck_empty(game->pool)) &&
-		(TRUE == is_player_hand_empty(game->p_remote)) &&
-		(TRUE == is_player_hand_empty(game->p_bot))) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+  if ((TRUE == is_deck_empty(game->pool)) &&
+      (TRUE == is_player_hand_empty(game->p_remote)) &&
+      (TRUE == is_player_hand_empty(game->p_bot))) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }

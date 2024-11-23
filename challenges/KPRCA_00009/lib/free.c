@@ -27,15 +27,12 @@
 #include "malloc.h"
 #include "stdlib.h"
 
-void free(void *ptr)
-{
-  if (ptr == NULL)
-    return;
+void free(void *ptr) {
+  if (ptr == NULL) return;
 
   struct blk_t *blk = (struct blk_t *)((intptr_t)ptr - HEADER_PADDING);
 
-  if (blk->free != 0)
-    return;
+  if (blk->free != 0) return;
 
   insert_into_flist(blk);
   coalesce(blk);

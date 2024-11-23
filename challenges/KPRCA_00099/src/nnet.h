@@ -22,21 +22,20 @@
  */
 #pragma once
 
-#include "vector.h"
 #include "neuron.h"
+#include "vector.h"
 
-#define BIAS_VAL  1.0
+#define BIAS_VAL 1.0
 
 typedef vector<Neuron> Layer;
 
-class NeuralNet
-{
-  public:
-    NeuralNet(vector<unsigned int> &t);
-    void feedForward(vector<double> &in);
-    void backProp(vector<double> &target);
-    void getOutput(vector<double> &out);
+class NeuralNet {
+ public:
+  NeuralNet(vector<unsigned int> &t);
+  void feedForward(vector<double> &in);
+  void backProp(vector<double> &target);
+  void getOutput(vector<double> &out);
 
-  private:
-    vector<Layer> m_layers;
+ private:
+  vector<Layer> m_layers;
 };

@@ -20,63 +20,49 @@
  * THE SOFTWARE.
  *
  */
-#include <libcgc.h>
 #include <ctype.h>
-#include <string.h>
+#include <libcgc.h>
 #include <stdlib.h>
+#include <string.h>
 
-float strtof(const char *str, char **endptr)
-{
-    const char *orig = str;
-    char c;
-    int n, negative = -1, dot = 0;
-    double ret = 0, floating = 1;
+float strtof(const char *str, char **endptr) {
+  const char *orig = str;
+  char c;
+  int n, negative = -1, dot = 0;
+  double ret = 0, floating = 1;
 
-    for (; str[0] != '\0' && isspace(str[0]); ++str);
+  for (; str[0] != '\0' && isspace(str[0]); ++str);
 
-    if (str[0] == '-' || str[0] == '+')
-    {
-        if (str[0] == '-')
-          negative = 1;
-        str++;
-    }
+  if (str[0] == '-' || str[0] == '+') {
+    if (str[0] == '-') negative = 1;
+    str++;
+  }
 
+  const char *start = str;
 
-    const char *start = str;
+  while (1) {
+    c = str[0];
+    if (c == '\0')
+      break;
+    else if (c == '.') {
+      dot = 1;
+    } else if (c >= '0' && c <= '9') {
+      n = c - '0';
+      if (dot) {
+        floating /= 10.0;
+        ret = ret + (floating * (double)n);
+      } else
+        ret = ret * 10.0 + (double)n;
+    } else
+      break;
+    str++;
+  }
 
-    while (1)
-    {
-        c = str[0];
-        if (c == '\0')
-          break;
-        else if (c == '.')
-        {
-            dot = 1;
-        }
-        else if (c >= '0' && c <= '9')
-        {
-            n = c - '0';
-            if (dot)
-            {
-                floating /= 10.0;
-                ret = ret + (floating * (double) n);
-            }
-            else
-                ret = ret * 10.0 + (double) n;
-        }
-        else
-            break;
-        str++;
-    }
+  if (start == str) {
+    if (endptr) *endptr = (char *)orig;
+    return 0.0;
+  }
 
-    if (start == str)
-    {
-        if (endptr)
-            *endptr = (char *) orig;
-        return 0.0;
-    }
-
-    if (endptr)
-        *endptr = (char *) str;
-    return (float) ((negative * -1) * (ret + 0.001));
+  if (endptr) *endptr = (char *)str;
+  return (float)((negative * -1) * (ret + 0.001));
 }

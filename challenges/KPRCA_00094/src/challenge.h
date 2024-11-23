@@ -25,29 +25,29 @@
 #define CHAL_H
 
 typedef enum {
-    CAT_CRYPTO,
-    CAT_PWNABLE,
-    CAT_FORENSICS,
-    CAT_WEB,
-    CAT_NETWORK,
-    CAT_REVERSING,
-    CAT_MISC,
+  CAT_CRYPTO,
+  CAT_PWNABLE,
+  CAT_FORENSICS,
+  CAT_WEB,
+  CAT_NETWORK,
+  CAT_REVERSING,
+  CAT_MISC,
 } category_t;
 
 typedef enum {
-    CSTAT_LOCKED,
-    CSTAT_SOLVED,
-    CSTAT_SOLVED_U,
-    CSTAT_OPEN,
+  CSTAT_LOCKED,
+  CSTAT_SOLVED,
+  CSTAT_SOLVED_U,
+  CSTAT_OPEN,
 } chal_stat_t;
 
 typedef struct {
-    char name[128];
-    char desc[256];
-    unsigned int points;
-    chal_stat_t status;
-    category_t cat;
-    char *flag;
+  char name[128];
+  char desc[256];
+  unsigned int points;
+  chal_stat_t status;
+  category_t cat;
+  char* flag;
 } chal_t;
 
 const char* chal_cat_to_string(category_t cat);

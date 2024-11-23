@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 #define READ_ERROR 1
@@ -31,41 +31,44 @@
 #define FILE_BUFFER_SIZE 4096
 
 typedef struct {
-	size_t fd;
-	size_t index;
-	size_t num;
-	unsigned char buffer[FILE_BUFFER_SIZE];
+  size_t fd;
+  size_t index;
+  size_t num;
+  unsigned char buffer[FILE_BUFFER_SIZE];
 } File;
 
 /**
-* Read from the socket until either a delimeter is ditected or n bytes are read
-* 
-* @param socket The file descripter to read from
-* @param buffer The buffer to store the read bytes in
-* @param delim The delimiter to detect 
-* @param size The maximum number of bytes to read
-* @param read The number of total bytes read
-* @return 0 if successful, -1 if the receive call returns an error, -2 if the receive call does not read a byte
-*/
-int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t size, size_t* read);
+ * Read from the socket until either a delimeter is ditected or n bytes are read
+ *
+ * @param socket The file descripter to read from
+ * @param buffer The buffer to store the read bytes in
+ * @param delim The delimiter to detect
+ * @param size The maximum number of bytes to read
+ * @param read The number of total bytes read
+ * @return 0 if successful, -1 if the receive call returns an error, -2 if the
+ * receive call does not read a byte
+ */
+int read_until_delim_or_n(unsigned int socket, char* buffer, char delim,
+                          size_t size, size_t* read);
 
 /**
-* Read exactly n bytes from the socket
-* 
-* @param socket The file descripter to read from
-* @param buffer The buffer to store the read bytes in
-* @param size The maximum number of bytes to read
-* @param read The number of total bytes read
-* @return 0 if successful, -1 if the receive call returns an error, -2 if the receive call does not read a byte
-*/
+ * Read exactly n bytes from the socket
+ *
+ * @param socket The file descripter to read from
+ * @param buffer The buffer to store the read bytes in
+ * @param size The maximum number of bytes to read
+ * @param read The number of total bytes read
+ * @return 0 if successful, -1 if the receive call returns an error, -2 if the
+ * receive call does not read a byte
+ */
 int read_n_bytes(unsigned int socket, char* buffer, size_t size, size_t* read);
 
 /**
-* Send size bytes to the socket
-* 
-* @param socket The file descripter to send to
-* @param buffer The buffer to store the read bytes in
-* @param size The maximum number of bytes to send
-* @return 0 if successful, -1 if the transmit call returns an error
-*/
-int transmit_all(int fd, const void *buf, const size_t size);
+ * Send size bytes to the socket
+ *
+ * @param socket The file descripter to send to
+ * @param buffer The buffer to store the read bytes in
+ * @param size The maximum number of bytes to send
+ * @return 0 if successful, -1 if the transmit call returns an error
+ */
+int transmit_all(int fd, const void* buf, const size_t size);

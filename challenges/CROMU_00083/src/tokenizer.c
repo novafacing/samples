@@ -25,81 +25,66 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
-#include "filesystem.h"
-#include "string.h"
+
 #include "ctype.h"
-#include "stdio.h"
+#include "filesystem.h"
 #include "malloc.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
-
-// returns the number of tokens, and an array of pointers to the items in the original string argument
+// returns the number of tokens, and an array of pointers to the items in the
+// original string argument
 int tokenize(char *string, char delimiter, char **args[]) {
-int i;
-int count;
+  int i;
+  int count;
 
-	if (strlen(string) == 0) {
+  if (strlen(string) == 0) {
+    return 0;
+  }
 
-		return 0;
-	}
+  i = 0;
+  count = 0;
 
-	i = 0;
-	count = 0;
+  // pass one is to just determine how many tokens there are so memory can be
+  // allocated
+  while (*(string + i) != 0) {
+    while (isspace(*(string + i)) && *(string + i) != 0) ++i;
 
-	// pass one is to just determine how many tokens there are so memory can be allocated
-	while(*(string+i) != 0) {
-		
-		while ( isspace(*(string+i)) && *(string+i) != 0)
-			++i;
+    if (*(string + i) == 0) break;
 
-		if (*(string+i) == 0)
-			break;
+    ++count;
 
-		++count;
+    while (!isspace(*(string + i)) && *(string + i) != 0) ++i;
 
-		while ( !isspace(*(string+i)) && *(string+i) != 0)
-			++i;
+    if (*(string + i) == 0) break;
+  }
 
-		if (*(string+i) == 0 )
-			break;
-	}
+  *args = malloc(count * sizeof(char *));
 
+  if (*args == 0) return -1;
 
-	*args = malloc(count * sizeof(char *));
+  i = 0;
+  count = 0;
 
+  while (*(string + i) != 0) {
+    while (isspace(*(string + i)) && *(string + i) != 0) ++i;
 
-	if (*args == 0 )
-		return -1;
+    if (*(string + i) == 0) break;
 
-	i = 0;
-	count = 0;
+    (*args)[count] = (string + i);
+    ++count;
 
-	while(*(string+i) != 0) {
-		
-		while ( isspace(*(string+i)) && *(string+i) != 0)
-			++i;
+    while (!isspace(*(string + i)) && *(string + i) != 0) ++i;
 
-		if (*(string+i) == 0)
-			break;
+    if (*(string + i) == 0)
+      break;
+    else {
+      *(string + i) = 0;
+      ++i;
+    }
+  }
 
-		(*args)[count] = (string+i);
-		++count;
-
-		while ( !isspace(*(string+i)) && *(string+i) != 0)
-			++i;
-
-
-		if (*(string+i) == 0 )
-			break;
-		else {
-
-			*(string+i) = 0;
-			++i;
-		}
-	}
-
-	return count;
-
+  return count;
 }
-

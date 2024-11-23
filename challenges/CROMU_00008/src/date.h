@@ -28,19 +28,17 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
+typedef struct _DATE_TIME_STRUCT {
+  uint8_t hour;
+  uint8_t minute;
+  uint8_t second;
 
-typedef struct _DATE_TIME_STRUCT
-{
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
-
-    uint8_t month;
-    uint8_t day;
-    uint8_t year;
+  uint8_t month;
+  uint8_t day;
+  uint8_t year;
 } tDateTime;
 
-int32_t date_compare( tDateTime date1, tDateTime date2 );
-int32_t parse_date( const char *str, tDateTime *pDate );
+int32_t date_compare(tDateTime date1, tDateTime date2);
+int32_t parse_date(const char *str, tDateTime *pDate);
 
-#endif // __DATE_H__
+#endif  // __DATE_H__

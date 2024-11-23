@@ -18,24 +18,24 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H 1
 
+#include <errno.h>
 #include <libcgc.h>
 #include <stdint.h>
-#include <errno.h>
-#include "memset.h"
-#include "memcpy.h"
-#include "send.h"
-#include "pi_prng.h"
-#include "strncpy.h"
-#include "list.h"
-#include "syslog.h"
-#include "recv_all.h"
-#include "sleep.h"
 
+#include "list.h"
+#include "memcpy.h"
+#include "memset.h"
+#include "pi_prng.h"
+#include "recv_all.h"
+#include "send.h"
+#include "sleep.h"
+#include "strncpy.h"
+#include "syslog.h"
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE -1
@@ -48,11 +48,14 @@
  * @param e An expression to compare with SUCCESS
  * @return An error condition if exp doesn't return SUCCESS
  */
-#define FAILBAIL(e) if (SUCCESS != (ret = e)) {return ret;}
+#define FAILBAIL(e)           \
+  if (SUCCESS != (ret = e)) { \
+    return ret;               \
+  }
 
 /**
  * Return the lesser of a and b
- * 
+ *
  * @param a The first value
  * @param b The second value
  * @return a if a < b else b
@@ -85,11 +88,11 @@
  * @param ptr A pointer to a member
  * @return A pointer to the containing structure
  */
-#define CONTAINEROF(type, member, ptr) ({                               \
-    char *__ptr = (char *)(ptr);                                        \
-    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL;          \
-})
-
+#define CONTAINEROF(type, member, ptr)                         \
+  ({                                                           \
+    char *__ptr = (char *)(ptr);                               \
+    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL; \
+  })
 
 /**
  * Allocate a chunk of memory on the heap.
@@ -125,7 +128,5 @@ void *calloc(size_t size);
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
 void *realloc(void *ptr, size_t size);
-
-
 
 #endif

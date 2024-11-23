@@ -26,26 +26,15 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-
 unsigned short motorola_swap_short(unsigned short input) {
-	
-	return ((input >> 8) | (input <<8));
-
+  return ((input >> 8) | (input << 8));
 }
 
 unsigned motorola_swap_word(unsigned input) {
-	
-	return ( ((input >> 24)&0xff) | ((input <<8) & 0xff0000) | ((input >>8) &0xff00) | ((input<<24)&0xff000000) );
-
+  return (((input >> 24) & 0xff) | ((input << 8) & 0xff0000) |
+          ((input >> 8) & 0xff00) | ((input << 24) & 0xff000000));
 }
 
-unsigned short intel_swap_short(unsigned short input) {
-	
-	return(input);
-}
+unsigned short intel_swap_short(unsigned short input) { return (input); }
 
-unsigned intel_swap_word(unsigned input) {
-	
-	return (input);
-
-}
+unsigned intel_swap_word(unsigned input) { return (input); }

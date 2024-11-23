@@ -31,62 +31,54 @@
 #define F_WRITE 2
 
 struct FILE {
-    int fd;
-    int rw;
-    int idx;
-    int length;
-    unsigned char *xlat_map;
-    unsigned char *xlat_map_inv;
-    char buffer[1024];
+  int fd;
+  int rw;
+  int idx;
+  int length;
+  unsigned char *xlat_map;
+  unsigned char *xlat_map_inv;
+  char buffer[1024];
 };
 
-static inline void xlat(const unsigned char *map, void *buf, size_t count)
-{
-    unsigned char *cbuf = (unsigned char *)buf;
-    size_t i;
+static inline void xlat(const unsigned char *map, void *buf, size_t count) {
+  unsigned char *cbuf = (unsigned char *)buf;
+  size_t i;
 
-    if (map == NULL)
-        return;
+  if (map == NULL) return;
 
-    for (i = 0; i < count; i++)
-        cbuf[i] = map[cbuf[i]];
+  for (i = 0; i < count; i++) cbuf[i] = map[cbuf[i]];
 }
 
-static inline int transmit_all(int fd, const void *buf, size_t count)
-{
-    const char *cbuf = (const char *)buf;
-    size_t i;
+static inline int transmit_all(int fd, const void *buf, size_t count) {
+  const char *cbuf = (const char *)buf;
+  size_t i;
 
-    for (i = 0; i < count; )
-    {
-        size_t bytes;
-        if (transmit(fd, cbuf + i, count - i, &bytes) != 0)
-            return -1;
-        i += bytes;
-    }
+  for (i = 0; i < count;) {
+    size_t bytes;
+    if (transmit(fd, cbuf + i, count - i, &bytes) != 0) return -1;
+    i += bytes;
+  }
 
-    return 0;
+  return 0;
 }
 
-static inline int transmit_xlat(int fd,  const unsigned char *map, const void *buf, size_t count)
-{
-    const char *cbuf = (const char *)buf;
-    char tmp[1024];
-    size_t i;
+static inline int transmit_xlat(int fd, const unsigned char *map,
+                                const void *buf, size_t count) {
+  const char *cbuf = (const char *)buf;
+  char tmp[1024];
+  size_t i;
 
-    for (i = 0; i < count; )
-    {
-        size_t cnt = count - i;
-        if (cnt > sizeof(tmp)) cnt = sizeof(tmp);
+  for (i = 0; i < count;) {
+    size_t cnt = count - i;
+    if (cnt > sizeof(tmp)) cnt = sizeof(tmp);
 
-        memcpy(tmp, cbuf + i, cnt);
-        xlat(map, tmp, cnt);
-        if (transmit_all(fd, tmp, cnt) != 0)
-            return -1;
-        i += cnt;
-    }
-    
-    return 0;
+    memcpy(tmp, cbuf + i, cnt);
+    xlat(map, tmp, cnt);
+    if (transmit_all(fd, tmp, cnt) != 0) return -1;
+    i += cnt;
+  }
+
+  return 0;
 }
 
 #endif

@@ -22,55 +22,54 @@
  */
 #include "mp.h"
 
-static void _MsgSend(int fd, int id, int selector, int next_fd, int next_id, int next_selector, int nargs, ...)
-{
-    va_list ap;
-    FILE *fp = fopen(fd, 1);
-    fwrite(&id, sizeof(int), fp);
-    fwrite(&selector, sizeof(int), fp);
-    fwrite(&nargs, 1, fp);
-    fwrite(&next_fd, sizeof(int), fp);
-    fwrite(&next_id, sizeof(int), fp);
-    fwrite(&next_selector, sizeof(int), fp);
+static void _MsgSend(int fd, int id, int selector, int next_fd, int next_id,
+                     int next_selector, int nargs, ...) {
+  va_list ap;
+  FILE* fp = fopen(fd, 1);
+  fwrite(&id, sizeof(int), fp);
+  fwrite(&selector, sizeof(int), fp);
+  fwrite(&nargs, 1, fp);
+  fwrite(&next_fd, sizeof(int), fp);
+  fwrite(&next_id, sizeof(int), fp);
+  fwrite(&next_selector, sizeof(int), fp);
 
-    va_start(ap, nargs);
-    for (int i = 0; i < nargs; i++)
-    {
-        // do stuff
-        proxy_argument *arg = va_arg(ap, proxy_argument *);
-        arg->send(fp);
-    }
-    va_end(ap);
-    fflush(fp);
+  va_start(ap, nargs);
+  for (int i = 0; i < nargs; i++) {
+    // do stuff
+    proxy_argument* arg = va_arg(ap, proxy_argument*);
+    arg->send(fp);
+  }
+  va_end(ap);
+  fflush(fp);
 }
 
-void MsgSend1(const object& obj, int selector)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 0);
+void MsgSend1(const object& obj, int selector) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 0);
 }
 
-void MsgSend(const object& obj, int selector, const object& next_obj, int next_selector)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id, next_selector, 0);
+void MsgSend(const object& obj, int selector, const object& next_obj,
+             int next_selector) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id,
+           next_selector, 0);
 }
 
-void MsgSend1(const object& obj, int selector, proxy_argument a1)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 1, &a1);
+void MsgSend1(const object& obj, int selector, proxy_argument a1) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 1, &a1);
 }
 
-void MsgSend(const object& obj, int selector, const object& next_obj, int next_selector, proxy_argument a1)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id, next_selector, 1, &a1);
+void MsgSend(const object& obj, int selector, const object& next_obj,
+             int next_selector, proxy_argument a1) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id,
+           next_selector, 1, &a1);
 }
 
-void MsgSend1(const object& obj, int selector, proxy_argument a1, proxy_argument a2)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 2, &a1, &a2);
+void MsgSend1(const object& obj, int selector, proxy_argument a1,
+              proxy_argument a2) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, 0, 0, 0, 2, &a1, &a2);
 }
 
-void MsgSend(const object& obj, int selector, const object& next_obj, int next_selector, proxy_argument a1, proxy_argument a2)
-{
-    _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id, next_selector, 2, &a1, &a2);
+void MsgSend(const object& obj, int selector, const object& next_obj,
+             int next_selector, proxy_argument a1, proxy_argument a2) {
+  _MsgSend(obj.d_fd, obj.d_id, selector, next_obj.d_fd, next_obj.d_id,
+           next_selector, 2, &a1, &a2);
 }
-

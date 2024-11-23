@@ -21,110 +21,101 @@
  *
  */
 #include "blogpost.h"
+
 #include "asciiart.h"
 #include "picture.h"
 
-BlogPost *BlogPost::create_blog_post(User *user, char *_title)
-{
-    if (!user || !_title || !*_title)
-        return NULL;
+BlogPost *BlogPost::create_blog_post(User *user, char *_title) {
+  if (!user || !_title || !*_title) return NULL;
 
-    return new BlogPost(user, _title);
+  return new BlogPost(user, _title);
 }
 
-BlogPost::BlogPost(User *user, char *_title)
-{
-    owner = user;
-    strcpy(title, _title);
-    memset(post_order, 0, sizeof(post_order));
-    total_views = 0;
+BlogPost::BlogPost(User *user, char *_title) {
+  owner = user;
+  strcpy(title, _title);
+  memset(post_order, 0, sizeof(post_order));
+  total_views = 0;
 }
 
-BlogPost::~BlogPost()
-{
+BlogPost::~BlogPost() {}
 
+char *BlogPost::get_title() { return title; }
+
+bool BlogPost::add_text_block(char *text) {
+  size_t len = strlen(post_order);
+  if (!text || !*text) {
+    printf("Can't add empty text\n");
+    return false;
+  }
+
+  if (len >= sizeof(post_order)) {
+    printf("Post is too big\n");
+    return false;
+  }
+
+  text_blocks.add(text);
+  post_order[len++] = 't';
+  return true;
 }
 
-char *BlogPost::get_title()
-{
-    return title;
+bool BlogPost::add_file(File *file) {
+  size_t len;
+  if (!file) {
+    printf("Bad file\n");
+    return false;
+  }
+
+  len = strlen(post_order);
+  if (len >= sizeof(post_order)) {
+    printf("Post is too big\n");
+    return false;
+  }
+
+  files.add(file);
+  post_order[len] = 'f';
+  post_order[++len] = '\0';
+  return true;
 }
 
-bool BlogPost::add_text_block(char *text)
-{
-    size_t len = strlen(post_order);
-    if (!text || !*text) {
-        printf("Can't add empty text\n");
-        return false;
+void BlogPost::like(User *user) {
+  for (int i = 0; i < likes.length(); i++) {
+    if (likes[i] == user) {
+      printf("You already liked this\n");
+      return;
     }
+  }
 
-    if (len >= sizeof(post_order)) {
-        printf("Post is too big\n");
-        return false;
-    }
-
-    text_blocks.add(text);
-    post_order[len++] = 't';
-    return true;
+  likes.add(user);
+  owner->add_like();
 }
 
-bool BlogPost::add_file(File *file)
-{
-    size_t len;
-    if (!file) {
-        printf("Bad file\n");
-        return false;
-    }
+void BlogPost::print_post() {
+  size_t text_idx = 0, file_idx = 0;
+  File *file;
 
-    len = strlen(post_order);
-    if (len >= sizeof(post_order)) {
-        printf("Post is too big\n");
-        return false;
-    }
-
-    files.add(file);
-    post_order[len] = 'f';
-    post_order[++len] = '\0';
-    return true;
-}
-
-void BlogPost::like(User *user)
-{
-    for (int i=0; i < likes.length(); i++) {
-        if (likes[i] == user) {
-            printf("You already liked this\n");
-            return;
-        }
-    }
-
-    likes.add(user);
-    owner->add_like();
-}
-
-void BlogPost::print_post()
-{
-    size_t text_idx = 0, file_idx = 0;
-    File *file;
-
-    printf("---%s---\n", title);
-    for(size_t i = 0; i < strlen(post_order); i++) {
-        switch(post_order[i]) {
-        case 't':
-            printf("%s\n", text_blocks[text_idx++]); break;
-        case 'f':
-            file = files[file_idx++];
-            switch(file->tell_filetype()) {
-            case ASCIIART:
-                ((AsciiArt *)(file))->print_asciiart(); break;
-            case PICTURE:
-                ((Picture *)(file))->print_picture(); break;
-            default:
-                printf("Unsupported file type\n");
-            }
+  printf("---%s---\n", title);
+  for (size_t i = 0; i < strlen(post_order); i++) {
+    switch (post_order[i]) {
+      case 't':
+        printf("%s\n", text_blocks[text_idx++]);
+        break;
+      case 'f':
+        file = files[file_idx++];
+        switch (file->tell_filetype()) {
+          case ASCIIART:
+            ((AsciiArt *)(file))->print_asciiart();
             break;
-        default:
-            printf("Bad post\n");
-            return;
+          case PICTURE:
+            ((Picture *)(file))->print_picture();
+            break;
+          default:
+            printf("Unsupported file type\n");
         }
+        break;
+      default:
+        printf("Bad post\n");
+        return;
     }
+  }
 }

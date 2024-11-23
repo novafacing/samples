@@ -20,8 +20,9 @@
  * THE SOFTWARE.
  *
  */
-#include "endian.h"
 #include "time.h"
+
+#include "endian.h"
 
 /* 2014-12-12 11:13:36 */
 #define INITIAL_TIME ((2208988800ULL + 1418382816) * 1000)
@@ -29,21 +30,18 @@
 
 unsigned long long current_time = INITIAL_TIME;
 
-int handle_msg_time(void *data, unsigned int n)
-{
-    uint32_t fractional, secs;
-    unsigned long long new_time;
+int handle_msg_time(void *data, unsigned int n) {
+  uint32_t fractional, secs;
+  unsigned long long new_time;
 
-    if (n < 8)
-        return 0;
+  if (n < 8) return 0;
 
-    fractional = betoh32(*(uint32_t *)(data));
-    secs = betoh32(*(uint32_t *)(data + 4));
+  fractional = betoh32(*(uint32_t *)(data));
+  secs = betoh32(*(uint32_t *)(data + 4));
 
-    new_time = (secs * 1000ULL) + ((fractional * 1000ULL) >> 32);
-    if (new_time < current_time || (new_time - current_time) > MAX_DIST)
-        return 1;
+  new_time = (secs * 1000ULL) + ((fractional * 1000ULL) >> 32);
+  if (new_time < current_time || (new_time - current_time) > MAX_DIST) return 1;
 
-    current_time = new_time;
-    return 1;
+  current_time = new_time;
+  return 1;
 }

@@ -18,13 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
-#define	FALSE 0
-#define	TRUE 1
+#define FALSE 0
+#define TRUE 1
 
-#define SZ_PAGE 0x1000 // 4096
+#define SZ_PAGE 0x1000  // 4096
 
 typedef unsigned char uint8_t;
 typedef uint8_t byte_t;
@@ -34,7 +34,7 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 // typedef long unsigned int size_t;
 
-typedef unsigned long long uint64_t; 
+typedef unsigned long long uint64_t;
 
 #define MAX_UINT8 0xff
 #define MAX_UINT32 0xffffffff

@@ -25,21 +25,20 @@
 
 #include "req.h"
 
-class CSkill
-{
-    public:
-        CSkill(const char* name, CRequirement::Type counter, int price);
-        ~CSkill();
+class CSkill {
+ public:
+  CSkill(const char* name, CRequirement::Type counter, int price);
+  ~CSkill();
 
-        const char* GetName() { return m_name; }
-        int GetPrice() { return m_price; }
-        CRequirement::Type GetCounter() { return m_counter; }
-        bool IsCounter(CRequirement::Type type);
+  const char* GetName() { return m_name; }
+  int GetPrice() { return m_price; }
+  CRequirement::Type GetCounter() { return m_counter; }
+  bool IsCounter(CRequirement::Type type);
 
-    private:
-        static const int k_maxNameLength = 16;
+ private:
+  static const int k_maxNameLength = 16;
 
-        char *m_name;
-        CRequirement::Type m_counter;
-        int m_price;
+  char* m_name;
+  CRequirement::Type m_counter;
+  int m_price;
 };

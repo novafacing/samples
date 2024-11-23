@@ -18,12 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /**
-* Convert a hex string of the form '0x00' into a hex value
-* 
-* @param buf The buffer that holds the hext string
-* @return The value of the hex string
-*/
+ * Convert a hex string of the form '0x00' into a hex value
+ *
+ * @param buf The buffer that holds the hext string
+ * @return The value of the hex string
+ */
 unsigned char atox(char* buf);

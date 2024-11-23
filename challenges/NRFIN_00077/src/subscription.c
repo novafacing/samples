@@ -18,9 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "subscription.h"
+
 #include "libc.h"
 
 /**
@@ -31,30 +32,29 @@
  * @return              The address of the new Subscription structure
  */
 Subscription* newSubscription(char* name, unsigned index, char* deliveryType) {
-	Subscription* subscription;
-	size_t channelNameLength;
+  Subscription* subscription;
+  size_t channelNameLength;
 
-	if(!(subscription = malloc(sizeof(Subscription))))
-		return NULL;
+  if (!(subscription = malloc(sizeof(Subscription)))) return NULL;
 
-	if(setDeliveryType(&subscription, deliveryType)) {
-		free(subscription);
-		return NULL;
-	}
+  if (setDeliveryType(&subscription, deliveryType)) {
+    free(subscription);
+    return NULL;
+  }
 
-	channelNameLength  = strlen(name);
-	if(!(subscription->name = malloc(channelNameLength+1))) {
-		free(subscription->deliveryType);
-		free(subscription);
-		return NULL;
-	}
+  channelNameLength = strlen(name);
+  if (!(subscription->name = malloc(channelNameLength + 1))) {
+    free(subscription->deliveryType);
+    free(subscription);
+    return NULL;
+  }
 
-	memset(subscription->name, 0, channelNameLength+1);
-	strncpy(subscription->name, name, channelNameLength);
-	subscription->index = index;
-	subscription->next = NULL;
+  memset(subscription->name, 0, channelNameLength + 1);
+  strncpy(subscription->name, name, channelNameLength);
+  subscription->index = index;
+  subscription->next = NULL;
 
-	return subscription;
+  return subscription;
 }
 
 /**
@@ -65,12 +65,12 @@ Subscription* newSubscription(char* name, unsigned index, char* deliveryType) {
  *                     NULL if not found.
  */
 Channel* getChannel(Channel* channelList, char* channelName) {
-	for(Channel* channel=channelList; channel!=NULL; channel=channel->next) {
-		if(!strcmp(channel->name, channelName)) 
-			return channel;
-	}
+  for (Channel* channel = channelList; channel != NULL;
+       channel = channel->next) {
+    if (!strcmp(channel->name, channelName)) return channel;
+  }
 
-	return NULL;
+  return NULL;
 }
 
 /**
@@ -80,13 +80,14 @@ Channel* getChannel(Channel* channelList, char* channelName) {
  * @return                   The address of the found Subscription structure,
  *                           NULL if not found.
  */
-Subscription* getSubscription(Subscription* subscriptions, char* subscriptionName) {
-	for(Subscription* subscription=subscriptions; subscription!=NULL; subscription=subscription->next) {
-		if(!strcmp(subscription->name, subscriptionName)) 
-			return subscription;
-	}
+Subscription* getSubscription(Subscription* subscriptions,
+                              char* subscriptionName) {
+  for (Subscription* subscription = subscriptions; subscription != NULL;
+       subscription = subscription->next) {
+    if (!strcmp(subscription->name, subscriptionName)) return subscription;
+  }
 
-	return NULL;
+  return NULL;
 }
 
 /**
@@ -96,34 +97,33 @@ Subscription* getSubscription(Subscription* subscriptions, char* subscriptionNam
  * @return                 1 if the assignment fails, 0 otherwise.
  */
 int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType) {
-	Subscription* subscription;
+  Subscription* subscription;
 
-	subscription = *subscriptionPtr;
+  subscription = *subscriptionPtr;
 
-	if(!strcmp(GUARANTEED_DELIVERY, deliveryType) ||
-	   !strcmp(FRESH_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_HIGH_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_MEDIUM_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_LOW_DELIVERY, deliveryType)) {
+  if (!strcmp(GUARANTEED_DELIVERY, deliveryType) ||
+      !strcmp(FRESH_DELIVERY, deliveryType) ||
+      !strcmp(PRIORITY_HIGH_DELIVERY, deliveryType) ||
+      !strcmp(PRIORITY_MEDIUM_DELIVERY, deliveryType) ||
+      !strcmp(PRIORITY_LOW_DELIVERY, deliveryType)) {
+    if (!(subscription->deliveryType = malloc(strlen(deliveryType) + 1)))
+      return 1;
 
-		if(!(subscription->deliveryType = malloc(strlen(deliveryType)+1)))
-			return 1;
+    memset(subscription->deliveryType, 0, strlen(deliveryType) + 1);
+    strcpy(subscription->deliveryType, deliveryType);
+  } else if (atoi(deliveryType) > 0) {
+    if (!(subscription->deliveryType = malloc(strlen(deliveryType) + 1)))
+      return 1;
 
-		memset(subscription->deliveryType, 0, strlen(deliveryType)+1);
-		strcpy(subscription->deliveryType, deliveryType);
-	} else if(atoi(deliveryType) > 0) {
-		if(!(subscription->deliveryType = malloc(strlen(deliveryType)+1)))
-			return 1;
+    memset(subscription->deliveryType, 0, strlen(deliveryType) + 1);
+    strcpy(subscription->deliveryType, deliveryType);
+  } else {
+    return 1;
+  }
 
-		memset(subscription->deliveryType, 0, strlen(deliveryType)+1);
-		strcpy(subscription->deliveryType, deliveryType);			
-	} else {
-		return 1;
-	}
+  *subscriptionPtr = subscription;
 
-	*subscriptionPtr = subscription;
-
-	return 0;
+  return 0;
 }
 
 /**
@@ -134,14 +134,13 @@ int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType) {
  *               NULL if not found.
  */
 Message* getMessageById(Message* queue, unsigned int id) {
-	Message* message=NULL;
+  Message* message = NULL;
 
-	for(message=queue; message!=NULL; message=message->next) {
-		if(message->id == id)
-			return message;
-	}
+  for (message = queue; message != NULL; message = message->next) {
+    if (message->id == id) return message;
+  }
 
-	return NULL;
+  return NULL;
 }
 
 /**
@@ -151,14 +150,14 @@ Message* getMessageById(Message* queue, unsigned int id) {
  *               NULL if not found.
  */
 Message* getLastMessage(Message* queue) {
-	Message* lastMessage;
+  Message* lastMessage;
 
-	if(!queue)
-		return NULL;
+  if (!queue) return NULL;
 
-	for(lastMessage=queue; lastMessage->next!=NULL; lastMessage=lastMessage->next);
+  for (lastMessage = queue; lastMessage->next != NULL;
+       lastMessage = lastMessage->next);
 
-	return lastMessage;
+  return lastMessage;
 }
 
 /**
@@ -167,21 +166,21 @@ Message* getLastMessage(Message* queue) {
  * @param channel The address of the channel to cleanup
  */
 void cleanupChannel(Channel* channel) {
-	unsigned int head;
+  unsigned int head;
 
-	head = channel->tail;
-	for(Subscription* subscription=channel->subscriptions; subscription!= NULL; subscription=subscription->next) {
-		if(subscription->index < head)
-			head = subscription->index;
-	}
+  head = channel->tail;
+  for (Subscription* subscription = channel->subscriptions;
+       subscription != NULL; subscription = subscription->next) {
+    if (subscription->index < head) head = subscription->index;
+  }
 
-	while(head > channel->head) {
-		Message* message;
+  while (head > channel->head) {
+    Message* message;
 
-		message = channel->queue;
-		channel->queue = message->next;
-		channel->head++;
-	}
+    message = channel->queue;
+    channel->queue = message->next;
+    channel->head++;
+  }
 }
 
 /**
@@ -190,26 +189,25 @@ void cleanupChannel(Channel* channel) {
  * @return      The address of the new Channel structure
  */
 Channel* newChannel(char* name) {
-	Channel* channel;
-	size_t nameSize;
+  Channel* channel;
+  size_t nameSize;
 
-	if(!(channel = malloc(sizeof(Channel))))
-		return NULL;
+  if (!(channel = malloc(sizeof(Channel)))) return NULL;
 
-	nameSize = strlen(name);
-	if(!(channel->name = malloc(nameSize))) {
-		free(channel);
-		return NULL;
-	}
-	memset(channel->name, 0, nameSize);
-	strcpy(channel->name, name);
-	channel->head = 0;
-	channel->tail = 0;
-	channel->subscriptions = NULL;
-	channel->queue = NULL;
-	channel->next = NULL;
+  nameSize = strlen(name);
+  if (!(channel->name = malloc(nameSize))) {
+    free(channel);
+    return NULL;
+  }
+  memset(channel->name, 0, nameSize);
+  strcpy(channel->name, name);
+  channel->head = 0;
+  channel->tail = 0;
+  channel->subscriptions = NULL;
+  channel->queue = NULL;
+  channel->next = NULL;
 
-	return channel;
+  return channel;
 }
 
 /**
@@ -219,36 +217,37 @@ Channel* newChannel(char* name) {
  * @param userName             The name of the user
  * @param channelName          The name of the channel to subscribe the user to
  */
-void addSubscriptions(Channel** channelListPtr, Subscription** userSubscriptionsPtr, char* userName, char* channelName) {
-	Subscription* userSubscription;
-	Subscription* channelSubscription;
-	Subscription* subscriptions;
-	Channel* channelList;
-	Channel* channel;
+void addSubscriptions(Channel** channelListPtr,
+                      Subscription** userSubscriptionsPtr, char* userName,
+                      char* channelName) {
+  Subscription* userSubscription;
+  Subscription* channelSubscription;
+  Subscription* subscriptions;
+  Channel* channelList;
+  Channel* channel;
 
-	channelList = *channelListPtr;
-	if(!(channel = getChannel(channelList, channelName))) {
-		if(!(channel = newChannel(channelName)))
-			return;
-		channel->next = *channelListPtr;
-		*channelListPtr = channel;
-	}
+  channelList = *channelListPtr;
+  if (!(channel = getChannel(channelList, channelName))) {
+    if (!(channel = newChannel(channelName))) return;
+    channel->next = *channelListPtr;
+    *channelListPtr = channel;
+  }
 
-	subscriptions = *userSubscriptionsPtr;
-	if((userSubscription = getSubscription(subscriptions, channel->name))) {
-		userSubscription->index = channel->tail;
-		return;
-	}
+  subscriptions = *userSubscriptionsPtr;
+  if ((userSubscription = getSubscription(subscriptions, channel->name))) {
+    userSubscription->index = channel->tail;
+    return;
+  }
 
+  userSubscription =
+      newSubscription(channel->name, channel->tail, FRESH_DELIVERY);
+  userSubscription->next = subscriptions;
+  subscriptions = userSubscription;
 
-	userSubscription = newSubscription(channel->name, channel->tail, FRESH_DELIVERY);
-	userSubscription->next = subscriptions;
-	subscriptions = userSubscription;
+  channelSubscription =
+      newSubscription(userName, channel->tail, FRESH_DELIVERY);
+  channelSubscription->next = channel->subscriptions;
+  channel->subscriptions = channelSubscription;
 
-	channelSubscription = newSubscription(userName, channel->tail, FRESH_DELIVERY);
-	channelSubscription->next = channel->subscriptions;
-	channel->subscriptions = channelSubscription;
-
-	*userSubscriptionsPtr = subscriptions;
-	
+  *userSubscriptionsPtr = subscriptions;
 }

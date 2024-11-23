@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-#define FREQ_2400_IND	1
-#define FREQ_1200_IND	0
+#define FREQ_2400_IND 1
+#define FREQ_1200_IND 0
 
-uint8_t receive_sample( int8_t sample_in );
+uint8_t receive_sample(int8_t sample_in);
 
-#endif // __RX_H__
+#endif  // __RX_H__

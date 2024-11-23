@@ -26,21 +26,9 @@
 #ifndef MOVIE_H
 #define MOVIE_H
 
-enum genre_t {
-  G_ACTION = 1,
-  G_ROMANCE,
-  G_COMEDY,
-  G_HORROR,
-  G_OTHER
-};
+enum genre_t { G_ACTION = 1, G_ROMANCE, G_COMEDY, G_HORROR, G_OTHER };
 
-enum rating_t {
-  R_G = 1,
-  R_PG,
-  R_PG13,
-  R_R,
-  R_UNKNOWN
-};
+enum rating_t { R_G = 1, R_PG, R_PG13, R_R, R_UNKNOWN };
 
 typedef struct movie {
   char *title;
@@ -57,16 +45,16 @@ typedef struct movie_node {
   struct movie_node *next;
 } movie_node_t;
 
-typedef movie_node_t * movie_list_t;
+typedef movie_node_t *movie_list_t;
 
-const char* movie_g2s(enum genre_t);
-const char* movie_r2s(enum rating_t);
+const char *movie_g2s(enum genre_t);
+const char *movie_r2s(enum rating_t);
 
 int movie_add(movie_list_t *, movie_t *);
 int movie_delete(movie_list_t *, int);
 int movie_update(movie_t *);
-movie_node_t* movie_find(movie_list_t, char *);
-movie_node_t* movie_find_by_id(movie_list_t, int);
+movie_node_t *movie_find(movie_list_t, char *);
+movie_node_t *movie_find_by_id(movie_list_t, int);
 void free_movie(movie_t *);
 
 #endif

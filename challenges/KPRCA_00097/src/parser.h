@@ -24,23 +24,21 @@
 
 #include "node.h"
 
-class Parser
-{
-private:
-    Node *parse(const char *ns, const char *input);
-public:
-    Parser(char left, char right, char sep, char assign, char close, char escape);
-    inline Node *parse(const char *input)
-    {
-        return parse(nullptr, input);
-    }
-private:
-    static const unsigned int MAX_LENGTH = 1024;
-    char d_left;
-    char d_right;
-    char d_sep;
-    char d_assign;
-    char d_close;
-    char d_escape;
-    char d_buf[MAX_LENGTH + 1];
+class Parser {
+ private:
+  Node *parse(const char *ns, const char *input);
+
+ public:
+  Parser(char left, char right, char sep, char assign, char close, char escape);
+  inline Node *parse(const char *input) { return parse(nullptr, input); }
+
+ private:
+  static const unsigned int MAX_LENGTH = 1024;
+  char d_left;
+  char d_right;
+  char d_sep;
+  char d_assign;
+  char d_close;
+  char d_escape;
+  char d_buf[MAX_LENGTH + 1];
 };

@@ -25,214 +25,160 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CDoubleItemList::CDoubleItemList( )
-    : m_pFirst( NULL ), m_pLast( NULL )
-{
+CDoubleItemList::CDoubleItemList() : m_pFirst(NULL), m_pLast(NULL) {}
 
+CDoubleItemList::~CDoubleItemList() { DeleteAll(); }
+
+void CDoubleItemList::DeleteAll(void) {
+  CDoubleItemLink *pNext;
+  CDoubleItemLink *pCur;
+
+  for (pCur = m_pFirst; pCur; pCur = pNext) {
+    pNext = pCur->m_pNext;
+
+    // Delete entry
+    delete pCur;
+
+    pCur = pNext;
+  }
 }
 
-CDoubleItemList::~CDoubleItemList( )
-{
-    DeleteAll();
+CDoubleItemLink *CDoubleItemList::GetNext(CDoubleItemLink *pItem) {
+  if (pItem->m_pList != this) return (NULL);
+
+  return (pItem->m_pNext);
 }
 
-void CDoubleItemList::DeleteAll( void )
-{
-    CDoubleItemLink *pNext;
-    CDoubleItemLink *pCur;
+CDoubleItemLink *CDoubleItemList::GetPrev(CDoubleItemLink *pItem) {
+  if (pItem->m_pList != this) return (NULL);
 
-    for ( pCur = m_pFirst; pCur; pCur = pNext )
-    {
-        pNext = pCur->m_pNext;
-
-        // Delete entry
-        delete pCur;
-
-        pCur = pNext;
-    }
+  return (pItem->m_pPrev);
 }
 
-CDoubleItemLink *CDoubleItemList::GetNext( CDoubleItemLink *pItem )
-{
-    if ( pItem->m_pList != this )
-        return (NULL);
+CDoubleItemLink *CDoubleItemList::RemoveFirst(void) {
+  CDoubleItemLink *pItem = m_pFirst;
 
-    return (pItem->m_pNext);
+  RemoveItem(pItem);
+
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::GetPrev( CDoubleItemLink *pItem )
-{
-    if ( pItem->m_pList != this )
-        return (NULL);
+CDoubleItemLink *CDoubleItemList::RemoveLast(void) {
+  CDoubleItemLink *pItem = m_pLast;
 
-    return (pItem->m_pPrev);
+  RemoveItem(pItem);
+
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::RemoveFirst( void )
-{
-    CDoubleItemLink *pItem = m_pFirst;
+CDoubleItemLink *CDoubleItemList::RemoveItem(CDoubleItemLink *pItem) {
+  // Check if item is in list...
+  if (pItem->m_pList != this) return (NULL);
 
-    RemoveItem( pItem );
+  if (pItem->m_pNext) pItem->m_pNext->m_pPrev = pItem->m_pPrev;
 
-    return (pItem);
+  if (pItem->m_pPrev) pItem->m_pPrev->m_pNext = pItem->m_pNext;
+
+  if (pItem == m_pLast) m_pLast = pItem->m_pPrev;
+
+  if (pItem == m_pFirst) m_pFirst = pItem->m_pNext;
+
+  // Remove our list pointer
+  pItem->ClearList();
+
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::RemoveLast( void )
-{
-    CDoubleItemLink *pItem = m_pLast;
+CDoubleItemLink *CDoubleItemList::AddFirst(CDoubleItemLink *pItem) {
+  if (pItem == NULL) return (NULL);
 
-    RemoveItem( pItem );
+  if (pItem->m_pList != NULL) return (NULL);  // Already in a list!
 
-    return (pItem);
+  if (m_pFirst == NULL) {
+    // Empty list
+    pItem->m_pPrev = NULL;
+    pItem->m_pNext = NULL;
+
+    m_pFirst = m_pLast = pItem;
+  } else {
+    pItem->m_pNext = m_pFirst;
+
+    pItem->m_pPrev = NULL;
+    m_pFirst->m_pPrev = pItem;
+
+    m_pFirst = pItem;
+  }
+
+  // Item tracks what list it is in
+  pItem->AddList(this);
+
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::RemoveItem( CDoubleItemLink *pItem )
-{
-    // Check if item is in list...
-    if ( pItem->m_pList != this )
-        return (NULL);
+CDoubleItemLink *CDoubleItemList::AddAfter(CDoubleItemLink *pPrev,
+                                           CDoubleItemLink *pItem) {
+  // SANITY check
+  if (pItem == NULL) return (NULL);
 
-    if ( pItem->m_pNext )
-        pItem->m_pNext->m_pPrev = pItem->m_pPrev;
+  if (pItem->m_pList != NULL) return (NULL);
 
-    if ( pItem->m_pPrev )
-        pItem->m_pPrev->m_pNext = pItem->m_pNext;
+  if (pPrev == NULL) return (AddFirst(pItem));
 
-    if ( pItem == m_pLast )
-        m_pLast = pItem->m_pPrev;
+  if (pPrev->m_pList != this) return (NULL);
 
-    if ( pItem == m_pFirst )
-        m_pFirst = pItem->m_pNext;
+  pItem->m_pNext = pPrev->m_pNext;
+  pItem->m_pPrev = pPrev;
 
-    // Remove our list pointer
-    pItem->ClearList();
+  if (pPrev->m_pNext) pPrev->m_pNext->m_pPrev = pItem;
 
-    return (pItem);
+  pPrev->m_pNext = pItem;
+
+  if (m_pLast == pPrev) m_pLast = pItem;
+
+  // Item tracks what list it is in
+  pItem->AddList(this);
+
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::AddFirst( CDoubleItemLink *pItem )
-{
-    if ( pItem == NULL )
-        return (NULL);
+CDoubleItemLink *CDoubleItemList::AddLast(CDoubleItemLink *pItem) {
+  // SANITY check
+  if (pItem == NULL) return (NULL);
 
-    if ( pItem->m_pList != NULL )
-        return (NULL);  // Already in a list!
+  if (pItem->m_pList != NULL) return (NULL);  // Already in a list!
 
-    if ( m_pFirst == NULL )
-    {
-        // Empty list
-        pItem->m_pPrev = NULL;
-        pItem->m_pNext = NULL;
+  if (m_pLast == NULL) {
+    // Empty list
+    pItem->m_pNext = NULL;
+    pItem->m_pPrev = NULL;
 
-        m_pFirst = m_pLast = pItem;
-    }
-    else
-    {
-        pItem->m_pNext = m_pFirst;
+    m_pFirst = m_pLast = pItem;
+  } else {
+    pItem->m_pNext = NULL;
+    pItem->m_pPrev = m_pLast;
 
-        pItem->m_pPrev = NULL;
-        m_pFirst->m_pPrev = pItem;
+    m_pLast->m_pNext = pItem;
 
-        m_pFirst = pItem;
-    }
+    m_pLast = pItem;
+  }
 
-    // Item tracks what list it is in
-    pItem->AddList( this );
+  // Item tracks what list it is in
+  pItem->AddList(this);
 
-    return (pItem);
+  return (pItem);
 }
 
-CDoubleItemLink *CDoubleItemList::AddAfter( CDoubleItemLink *pPrev, CDoubleItemLink *pItem )
-{
-    // SANITY check
-    if ( pItem == NULL )
-        return (NULL);
+CDoubleItemLink::CDoubleItemLink()
+    : m_pNext(NULL), m_pPrev(NULL), m_pList(NULL) {}
 
-    if ( pItem->m_pList != NULL )
-        return (NULL);
+CDoubleItemLink::~CDoubleItemLink() { Unlink(); }
 
-    if ( pPrev == NULL )
-        return (AddFirst( pItem ));
+void CDoubleItemLink::Unlink(void) {
+  if (m_pList == NULL) return;
 
-    if ( pPrev->m_pList != this )
-        return (NULL);
-
-    pItem->m_pNext = pPrev->m_pNext;
-    pItem->m_pPrev = pPrev;
-
-    if ( pPrev->m_pNext )
-        pPrev->m_pNext->m_pPrev = pItem;
-
-    pPrev->m_pNext = pItem;
-
-    if ( m_pLast == pPrev )
-        m_pLast = pItem;
-
-    // Item tracks what list it is in
-    pItem->AddList( this );
-
-    return (pItem);
+  m_pList->RemoveItem(this);
 }
 
-CDoubleItemLink *CDoubleItemList::AddLast( CDoubleItemLink *pItem )
-{
-    // SANITY check
-    if ( pItem == NULL )
-        return (NULL);
+CDoubleQueue::CDoubleQueue() : m_itemCount(0), CDoubleItemList() {}
 
-    if ( pItem->m_pList != NULL )
-        return (NULL);  // Already in a list!
-
-    if ( m_pLast == NULL )
-    {
-        // Empty list
-        pItem->m_pNext = NULL;
-        pItem->m_pPrev = NULL;
-
-        m_pFirst = m_pLast = pItem;
-    }
-    else
-    {
-        pItem->m_pNext = NULL;
-        pItem->m_pPrev = m_pLast;
-
-        m_pLast->m_pNext = pItem;
-
-        m_pLast = pItem;
-    }
-
-    // Item tracks what list it is in
-    pItem->AddList( this );
-
-    return (pItem);
-}
-
-CDoubleItemLink::CDoubleItemLink( )
-    : m_pNext( NULL ), m_pPrev( NULL ), m_pList( NULL )
-{
-
-}
-
-CDoubleItemLink::~CDoubleItemLink( )
-{
-    Unlink();
-}
-
-void CDoubleItemLink::Unlink( void )
-{
-    if ( m_pList == NULL )
-        return;
-
-    m_pList->RemoveItem( this );
-}
-
-CDoubleQueue::CDoubleQueue()
-    : m_itemCount( 0 ), CDoubleItemList()
-{
-
-}
-
-CDoubleQueue::~CDoubleQueue()
-{
-
-}
+CDoubleQueue::~CDoubleQueue() {}

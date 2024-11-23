@@ -22,12 +22,9 @@
  */
 #include "string.h"
 
-char *strstr(const char *haystack, const char *needle)
-{
-    unsigned int i;
-    for (i = 0; haystack[i] != 0; i++)
-        if (strcmp(&haystack[i], needle) == 0)
-            return (char *)&haystack[i];
-    return NULL;
+char *strstr(const char *haystack, const char *needle) {
+  unsigned int i;
+  for (i = 0; haystack[i] != 0; i++)
+    if (strcmp(&haystack[i], needle) == 0) return (char *)&haystack[i];
+  return NULL;
 }
-

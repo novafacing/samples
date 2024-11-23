@@ -23,18 +23,15 @@
 
 #include <stdlib.h>
 
-int recvall(int fd, void *dst, size_t size)
-{
-    unsigned char *buf = dst;
-    size_t rx;
+int recvall(int fd, void *dst, size_t size) {
+  unsigned char *buf = dst;
+  size_t rx;
 
-    while (size)
-    {
-        if (receive(fd, dst, size, &rx) != 0 || rx == 0)
-            return -1;
-        buf += rx;
-        size -= rx;
-    }
+  while (size) {
+    if (receive(fd, dst, size, &rx) != 0 || rx == 0) return -1;
+    buf += rx;
+    size -= rx;
+  }
 
-    return 0;
+  return 0;
 }

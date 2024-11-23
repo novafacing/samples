@@ -23,14 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include "graph.h"
+
 #include <libcgc.h>
-#include "stdlib.h"
+
+#include "io.h"
+#include "ll.h"
+#include "malloc.h"
 #include "stdint.h"
 #include "stdio.h"
-#include "malloc.h"
-#include "graph.h"
-#include "ll.h"
-#include "io.h"
+#include "stdlib.h"
 
 extern pNode Nodes;
 extern pEdge Edges;
@@ -41,131 +43,134 @@ uint32_t NumEdges = 0;
 // find the node with the minimum distance
 // not already in the SPT
 pNode FindMinDistanceNode(void) {
-	pNode n;
-	pNode MinDistanceNode = NULL;
-	uint32_t MinDistance = SIZE_MAX;
+  pNode n;
+  pNode MinDistanceNode = NULL;
+  uint32_t MinDistance = SIZE_MAX;
 
-	n = Nodes;
-	while (n) {
-		if (n->Distance < MinDistance && !(n->InSPT)) {
-			MinDistance = n->Distance;
-			MinDistanceNode = n;
-		}
-		n = n->Next;
-	}
+  n = Nodes;
+  while (n) {
+    if (n->Distance < MinDistance && !(n->InSPT)) {
+      MinDistance = n->Distance;
+      MinDistanceNode = n;
+    }
+    n = n->Next;
+  }
 
-	return(MinDistanceNode);
+  return (MinDistanceNode);
 }
 
-//uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint32_t *NodeCount) {
-uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *NodeCount) {
-	pNode StartingNode;
-	pNode EndingNode;
-	int32_t i;
-	pNode MinDistanceNode;
-	pNode n;
-	pEdge e;
-	pNode AdjacentNode;
-	uint32_t *Response;
+// uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName,
+// uint32_t *NodeCount) {
+uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName,
+                  uint8_t *NodeCount) {
+  pNode StartingNode;
+  pNode EndingNode;
+  int32_t i;
+  pNode MinDistanceNode;
+  pNode n;
+  pEdge e;
+  pNode AdjacentNode;
+  uint32_t *Response;
 
-	if (Nodes == NULL || NodeCount == NULL) {
-		return(NULL);
-	}
+  if (Nodes == NULL || NodeCount == NULL) {
+    return (NULL);
+  }
 
-	// Set all node distances to max and init the tracking variables
-	n = Nodes;
-	while (n) {
-		n->Distance = SIZE_MAX;
-		n->InSPT = 0;
-		n->PrevSPT = NULL;
-		n = n->Next;
-	}
+  // Set all node distances to max and init the tracking variables
+  n = Nodes;
+  while (n) {
+    n->Distance = SIZE_MAX;
+    n->InSPT = 0;
+    n->PrevSPT = NULL;
+    n = n->Next;
+  }
 
-	// find the ending node
-	if ((EndingNode = FindNode(EndingNodeName)) == NULL) {
-		return(NULL);
-	}
-	
-	// find the starting node and set its distance to 0
-	if ((StartingNode = FindNode(StartingNodeName)) == NULL) {
-		return(NULL);
-	}
-	StartingNode->Distance = 0;
+  // find the ending node
+  if ((EndingNode = FindNode(EndingNodeName)) == NULL) {
+    return (NULL);
+  }
 
-	for (i = 0; i < NumNodes; i++) {
-		// find the node with the minimum distance
-		if ((MinDistanceNode = FindMinDistanceNode()) == NULL) {
-			// unable to find the next node in the SPT
-			// due to disconnected graph
-			return(NULL);
-		}
+  // find the starting node and set its distance to 0
+  if ((StartingNode = FindNode(StartingNodeName)) == NULL) {
+    return (NULL);
+  }
+  StartingNode->Distance = 0;
 
-		// add it to the SPT
-		MinDistanceNode->InSPT = 1;
+  for (i = 0; i < NumNodes; i++) {
+    // find the node with the minimum distance
+    if ((MinDistanceNode = FindMinDistanceNode()) == NULL) {
+      // unable to find the next node in the SPT
+      // due to disconnected graph
+      return (NULL);
+    }
 
-		// see if we've found the end node
-		if (MinDistanceNode == EndingNode) {
-			// found the end
-			break;
-		}
+    // add it to the SPT
+    MinDistanceNode->InSPT = 1;
 
-		// find edges from this node to others
-		e = Edges;
-		while (e) {
-			if (e->NodeA == MinDistanceNode) {
-				// if the cost via this edge is lower, update it
-				if (MinDistanceNode->Distance + e->Weight < e->NodeZ->Distance) {
-					e->NodeZ->Distance = MinDistanceNode->Distance + e->Weight;
-					e->NodeZ->PrevSPT = MinDistanceNode;
-				}
-			}
-			if (e->NodeZ == MinDistanceNode) {
-				// if the cost via this edge is lower, update it
-				if (MinDistanceNode->Distance + e->Weight < e->NodeA->Distance) {
-					e->NodeA->Distance = MinDistanceNode->Distance + e->Weight;
-					e->NodeA->PrevSPT = MinDistanceNode;
-				}
-			}
-			e = e->Next;
-		}
-	}
+    // see if we've found the end node
+    if (MinDistanceNode == EndingNode) {
+      // found the end
+      break;
+    }
 
-	// count how many nodes there are in the SPT
-	*NodeCount = 1;
-	n = EndingNode;
-	while (n != StartingNode) {
-		if (!(n->PrevSPT)) {
-			return(NULL);
-		}
-		(*NodeCount)++;
-		n = n->PrevSPT;
-	}
-	// allocate space for the uint32_t array
-	if ((Response = (uint32_t *)calloc(sizeof(uint32_t)*(*NodeCount))) == NULL) {
-		_terminate(-1);
-	}
-	
-	// starting at the end node, work our way back
-	// along the SPT creating the response we'll send
-	// back to the client
-	n = EndingNode;
-	i = *NodeCount;
-	while (n != StartingNode) {
-		Response[--i] = n->Name;
+    // find edges from this node to others
+    e = Edges;
+    while (e) {
+      if (e->NodeA == MinDistanceNode) {
+        // if the cost via this edge is lower, update it
+        if (MinDistanceNode->Distance + e->Weight < e->NodeZ->Distance) {
+          e->NodeZ->Distance = MinDistanceNode->Distance + e->Weight;
+          e->NodeZ->PrevSPT = MinDistanceNode;
+        }
+      }
+      if (e->NodeZ == MinDistanceNode) {
+        // if the cost via this edge is lower, update it
+        if (MinDistanceNode->Distance + e->Weight < e->NodeA->Distance) {
+          e->NodeA->Distance = MinDistanceNode->Distance + e->Weight;
+          e->NodeA->PrevSPT = MinDistanceNode;
+        }
+      }
+      e = e->Next;
+    }
+  }
 
-		if (!(n->PrevSPT)) {
-			return(NULL);
-		}
+  // count how many nodes there are in the SPT
+  *NodeCount = 1;
+  n = EndingNode;
+  while (n != StartingNode) {
+    if (!(n->PrevSPT)) {
+      return (NULL);
+    }
+    (*NodeCount)++;
+    n = n->PrevSPT;
+  }
+  // allocate space for the uint32_t array
+  if ((Response = (uint32_t *)calloc(sizeof(uint32_t) * (*NodeCount))) ==
+      NULL) {
+    _terminate(-1);
+  }
 
-		n = n->PrevSPT;
-	}
-	Response[--i] = n->Name;
+  // starting at the end node, work our way back
+  // along the SPT creating the response we'll send
+  // back to the client
+  n = EndingNode;
+  i = *NodeCount;
+  while (n != StartingNode) {
+    Response[--i] = n->Name;
 
-	// Free the graph data
-	DestroyNodes();
-	DestroyEdges();
-	NumNodes = 0;
-	NumEdges = 0;
+    if (!(n->PrevSPT)) {
+      return (NULL);
+    }
 
-	return(Response);
+    n = n->PrevSPT;
+  }
+  Response[--i] = n->Name;
+
+  // Free the graph data
+  DestroyNodes();
+  DestroyEdges();
+  NumNodes = 0;
+  NumEdges = 0;
+
+  return (Response);
 }

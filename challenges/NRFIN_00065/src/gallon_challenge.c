@@ -21,40 +21,36 @@
  */
 
 #include "conv.h"
+#include "games.h"
 #include "stdio.h"
 #include "string.h"
 
-#include "games.h"
+int do_gallon_challenge(void) {
+  char buf[40] = {0};
+  unsigned int countdown;
+  int i;
 
-int
-do_gallon_challenge(void)
-{
-    char buf[40] = { 0 };
-    unsigned int countdown;
-    int i;
+  if (game_state.games.gallon_challenge.tank_size == 0)
+    game_state.games.gallon_challenge.tank_size = 100;
 
-    if (game_state.games.gallon_challenge.tank_size == 0)
-        game_state.games.gallon_challenge.tank_size = 100;
+  printf("Give me a countdown!\n");
+  if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    return EXIT_FAILURE;
+  if (strlen(buf) == 0 || strtou(buf, 16, &countdown) == EXIT_FAILURE)
+    return EXIT_FAILURE;
 
-    printf("Give me a countdown!\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
-        return EXIT_FAILURE;
-    if (strlen(buf) == 0 || strtou(buf, 16, &countdown) == EXIT_FAILURE)
-        return EXIT_FAILURE;
+  for (i = 0; i < game_state.games.gallon_challenge.tank_size; i++) {
+    if (i < 100) printf("CHUG! ");
 
-    for (i = 0; i < game_state.games.gallon_challenge.tank_size; i++) {
-        if (i < 100)
-            printf("CHUG! ");
+    *(unsigned int *)&game_state.spew[i & ~(sizeof(unsigned int) - 1)] =
+        countdown;
+  }
+  printf("\n");
 
-        *(unsigned int *)&game_state.spew[i & ~(sizeof(unsigned int) - 1)] = countdown;
-    }
-    printf("\n");
+  if (!check_cookie(game_state.games.gallon_challenge.cookie))
+    printf("Woah... bleh.\n");
+  else
+    printf("Nice!\n");
 
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
-        printf("Woah... bleh.\n");
-    else
-        printf("Nice!\n");
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
-

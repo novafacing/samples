@@ -18,30 +18,30 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef SENTENCE_H
 #define SENTENCE_H 1
 
 // sentences are a comma separated list of fields.
 
-#define MAX_SENTENCE_LEN 65 // longest sentence is 64 + 1 for NULL
+#define MAX_SENTENCE_LEN 65  // longest sentence is 64 + 1 for NULL
 
 enum msg_status {
-	EMPTY = 1,
-	PARTIAL = 2,
-	DONE = 3,
+  EMPTY = 1,
+  PARTIAL = 2,
+  DONE = 3,
 };
 
 struct sentence_struct {
-	unsigned int frag_num;
-	unsigned int frag_total;
-	unsigned int session_id;
-	char *p_ais_msg_idx;			// ptr to idx after last byte received in ais_msg
-	unsigned char msg_status;		// ais message receive status (EMPTY, PARTIAL, DONE)
-	unsigned char msg_type;			// ais message type
-	char *ais_msg; // ASCII encoded ais message content
+  unsigned int frag_num;
+  unsigned int frag_total;
+  unsigned int session_id;
+  char *p_ais_msg_idx;  // ptr to idx after last byte received in ais_msg
+  unsigned char
+      msg_status;          // ais message receive status (EMPTY, PARTIAL, DONE)
+  unsigned char msg_type;  // ais message type
+  char *ais_msg;           // ASCII encoded ais message content
 };
-
 
 /**
  * Parse the receied sentence and store the data in the sentence_struct.
@@ -69,7 +69,7 @@ void reset_sentence_struct(struct sentence_struct *ss);
 int get_sentence_start(const char *str, const char **start);
 
 /**
- * Calculate the checksum and compare with the value provided at the 
+ * Calculate the checksum and compare with the value provided at the
  * end of the sentence.
  *
  * @param str Pointer to char string
@@ -94,7 +94,7 @@ int field_to_uint(const char *str, unsigned int *int_val);
  * @param str Pointer to anywhere within a sentence.
  * @return address of first char of next field, NULL if at end of str.
  */
-const char * get_next_field(const char *str);
+const char *get_next_field(const char *str);
 
 /**
  * Copy count bytes of field from the sentence into a buffer.
@@ -105,6 +105,5 @@ const char * get_next_field(const char *str);
  * @return VA of last char written to buf (usually '\0')
  */
 char *fieldncpy(const char *str, char *buf, int n);
-
 
 #endif

@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 /**
  * Doubly-linked list
  *
  * This linked list has an empty head node in the initial list.
- * 
+ *
  * The list stores a count of the nodes it contains in 'length'
  */
 
@@ -37,15 +37,15 @@
 typedef void (*nodeDataFreeFn)(void *);
 
 struct node {
-	void *data;
-	struct node *next;
-	struct node *prev;
+  void *data;
+  struct node *next;
+  struct node *prev;
 };
 
 struct list {
-	unsigned int length;
-	struct node dummy;
-	nodeDataFreeFn ndf;
+  unsigned int length;
+  struct node dummy;
+  nodeDataFreeFn ndf;
 };
 
 /**
@@ -57,7 +57,7 @@ struct list {
 struct node *list_create_node(void *data);
 
 /**
- * Destroy the node and its data element. 
+ * Destroy the node and its data element.
  *  If node is still in the list, remove from list first.
  *
  * @param l 	List containing node n
@@ -133,20 +133,28 @@ void list_insert_at_start(struct list *l, void *d);
  *
  * @param l 		Pointer to list
  * @param new 		Pointer to new node
- * @param predFn 	Predicate function to test if first data param is >= second data param (return TRUE if first >= second, else FALSE)
- * @param desc 		TRUE => sort in descending order, FALSE => ascending order
+ * @param predFn 	Predicate function to test if first data param is >=
+ * second data param (return TRUE if first >= second, else FALSE)
+ * @param desc 		TRUE => sort in descending order, FALSE => ascending
+ * order
  */
-void list_insert_node_sorted(struct list *l, struct node *new, unsigned char (*predFn)(const void *, void *), unsigned char desc);
+void list_insert_node_sorted(struct list *l, struct node *new,
+                             unsigned char (*predFn)(const void *, void *),
+                             unsigned char desc);
 
 /**
  * Insert data element into a new node into list in sorted order.
  *
  * @param l 		Pointer to list
  * @param d 		Pointer to data to insert into new node
- * @param predFn 	Predicate function to test if first data param is >= second data param (return TRUE if first >= second, else FALSE)
- * @param desc 		TRUE => sort in descending order, FALSE => ascending order
+ * @param predFn 	Predicate function to test if first data param is >=
+ * second data param (return TRUE if first >= second, else FALSE)
+ * @param desc 		TRUE => sort in descending order, FALSE => ascending
+ * order
  */
-void list_insert_sorted(struct list *l, void *d, unsigned char (*predFn)(const void *, void *), unsigned char desc);
+void list_insert_sorted(struct list *l, void *d,
+                        unsigned char (*predFn)(const void *, void *),
+                        unsigned char desc);
 
 /**
  * Remove the first node from the start of list.
@@ -216,9 +224,10 @@ unsigned int list_length(struct list *l);
  * Find the node in the list that contains the given data
  *
  * @param l 	Pointer to list
- * @param pred 	Predicate function to compare 2 data elements for equality (return TRUE if equal)
+ * @param pred 	Predicate function to compare 2 data elements for equality
+ * (return TRUE if equal)
  * @param data 	Pointer to data element to pass into predicate fn
  * @return 		VA of node or NULL if not found
  */
-struct node *list_find_node_with_data(struct list *l, unsigned char (*predFn)(const void *, void *), void *data);
-
+struct node *list_find_node_with_data(
+    struct list *l, unsigned char (*predFn)(const void *, void *), void *data);

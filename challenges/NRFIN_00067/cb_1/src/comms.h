@@ -18,13 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef COMMS_H
 #define COMMS_H 1
 
-
-static const char STATUS_OK[2] 		= {'\x04','\x04'};
-static const char STATUS_ERR[2] 	= {'\x44','\xEE'};
-static const char STATUS_QUIT[2]	= {'\x44','\x44'};
+static const char STATUS_OK[2] = {'\x04', '\x04'};
+static const char STATUS_ERR[2] = {'\x44', '\xEE'};
+static const char STATUS_QUIT[2] = {'\x44', '\x44'};
 
 #endif

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 /**
  * @file pool.h
  *
@@ -36,8 +36,8 @@ typedef unsigned long uintptr_t;
 struct freeblk;
 
 struct pool {
-    size_t size;
-    LIST_OF(struct freeblk) freelist;
+  size_t size;
+  LIST_OF(struct freeblk) freelist;
 };
 
 /**
@@ -73,4 +73,3 @@ void *pool_alloc(struct pool *pool);
 void pool_free(struct pool *pool, void *addr);
 
 #endif /* POOL_H_ */
-

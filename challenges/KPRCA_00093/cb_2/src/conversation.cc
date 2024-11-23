@@ -24,31 +24,26 @@
 
 #define MAX_MSGS 100
 
-Conversation::Conversation(Channel *channel)
-    : messages_(MAX_MSGS) {
-    channel_ = channel;
-    sender_ = (User *)NULL;
+Conversation::Conversation(Channel *channel) : messages_(MAX_MSGS) {
+  channel_ = channel;
+  sender_ = (User *)NULL;
 }
 
-Conversation::Conversation(User *user)
-    :messages_(MAX_MSGS) {
-    channel_ = (Channel *)NULL;
-    sender_ = user;
+Conversation::Conversation(User *user) : messages_(MAX_MSGS) {
+  channel_ = (Channel *)NULL;
+  sender_ = user;
 }
 
-Conversation::~Conversation() {
-}
+Conversation::~Conversation() {}
 
 void Conversation::AddChat(Chat chat) {
-    messages_.ForceAppend(chat, Chat().Delete);
+  messages_.ForceAppend(chat, Chat().Delete);
 }
 
-void Conversation::ReadMessages() {
-    ClearChatMessages();
-}
+void Conversation::ReadMessages() { ClearChatMessages(); }
 
 void Conversation::ClearChatMessages() {
-    while(!messages_.IsEmpty()) {
-        messages_.Remove(0, Chat().Delete);
-    }
+  while (!messages_.IsEmpty()) {
+    messages_.Remove(0, Chat().Delete);
+  }
 }

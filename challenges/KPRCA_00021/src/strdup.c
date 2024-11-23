@@ -1,17 +1,15 @@
-#include <libcgc.h>
-#include <string.h>
-#include <stdlib.h>
 #include "strdup.h"
 
-char* strdup(char *s)
-{
+#include <libcgc.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *strdup(char *s) {
   int sz = 0;
-  if (s)
-  {
+  if (s) {
     sz = strlen(s) + 1;
     char *d = malloc(sz);
-    if (d)
-    {
+    if (d) {
       memset(d, 0, sz);
       memcpy(d, s, sz);
       return d;

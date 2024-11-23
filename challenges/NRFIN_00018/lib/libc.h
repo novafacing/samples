@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
- 
+ */
+
 #ifndef LIBC_H
 #define LIBC_H
 
-extern int transmit_all(int fd, const char *buf, const size_t size); // NRFIN_00002
-extern void * memset(void *dst, char c, size_t n); 
+extern int transmit_all(int fd, const char *buf,
+                        const size_t size);  // NRFIN_00002
+extern void *memset(void *dst, char c, size_t n);
 #endif

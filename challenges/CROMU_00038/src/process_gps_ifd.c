@@ -25,58 +25,50 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 
+#include "service.h"
+#include "stdlib.h"
 
 extern unsigned short (*swap_short)(unsigned short);
 extern unsigned (*swap_word)(unsigned);
 
+void process_gps_ifd(IFD_Type *ifd_ptr, TIFF_Hdr_Type *tiff_hdr,
+                     unsigned short segment_size,
+                     unsigned char *endofsegment_ptr) {
+  int i;
+  unsigned short count;
+  unsigned int remaining_size;
 
-void process_gps_ifd(IFD_Type *ifd_ptr, TIFF_Hdr_Type * tiff_hdr, unsigned short segment_size, unsigned char *endofsegment_ptr) {
-	
-int i;
-unsigned short count;
-unsigned int remaining_size;
+  if ((unsigned char *)ifd_ptr > endofsegment_ptr) {
+    _terminate(-1);
+  }
 
+  if ((unsigned char *)ifd_ptr < (unsigned char *)tiff_hdr) {
+    _terminate(-1);
+  }
 
-    if ((unsigned char *)ifd_ptr > endofsegment_ptr) {
+  count = swap_short(ifd_ptr->Count);
 
-        _terminate(-1);
-    }
+  remaining_size = endofsegment_ptr - (unsigned char *)ifd_ptr;
 
-    if ((unsigned char *)ifd_ptr < (unsigned char *)tiff_hdr) {
+  if (remaining_size > segment_size) _terminate(-1);
 
-        _terminate(-1);
-    }	
+  if (count * 12 + sizeof(count) > remaining_size) {
+    printf("Invalid GPS_IFD count value\n");
+    _terminate(-1);
+  }
 
-    count = swap_short(ifd_ptr->Count);
+  printf("# of arrays: @d\n", count);
 
-    remaining_size = endofsegment_ptr - (unsigned char *)ifd_ptr;
+  for (i = 0; i < count; ++i) {
+    printf("Tag: @x (", swap_short(ifd_ptr->Entry[i].Tag));
+    print_gps_tag_text(swap_short(ifd_ptr->Entry[i].Tag));
+    printf(")\n");
 
-    if (remaining_size > segment_size)
-        _terminate(-1);
-
-    if (count *12 + sizeof(count) > remaining_size) {
-
-        printf("Invalid GPS_IFD count value\n");
-        _terminate(-1);
-    }
-
-	printf("# of arrays: @d\n", count);
-
-    for (i=0; i< count; ++i) {
-
-        printf("Tag: @x (", swap_short(ifd_ptr->Entry[i].Tag));
-        print_gps_tag_text(swap_short(ifd_ptr->Entry[i].Tag));
-        printf(")\n");
-
-        printf("Type: @x (", swap_short(ifd_ptr->Entry[i].Type));
-        print_type(swap_short(ifd_ptr->Entry[i].Type));
-        printf(")\n");
-        printf("Count: @x\n", swap_word(ifd_ptr->Entry[i].Count));
-        printf("Value: @u\n", swap_word(ifd_ptr->Entry[i].Value));
-
-    }
-
+    printf("Type: @x (", swap_short(ifd_ptr->Entry[i].Type));
+    print_type(swap_short(ifd_ptr->Entry[i].Type));
+    printf(")\n");
+    printf("Count: @x\n", swap_word(ifd_ptr->Entry[i].Count));
+    printf("Value: @u\n", swap_word(ifd_ptr->Entry[i].Value));
+  }
 }

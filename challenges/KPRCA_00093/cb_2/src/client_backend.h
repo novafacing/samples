@@ -33,17 +33,21 @@ bool AddUser(User *user);
 bool DeleteUser(User **puser, const char *pass, unsigned short pass_length);
 
 bool CheckIfChannelExists(const char *name, unsigned short length);
-bool JoinChannel(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *chan_name, unsigned short chan_length);
-bool DeleteChannel(const char *chan_name, unsigned short chan_length, const char *user_name, unsigned short user_length,
-                const char *pass, unsigned short pass_length);
-bool AddChannelAdmin(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *admin_name, unsigned short admin_name_length);
-bool VerifyPassword(const char *name, unsigned short name_length, const char *pass, unsigned short pass_length);
+bool JoinChannel(const char *user_name, unsigned short user_length,
+                 const char *pass, unsigned short pass_length,
+                 const char *chan_name, unsigned short chan_length);
+bool DeleteChannel(const char *chan_name, unsigned short chan_length,
+                   const char *user_name, unsigned short user_length,
+                   const char *pass, unsigned short pass_length);
+bool AddChannelAdmin(const char *user_name, unsigned short user_length,
+                     const char *pass, unsigned short pass_length,
+                     const char *admin_name, unsigned short admin_name_length);
+bool VerifyPassword(const char *name, unsigned short name_length,
+                    const char *pass, unsigned short pass_length);
 
 void DebugPrintUsers();
 void DebugPrintChannels();
 
-}
+}  // namespace Backend
 
 #endif /* CLIENT_BACKEND_H_ */

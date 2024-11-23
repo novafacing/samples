@@ -24,29 +24,25 @@
 
 #include "engine.h"
 
-enum
-{
-    MSG_QUIT = 0x7160f126,
-    MSG_UPDATE = 0x30a7db1a,
-    MSG_CHECK = 0x367bae4d,
-    MSG_WHITELIST = 0xfa5059f
+enum {
+  MSG_QUIT = 0x7160f126,
+  MSG_UPDATE = 0x30a7db1a,
+  MSG_CHECK = 0x367bae4d,
+  MSG_WHITELIST = 0xfa5059f
 };
 
-enum
-{
-    RESP_OK = 0x6fc5499a,
-    RESP_ERROR = 0x42083b85
-};
+enum { RESP_OK = 0x6fc5499a, RESP_ERROR = 0x42083b85 };
 
-class Interface
-{
-private:
-    bool send_response(unsigned int resp);
-public:
-    Interface(Engine &engine);
-    ~Interface();
+class Interface {
+ private:
+  bool send_response(unsigned int resp);
 
-    bool process(unsigned char *data, unsigned int len);
-private:
-    Engine &d_engine;
+ public:
+  Interface(Engine &engine);
+  ~Interface();
+
+  bool process(unsigned char *data, unsigned int len);
+
+ private:
+  Engine &d_engine;
 };

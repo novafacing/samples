@@ -18,80 +18,76 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+#include "menu.h"
+
 #include <libcgc.h>
 #include <stdint.h>
+
 #include "libc.h"
-#include "memcmp.h"
-#include "memset.h"
-#include "memcpy.h"
 #include "list.h"
 #include "malloc.h"
+#include "memcmp.h"
+#include "memcpy.h"
+#include "memset.h"
 #include "string.h"
-
-#include "menu.h"
 #include "todays_menu.h"
 
 Menu todays_menu;
 
 void menu_setup(void) {
-    memset(&todays_menu, '\0', sizeof(Menu));
-    load_menu(&todays_menu);
+  memset(&todays_menu, '\0', sizeof(Menu));
+  load_menu(&todays_menu);
 }
 
-Appetizer *get_appetizer_list(void) {
-	return todays_menu.appetizer_list;
-}
+Appetizer *get_appetizer_list(void) { return todays_menu.appetizer_list; }
 
-Meal *get_meal_list(void) {
-	return todays_menu.meal_list;
-}
+Meal *get_meal_list(void) { return todays_menu.meal_list; }
 
-Dessert *get_dessert_list(void) {
-	return todays_menu.dessert_list;
-}
+Dessert *get_dessert_list(void) { return todays_menu.dessert_list; }
 
 unsigned int get_appetizer_count(void) {
-	Appetizer *cur = todays_menu.appetizer_list;
-	unsigned int count = 0;
+  Appetizer *cur = todays_menu.appetizer_list;
+  unsigned int count = 0;
 
-	while (NULL != cur) {
-		cur=(Appetizer *)cur->next;
-		count++;
-	}
-	return count;
+  while (NULL != cur) {
+    cur = (Appetizer *)cur->next;
+    count++;
+  }
+  return count;
 }
 
 unsigned int get_meal_count(void) {
-	Meal *cur = todays_menu.meal_list;
-	unsigned int count = 0;
+  Meal *cur = todays_menu.meal_list;
+  unsigned int count = 0;
 
-	while (NULL != cur) {
-		cur=(Meal *)cur->next;
-		count++;
-	}
-	return count;
+  while (NULL != cur) {
+    cur = (Meal *)cur->next;
+    count++;
+  }
+  return count;
 }
 
 unsigned int get_dessert_count(void) {
-	Dessert *cur = todays_menu.dessert_list;
-	unsigned int count = 0;
+  Dessert *cur = todays_menu.dessert_list;
+  unsigned int count = 0;
 
-	while (NULL != cur) {
-		cur=(Dessert *)cur->next;
-		count++;
-	}
-	return count;
+  while (NULL != cur) {
+    cur = (Dessert *)cur->next;
+    count++;
+  }
+  return count;
 }
 
 void print_appetizer(Appetizer *a) {
-	DBG("Appetizer name:%S, next:%H\n", a->name, a->next);
+  DBG("Appetizer name:%S, next:%H\n", a->name, a->next);
 }
 
 void print_meal(Meal *m) {
-	DBG("Meal name:%S, main:%S, veggies:%S, side:%S, next:%H\n", m->name, m->main, m->veggies, m->side, m->next);
+  DBG("Meal name:%S, main:%S, veggies:%S, side:%S, next:%H\n", m->name, m->main,
+      m->veggies, m->side, m->next);
 }
 
 void print_dessert(Dessert *d) {
-	DBG("Dessert name:%S, next:%H\n", d->name, d->next);
+  DBG("Dessert name:%S, next:%H\n", d->name, d->next);
 }

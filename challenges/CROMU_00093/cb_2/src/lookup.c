@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "libc.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
-#include "malloc.h"
 #include "lookup.h"
 
-void usage() {
-  printf("lookupd [-s] [-q] names\n");
-}
+#include <libcgc.h>
+
+#include "libc.h"
+#include "malloc.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+
+void usage() { printf("lookupd [-s] [-q] names\n"); }
 
 void lookup(int argc, char **argv) {
   int brief = 0;
@@ -42,7 +42,7 @@ void lookup(int argc, char **argv) {
   int num_names;
   int i;
 
-// Process command line args
+  // Process command line args
   if (strcmp(argv[0], "lookup") != 0) {
     usage();
     return;
@@ -53,7 +53,7 @@ void lookup(int argc, char **argv) {
       if (argv[i][1] == 's') {
         brief = 1;
       } else if (argv[i][1] == 'l') {
-        brief = 0; 
+        brief = 0;
       } else if (argv[i][1] == 'q') {
         quick = 1;
       } else {
@@ -68,7 +68,7 @@ void lookup(int argc, char **argv) {
   }
   // Remaining arguments are names
   if (i >= argc) {
-  // print all users on the system
+    // print all users on the system
     if (brief) {
       print_all_users_short();
     } else {
@@ -97,10 +97,9 @@ void lookup(int argc, char **argv) {
   }
 }
 
-
 user *quick_lookup(char *name) {
   list *l = short_list;
-  while(l != NULL) {
+  while (l != NULL) {
     if (l->object == NULL) {
       break;
     }
@@ -115,7 +114,7 @@ user *quick_lookup(char *name) {
 
 user *long_lookup(char *name) {
   user *u = root_user;
-  while(u != NULL) {
+  while (u != NULL) {
     if (equals(u->name, name)) {
       list *l = short_list;
       while (l->next != NULL) {
@@ -138,7 +137,6 @@ user *long_lookup(char *name) {
   return NULL;
 }
 
-
 void print_all_users_short() {
   user *u = root_user;
   while (u != NULL) {
@@ -146,7 +144,6 @@ void print_all_users_short() {
     u = u->next;
   }
 }
-
 
 void print_all_users_long() {
   user *u = root_user;
@@ -161,15 +158,15 @@ void print_user_short(user *u) {
   printf("Real name: $s\n", u->realname);
   printf("Phone #:$s\n", u->phone);
   printf("\n");
-  }
-
+}
 
 void print_user_long(user *u) {
-  printf("Username: $s\nReal name: $s\nHost name: $s\nIdle for: $d seconds\n", u->name, u->realname, u->hostname, u->idletime);
+  printf("Username: $s\nReal name: $s\nHost name: $s\nIdle for: $d seconds\n",
+         u->name, u->realname, u->hostname, u->idletime);
   if (u->online) {
     printf("User is online\n");
   } else {
     printf("User is offline\n");
   }
   printf("Phone #:$s\n\n", u->phone);
-  }
+}

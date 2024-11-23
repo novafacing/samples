@@ -20,24 +20,20 @@
  * THE SOFTWARE.
  *
  */
-#include <libcgc.h>
-
 #include <ctype.h>
+#include <libcgc.h>
 #include <stdlib.h>
 
-int read_balanced_expression(int fd, char *buf, size_t max)
-{
+int read_balanced_expression(int fd, char *buf, size_t max) {
   size_t rx = 0;
   size_t depth = 0;
   char nl;
 
   while (receive(fd, buf, 1, &rx) == 0) {
-    if (rx ==  0)
-      break;
+    if (rx == 0) break;
 
     // Ensure first character is a open paren
-    if (depth == 0 && *buf != '(')
-        return -1;
+    if (depth == 0 && *buf != '(') return -1;
 
     if (*buf == '(') {
       if (depth == SIZE_MAX)
@@ -52,20 +48,16 @@ int read_balanced_expression(int fd, char *buf, size_t max)
     }
 
     max -= rx;
-    if (max == 0)
-      break;
+    if (max == 0) break;
     buf += rx;
 
-    if (depth == 0)
-      break;
+    if (depth == 0) break;
   }
 
   // chomp
   while (receive(fd, &nl, 1, &rx) == 0) {
-    if (rx == 0 || nl == '\n')
-      break;
-    if (!isspace(nl))
-      return -1;
+    if (rx == 0 || nl == '\n') break;
+    if (!isspace(nl)) return -1;
   }
 
   *buf = '\0';

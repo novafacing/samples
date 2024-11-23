@@ -23,72 +23,49 @@
 #pragma once
 
 template <class T>
-class shared_ptr
-{
-private:
-    struct cb
-    {
-        cb(T* p) : _p(p), use_count(0) {}
-        ~cb()
-        {
-            delete _p;
-        }
+class shared_ptr {
+ private:
+  struct cb {
+    cb(T* p) : _p(p), use_count(0) {}
+    ~cb() { delete _p; }
 
-        T* _p;
-        size_t use_count;
-    };
-public:
-    shared_ptr() : _p(nullptr), _cb(nullptr) {}
-    explicit shared_ptr(T* p) : shared_ptr()
-    {
-        reset(p);
-    }
-    ~shared_ptr()
-    {
-        reset(nullptr);
-    }
-    shared_ptr(const shared_ptr& other)
-    {
-        _p = other._p;
-        _cb = other._cb;
-        if (_cb != nullptr)
-            _cb->use_count++;
-    }
-    shared_ptr& operator=(const shared_ptr& other)
-    {
-        reset(nullptr);
-        _p = other._p;
-        _cb = other._cb;
-        if (_cb != nullptr)
-            _cb->use_count++;
-        return *this;
-    }
-    void reset(T* p)
-    {
-        if (_cb != nullptr)
-        {
-            _cb->use_count--;
-            if (_cb->use_count == 0)
-            {
-                delete _cb;
-            }
-        }
-        _p = p;
-        if (_p != nullptr)
-        {
-            _cb = new cb(_p);
-            _cb->use_count++;
-        }
-    }
-    T* get() const
-    {
-        return _p;
-    }
-    explicit operator bool() const
-    {
-        return _p != nullptr;
-    }
-private:
     T* _p;
-    cb* _cb;
+    size_t use_count;
+  };
+
+ public:
+  shared_ptr() : _p(nullptr), _cb(nullptr) {}
+  explicit shared_ptr(T* p) : shared_ptr() { reset(p); }
+  ~shared_ptr() { reset(nullptr); }
+  shared_ptr(const shared_ptr& other) {
+    _p = other._p;
+    _cb = other._cb;
+    if (_cb != nullptr) _cb->use_count++;
+  }
+  shared_ptr& operator=(const shared_ptr& other) {
+    reset(nullptr);
+    _p = other._p;
+    _cb = other._cb;
+    if (_cb != nullptr) _cb->use_count++;
+    return *this;
+  }
+  void reset(T* p) {
+    if (_cb != nullptr) {
+      _cb->use_count--;
+      if (_cb->use_count == 0) {
+        delete _cb;
+      }
+    }
+    _p = p;
+    if (_p != nullptr) {
+      _cb = new cb(_p);
+      _cb->use_count++;
+    }
+  }
+  T* get() const { return _p; }
+  explicit operator bool() const { return _p != nullptr; }
+
+ private:
+  T* _p;
+  cb* _cb;
 };

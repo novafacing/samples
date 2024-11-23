@@ -18,27 +18,29 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef RXTX_H
 #define RXTX_H 1
 
 #include "card.h"
-#include "hand.h"
 #include "gofish.h"
+#include "hand.h"
 
 /**
  * Recieve name of remote player
  *
- * @param player_name Pointer to null terminated char buf holding name of remote player
+ * @param player_name Pointer to null terminated char buf holding name of remote
+ * player
  * @return SUCCESS or ERRNO_RECV, ERR_INVALID_XML on error
  */
 extern int recv_player_name(char **player_name);
 
 /**
  * Send 0 or more cards to remote player.
- * 
- * If qty is 0, the xml for a card is omitted, but the encapsulating xml is sent.
+ *
+ * If qty is 0, the xml for a card is omitted, but the encapsulating xml is
+ * sent.
  *
  * @param cards An array of cards.
  * @param qty Quantity of cards to send.
@@ -116,7 +118,7 @@ extern int recv_and_match_cards(struct card *cards[], uint8_t qty);
  *
  * Note: When no card is to be shown, c is NULL.
  *
- * @param cards Cards array holding a card to send to remote player or 
+ * @param cards Cards array holding a card to send to remote player or
  *	NULL if no card is to be shown.
  * @return SUCCESS or ERR_INVALID_XML on error
  */
@@ -143,7 +145,7 @@ extern void send_ask(uint8_t rank);
  * Receive count of books played by remote player on this turn.
  *
  * @param count Expected number of books
- * @return TRUE if player count matches expected count, else FALSE, or 
+ * @return TRUE if player count matches expected count, else FALSE, or
  *	ERR_INVALID_XML, ERRNO_RECV on error
  */
 extern int recv_and_match_count_books_played(uint8_t count);

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef LL_H
 #define LL_H
 #include <libcgc.h>
+
 #include "graph.h"
 
 pNode AddNode(pNode Element);

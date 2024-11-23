@@ -24,67 +24,56 @@
 
 DefineClass(Array, Object)
 
-DefineFunction(Array, void, $init)
-{
-    this->m_size = this->m_count = 0;
-    this->m_elements = NULL;
+    DefineFunction(Array, void, $init) {
+  this->m_size = this->m_count = 0;
+  this->m_elements = NULL;
 }
 
-DefineFunction(Array, void, enlarge, size_t min_count)
-{
-    if (this->m_size >= min_count)
-        return;
+DefineFunction(Array, void, enlarge, size_t min_count) {
+  if (this->m_size >= min_count) return;
 
-    this->m_size = min_count * 15 / 10;
-    if (this->m_size < min_count)
-        this->m_size = min_count;
+  this->m_size = min_count * 15 / 10;
+  if (this->m_size < min_count) this->m_size = min_count;
 
-    this->m_elements = realloc(this->m_elements, this->m_size * sizeof(this->m_elements[0]));
-    ASSERT_ALLOC(this->m_elements);
+  this->m_elements =
+      realloc(this->m_elements, this->m_size * sizeof(this->m_elements[0]));
+  ASSERT_ALLOC(this->m_elements);
 }
 
-DefineFunction(Array, void, push, void *o)
-{
-    $(this, enlarge, this->m_count+1);
-    this->m_elements[this->m_count++] = o;
+DefineFunction(Array, void, push, void *o) {
+  $(this, enlarge, this->m_count + 1);
+  this->m_elements[this->m_count++] = o;
 }
 
-DefineFunction(Array, void *, pop)
-{
-    if (this->m_count == 0)
-        return NULL;
+DefineFunction(Array, void *, pop) {
+  if (this->m_count == 0) return NULL;
 
-    return this->m_elements[--this->m_count];
+  return this->m_elements[--this->m_count];
 }
 
-DefineFunction(Array, void, set, size_t idx, void *o)
-{
-    $(this, enlarge, idx+1);
+DefineFunction(Array, void, set, size_t idx, void *o) {
+  $(this, enlarge, idx + 1);
 
-    while (idx >= this->m_count)
-    {
-        this->m_elements[this->m_count++] = NULL;
-    }
+  while (idx >= this->m_count) {
+    this->m_elements[this->m_count++] = NULL;
+  }
 
-    this->m_elements[idx] = o;
+  this->m_elements[idx] = o;
 }
 
-DefineFunction(Array, void *, get, size_t idx)
-{
-    if (idx >= this->m_count)
-        return NULL;
+DefineFunction(Array, void *, get, size_t idx) {
+  if (idx >= this->m_count) return NULL;
 
-    return this->m_elements[idx];
+  return this->m_elements[idx];
 }
 
-DefineFunction(Array, void *, remove, size_t idx)
-{
-    if (idx >= this->m_count)
-        return NULL;
+DefineFunction(Array, void *, remove, size_t idx) {
+  if (idx >= this->m_count) return NULL;
 
-    void *o = this->m_elements[idx];
-    this->m_count--;
+  void *o = this->m_elements[idx];
+  this->m_count--;
 
-    memmove(&this->m_elements[idx], &this->m_elements[idx+1], (this->m_count - idx) * sizeof(void *));
-    return o;
+  memmove(&this->m_elements[idx], &this->m_elements[idx + 1],
+          (this->m_count - idx) * sizeof(void *));
+  return o;
 }

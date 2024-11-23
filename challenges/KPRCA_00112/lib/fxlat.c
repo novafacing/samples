@@ -22,60 +22,53 @@
  */
 #include "stdio_private.h"
 
-static unsigned int hash_seed(const char *seed)
-{
-    unsigned int i;
-    unsigned int H = 0x314abc86;
-    
-    for (i = 0; seed[i] != 0; i++)
-    {
-        H *= 37;
-        H ^= seed[i];
-        H = (H << 13) ^ (H >> 19);
-    }
+static unsigned int hash_seed(const char *seed) {
+  unsigned int i;
+  unsigned int H = 0x314abc86;
 
-    return H;
+  for (i = 0; seed[i] != 0; i++) {
+    H *= 37;
+    H ^= seed[i];
+    H = (H << 13) ^ (H >> 19);
+  }
+
+  return H;
 }
 
-void fxlat(FILE *stream, const char *seed)
-{
-    unsigned int state, i;
-    unsigned char *map, *map_inv;
+void fxlat(FILE *stream, const char *seed) {
+  unsigned int state, i;
+  unsigned char *map, *map_inv;
 
-    if (seed == NULL)
-    {
-        free(stream->xlat_map);
-        stream->xlat_map = NULL;
-        stream->xlat_map_inv = NULL;
-        return;
-    }
-    
-    map = stream->xlat_map = realloc(stream->xlat_map, 256);
-    map_inv = stream->xlat_map_inv = realloc(stream->xlat_map_inv, 256);
-    state = hash_seed(seed);
+  if (seed == NULL) {
+    free(stream->xlat_map);
+    stream->xlat_map = NULL;
+    stream->xlat_map_inv = NULL;
+    return;
+  }
 
-    /* initialize map with identity */
-    for (i = 0; i < 256; i++)
-        map[i] = i;
+  map = stream->xlat_map = realloc(stream->xlat_map, 256);
+  map_inv = stream->xlat_map_inv = realloc(stream->xlat_map_inv, 256);
+  state = hash_seed(seed);
 
-    /* shuffle using Fisher-Yates */
-    for (i = 255; i >= 1; i--)
-    {
-        unsigned int j = state % i, tmp;
-        
-        /* iterate state */
-        state *= 3;
-        state = (state << 13) ^ (state >> 19) ^ (state >> 21);
+  /* initialize map with identity */
+  for (i = 0; i < 256; i++) map[i] = i;
 
-        /* exchange elements */
-        tmp = map[i];
-        map[i] = map[j];
-        map[j] = tmp;
-    }
+  /* shuffle using Fisher-Yates */
+  for (i = 255; i >= 1; i--) {
+    unsigned int j = state % i, tmp;
 
-    /* initialize inverse mapping */
-    for (i = 0; i < 256; i++)
-    {
-        map_inv[map[i]] = i;
-    }
+    /* iterate state */
+    state *= 3;
+    state = (state << 13) ^ (state >> 19) ^ (state >> 21);
+
+    /* exchange elements */
+    tmp = map[i];
+    map[i] = map[j];
+    map[j] = tmp;
+  }
+
+  /* initialize inverse mapping */
+  for (i = 0; i < 256; i++) {
+    map_inv[map[i]] = i;
+  }
 }

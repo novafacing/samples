@@ -24,12 +24,10 @@
  */
 #include <string.h>
 
-char *strcpy(char *dest, const char *src)
-{
-    size_t i = 0;
-    while (*src)
-      dest[i++] = *src++;
+char *strcpy(char *dest, const char *src) {
+  size_t i = 0;
+  while (*src) dest[i++] = *src++;
 
-    dest[i] = '\0';
-    return dest;
+  dest[i] = '\0';
+  return dest;
 }

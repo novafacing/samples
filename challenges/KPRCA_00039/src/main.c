@@ -21,8 +21,8 @@
  *
  */
 
-#include <libcgc.h>
 #include <ctype.h>
+#include <libcgc.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,20 +38,10 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 
 typedef enum action_t action_t;
-enum action_t {
-  AUNUSED = 0,
-  PLAY,
-  PASS
-};
+enum action_t { AUNUSED = 0, PLAY, PASS };
 
 typedef enum color_t color_t;
-enum color_t {
-  CUNUSED = 0,
-  BLACK,
-  WHITE,
-  EMPTY,
-  OFF_BOARD
-};
+enum color_t { CUNUSED = 0, BLACK, WHITE, EMPTY, OFF_BOARD };
 
 #define error(__status) exit(__status)
 
@@ -69,8 +59,7 @@ typedef u64 hash_t;
 
 static u32 pcnt = 0;
 static u64 prng_s = 0;
-u64 prand(void)
-{
+u64 prand(void) {
   pcnt++;
   prng_s = prng_s * 1103515245 + 12345;
   return (u32)(prng_s / (2 << 15));
@@ -82,30 +71,25 @@ struct hashl_t {
   hashl_t* next;
 };
 
-static inline void INIT_LIST(hashl_t** list, hash_t hash)
-{
+static inline void INIT_LIST(hashl_t** list, hash_t hash) {
   *list = calloc(1, sizeof(hashl_t));
   if (!list) error(1);
   (*list)->hash = hash;
   (*list)->next = *list;
 }
 
-static inline void EXTD_LIST(hashl_t* list, hash_t hash)
-{
+static inline void EXTD_LIST(hashl_t* list, hash_t hash) {
   hashl_t* new = calloc(1, sizeof(hashl_t));
-  if (!new)
-    error(1);
+  if (!new) error(1);
   for (; list->next != list; list = list->next)
-    if (list->hash == hash)
-      return;
+    if (list->hash == hash) return;
 
   new->next = new;
   new->hash = hash;
   list->next = new;
 }
 
-static inline int CONT_LIST(hashl_t* list, hash_t hash)
-{
+static inline int CONT_LIST(hashl_t* list, hash_t hash) {
   u32 cnt = 1;
   do {
     if (list->hash == hash) {
@@ -134,8 +118,7 @@ struct game_t {
 };
 
 static hash_t ztable[BOARD_DIM * BOARD_DIM][NUM_PLAYERS];
-int init_zobrist(void)
-{
+int init_zobrist(void) {
   for (u16 y = 0; y < BOARD_DIM * BOARD_DIM; y++) {
     for (u16 x = 0; x < NUM_PLAYERS; x++) {
       ztable[y][x] = prand();
@@ -144,8 +127,7 @@ int init_zobrist(void)
   return 0;
 }
 
-hash_t hash_zobrist(board_t board)
-{
+hash_t hash_zobrist(board_t board) {
   hash_t h = 0;
   for (u16 y = 0; y < BOARD_DIM * BOARD_DIM; y++) {
     if (board[y / BOARD_DIM][y % BOARD_DIM] != EMPTY) {
@@ -160,15 +142,10 @@ void push_game_state(game_t* game) {
   EXTD_LIST(game->history, h);
 }
 
-static inline u64 abs(s32 x)
-{
-  return (x < 0) ? -x : x;
-}
+static inline u64 abs(s32 x) { return (x < 0) ? -x : x; }
 
-u8 ndigits(int x)
-{
-  if (x == 0)
-    return 1;
+u8 ndigits(int x) {
+  if (x == 0) return 1;
 
   u8 n = 0;
   while (x) {
@@ -178,11 +155,9 @@ u8 ndigits(int x)
   return n;
 }
 
-game_t* init_game(board_t board)
-{
+game_t* init_game(board_t board) {
   game_t* game = calloc(1, sizeof(game_t));
-  if (!game)
-    return NULL;
+  if (!game) return NULL;
 
   if (board) {
     for (u32 y = 0; y < BOARD_DIM; y++) {
@@ -213,30 +188,23 @@ game_t* init_game(board_t board)
   return game;
 }
 
-game_t* copy_game(game_t* game)
-{
+game_t* copy_game(game_t* game) {
   game_t* copy = calloc(1, sizeof(game_t));
-  if (!copy)
-    error(1);
+  if (!copy) error(1);
   memcpy(copy, game, sizeof(game_t));
   return copy;
 }
 
-color_t get_color(board_t board, u8 x, u8 y)
-{
-  if (x >= BOARD_DIM || x < 0 || y >= BOARD_DIM || y < 0)
-    return OFF_BOARD;
+color_t get_color(board_t board, u8 x, u8 y) {
+  if (x >= BOARD_DIM || x < 0 || y >= BOARD_DIM || y < 0) return OFF_BOARD;
 
   return board[y][x];
 }
 
-int has_liberty(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color)
-{
+int has_liberty(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color) {
   color_t c = get_color(game->board, x, y);
-  if (c == OFF_BOARD)
-    return 0;
-  if (sboard[y][x] == 1)
-    return 0;
+  if (c == OFF_BOARD) return 0;
+  if (sboard[y][x] == 1) return 0;
 
   color_t u = get_color(game->board, x, y + 1);
   color_t d = get_color(game->board, x, y - 1);
@@ -261,23 +229,20 @@ int has_liberty(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color)
   return 0;
 }
 
-u8 surrounded_by(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color)
-{
-  if (!game || !sboard)
-    error(1);
+u8 surrounded_by(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color) {
+  if (!game || !sboard) error(1);
 
   color_t cur = get_color(game->board, x, y);
-  if (cur == OFF_BOARD || sboard[y][x] == 1)
-    return 1;
+  if (cur == OFF_BOARD || sboard[y][x] == 1) return 1;
 
   if (cur == color) {
-      sboard[y][x] = 1;
-      return 2;
+    sboard[y][x] = 1;
+    return 2;
   } else if (cur == OTHER_PLAYER(color)) {
-      sboard[y][x] = 1;
-      return 0;
+    sboard[y][x] = 1;
+    return 0;
   } else if (cur == EMPTY) {
-      sboard[y][x] = 1;
+    sboard[y][x] = 1;
   }
 
   u8 u = surrounded_by(game, sboard, x, y + 1, color);
@@ -292,16 +257,15 @@ u8 surrounded_by(game_t* game, sboard_t sboard, u8 x, u8 y, color_t color)
   }
 }
 
-
-int remove_captures(game_t* game, color_t color)
-{
+int remove_captures(game_t* game, color_t color) {
   u32 cnt = 0;
   sboard_t sboard;
   game_t* frozen = copy_game(game);
   for (u8 y = 0; y < BOARD_DIM; y++) {
     for (u8 x = 0; x < BOARD_DIM; x++) {
       memset(sboard, 0, sizeof(sboard));
-      if (get_color(frozen->board, x, y) == color && !has_liberty(frozen, sboard, x, y, color)) {
+      if (get_color(frozen->board, x, y) == color &&
+          !has_liberty(frozen, sboard, x, y, color)) {
         cnt++;
         SET_BOARD(game->board, x, y, EMPTY);
       }
@@ -311,8 +275,7 @@ int remove_captures(game_t* game, color_t color)
   return cnt;
 }
 
-int has_happened(game_t* proposed, game_t* current)
-{
+int has_happened(game_t* proposed, game_t* current) {
   hash_t h = hash_zobrist(proposed->board);
   if (CONT_LIST(current->history, h)) {
     return 1;
@@ -320,8 +283,7 @@ int has_happened(game_t* proposed, game_t* current)
   return 0;
 }
 
-int score(game_t* game, u32* black, u32* white)
-{
+int score(game_t* game, u32* black, u32* white) {
   sboard_t sboard;
   *black = game->caps[BLACK - 1];
   *white = game->caps[WHITE - 1];
@@ -355,12 +317,10 @@ int score(game_t* game, u32* black, u32* white)
   return 0;
 }
 
-int check_and_play(game_t** game, u8 x, u8 y, color_t color, u8 play)
-{
+int check_and_play(game_t** game, u8 x, u8 y, color_t color, u8 play) {
   if (color != EMPTY && (*game)->board[y][x] != EMPTY) {
     return -1;
   }
-
 
   game_t* simulated = copy_game(*game);
   SET_BOARD(simulated->board, x, y, color);
@@ -387,46 +347,36 @@ int check_and_play(game_t** game, u8 x, u8 y, color_t color, u8 play)
 #define SCREEN_HEIGHT 30
 #define BOARD_WIDTH 37
 
-static inline void clear_screen(void)
-{
-  fdprintf(STDOUT, "\033[2J");
+static inline void clear_screen(void) { fdprintf(STDOUT, "\033[2J"); }
+
+static inline void print_char(char color) { fdprintf(STDOUT, "%c", color); }
+
+void print_rchar(char c, u8 r) {
+  for (u8 i = 0; i < r; i++) print_char(c);
 }
 
-static inline void print_char(char color)
-{
-  fdprintf(STDOUT, "%c", color);
-}
-
-void print_rchar(char c, u8 r)
-{
-  for (u8 i = 0; i < r; i++)
-    print_char(c);
-}
-
-void print_player(game_t* game, color_t color)
-{
+void print_player(game_t* game, color_t color) {
 #define OFFSET 7
   fdprintf(STDOUT, "%s: %d", COLOR_STRING(color), game->scores[color - 1]);
-  print_rchar(' ', (((SCREEN_WIDTH - BOARD_WIDTH) / 2) - OFFSET) - ndigits(game->scores[color - 1]));
+  print_rchar(' ', (((SCREEN_WIDTH - BOARD_WIDTH) / 2) - OFFSET) -
+                       ndigits(game->scores[color - 1]));
 }
 
-void print_point(game_t* game, u8 x, u8 y)
-{
-  if (x != 0)
-    print_char(' ');
+void print_point(game_t* game, u8 x, u8 y) {
+  if (x != 0) print_char(' ');
 
   switch (get_color(game->board, x, y)) {
-  case EMPTY:
-    print_char('-');
-    break;
-  case WHITE:
-    print_char('W');
-    break;
-  case BLACK:
-    print_char('B');
-    break;
-  default:
-    return;
+    case EMPTY:
+      print_char('-');
+      break;
+    case WHITE:
+      print_char('W');
+      break;
+    case BLACK:
+      print_char('B');
+      break;
+    default:
+      return;
   }
 
   if (x != BOARD_DIM - 1)
@@ -435,9 +385,8 @@ void print_point(game_t* game, u8 x, u8 y)
     print_char('\n');
 }
 
-void draw_game(game_t* game)
-{
-  //clear_screen();
+void draw_game(game_t* game) {
+  // clear_screen();
 
   print_rchar('\n', (SCREEN_HEIGHT - BOARD_DIM) / 2);
 
@@ -446,7 +395,8 @@ void draw_game(game_t* game)
       print_player(game, y < BOARD_DIM / 2 ? WHITE : BLACK);
     } else if (y == BOARD_DIM / 2) {
       fdprintf(STDOUT, "Ticks: %u", game->ticks);
-      print_rchar(' ', (((SCREEN_WIDTH - BOARD_WIDTH) / 2) - OFFSET)- ndigits(game->ticks));
+      print_rchar(' ', (((SCREEN_WIDTH - BOARD_WIDTH) / 2) - OFFSET) -
+                           ndigits(game->ticks));
     } else {
       print_rchar(' ', (SCREEN_WIDTH - BOARD_WIDTH) / 2);
     }
@@ -458,18 +408,16 @@ void draw_game(game_t* game)
   print_rchar('\n', (SCREEN_HEIGHT - BOARD_DIM) / 2);
 }
 
-void sleep(int s, int us)
-{
+void sleep(int s, int us) {
   struct timeval t;
   t.tv_sec = s;
   t.tv_usec = us;
   fdwait(0, NULL, NULL, &t, NULL);
 }
 
-int read_n_bytes(int fd, size_t n, char *buf, int has_terminator, char terminator)
-{
-  if (!n || !buf)
-    return -1;
+int read_n_bytes(int fd, size_t n, char* buf, int has_terminator,
+                 char terminator) {
+  if (!n || !buf) return -1;
 
   size_t rx = 0, total_read = 0;
 
@@ -490,8 +438,7 @@ int read_n_bytes(int fd, size_t n, char *buf, int has_terminator, char terminato
   return total_read;
 }
 
-int read_move(u8* x, u8* y, u8* pass)
-{
+int read_move(u8* x, u8* y, u8* pass) {
 #define INPUT_MAX 8
   int ret = -1;
   char buf[INPUT_MAX + 1];
@@ -504,49 +451,49 @@ int read_move(u8* x, u8* y, u8* pass)
 
   if (!strncmp("pass", buf, strlen("pass"))) {
     *pass = 1;
-    ret = 0; goto out;
+    ret = 0;
+    goto out;
   }
 
   long n1 = strtol(buf, &p, 10);
 
-  if (p == buf)
-    goto out;
+  if (p == buf) goto out;
 
-  if (p >= buf + INPUT_MAX)
-    goto out;
+  if (p >= buf + INPUT_MAX) goto out;
 
-  while (p && *p && p < buf + INPUT_MAX && !isdigit(*p))
-    p++;
+  while (p && *p && p < buf + INPUT_MAX && !isdigit(*p)) p++;
 
   long n2 = strtol(p, NULL, 10);
 
   if (n1 >= 0 && n1 < BOARD_DIM && n2 >= 0 && n2 < BOARD_DIM) {
     *x = n1;
     *y = n2;
-    ret = 0; goto out;
+    ret = 0;
+    goto out;
   }
 out:
   return ret;
 }
 
-void end_game(game_t* game, char *name, u8 reason)
-{
+void end_game(game_t* game, char* name, u8 reason) {
   free(game);
   fdprintf(STDOUT, "Game Over ");
   switch (reason) {
-  case 0:
-    fdprintf(STDOUT, "Both Passed\n");
-    break;
-  case 1:
-    fdprintf(STDOUT, "Game Time Exceeded\n");
-    break;
-  case 2:
-    fdprintf(STDOUT, "Stones Exhausted\n");
-    break;
+    case 0:
+      fdprintf(STDOUT, "Both Passed\n");
+      break;
+    case 1:
+      fdprintf(STDOUT, "Game Time Exceeded\n");
+      break;
+    case 2:
+      fdprintf(STDOUT, "Stones Exhausted\n");
+      break;
   }
 
   fdprintf(STDOUT, "You are a ");
-  fdprintf(STDOUT, ((game->scores[BLACK - 1] > game->scores[WHITE - 1])) ? "Winner, " : "Loser, ");
+  fdprintf(STDOUT, ((game->scores[BLACK - 1] > game->scores[WHITE - 1]))
+                       ? "Winner, "
+                       : "Loser, ");
 #ifdef PATCHED
   fdprintf(STDOUT, "%s", name);
 #else
@@ -557,8 +504,7 @@ void end_game(game_t* game, char *name, u8 reason)
   return;
 }
 
-void prompt_move(game_t* game, color_t color)
-{
+void prompt_move(game_t* game, color_t color) {
   fdprintf(STDOUT, "%d ", game->ticks);
   if (color == BLACK)
     fdprintf(STDOUT, "B >");
@@ -566,34 +512,30 @@ void prompt_move(game_t* game, color_t color)
     fdprintf(STDOUT, "W >");
 }
 
-char* color_to_string(color_t c)
-{
+char* color_to_string(color_t c) {
   switch (c) {
-  case WHITE:
-    return "White";
-  case BLACK:
-    return "Black";
-  case EMPTY:
-    return "Empty";
-  case OFF_BOARD:
-    return "Off";
-  default:
-    error(1);
+    case WHITE:
+      return "White";
+    case BLACK:
+      return "Black";
+    case EMPTY:
+      return "Empty";
+    case OFF_BOARD:
+      return "Off";
+    default:
+      error(1);
   }
 
   return NULL;
 }
 
-int pass_for(game_t* game, color_t color)
-{
+int pass_for(game_t* game, color_t color) {
   game->passes++;
-  if (color == WHITE && game->passes > 1)
-    return -1;
+  if (color == WHITE && game->passes > 1) return -1;
   return 0;
 }
 
-int interact(game_t** game, color_t color)
-{
+int interact(game_t** game, color_t color) {
   u8 x, y, pass;
 
   prompt_move(*game, color);
@@ -614,8 +556,7 @@ int interact(game_t** game, color_t color)
   return 0;
 }
 
-action_t calculate_move(game_t** game, u8* ox, u8* oy, color_t color)
-{
+action_t calculate_move(game_t** game, u8* ox, u8* oy, color_t color) {
   s32 vote, bvote = 0;
   u8 bx, by;
   sboard_t sboard;
@@ -651,8 +592,7 @@ action_t calculate_move(game_t** game, u8* ox, u8* oy, color_t color)
           bx = x;
           by = y;
           bvote = vote;
-          if (gend > 5)
-            goto done;
+          if (gend > 5) goto done;
         }
       }
     }
@@ -667,8 +607,7 @@ done:
   }
 }
 
-int ai(game_t** game, color_t color)
-{
+int ai(game_t** game, color_t color) {
   u8 x, y;
   switch (calculate_move(game, &x, &y, color)) {
     case PLAY:
@@ -685,8 +624,7 @@ int ai(game_t** game, color_t color)
   return 0;
 }
 
-void pb(game_t* game)
-{
+void pb(game_t* game) {
   fdprintf(STDERR, "@@");
   for (u16 y = 0; y < BOARD_DIM; y++) {
     for (u16 x = 0; x < BOARD_DIM; x++) {
@@ -696,19 +634,16 @@ void pb(game_t* game)
   fdprintf(STDERR, "\n");
 }
 
-int main(void)
-{
+int main(void) {
 #define NAME_LEN 8
   char name[NAME_LEN];
   int iret = -1;
 
-  read_n_bytes(STDIN, sizeof(prng_s), (char *)&prng_s, 0, 0);
-  if (init_zobrist() != 0)
-    error(1);
+  read_n_bytes(STDIN, sizeof(prng_s), (char*)&prng_s, 0, 0);
+  if (init_zobrist() != 0) error(1);
 
   game_t* game = init_game(NULL);
-  if (!game)
-    error(1);
+  if (!game) error(1);
 
   fdprintf(STDOUT, "What is your name?\n");
   if (read_n_bytes(STDIN, NAME_LEN, name, 1, '\n') < 0) {
@@ -730,7 +665,7 @@ int main(void)
       }
     }
 
-    score(game, &(game->scores[BLACK - 1]), &(game->scores[WHITE -1]));
+    score(game, &(game->scores[BLACK - 1]), &(game->scores[WHITE - 1]));
 
     draw_game(game);
     ai(&game, WHITE);
@@ -739,9 +674,9 @@ int main(void)
 #define MAX_STONES 90
 #define MAX_TICKS 150
     game->ticks++;
-    if (game->ticks > MAX_TICKS)
-      end_game(game, name, 1);
-    if (game->used[BLACK - 1] > MAX_STONES || game->used[WHITE - 1] > MAX_STONES)
+    if (game->ticks > MAX_TICKS) end_game(game, name, 1);
+    if (game->used[BLACK - 1] > MAX_STONES ||
+        game->used[WHITE - 1] > MAX_STONES)
       end_game(game, name, 2);
   }
 }

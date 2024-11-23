@@ -23,120 +23,91 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <stdlib.h>
-#include <stdint.h>
 #include <ctype.h>
-
 #include <prng.h>
-
+#include <stdint.h>
+#include <stdlib.h>
 
 int minimum(unsigned int a, unsigned int b) {
-
-	if (a < b)
-		return a;
-	else
-		return b;
+  if (a < b)
+    return a;
+  else
+    return b;
 }
 
 int max(int a, int b) {
-
-	if (a > b)
-		return a;
-	else
-		return b;
-
+  if (a > b)
+    return a;
+  else
+    return b;
 }
 
-int rand( void )
-{
-	return (random_in_range( 0, RAND_MAX-1 ));
+int rand(void) { return (random_in_range(0, RAND_MAX - 1)); }
+
+void srand(unsigned int seed) { seed_prng(seed); }
+
+int atoi(const char *pStr) {
+  int value = 0;
+  int negative = 0;
+
+  while (isspace(*pStr)) pStr++;
+
+  if (*pStr == '\0') return 0;
+
+  if (*pStr == '-') {
+    negative = 1;
+    pStr++;
+  }
+
+  // Read in string
+  while (isdigit(*pStr)) value = (value * 10) + (*pStr++ - '0');
+
+  if (negative)
+    return (-value);
+  else
+    return value;
 }
 
-void srand( unsigned int seed )
-{
-	seed_prng( seed );
+double atof(char *pStr) {
+  double tmpNumber;
+  int factor = 1;
+  int sign;
+  int isFloat = 0;
+  int digit_value;
+
+  while (*pStr == ' ') ++pStr;
+
+  if (*pStr == '-') {
+    sign = -1;
+    ++pStr;
+  } else
+    sign = 1;
+
+  while (pStr) {
+    if (*pStr == '.') {
+      isFloat = 1;
+      ++pStr;
+      continue;
+    }
+
+    if (*pStr >= '0' && *pStr <= '9') {
+      digit_value = *pStr - '0';
+
+      tmpNumber *= 10;
+
+      tmpNumber += digit_value;
+
+      if (isFloat) factor *= 10;
+
+    } else
+      break;
+
+    ++pStr;
+  }
+
+  tmpNumber = tmpNumber * sign;
+
+  if (isFloat) tmpNumber = tmpNumber / factor;
+
+  return tmpNumber;
 }
-
-int atoi( const char *pStr )
-{
-	int value = 0;
-	int negative = 0;
-
-	while ( isspace( *pStr ) )
-		pStr++;
-
-	if ( *pStr == '\0' )
-		return 0;
-
-	if ( *pStr == '-' )
-	{
-		negative = 1;
-		pStr++;
-	}
-
-	// Read in string
-	while ( isdigit( *pStr ) )
-		value = (value * 10) + (*pStr++ - '0');
-
-	if ( negative )
-		return (-value);
-	else
-		return value;	
-}
-
-
-
-double atof( char *pStr )
-{
-
-double tmpNumber;
-int factor = 1;
-int sign;
-int isFloat = 0;
-int digit_value;
-
-	while (*pStr == ' ')
-		++pStr;
-
-	if (*pStr == '-') {
-		sign = -1;
-		++pStr;
-	}
-	else
-		sign = 1;
-
-	while (pStr) {
-
-		if (*pStr == '.') {
-			isFloat = 1;
-			++pStr;
-			continue;
-		}
-
-		if (*pStr >= '0' && *pStr <= '9') {
-
-			digit_value = *pStr - '0';
-
-			tmpNumber *= 10;
-
-			tmpNumber += digit_value;
-
-			if (isFloat)
-				factor *= 10;
-
-		}
-		else
-			break;
-
-		++pStr;
-	}
-
-	tmpNumber = tmpNumber * sign;
-
-	if (isFloat)
-		tmpNumber = tmpNumber / factor;
-
-	return tmpNumber;
-
-}
-

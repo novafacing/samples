@@ -24,11 +24,12 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "monte.h"
+
+#include <libcgc.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "block.h"
 
 #define PI 3.14126535
@@ -47,15 +48,15 @@ float64 monte_gen();
 float64 kajigger_from_random_int(uint64 random_int);
 
 void monte_initialize() {
-  uint64* random_uint_page = (uint64*) random_page;
+  uint64* random_uint_page = (uint64*)random_page;
   kajigger = kajigger_from_random_int(random_uint_page[0]);
   counter = 0;
 }
 
 float64 kajigger_from_random_int(uint64 random_int) {
-  float64 cast = (float64) random_int;
+  float64 cast = (float64)random_int;
   float64 sine = sin(cast);
-  uint64  sine_bytes = *((uint64*)&sine);
+  uint64 sine_bytes = *((uint64*)&sine);
   uint64 new_sine_bytes = sine_bytes & 0xffffffffffff0000;
   return *((float64*)&new_sine_bytes);
 }
@@ -90,21 +91,20 @@ uint8 monte_happy() {
     if (dist <= 1) in_circle++;
   }
 
-  float64 ratio = ((float64) in_circle) / ((float64)CHECKS);
+  float64 ratio = ((float64)in_circle) / ((float64)CHECKS);
 
   float64 diff = fabs((4 * ratio) - PI);
 
   float64 doubler_size = 50 * log10(1.0 / diff);
-  /* printf("scl %f rat %f dif %f dbl %f\n", scaler, ratio, diff, doubler_size); */
+  /* printf("scl %f rat %f dif %f dbl %f\n", scaler, ratio, diff, doubler_size);
+   */
   if (doubler_size > 254.0) return 0xff;
   if (doubler_size < 1.0) return 0;
 
-  return (uint8) doubler_size;
+  return (uint8)doubler_size;
 }
 
-uint8 check_random_params(float64 check_kj,
-                          uint64 check_counter,
-                          float64 spl,
+uint8 check_random_params(float64 check_kj, uint64 check_counter, float64 spl,
                           float64 scl) {
   float64 existing_kajigger = kajigger;
   kajigger = check_kj;

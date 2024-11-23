@@ -18,10 +18,11 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 #include <libcgc.h>
+
 #include "common.h"
 
 const char *CB_NAME = "   TAP";
@@ -33,17 +34,17 @@ const char *CB_NAME = "   TAP";
 #define PIPE_SEND_CB1 PIPE_CB1_A
 #define PIPE_SEND_CB2 PIPE_CB2_A
 
- /**
- * Called when the CRS issues a shutdown command.  This function propagates the 
+/**
+ * Called when the CRS issues a shutdown command.  This function propagates the
  * shutdown to all CBs in the set then _terminate(0)s itself.
  *
  * @return void
  */
 void do_exit(msg *exit_msg);
 
- /**
+/**
  * Implement a simple blocking router to mediate between the CB set and the CRS.
- * Messages are routed based on their desintation field, allowing the CRS to 
+ * Messages are routed based on their desintation field, allowing the CRS to
  * address any particular CB.
  *
  * @return An int indicating SUCCESS (0) or an error condition (!=0).

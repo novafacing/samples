@@ -26,6 +26,6 @@ THE SOFTWARE.
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-uint32_t ReadBytes( uint8_t *pDest, uint32_t numBytes );
+uint32_t ReadBytes(uint8_t *pDest, uint32_t numBytes);
 
-#endif // __COMMON_H__
+#endif  // __COMMON_H__

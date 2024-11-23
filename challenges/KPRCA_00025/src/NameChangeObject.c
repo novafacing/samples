@@ -24,26 +24,22 @@
 
 DefineClass(NameChangeObject, MapObject)
 
-DefineFunction(NameChangeObject, void, $init)
-{
-    this->m_icon = 'N';
+    DefineFunction(NameChangeObject, void, $init) {
+  this->m_icon = 'N';
 }
 
-DefineFunction(NameChangeObject, int, on_collide, Player *p)
-{
-    $(p, name_change_menu);
-    return 1;
+DefineFunction(NameChangeObject, int, on_collide, Player *p) {
+  $(p, name_change_menu);
+  return 1;
 }
 
-DefineFunction(NameChangeObject, void, serialize, Buffer *buf)
-{
-    $(buf, write_number, 3); // used by MapObject_deserialize
-    // do nothing
+DefineFunction(NameChangeObject, void, serialize, Buffer *buf) {
+  $(buf, write_number, 3);  // used by MapObject_deserialize
+                            // do nothing
 }
 
-DefineFunction(NameChangeObject, void, deserialize, Buffer *buf)
-{
-    unsigned int type = $(buf, read_number);
-    ASSERT_OR_RAISE(type == 3, EXC_BAD_STATE);
-    // do nothing
+DefineFunction(NameChangeObject, void, deserialize, Buffer *buf) {
+  unsigned int type = $(buf, read_number);
+  ASSERT_OR_RAISE(type == 3, EXC_BAD_STATE);
+  // do nothing
 }

@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef TRANSPORT_H
 #define TRANSPORT_H
 
-#define MAX_TRANSPORT_SIZE 1024*4
+#define MAX_TRANSPORT_SIZE 1024 * 4
 
 typedef struct TransportMessage_s {
   uint8_t reserved;
@@ -35,11 +35,11 @@ typedef struct TransportMessage_s {
   uint32_t currentOffset;
 } TransportMessage;
 
-
 int ReceiveTransportMessage(TransportMessage **ptpMessage);
 void DestroyTransportMessage(TransportMessage **ptpMessage);
 void SendTransportMessage(TransportMessage *tpMessage);
 void ResetTransportMessage(TransportMessage *tpMessage);
-int ReadFromTransportMessage(TransportMessage *tpMessage, uint8_t *buffer, int size);
+int ReadFromTransportMessage(TransportMessage *tpMessage, uint8_t *buffer,
+                             int size);
 
 #endif

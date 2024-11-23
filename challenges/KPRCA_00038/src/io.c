@@ -20,110 +20,84 @@
  * THE SOFTWARE.
  *
  */
+#include "io.h"
+
 #include <stdlib.h>
 #include <string.h>
-
-#include "io.h"
 
 #define BUFFER_SIZE (8192)
 #define IS_MUTABLE(x) ((x)->fd >= 0)
 
-void io_init_fd(io_t *io, int fd)
-{
-    io->fd = fd;
-    io->buf = malloc(BUFFER_SIZE);
+void io_init_fd(io_t *io, int fd) {
+  io->fd = fd;
+  io->buf = malloc(BUFFER_SIZE);
+  io->pos = 0;
+  io->length = 0;
+  io->mark = -1;
+}
+
+void io_init_bytes(io_t *io, const char *str, unsigned int length) {
+  io->fd = -1;
+  io->buf = (char *)str;
+  io->length = length;
+  io->pos = 0;
+  io->mark = -1;
+}
+
+void io_init_string(io_t *io, const char *str) {
+  io_init_bytes(io, str, strlen(str));
+}
+
+void io_mark(io_t *io) {
+  if (IS_MUTABLE(io) && io->pos > 0) {
+    memmove(io->buf, io->buf + io->pos, io->length - io->pos);
+    io->length -= io->pos;
     io->pos = 0;
-    io->length = 0;
-    io->mark = -1;
+  }
+  io->mark = io->pos;
 }
 
-void io_init_bytes(io_t *io, const char *str, unsigned int length)
-{
-    io->fd = -1;
-    io->buf = (char *)str;
-    io->length = length;
-    io->pos = 0;
-    io->mark = -1;
-}
+int io_rewind(io_t *io) {
+  if (io->mark == -1) return 0;
 
-void io_init_string(io_t *io, const char *str)
-{
-    io_init_bytes(io, str, strlen(str));
-}
-
-void io_mark(io_t *io)
-{
-    if (IS_MUTABLE(io) && io->pos > 0)
-    {
-        memmove(io->buf, io->buf + io->pos, io->length - io->pos);
-        io->length -= io->pos;
-        io->pos = 0;
-    }
-    io->mark = io->pos;
-}
-
-int io_rewind(io_t *io)
-{
-    if (io->mark == -1)
-        return 0;
-
-    io->pos = io->mark;
-    return 1;
+  io->pos = io->mark;
+  return 1;
 }
 
 /* returns position relative to last mark */
-int io_tell(io_t *io)
-{
-    return io->pos - io->mark;
-}
+int io_tell(io_t *io) { return io->pos - io->mark; }
 
 /* seeks to a position relative to last mark */
-int io_seek(io_t *io, int pos)
-{
-    int new_pos = io->mark + pos;
-    if (new_pos > io->length)
-        return 0;
-    
-    io->pos = new_pos;
-    return 1;
+int io_seek(io_t *io, int pos) {
+  int new_pos = io->mark + pos;
+  if (new_pos > io->length) return 0;
+
+  io->pos = new_pos;
+  return 1;
 }
 
-int io_getc(io_t *io)
-{
-    if (io->pos == io->length)
-    {
-        if (IS_MUTABLE(io))
-        {
-            size_t bytes;
-            if (io->length == BUFFER_SIZE)
-                return -1;
-            if (receive(io->fd, &io->buf[io->length], 1, &bytes) != 0 || bytes != 1)
-                return -1;
-            io->length++;
-        }
-        else
-        {
-            return -1;
-        }
+int io_getc(io_t *io) {
+  if (io->pos == io->length) {
+    if (IS_MUTABLE(io)) {
+      size_t bytes;
+      if (io->length == BUFFER_SIZE) return -1;
+      if (receive(io->fd, &io->buf[io->length], 1, &bytes) != 0 || bytes != 1)
+        return -1;
+      io->length++;
+    } else {
+      return -1;
     }
+  }
 
-    return io->buf[io->pos++];
+  return io->buf[io->pos++];
 }
 
-int io_ungetc(io_t *io)
-{
-    return io_seek(io, io_tell(io) - 1);
+int io_ungetc(io_t *io) { return io_seek(io, io_tell(io) - 1); }
+
+int io_peek(io_t *io) {
+  int c = io_getc(io);
+  if (c >= 0) io_ungetc(io);
+  return c;
 }
 
-int io_peek(io_t *io)
-{
-    int c = io_getc(io);
-    if (c >= 0)
-        io_ungetc(io);
-    return c;
-}
-
-int io_read(io_t *io, char *buf, unsigned int cnt)
-{
-    return -1;
-}
+int io_read(io_t *io, char *buf, unsigned int cnt) { return -1; }

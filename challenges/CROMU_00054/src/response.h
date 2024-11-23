@@ -28,58 +28,51 @@ THE SOFTWARE.
 
 #include <cutil_list.h>
 
-extern "C"
-{
+extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 }
 
-class CResponse
-{
-public:
-	CResponse( );
-	~CResponse( );
+class CResponse {
+ public:
+  CResponse();
+  ~CResponse();
 
-	uint16_t GetResponseLength( void ) const { return m_responseLen; };
+  uint16_t GetResponseLength(void) const { return m_responseLen; };
 
-	uint16_t AddResponse( uint8_t *pData, uint16_t dataLen );
-	uint16_t GetResponseData( uint8_t *pDest, uint16_t destLen );
+  uint16_t AddResponse(uint8_t *pData, uint16_t dataLen);
+  uint16_t GetResponseData(uint8_t *pDest, uint16_t destLen);
 
-	void ClearResponse( void );
+  void ClearResponse(void);
 
-private:
-	class CResponseElement
-	{
-	public:
-		CResponseElement( uint8_t *pData, uint16_t dataLen )
-		{
-			m_pData = new uint8_t[dataLen];
+ private:
+  class CResponseElement {
+   public:
+    CResponseElement(uint8_t *pData, uint16_t dataLen) {
+      m_pData = new uint8_t[dataLen];
 
-			memcpy( m_pData, pData, dataLen );
-			m_dataLen = dataLen;
-		}
+      memcpy(m_pData, pData, dataLen);
+      m_dataLen = dataLen;
+    }
 
-		~CResponseElement( )
-		{
-			if ( m_pData )
-				delete [] m_pData;
-		}
+    ~CResponseElement() {
+      if (m_pData) delete[] m_pData;
+    }
 
-		uint8_t *GetData( void ) const { return m_pData; };
-		uint16_t GetDataLength( void ) const { return m_dataLen; };
+    uint8_t *GetData(void) const { return m_pData; };
+    uint16_t GetDataLength(void) const { return m_dataLen; };
 
-	public:
-		CUtil::DLL_LINK( CResponseElement ) m_responseLink;
+   public:
+    CUtil::DLL_LINK(CResponseElement) m_responseLink;
 
-	private:
-		uint8_t *m_pData;
-		uint16_t m_dataLen;
+   private:
+    uint8_t *m_pData;
+    uint16_t m_dataLen;
+  };
 
-	};
-
-private:
-	CUtil::DLL_LIST( CResponseElement, m_responseLink ) m_responseList;
-	uint16_t m_responseLen;	
+ private:
+  CUtil::DLL_LIST(CResponseElement, m_responseLink) m_responseList;
+  uint16_t m_responseLen;
 };
 
-#endif // __RESPONSE_H__
+#endif  // __RESPONSE_H__

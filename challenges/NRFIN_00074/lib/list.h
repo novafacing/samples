@@ -20,11 +20,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
-* @file list.h
-*
-* Routines for manipulating intrusive doubly-linked lists, based on Linux kernel list.h
-*   interface
-*/
+ * @file list.h
+ *
+ * Routines for manipulating intrusive doubly-linked lists, based on Linux
+ * kernel list.h interface
+ */
 
 #ifndef LIST_H_
 #define LIST_H_
@@ -32,11 +32,11 @@
 #include "libc.h"
 
 struct list_node {
-    struct list_node *next, *prev;
+  struct list_node *next, *prev;
 };
 
 struct list {
-    struct list_node *head, *tail;
+  struct list_node *head, *tail;
 };
 
 /**
@@ -44,7 +44,10 @@ struct list {
  *
  * @param list A pointer to the list
  */
-#define list_init(list) do { (list)->head = (list)->tail = NULL; } while (0)
+#define list_init(list)                 \
+  do {                                  \
+    (list)->head = (list)->tail = NULL; \
+  } while (0)
 
 /**
  * Get the entry associated with a particular node.
@@ -62,8 +65,8 @@ struct list {
  * @param list A pointer to the list
  * @param cur The variable to use as an iterator
  */
-#define list_for_each(list, cur)                                        \
-    for (cur = (list)->head; cur != NULL; cur = (cur)->next)
+#define list_for_each(list, cur) \
+  for (cur = (list)->head; cur != NULL; cur = (cur)->next)
 
 /**
  * Traverse a list in the backwards direction.
@@ -71,8 +74,8 @@ struct list {
  * @param list A pointer to the list
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_reverse(list, cur)                                \
-    for (cur = (list)->tail; cur != NULL; cur = (cur)->prev)
+#define list_for_each_reverse(list, cur) \
+  for (cur = (list)->tail; cur != NULL; cur = (cur)->prev)
 
 /**
  * Traverse a list's entries in the forward direction.
@@ -82,10 +85,9 @@ struct list {
  * @param list A pointer to the list
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_entry(type, member, list, cur)                    \
-    for (cur = list_entry(type, member, (list)->head);                  \
-         cur != NULL;                                                   \
-         cur = list_entry(type, member, (cur)->member.next))
+#define list_for_each_entry(type, member, list, cur)              \
+  for (cur = list_entry(type, member, (list)->head); cur != NULL; \
+       cur = list_entry(type, member, (cur)->member.next))
 
 /**
  * Traverse a list's entries in the backwards direction.
@@ -95,10 +97,9 @@ struct list {
  * @param list A pointer to the list
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_entry_reverse(type, member, list, cur)            \
-    for (cur = list_entry(type, member, (list)->tail);                  \
-         cur != NULL;                                                   \
-         cur = list_entry(type, member, (cur)->member.prev))
+#define list_for_each_entry_reverse(type, member, list, cur)      \
+  for (cur = list_entry(type, member, (list)->tail); cur != NULL; \
+       cur = list_entry(type, member, (cur)->member.prev))
 
 /**
  * Safely traverse a list in the forward direction using a temporary.
@@ -107,10 +108,9 @@ struct list {
  * @param n Temporary variable
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_safe(list, n, cur)                                \
-    for (cur = (list)->head, n = cur ? cur->next : NULL;                \
-         cur != NULL;                                                   \
-         cur = n, n = cur ? (cur)->next : NULL)
+#define list_for_each_safe(list, n, cur)                            \
+  for (cur = (list)->head, n = cur ? cur->next : NULL; cur != NULL; \
+       cur = n, n = cur ? (cur)->next : NULL)
 
 /**
  * Safely traverse a list in the backwards direction using a temporary.
@@ -119,10 +119,9 @@ struct list {
  * @param n Temporary variable
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_safe_reverse(list, n, cur)                        \
-    for (cur = (list)->tail, n = cur ? cur->prev : NULL;                \
-         cur != NULL;                                                   \
-         cur = n, n = cur ? (cur)->prev : NULL)
+#define list_for_each_safe_reverse(list, n, cur)                    \
+  for (cur = (list)->tail, n = cur ? cur->prev : NULL; cur != NULL; \
+       cur = n, n = cur ? (cur)->prev : NULL)
 
 /**
  * Safely traverse a list's entries in the forward direction using a temporary.
@@ -133,12 +132,11 @@ struct list {
  * @param n Temporary variable
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_entry_safe(type, member, list, n, cur)            \
-    for (cur = list_entry(type, member, (list)->head),                  \
-         n = cur ? list_entry(type, member, (cur)->member.next) : NULL; \
-         cur != NULL;                                                   \
-         cur = n,                                                       \
-         n = cur ? list_entry(type, member, (cur)->member.next) : NULL)
+#define list_for_each_entry_safe(type, member, list, n, cur)         \
+  for (cur = list_entry(type, member, (list)->head),                 \
+      n = cur ? list_entry(type, member, (cur)->member.next) : NULL; \
+       cur != NULL;                                                  \
+       cur = n, n = cur ? list_entry(type, member, (cur)->member.next) : NULL)
 
 /**
  * Safely traverse a list's entries in the backwards direction using a
@@ -150,12 +148,11 @@ struct list {
  * @param n Temporary variable
  * @param cur The variable to use as an iterator
  */
-#define list_for_each_entry_safe_reverse(type, member, list, n, cur)    \
-    for (cur = list_entry(type, member, (list)->tail),                  \
-         n = cur ? list_entry(type, member, (cur)->member.prev) : NULL; \
-         cur != NULL;                                                   \
-         cur = n,                                                       \
-         n = cur ? list_entry(type, member, (cur)->member.prev) : NULL)
+#define list_for_each_entry_safe_reverse(type, member, list, n, cur) \
+  for (cur = list_entry(type, member, (list)->tail),                 \
+      n = cur ? list_entry(type, member, (cur)->member.prev) : NULL; \
+       cur != NULL;                                                  \
+       cur = n, n = cur ? list_entry(type, member, (cur)->member.prev) : NULL)
 
 /**
  * Get the length of a list.
@@ -163,16 +160,13 @@ struct list {
  * @param list The list
  * @return The length of the list
  */
-static inline unsigned int
-list_length(struct list *list)
-{
-    unsigned int ret = 0;
-    struct list_node *cur;
+static inline unsigned int list_length(struct list *list) {
+  unsigned int ret = 0;
+  struct list_node *cur;
 
-    list_for_each(list, cur)
-        ret++;
+  list_for_each(list, cur) ret++;
 
-    return ret;
+  return ret;
 }
 
 /**
@@ -182,36 +176,33 @@ list_length(struct list *list)
  * @param succ The node to insert before
  * @param toadd The node to add
  */
-static inline void
-list_insert_before(struct list *list, struct list_node *succ,
-        struct list_node *toadd)
-{
-    if (toadd == NULL)
-        return;
+static inline void list_insert_before(struct list *list, struct list_node *succ,
+                                      struct list_node *toadd) {
+  if (toadd == NULL) return;
 
-    toadd->next = toadd->prev = NULL;
-    if (list->head == NULL && list->tail == NULL) {
-        // Singleton list
-        list->head = list->tail = toadd;
-    } else if (succ == NULL) {
-        // Insert at tail
-        toadd->prev = list->tail;
-        list->tail->next = toadd;
-        toadd->next = NULL;
-        list->tail = toadd;
-    } else if (succ == list->head) {
-        // Insert at head
-        toadd->next = list->head;
-        list->head->prev = toadd;
-        toadd->prev = NULL;
-        list->head = toadd;
-    } else {
-        // General case
-        toadd->prev = succ->prev;
-        toadd->next = succ;
-        succ->prev->next = toadd;
-        succ->prev = toadd;
-    }
+  toadd->next = toadd->prev = NULL;
+  if (list->head == NULL && list->tail == NULL) {
+    // Singleton list
+    list->head = list->tail = toadd;
+  } else if (succ == NULL) {
+    // Insert at tail
+    toadd->prev = list->tail;
+    list->tail->next = toadd;
+    toadd->next = NULL;
+    list->tail = toadd;
+  } else if (succ == list->head) {
+    // Insert at head
+    toadd->next = list->head;
+    list->head->prev = toadd;
+    toadd->prev = NULL;
+    list->head = toadd;
+  } else {
+    // General case
+    toadd->prev = succ->prev;
+    toadd->next = succ;
+    succ->prev->next = toadd;
+    succ->prev = toadd;
+  }
 }
 
 /**
@@ -223,9 +214,9 @@ list_insert_before(struct list *list, struct list_node *succ,
  * @param succ The entry to insert before
  * @param toadd The entry to add
  */
-#define list_insert_entry_before(type, member, list, succ, toadd)       \
-    list_insert_before(list, succ ? &((type *)(succ))->member : NULL,   \
-            &(toadd)->member)
+#define list_insert_entry_before(type, member, list, succ, toadd)   \
+  list_insert_before(list, succ ? &((type *)(succ))->member : NULL, \
+                     &(toadd)->member)
 
 /**
  * Insert a new node after a specific node.
@@ -234,14 +225,12 @@ list_insert_before(struct list *list, struct list_node *succ,
  * @param pred The node to insert after
  * @param toadd The node to add
  */
-static inline void
-list_insert_after(struct list *list, struct list_node *pred,
-        struct list_node *toadd)
-{
-    if (pred == NULL)
-        list_insert_before(list, list->head, toadd);
-    else
-        list_insert_before(list, pred->next, toadd);
+static inline void list_insert_after(struct list *list, struct list_node *pred,
+                                     struct list_node *toadd) {
+  if (pred == NULL)
+    list_insert_before(list, list->head, toadd);
+  else
+    list_insert_before(list, pred->next, toadd);
 }
 
 /**
@@ -253,9 +242,9 @@ list_insert_after(struct list *list, struct list_node *pred,
  * @param pred The entry to insert after
  * @param toadd The entry to add
  */
-#define list_insert_entry_after(type, member, list, pred, toadd)        \
-    list_insert_after(list, pred ? &((type *)(pred))->member : NULL,    \
-            &(toadd)->member)
+#define list_insert_entry_after(type, member, list, pred, toadd)   \
+  list_insert_after(list, pred ? &((type *)(pred))->member : NULL, \
+                    &(toadd)->member)
 
 /**
  * Insert a new node at the head of a list.
@@ -263,10 +252,8 @@ list_insert_after(struct list *list, struct list_node *pred,
  * @param list The list
  * @param toadd The node to add
  */
-static inline void
-list_push_front(struct list *list, struct list_node *toadd)
-{
-    list_insert_before(list, list->head, toadd);
+static inline void list_push_front(struct list *list, struct list_node *toadd) {
+  list_insert_before(list, list->head, toadd);
 }
 
 /**
@@ -277,8 +264,8 @@ list_push_front(struct list *list, struct list_node *toadd)
  * @param list A pointer to the list
  * @param toadd The entry to add
  */
-#define list_push_entry_front(type, member, list, toadd)                \
-    list_push_front(list, &(toadd)->member)
+#define list_push_entry_front(type, member, list, toadd) \
+  list_push_front(list, &(toadd)->member)
 
 /**
  * Insert a new node at the tail of a list.
@@ -286,10 +273,8 @@ list_push_front(struct list *list, struct list_node *toadd)
  * @param list The list
  * @param toadd The node to add
  */
-static inline void
-list_push_back(struct list *list, struct list_node *toadd)
-{
-    list_insert_after(list, list->tail, toadd);
+static inline void list_push_back(struct list *list, struct list_node *toadd) {
+  list_insert_after(list, list->tail, toadd);
 }
 
 /**
@@ -300,8 +285,8 @@ list_push_back(struct list *list, struct list_node *toadd)
  * @param list A pointer to the list
  * @param toadd The entry to add
  */
-#define list_push_entry_back(type, member, list, toadd)                 \
-    list_push_back(list, &(toadd)->member)
+#define list_push_entry_back(type, member, list, toadd) \
+  list_push_back(list, &(toadd)->member)
 
 /**
  * Insert a new node in order as specified by a comparison function.
@@ -310,18 +295,17 @@ list_push_back(struct list *list, struct list_node *toadd)
  * @param toadd The node to add
  * @param cmp The comparison function
  */
-static inline void
-list_insert_in_order(struct list *list, struct list_node *toadd,
-        int (*cmp)(const struct list_node *, const struct list_node *))
-{
-    struct list_node *cur;
-    list_for_each(list, cur)
-        if (cmp(toadd, cur) >= 0) {
-            list_insert_before(list, cur, toadd);
-            return;
-        }
+static inline void list_insert_in_order(struct list *list,
+                                        struct list_node *toadd,
+                                        int (*cmp)(const struct list_node *,
+                                                   const struct list_node *)) {
+  struct list_node *cur;
+  list_for_each(list, cur) if (cmp(toadd, cur) >= 0) {
+    list_insert_before(list, cur, toadd);
+    return;
+  }
 
-    list_push_back(list, toadd);
+  list_push_back(list, toadd);
 }
 
 /**
@@ -335,8 +319,8 @@ list_insert_in_order(struct list *list, struct list_node *toadd,
  * @param toadd The entry to add
  * @param cmp The comparison function
  */
-#define list_insert_entry_in_order(type, member, list, toadd, cmp)      \
-    list_insert_in_order(list, &(toadd)->member, cmp)
+#define list_insert_entry_in_order(type, member, list, toadd, cmp) \
+  list_insert_in_order(list, &(toadd)->member, cmp)
 
 /**
  * Find a node in the list based on a predicate function.
@@ -347,16 +331,14 @@ list_insert_in_order(struct list *list, struct list_node *toadd,
  * @return The first list_node that matches from the head of the list, or NULL
  *      if not found
  */
-static inline struct list_node *
-list_find(const struct list *list, int (*pred)(const struct list_node *, void *),
-        void *data)
-{
-    struct list_node *cur;
-    list_for_each(list, cur)
-        if (pred(cur, data))
-            return cur;
+static inline struct list_node *list_find(const struct list *list,
+                                          int (*pred)(const struct list_node *,
+                                                      void *),
+                                          void *data) {
+  struct list_node *cur;
+  list_for_each(list, cur) if (pred(cur, data)) return cur;
 
-    return NULL;
+  return NULL;
 }
 
 /**
@@ -372,8 +354,8 @@ list_find(const struct list *list, int (*pred)(const struct list_node *, void *)
  * @return The first entry that matches from the head of the list, or NULL if
  *      not found
  */
-#define list_find_entry(type, member, list, pred, data)                 \
-    list_entry(type, member, list_find(list, pred, data))
+#define list_find_entry(type, member, list, pred, data) \
+  list_entry(type, member, list_find(list, pred, data))
 
 /**
  * Remove a node from a list.
@@ -381,21 +363,18 @@ list_find(const struct list *list, int (*pred)(const struct list_node *, void *)
  * @param list The list
  * @param torem The node to remove
  */
-static inline void
-list_remove(struct list *list, struct list_node *torem)
-{
-    if (torem == NULL)
-        return;
+static inline void list_remove(struct list *list, struct list_node *torem) {
+  if (torem == NULL) return;
 
-    if (torem->prev == NULL)
-        list->head = torem->next;
-    else
-        torem->prev->next = torem->next;
+  if (torem->prev == NULL)
+    list->head = torem->next;
+  else
+    torem->prev->next = torem->next;
 
-    if (torem->next == NULL)
-        list->tail = torem->prev;
-    else
-        torem->next->prev = torem->prev;
+  if (torem->next == NULL)
+    list->tail = torem->prev;
+  else
+    torem->next->prev = torem->prev;
 }
 
 /**
@@ -406,10 +385,11 @@ list_remove(struct list *list, struct list_node *torem)
  * @param list A pointer to the list
  * @param torem The entry to remove
  */
-#define list_remove_entry(type, member, list, torem) ({                 \
-    type *__torem = (torem);                                            \
-    list_remove(list, __torem ? &__torem->member : NULL);               \
-})
+#define list_remove_entry(type, member, list, torem)      \
+  ({                                                      \
+    type *__torem = (torem);                              \
+    list_remove(list, __torem ? &__torem->member : NULL); \
+  })
 
 /**
  * Remove and return the node at the head of the list.
@@ -417,12 +397,10 @@ list_remove(struct list *list, struct list_node *torem)
  * @param list The list
  * @return The node at the head of the list
  */
-static inline struct list_node *
-list_pop_front(struct list *list)
-{
-    struct list_node *ret = list->head;
-    list_remove(list, ret);
-    return ret;
+static inline struct list_node *list_pop_front(struct list *list) {
+  struct list_node *ret = list->head;
+  list_remove(list, ret);
+  return ret;
 }
 
 /**
@@ -433,8 +411,8 @@ list_pop_front(struct list *list)
  * @param list A pointer to the list
  * @return The entry at the head of the list
  */
-#define list_pop_entry_front(type, member, list)                        \
-    list_entry(type, member, list_pop_front(list))
+#define list_pop_entry_front(type, member, list) \
+  list_entry(type, member, list_pop_front(list))
 
 /**
  * Remove and return the node at the tail of the list.
@@ -442,12 +420,10 @@ list_pop_front(struct list *list)
  * @param list The list
  * @return The node at the tail of the list
  */
-static inline struct list_node *
-list_pop_back(struct list *list)
-{
-    struct list_node *ret = list->tail;
-    list_remove(list, ret);
-    return ret;
+static inline struct list_node *list_pop_back(struct list *list) {
+  struct list_node *ret = list->tail;
+  list_remove(list, ret);
+  return ret;
 }
 
 /**
@@ -458,7 +434,7 @@ list_pop_back(struct list *list)
  * @param list A pointer to the list
  * @return The entry at the tail of the list
  */
-#define list_pop_entry_back(type, member, list)                         \
-    list_entry(type, member, list_pop_back(list))
+#define list_pop_entry_back(type, member, list) \
+  list_entry(type, member, list_pop_back(list))
 
 #endif /* LIST_H_ */

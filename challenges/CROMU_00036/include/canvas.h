@@ -46,7 +46,8 @@ typedef struct Canvas_s {
   RGB_Color colors[CANVAS_MAX_COLORS + 1];
 } Canvas;
 
-int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers);
+int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size,
+                 uint8_t layers);
 void FlattenCanvas(Canvas *c);
 void DestroyCanvas(Canvas **c);
 

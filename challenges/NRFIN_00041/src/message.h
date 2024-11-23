@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "sentence.h"
 
 #ifndef MESSAGE_H
 #define MESSAGE_H 1
 
-#define MAX_ENGLISH_LEN 140 // max msg len: msg 1 = 137, msg 4 = 91, msg 5 = 124
-
+#define MAX_ENGLISH_LEN \
+  140  // max msg len: msg 1 = 137, msg 4 = 91, msg 5 = 124
 
 /**
  * Determine AIS message type and dispatch message-type-specific parser.
@@ -63,8 +63,5 @@ int parse_msg_type_4(char *english, const char *ais_msg);
  * @return SUCCESS if successful, or ERR_INVALID_MESSAGE on error.
  */
 int parse_msg_type_5(char *english, const char *ais_msg);
-
-
-
 
 #endif

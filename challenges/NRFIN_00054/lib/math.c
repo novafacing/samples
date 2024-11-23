@@ -26,53 +26,35 @@
 #define EXPMASK (0x7ffull << 52)
 #define MANTMASK (~(1ull << 52))
 
-unsigned long long
-sign(double d)
-{
-    return *(unsigned long long *)(&d) & SIGNMASK;
+unsigned long long sign(double d) {
+  return *(unsigned long long *)(&d) & SIGNMASK;
 }
 
-unsigned long long
-exponent(double d)
-{
-    return *(unsigned long long *)(&d) & EXPMASK;
+unsigned long long exponent(double d) {
+  return *(unsigned long long *)(&d) & EXPMASK;
 }
 
-unsigned long long
-mantissa(double d)
-{
-    return *(unsigned long long *)(&d) & MANTMASK;
+unsigned long long mantissa(double d) {
+  return *(unsigned long long *)(&d) & MANTMASK;
 }
 
-int
-isnan(double d)
-{
-    return exponent(d) == EXPMASK && mantissa(d) != 0;
+int isnan(double d) { return exponent(d) == EXPMASK && mantissa(d) != 0; }
+
+int isinf(double d) {
+  if (exponent(d) == EXPMASK && mantissa(d) == 0) return sign(d) ? -1 : 1;
+  return 0;
 }
 
-int
-isinf(double d)
-{
-    if (exponent(d) == EXPMASK && mantissa(d) == 0)
-        return sign(d) ? -1 : 1;
-    return 0;
+double abs(double d) {
+  unsigned long long ret = *(unsigned long long *)(&d) & ~SIGNMASK;
+  return *(double *)(&ret);
 }
 
-double
-abs(double d)
-{
-    unsigned long long ret = *(unsigned long long *)(&d) & ~SIGNMASK;
-    return *(double *)(&ret);
+double clamp(double d) {
+  if (d < 0.0)
+    return 0.0;
+  else if (d > 1.0)
+    return 1.0;
+  else
+    return d;
 }
-
-double
-clamp(double d)
-{
-    if (d < 0.0)
-        return 0.0;
-    else if (d > 1.0)
-        return 1.0;
-    else
-        return d;
-}
-

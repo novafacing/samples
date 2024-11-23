@@ -29,19 +29,19 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "string.h"
-#include "service.h"
-#include "helper.h"
+
 #include "genericParsers.h"
+#include "helper.h"
+#include "service.h"
+#include "string.h"
 #include "territoryParsers.h"
 
-int countryMenu( pCountry co );
-void freeCountry( pCountry co );
-void printCountryInfo( pCountry co);
-pCountry countryTopLevel( pstring str);
-void initCountry( pCountry co );
-char *extractLanguage( pstring str );
-char *extractCapitol( pstring str );
+int countryMenu(pCountry co);
+void freeCountry(pCountry co);
+void printCountryInfo(pCountry co);
+pCountry countryTopLevel(pstring str);
+void initCountry(pCountry co);
+char *extractLanguage(pstring str);
+char *extractCapitol(pstring str);
 
 #endif
-

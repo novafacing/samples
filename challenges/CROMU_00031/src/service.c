@@ -24,43 +24,44 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "board.h"
 #include "moves.h"
+#include "stdlib.h"
 
 // current player
 char CURR_PLAYER[6];
 
 int main(void) {
-	char srcx, srcy, dstx, dsty;
-	// board
-	char board[X_MAX][Y_MAX];
+  char srcx, srcy, dstx, dsty;
+  // board
+  char board[X_MAX][Y_MAX];
 
-	InitBoard(board);
-	strcpy(CURR_PLAYER, "WHITE");
-	PrintBoard(board);
+  InitBoard(board);
+  strcpy(CURR_PLAYER, "WHITE");
+  PrintBoard(board);
 
-	while (1) {
-		if (!AcceptMove(board, &srcx, &srcy, &dstx, &dsty)) {
-			puts("good game");
-			return(0);
-		}	
+  while (1) {
+    if (!AcceptMove(board, &srcx, &srcy, &dstx, &dsty)) {
+      puts("good game");
+      return (0);
+    }
 
-		if (!IsValidMove(board, srcx, srcy, dstx, dsty)) {
-			puts("NO");
-			continue;
-		}
+    if (!IsValidMove(board, srcx, srcy, dstx, dsty)) {
+      puts("NO");
+      continue;
+    }
 
-		MakeMove(board, srcx, srcy, dstx, dsty);
+    MakeMove(board, srcx, srcy, dstx, dsty);
 
-		if (!strcmp(CURR_PLAYER, "WHITE")) {
-			strcpy(CURR_PLAYER, "BLACK");
-		} else {
-			strcpy(CURR_PLAYER, "WHITE");
-		}
+    if (!strcmp(CURR_PLAYER, "WHITE")) {
+      strcpy(CURR_PLAYER, "BLACK");
+    } else {
+      strcpy(CURR_PLAYER, "WHITE");
+    }
 
-		puts("OK");
-	}
+    puts("OK");
+  }
 
-	return(0);
+  return (0);
 }

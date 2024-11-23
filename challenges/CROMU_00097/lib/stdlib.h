@@ -28,19 +28,19 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-#define RAND_MAX	2147483647
+#define RAND_MAX 2147483647
 #define MAGIC_PAGE 0x4347c000
 
-int rand( void );
-void srand( unsigned int seed );
+int rand(void);
+void srand(unsigned int seed);
 
-int atoi( const char *pStr );
-double atof( char *pStr );
- 
-char *strcpy( char *pDest, const char *pSource );
-char *strncpy( char *pDest, const char *pSource, size_t maxlen );
-void *memcpy( void *pDest, const void *pSrc, size_t nbytes );
+int atoi(const char *pStr);
+double atof(char *pStr);
 
-long int strtol( const char *str, char **endptr, int base );
+char *strcpy(char *pDest, const char *pSource);
+char *strncpy(char *pDest, const char *pSource, size_t maxlen);
+void *memcpy(void *pDest, const void *pSrc, size_t nbytes);
 
-#endif // STDLIB_H__
+long int strtol(const char *str, char **endptr, int base);
+
+#endif  // STDLIB_H__

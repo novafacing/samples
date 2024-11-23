@@ -23,47 +23,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include "shell.h"
+
 #include <libcgc.h>
+
+#include "cstring.h"
+#include "filesystem.h"
+#include "loader.h"
+#include "malloc.h"
+#include "osfiles.h"
 #include "stdint.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "malloc.h"
 #include "string.h"
-#include "filesystem.h"
-#include "cstring.h"
-#include "osfiles.h"
-#include "loader.h"
-#include "shell.h"
 
-void ListFilesRecurse(FileNode *file, int level)
-{
-  if (file == NULL)
-  {
+void ListFilesRecurse(FileNode *file, int level) {
+  if (file == NULL) {
     return;
   }
-  for (int i=0; i < level; i++)
-  {
+  for (int i = 0; i < level; i++) {
     printf("    ");
   }
-  printf("$s ($d)\n", file->name,  GetFileID(file));
-  ListFilesRecurse(file->child, level+1);
+  printf("$s ($d)\n", file->name, GetFileID(file));
+  ListFilesRecurse(file->child, level + 1);
   ListFilesRecurse(file->next, level);
 }
 
-void ListFilesLong(FileNode *parent)
-{
+void ListFilesLong(FileNode *parent) {
   FileNode *flavorFile = FindFileAbsolute("System%Special%Flavor.sl");
   ExecutableInMemory *flavorSL = LoadSharedLibrary(flavorFile);
   FileNode *file = parent->child;
   ExecutableInMemory *resourceSL = flavorSL;
 
-  while (file != NULL)
-  {
+  while (file != NULL) {
     resourceSL = flavorSL;
     int index = GetFileType(file) - FILE_TEXT;
-    if (GetFileType(file) == FILE_LINK)
-    {
-      ExtractLinkTargetAndID((ShortcutFileHeader *)file->contents, parent,  &resourceSL, &index);
+    if (GetFileType(file) == FILE_LINK) {
+      ExtractLinkTargetAndID((ShortcutFileHeader *)file->contents, parent,
+                             &resourceSL, &index);
     }
     char *resource = LookupResource(resourceSL, index);
     printf("$s \t$d\t$s\n", GetFileName(file), GetFileSize(file), resource);
@@ -71,22 +68,19 @@ void ListFilesLong(FileNode *parent)
   }
 }
 
-void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, ExecutableInMemory **flavorSL, int *index)
-{
+void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent,
+                            ExecutableInMemory **flavorSL, int *index) {
   ExecutableInMemory *newFlavor = NULL;
   int newIndex = -1;
 
-  if (sh->size > MAX_FILE_SIZE)
-  {
+  if (sh->size > MAX_FILE_SIZE) {
     return;
   }
-  if (sh->magic != SHORTCUT_MAGIC)
-  {
+  if (sh->magic != SHORTCUT_MAGIC) {
     return;
   }
-  
-  if (strncmp(sh->targetName, "System%Special%", 15) != 0)
-  {
+
+  if (strncmp(sh->targetName, "System%Special%", 15) != 0) {
     newIndex = -1;
   } else {
     newIndex = sh->index;
@@ -94,8 +88,7 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
 
   // Verify separator is not present
   char *sepPtr = strchr(sh->targetName, '+');
-  if (sepPtr != NULL)
-  {
+  if (sepPtr != NULL) {
     return;
   }
   // Add separator and copy
@@ -111,19 +104,16 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
 
   // Check for separator
   char *indexPtr = strchr(pFileAndID, '+');
-  if (indexPtr == NULL)
-  {
+  if (indexPtr == NULL) {
     return;
   }
-  
+
   newIndex = atoi(indexPtr + 1);
 
   // Attempt usage of this flavor file
-  if (newIndex >= 0)
-  {
+  if (newIndex >= 0) {
     newFlavor = VerifyAndLoadFlavorFile(sh->targetName, parent);
-    if (newFlavor == NULL)
-    {
+    if (newFlavor == NULL) {
       return;
     }
 
@@ -131,61 +121,50 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
     *flavorSL = newFlavor;
   }
 }
- 
 
-ExecutableInMemory *VerifyAndLoadFlavorFile(char *name, FileNode *parent)
-{ 
+ExecutableInMemory *VerifyAndLoadFlavorFile(char *name, FileNode *parent) {
   // check name fits with .listofiles added
   char listofiles[65];
   memset(listofiles, 0, 65);
   strncpy(listofiles, name, 64);
   char *sepIndex = strchr(listofiles, '_');
-  if (sepIndex)
-  {
+  if (sepIndex) {
     *sepIndex = 0;
   } else {
     sepIndex = listofiles + strlen(listofiles);
   }
-  if (strlen(listofiles) > 64 - strlen(".listofiles"))
-  {
+  if (strlen(listofiles) > 64 - strlen(".listofiles")) {
     return NULL;
   }
   strcpy(sepIndex, ".listofiles");
-  FileNode *listFile =  FindFile(listofiles, parent);
+  FileNode *listFile = FindFile(listofiles, parent);
 
   // check file exists
   FileNode *flavor = FindFile(name, parent);
-  if (flavor == NULL)
-  {
+  if (flavor == NULL) {
     flavor = FindFileAbsolute(name);
   }
   return LoadSharedLibrary(flavor);
 }
 
-
-char ReceiveCommand()
-{
+char ReceiveCommand() {
   char cmd, delim;
-  if (receive(STDIN, &cmd, 1, NULL) != 0) 
-  {
+  if (receive(STDIN, &cmd, 1, NULL) != 0) {
     _terminate(-1);
   }
-  if (receive(STDIN, &delim, 1, NULL) != 0) 
-  {
+  if (receive(STDIN, &delim, 1, NULL) != 0) {
     _terminate(-1);
   }
-  if (delim != DELIM)
-  {
+  if (delim != DELIM) {
     return EXIT_CMD;
   }
   return cmd;
 }
 
-int main()
-{
+int main() {
   FileNode *cwd = InitializeFileSystem();
   int activeSession = 1;
-  
+
   // Populate shell files and icons
   InitializeOSFiles();
 
@@ -193,25 +172,22 @@ int main()
     printf(">");
     // Receive a command
     char cmd = ReceiveCommand();
-    switch(cmd)
-    {
+    switch (cmd) {
       // Process command
-      case UPLOAD_A_FILE:
-      {
+      case UPLOAD_A_FILE: {
         cString *name = ReceiveCString(64);
         uint8_t type;
         ReceiveBytes((char *)&type, 1);
         cString *contents = ReceiveCString(MAX_FILE_SIZE);
-        if (CreateFile(name->string, type, contents->length, contents->string, cwd) != FS_SUCCESS)
-        {
+        if (CreateFile(name->string, type, contents->length, contents->string,
+                       cwd) != FS_SUCCESS) {
           printf("FAILED\n");
-        } 
+        }
         DestroyCString(name);
         DestroyCString(contents);
         break;
       }
-      case READ_A_FILE:
-      {
+      case READ_A_FILE: {
         cString *name = ReceiveCString(64);
         FileNode *file = FindFile(name->string, cwd);
         /*
@@ -219,8 +195,7 @@ int main()
         {
           file = FindFile(file->contents + 8);
         }*/
-        if (file)
-        {
+        if (file) {
           char *contents = ReadFile(file);
           printf("$s\n", contents);
           free(contents);
@@ -228,52 +203,42 @@ int main()
         DestroyCString(name);
         break;
       }
-      case DELETE_A_FILE:
-      {
+      case DELETE_A_FILE: {
         cString *name = ReceiveCString(64);
-        if ((DeleteFile(name->string, cwd)) != FS_SUCCESS)
-        {
+        if ((DeleteFile(name->string, cwd)) != FS_SUCCESS) {
           printf("FAILED\n");
         }
         DestroyCString(name);
         break;
       }
-      case LIST_FILES:
-      {
+      case LIST_FILES: {
         ListFilesRecurse(cwd, 0);
         break;
       }
-      case LIST_FILES_LONG:
-      {
+      case LIST_FILES_LONG: {
         ListFilesLong(cwd);
         break;
       }
-      case CREATE_DIR:
-      {
+      case CREATE_DIR: {
         cString *name = ReceiveCString(64);
-        if(CreateFile(name->string, FILE_DIRECTORY, 0, 0, cwd) != FS_SUCCESS)
-        {
+        if (CreateFile(name->string, FILE_DIRECTORY, 0, 0, cwd) != FS_SUCCESS) {
           printf("FAILED\n");
         }
         DestroyCString(name);
         break;
       }
-      case PWD:
-      {
+      case PWD: {
         printf("$s$s\n", GetFilePath(cwd), GetFileName(cwd));
         break;
       }
-      case CHANGE_DIR:
-      {
+      case CHANGE_DIR: {
         cString *name = ReceiveCString(64);
-        if (strcmp("upone", name->string) == 0)
-        {
+        if (strcmp("upone", name->string) == 0) {
           cwd = GetParent(cwd);
           break;
         }
         FileNode *newDir = FindFile(name->string, cwd);
-        if (GetFileType(newDir) == FILE_DIRECTORY)
-        {
+        if (GetFileType(newDir) == FILE_DIRECTORY) {
           cwd = newDir;
         } else {
           printf("File Not Found\n");
@@ -290,4 +255,3 @@ int main()
 
   printf("\n");
 }
-

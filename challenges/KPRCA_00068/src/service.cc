@@ -22,13 +22,13 @@
  */
 #include "interface.h"
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
-{
-    char *secret_page = (char *)secret_page_i;
-    (void) secret_page;
+extern "C" int __attribute__((fastcall)) main(int secret_page_i,
+                                              char *unused[]) {
+  char *secret_page = (char *)secret_page_i;
+  (void)secret_page;
 
-    Interface ui;
-    ui.run();
+  Interface ui;
+  ui.run();
 
-    return 0;
+  return 0;
 }

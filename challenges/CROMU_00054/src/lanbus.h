@@ -28,46 +28,48 @@ THE SOFTWARE.
 
 #include <cutil_list.h>
 
-class CLANMessage
-{
-public:
-	CLANMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
-	~CLANMessage( );
+class CLANMessage {
+ public:
+  CLANMessage(uint8_t srcID, uint8_t destID, uint8_t *pMessageData,
+              uint16_t messageLen);
+  ~CLANMessage();
 
-	uint8_t GetSourceID( void ) const { return m_srcID; };
-	uint8_t GetDestID( void ) const { return m_destID; };
-	uint16_t GetMessageLen( void ) const { return m_messageLen; };
-	uint8_t *GetMessageData( void ) { return m_pMessageData; };
+  uint8_t GetSourceID(void) const { return m_srcID; };
+  uint8_t GetDestID(void) const { return m_destID; };
+  uint16_t GetMessageLen(void) const { return m_messageLen; };
+  uint8_t *GetMessageData(void) { return m_pMessageData; };
 
-private:
-	uint8_t *m_pMessageData;
-	uint16_t m_messageLen;
-	uint8_t m_destID;
-	uint8_t m_srcID;
+ private:
+  uint8_t *m_pMessageData;
+  uint16_t m_messageLen;
+  uint8_t m_destID;
+  uint8_t m_srcID;
 
-public:
-	CUtil::DLL_LINK( CLANMessage ) m_lanbusLink;
+ public:
+  CUtil::DLL_LINK(CLANMessage) m_lanbusLink;
 };
 
-class CLANBus
-{
-public:
-	CLANBus( );
-	~CLANBus( );
+class CLANBus {
+ public:
+  CLANBus();
+  ~CLANBus();
 
-	bool SendMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
-	bool InjectSimulationMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
+  bool SendMessage(uint8_t srcID, uint8_t destID, uint8_t *pMessageData,
+                   uint16_t messageLen);
+  bool InjectSimulationMessage(uint8_t srcID, uint8_t destID,
+                               uint8_t *pMessageData, uint16_t messageLen);
 
-	CLANMessage *RecvMessage( uint8_t *pDestList, uint8_t destListCount, CLANMessage *pLastMessage = NULL );
+  CLANMessage *RecvMessage(uint8_t *pDestList, uint8_t destListCount,
+                           CLANMessage *pLastMessage = NULL);
 
-	void NextTick( void );
+  void NextTick(void);
 
-private:
-	// Messages waiting to be sent (next tick)
-	CUtil::DLL_LIST( CLANMessage, m_lanbusLink ) m_oSentList;
+ private:
+  // Messages waiting to be sent (next tick)
+  CUtil::DLL_LIST(CLANMessage, m_lanbusLink) m_oSentList;
 
-	// Messages read (current tick)
-	CUtil::DLL_LIST( CLANMessage, m_lanbusLink ) m_oReceiveList;
+  // Messages read (current tick)
+  CUtil::DLL_LIST(CLANMessage, m_lanbusLink) m_oReceiveList;
 };
 
-#endif // __ECM_H__
+#endif  // __ECM_H__

@@ -27,4 +27,3 @@ THE SOFTWARE.
 void init_mt(unsigned int);
 void gen_mt_state(void);
 unsigned int rand_mt(void);
-

@@ -32,20 +32,20 @@ THE SOFTWARE.
 #define MAX_FILES_PER_TREE 10
 
 // Error codes
-#define FS_ACCESS_DENIED  0x10
+#define FS_ACCESS_DENIED 0x10
 #define FS_FILE_NOT_FOUND 0x20
 
 // File modes
-#define FS_MODE_CREATE    0x31
-#define FS_MODE_READ      0x32
+#define FS_MODE_CREATE 0x31
+#define FS_MODE_READ 0x32
 #define FS_MODE_OVERWRITE 0x33
-#define FS_MODE_WRITE     0x34
+#define FS_MODE_WRITE 0x34
 
-#define MAX_FILENAME_LEN  128
-#define MAX_TREENAME_LEN  128
-#define MAX_SERVICE_NAME  64
+#define MAX_FILENAME_LEN 128
+#define MAX_TREENAME_LEN 128
+#define MAX_SERVICE_NAME 64
 #define MAX_SERVICE_TYPES 5
-#define MAX_FILESIZE      1024
+#define MAX_FILESIZE 1024
 
 typedef struct file_s {
   uint16_t fileID;
@@ -56,7 +56,7 @@ typedef struct file_s {
 } fs_file;
 
 typedef struct tree_s {
-  uint32_t treeID; 
+  uint32_t treeID;
   char treeName[MAX_TREENAME_LEN];
   char serviceType[MAX_SERVICE_NAME];
   fs_file *files[MAX_FILES_PER_TREE];
@@ -66,7 +66,8 @@ extern fs_tree allTrees[MAX_TREES];
 extern char serviceTypes[MAX_SERVICE_TYPES][MAX_SERVICE_NAME];
 
 void InitializeFileSystem();
-fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID, uint32_t mode);
+fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID,
+                    uint32_t mode);
 void CloseFile(fs_file *file);
 fs_file *FindFileByName(fs_tree *tree, uint8_t *filename);
 int ReadFile(uint8_t *dest, fs_file *file, uint16_t offset, uint16_t length);
@@ -74,6 +75,3 @@ int WriteFile(fs_file *file, uint8_t *source, uint16_t offset, uint16_t length);
 fs_tree *FindTreeByPath(uint32_t userID, uint8_t *path, uint8_t *service);
 
 #endif
-
-
-

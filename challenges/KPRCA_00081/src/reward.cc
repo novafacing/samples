@@ -21,17 +21,12 @@
  *
  */
 
+#include "reward.h"
+
 #include <cstdio.h>
 #include <cstdlib.h>
 #include <cstring.h>
-#include "reward.h"
 
-CReward::CReward(int exp, int supply) : m_exp(exp), m_supply(supply)
-{
-}
+CReward::CReward(int exp, int supply) : m_exp(exp), m_supply(supply) {}
 
-CReward::~CReward()
-{
-}
-
-
+CReward::~CReward() {}

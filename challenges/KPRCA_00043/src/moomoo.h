@@ -24,8 +24,8 @@
 #ifndef MOOMOO_H
 #define MOOMOO_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 unsigned int moomoo(const char *, size_t);
 unsigned int yooyoo(const char *, size_t);

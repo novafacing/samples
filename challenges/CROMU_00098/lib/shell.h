@@ -31,4 +31,4 @@ THE SOFTWARE.
 void runshellcommand(char *cmd);
 void shell();
 
-#endif // SHELL_H
+#endif  // SHELL_H

@@ -1,7 +1,6 @@
 #include <ctype.h>
 
-int strcasecmp(const char *s1, const char *s2)
-{
+int strcasecmp(const char *s1, const char *s2) {
   unsigned char *_s1 = (unsigned char *)s1;
   unsigned char *_s2 = (unsigned char *)s2;
   while (*_s1 && *_s2)

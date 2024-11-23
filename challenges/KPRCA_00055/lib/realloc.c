@@ -22,7 +22,4 @@
  */
 #include "malloc_private.h"
 
-void *realloc(void *ptr, size_t n)
-{
-    return malloc_realloc(&g_heap, ptr, n);
-}
+void *realloc(void *ptr, size_t n) { return malloc_realloc(&g_heap, ptr, n); }

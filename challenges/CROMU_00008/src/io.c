@@ -23,55 +23,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <stdlib.h>
-#include <libcgc.h>
 #include "io.h"
+
+#include <libcgc.h>
+#include <stdlib.h>
 
 int g_lasterror = 0;
 
-int readLine( int fd, char *buffer, size_t maxlen )
-{
-    size_t pos;
-    char temp_buffer[2];
-    int retvalue;
-    size_t rx_count;
+int readLine(int fd, char *buffer, size_t maxlen) {
+  size_t pos;
+  char temp_buffer[2];
+  int retvalue;
+  size_t rx_count;
 
-    for ( pos = 1; pos < maxlen; pos++ )
-    {
-        if ( (retvalue = receive( fd, (void *)temp_buffer, 1, &rx_count)) != 0 )
-        {
-            g_lasterror = retvalue;
-            return (-1);
-        }
-        else
-        {
-            if ( temp_buffer[0] == '\n' )
-                break;
+  for (pos = 1; pos < maxlen; pos++) {
+    if ((retvalue = receive(fd, (void *)temp_buffer, 1, &rx_count)) != 0) {
+      g_lasterror = retvalue;
+      return (-1);
+    } else {
+      if (temp_buffer[0] == '\n') break;
 
-            buffer[0] = temp_buffer[0];
-            buffer++;
-        }
+      buffer[0] = temp_buffer[0];
+      buffer++;
     }
+  }
 
-    buffer[0] = '\0';
-    return pos;
+  buffer[0] = '\0';
+  return pos;
 }
 
-char *sanitize_string( char *str )
-{
-    char *str_start = str;
-    char c;
+char *sanitize_string(char *str) {
+  char *str_start = str;
+  char c;
 
-    while ( (c = *str) )
-    {
-        if ( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-             (c >= '0' && c <= '9') )
-            ;
-        else
-            *str = '_';
+  while ((c = *str)) {
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+        (c >= '0' && c <= '9'))
+      ;
+    else
+      *str = '_';
 
-        str++;
-    }
+    str++;
+  }
 
-    return str_start;
+  return str_start;
 }

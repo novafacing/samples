@@ -18,13 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SENDALL_H
 #define SENDALL_H 1
 
-#include <libcgc.h>
 #include <errno.h>
+#include <libcgc.h>
 
 /**
  * Send bytes from buffer to file descriptor.
@@ -33,6 +33,6 @@
  * @param size Number of bytes to send.
  * @returns SUCCESS, ERRNO_SEND on error.
  */
-int sendall(int fd, const char * buf, const size_t size);
+int sendall(int fd, const char* buf, const size_t size);
 
 #endif

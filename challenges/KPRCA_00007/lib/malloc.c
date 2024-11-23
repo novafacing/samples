@@ -23,13 +23,13 @@
  *
  */
 
-#include "libcgc.h"
 #include "malloc.h"
+
+#include "libcgc.h"
 #include "stdlib.h"
 
 /* Get some more memory through allocate */
-static int allocate_new_blk(void)
-{
+static int allocate_new_blk(void) {
   void *ret;
   struct blk_t *new_blk;
   size_t size = NEW_CHUNK_SIZE;
@@ -38,8 +38,7 @@ static int allocate_new_blk(void)
     return 1;
   }
 
-  if (ret == NULL)
-    return 1;
+  if (ret == NULL) return 1;
 
   new_blk = (struct blk_t *)ret;
   new_blk->size = size;
@@ -54,28 +53,23 @@ static int allocate_new_blk(void)
 }
 
 /* Find first fit block for a size */
-static int find_fit(size_t size, struct blk_t **blk)
-{
+static int find_fit(size_t size, struct blk_t **blk) {
   int sc_i = get_size_class(size);
 
   for (; sc_i < NUM_FREE_LISTS; sc_i++) {
     *blk = free_lists[sc_i];
-    for(; *blk != NULL; *blk = (*blk)->fsucc)
-      if ((*blk)->size >= size)
-        return sc_i;
+    for (; *blk != NULL; *blk = (*blk)->fsucc)
+      if ((*blk)->size >= size) return sc_i;
   }
 
   *blk = NULL;
   return -1;
 }
 
-void *malloc(size_t size)
-{
-  if (size == 0)
-    return NULL;
+void *malloc(size_t size) {
+  if (size == 0) return NULL;
 
-  if (size % ALIGNMENT != 0)
-    size = (size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
+  if (size % ALIGNMENT != 0) size = (size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
 
   size += HEADER_PADDING;
 
@@ -110,8 +104,7 @@ void *malloc(size_t size)
     /* Patch up blk list pointers */
     nb->prev = blk;
     nb->next = blk->next;
-    if (blk->next)
-      blk->next->prev = nb;
+    if (blk->next) blk->next->prev = nb;
     blk->next = nb;
 
     /* Put the new block into the free list */

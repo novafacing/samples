@@ -26,25 +26,18 @@ THE SOFTWARE.
 #ifndef __USER_MESSAGE_H__
 #define __USER_MESSAGE_H__
 
-class CUserMessage : public CDoubleItemLink
-{
-public:
-    CUserMessage( const String &sFrom, const String &sMessage );
-    ~CUserMessage();
+class CUserMessage : public CDoubleItemLink {
+ public:
+  CUserMessage(const String &sFrom, const String &sMessage);
+  ~CUserMessage();
 
-    const String &GetFrom( void ) const
-    {
-        return m_sFrom;
-    }
+  const String &GetFrom(void) const { return m_sFrom; }
 
-    const String &GetMessage( void ) const
-    {
-        return m_sMessage;
-    }
+  const String &GetMessage(void) const { return m_sMessage; }
 
-private:
-    String m_sFrom;
-    String m_sMessage;
+ private:
+  String m_sFrom;
+  String m_sMessage;
 };
 
-#endif // __USER_MESSAGE_H__
+#endif  // __USER_MESSAGE_H__

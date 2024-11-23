@@ -25,179 +25,175 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
 void print_tag_text(unsigned short tag) {
+  switch (tag) {
+    case 0x100:
 
+      printf("ImageWidth");
+      break;
 
-    switch (tag) {
+    case 0x101:
 
-        case 0x100:
+      printf("ImageLength");
+      break;
 
-            printf("ImageWidth");
-            break;
-        
-        case 0x101:
+    case 0x102:
 
-            printf("ImageLength");
-            break;
+      printf("BitsPerSample");
+      break;
 
-        case 0x102:
+    case 0x103:
 
-            printf("BitsPerSample");
-            break;
+      printf("Compression");
+      break;
 
-        case 0x103:
+    case 0x106:
 
-            printf("Compression");
-            break;
+      printf("PhotometricInterpretation");
+      break;
 
-        case 0x106:
+    case 0x112:
 
-            printf("PhotometricInterpretation");
-            break;
+      printf("Orientation");
+      break;
 
-        case 0x112:
+    case 0x115:
 
-            printf("Orientation");
-            break;
+      printf("SamplesPerPixel");
+      break;
 
-        case 0x115:
+    case 0x11c:
 
-            printf("SamplesPerPixel");
-            break;
+      printf("PlanarConfiguration");
+      break;
 
-        case 0x11c:
+    case 0x212:
 
-            printf("PlanarConfiguration");
-            break;
+      printf("YCbCrSubSampling");
+      break;
 
-        case 0x212:
+    case 0x213:
 
-            printf("YCbCrSubSampling");
-            break;
+      printf("YCbCrPositioning");
+      break;
 
-        case 0x213:
+    case 0x11a:
 
-            printf("YCbCrPositioning");
-            break;
+      printf("XResolution");
+      break;
 
-        case 0x11a:
+    case 0x11b:
 
-            printf("XResolution");
-            break;
+      printf("YResolution");
+      break;
 
-        case 0x11b:
+    case 0x128:
 
-            printf("YResolution");
-            break;
+      printf("ResolutionUnit");
+      break;
 
-        case 0x128:
+    case 0x111:
 
-            printf("ResolutionUnit");
-            break;
+      printf("StripOffsets");
+      break;
 
-        case 0x111:
+    case 0x116:
 
-            printf("StripOffsets");
-            break;
+      printf("RowsPerStrip");
+      break;
 
-        case 0x116:
+    case 0x117:
 
-            printf("RowsPerStrip");
-            break;
+      printf("StripByteCounts");
+      break;
 
-        case 0x117:
+    case 0x201:
 
-            printf("StripByteCounts");
-            break;
+      printf("InterchangeFormat");
+      break;
 
-        case 0x201:
+    case 0x202:
 
-            printf("InterchangeFormat");
-            break;
+      printf("InterchangeFormatLength");
+      break;
 
-        case 0x202:
+    case 0x12d:
 
-            printf("InterchangeFormatLength");
-            break;
+      printf("TransferFunction");
+      break;
 
-        case 0x12d:
+    case 0x13e:
 
-            printf("TransferFunction");
-            break;
+      printf("WhitePoint");
+      break;
 
-        case 0x13e:
+    case 0x13f:
 
-            printf("WhitePoint");
-            break;
+      printf("PrimaryChromaticities");
+      break;
 
-        case 0x13f:
+    case 0x211:
 
-            printf("PrimaryChromaticities");
-            break;
+      printf("YCbCrCoefficients");
+      break;
 
-        case 0x211:
+    case 0x214:
 
-            printf("YCbCrCoefficients");
-            break;
+      printf("ReferenceBlackWhite");
+      break;
 
-        case 0x214:
+    case 0x132:
 
-            printf("ReferenceBlackWhite");
-            break;
+      printf("DateTime");
+      break;
 
-        case 0x132:
+    case 0x10e:
 
-            printf("DateTime");
-            break;
+      printf("ImageDescription");
+      break;
 
-        case 0x10e:
+    case 0x10f:
 
-            printf("ImageDescription");
-            break;
+      printf("Make");
+      break;
 
-        case 0x10f:
+    case 0x110:
 
-            printf("Make");
-            break;
+      printf("Model");
+      break;
 
-        case 0x110:
+    case 0x131:
 
-            printf("Model");
-            break;
+      printf("Software");
+      break;
 
-        case 0x131:
+    case 0x13b:
 
-            printf("Software");
-            break;
+      printf("Artist");
+      break;
 
-        case 0x13b:
+    case 0x8298:
 
-            printf("Artist");
-            break;
+      printf("Copyright");
+      break;
 
-        case 0x8298:
+    case 0x8825:
 
-            printf("Copyright");
-            break;
+      printf("GPS Info");
+      break;
 
-        case 0x8825:
+    case 0x8769:
 
-            printf("GPS Info");
-            break;
+      printf("EXIF IFD Pointer");
+      break;
 
-        case 0x8769:
+    case 0xc4a5:
 
-            printf("EXIF IFD Pointer");
-            break;
-
-        case 0xc4a5:
-
-            printf("");
-            break;
-
-    }
+      printf("");
+      break;
+  }
 }
-

@@ -27,35 +27,29 @@
 #define MAX_MSG_LENGTH 512
 
 Chat::Chat() {
-    msg_length_ = 0;
-    msg_ = (char *)NULL;
-    from_ = (User *)NULL;
+  msg_length_ = 0;
+  msg_ = (char *)NULL;
+  from_ = (User *)NULL;
 }
 
 Chat::Chat(char *msg, unsigned short msg_length, User *from) {
-    msg_length_ = msg_length <= MAX_MSG_LENGTH ? msg_length : MAX_MSG_LENGTH;
-    msg_ = new char[msg_length_];
-    memcpy(msg_, msg, msg_length_);
-    from_ = from;
+  msg_length_ = msg_length <= MAX_MSG_LENGTH ? msg_length : MAX_MSG_LENGTH;
+  msg_ = new char[msg_length_];
+  memcpy(msg_, msg, msg_length_);
+  from_ = from;
 }
 
 void Chat::Delete(Chat *chat) {
-    if (chat->msg_) {
-        delete[] chat->msg_;
-        chat->msg_ = (char *)NULL;
-    }
-    chat->msg_length_ = 0;
-    chat->from_ = (User *)NULL;
+  if (chat->msg_) {
+    delete[] chat->msg_;
+    chat->msg_ = (char *)NULL;
+  }
+  chat->msg_length_ = 0;
+  chat->from_ = (User *)NULL;
 }
 
-const char *Chat::msg() {
-    return msg_;
-}
+const char *Chat::msg() { return msg_; }
 
-const unsigned short Chat::msg_length() {
-    return msg_length_;
-}
+const unsigned short Chat::msg_length() { return msg_length_; }
 
-const User *Chat::from() {
-    return from_;
-}
+const User *Chat::from() { return from_; }

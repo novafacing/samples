@@ -2,21 +2,21 @@
 #define VSQUARERABBIT_H
 
 #include "card.h"
-#include "hand.h"
 #include "deck.h"
+#include "hand.h"
 
 typedef struct squarerabbit squarerabbit_t;
 struct squarerabbit {
-    deck_t *deck;
-    hand_t *dealer_hand;
-    hand_t *player_hand;
-    int current_bet;
-    int paid_insurance;
-    char player_finished;
-    char double_or_split;
-    char busted;
+  deck_t *deck;
+  hand_t *dealer_hand;
+  hand_t *player_hand;
+  int current_bet;
+  int paid_insurance;
+  char player_finished;
+  char double_or_split;
+  char busted;
 
-    char split_len;
+  char split_len;
 };
 
 void init_squarerabbit(unsigned int *seed);

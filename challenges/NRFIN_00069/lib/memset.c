@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "memcpy.h"
 
-void * memset(void *dst, char c, size_t n) {
-    size_t i;
-    unsigned char *d = dst;
-    for (i=0; i<n; i++) {
-        d[i] = (unsigned char) c;
-    }
-    return dst;
+void *memset(void *dst, char c, size_t n) {
+  size_t i;
+  unsigned char *d = dst;
+  for (i = 0; i < n; i++) {
+    d[i] = (unsigned char)c;
+  }
+  return dst;
 }

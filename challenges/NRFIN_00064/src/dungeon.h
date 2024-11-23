@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #define INVALID_MOVE -1
 #define RESULT_WIN 1
@@ -69,53 +69,54 @@
 #define MOVELIST_HDR "Move list: "
 #define HIGHSCORE_MSG "Please enter your name: "
 #define NO_SCORES_MSG "NO HIGH SCORES!\n"
-#define HIGHSCORE_HDR "\n-------------------\n moves   |   name  \n-------------------\n"
+#define HIGHSCORE_HDR \
+  "\n-------------------\n moves   |   name  \n-------------------\n"
 #define MASTER_MSG "Dungeon conquered in !U moves !X"
 
 #define FLAG_PAGE 0x4347C000
 
 typedef struct {
-	unsigned int x;
-	unsigned int y;
+  unsigned int x;
+  unsigned int y;
 } Coordinate;
 
 typedef struct {
-	char symbol;
-	unsigned int id;
-	Coordinate* position;
-	Coordinate* direction;
-	unsigned int moves;
+  char symbol;
+  unsigned int id;
+  Coordinate* position;
+  Coordinate* direction;
+  unsigned int moves;
 } Object;
 
 typedef struct {
-	char quit;
-	char left;
-	char right;
-	char jump;
-	char jumpleft;
-	char jumpright;
-	char wait;
-	char play;
-	char instructions;
-	char scores;
+  char quit;
+  char left;
+  char right;
+  char jump;
+  char jumpleft;
+  char jumpright;
+  char wait;
+  char play;
+  char instructions;
+  char scores;
 } Moves;
 
 typedef struct {
-	Object* contents[ROOM_HEIGHT][ROOM_WIDTH];
-	void* next;
+  Object* contents[ROOM_HEIGHT][ROOM_WIDTH];
+  void* next;
 } Room;
 
 typedef struct {
-	char* name;
-	unsigned int score;
-	void* next;
+  char* name;
+  unsigned int score;
+  void* next;
 } Score;
 
 typedef struct {
-	Moves moveTypes;
-	Room* start;
-	char* moveList;
-	Score* highScores;
+  Moves moveTypes;
+  Room* start;
+  char* moveList;
+  Score* highScores;
 } Dungeon;
 
 void buildDungeon(Dungeon* dungeon);
@@ -127,45 +128,26 @@ void playerWon(Dungeon* dungeon);
 void playerDied(Dungeon dungeon);
 Score* insertNewScore(Score* highScores, Score* newScore);
 
+static const char first_room_string[ROOM_HEIGHT][ROOM_WIDTH] = {
+    "------------------------", "|R                   v |",
+    "|-                     |", "| -                   v|",
+    "|  -                   |", "|   -                  |",
+    "|    -                 |", "|------&     --       -|",
+    "------------------------"};
 
-static const char first_room_string[ROOM_HEIGHT][ROOM_WIDTH] = 
-{"------------------------",
- "|R                   v |",
- "|-                     |",
- "| -                   v|", 
- "|  -                   |", 
- "|   -                  |", 
- "|    -                 |",
- "|------&     --       -|", 
- "------------------------"};
-
-static const char room_string[3][ROOM_HEIGHT][ROOM_WIDTH] = 
-{
-{"------------------------",
- "|                    v |",
- "|       --             |",
- "|     -     -          |", 
- "|            |        v|", 
- "|   -        |  -      |", 
- "             | -       |",
- "|------&     --&      -|", 
- "------------------------"},
- {"------------------------",
-  "|&       &            v|",
-  "|--------------  |-    |",
-  "|                |     |", 
-  "|---    ---------|     |", 
-  "|   ---          |     |", 
-  "       ---       |     |",
-  "|                |&  --|", 
-  "------------------------"},
- {"------------------------",
-  "|                     @|",
-  "|       -           ---|",
-  "|     v- -        v-   |", 
-  "|     -   -       -    |", 
-  "|    -     -     -     |", 
-  "    -       -   -      |",
-  "|  &|       |&  |      |", 
-  "------------------------"}
-};
+static const char room_string[3][ROOM_HEIGHT][ROOM_WIDTH] = {
+    {"------------------------", "|                    v |",
+     "|       --             |", "|     -     -          |",
+     "|            |        v|", "|   -        |  -      |",
+     "             | -       |", "|------&     --&      -|",
+     "------------------------"},
+    {"------------------------", "|&       &            v|",
+     "|--------------  |-    |", "|                |     |",
+     "|---    ---------|     |", "|   ---          |     |",
+     "       ---       |     |", "|                |&  --|",
+     "------------------------"},
+    {"------------------------", "|                     @|",
+     "|       -           ---|", "|     v- -        v-   |",
+     "|     -   -       -    |", "|    -     -     -     |",
+     "    -       -   -      |", "|  &|       |&  |      |",
+     "------------------------"}};

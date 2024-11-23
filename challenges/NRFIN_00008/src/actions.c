@@ -18,204 +18,197 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "actions.h"
 
 #include <libcgc.h>
-#include "service.h"
-#include "actions.h"
+
 #include "libc.h"
-#include "rle.h"
 #include "r.h"
+#include "rle.h"
+#include "service.h"
 
 #define NOSUCHVID "I hate this hacker crap!"
 #define VIDEXISTS "It's a UNIX system, I know this!"
 #define GOODBYE "God help us, we're in the hands of engineers..."
 #define ACCKEY "Your personal access key is: 0x"
 #define REMOVED "Creation is an act of sheer will. Next time it'll be flawless."
-#define FINISHED "PLAYBACK FINISHED" 
+#define FINISHED "PLAYBACK FINISHED"
 
 video *get_video_by_name(char *buf) {
-    video *cur = vhead;
-    while (cur) {
-        if (streq(cur->name,buf))
-            return cur;
-        cur = cur->next;
-    }
-    return NULL;
+  video *cur = vhead;
+  while (cur) {
+    if (streq(cur->name, buf)) return cur;
+    cur = cur->next;
+  }
+  return NULL;
 }
 
+void list(char *buf) {
+  uint32_t i = 1;
+  char tmp[11] = {0};
+  video *cur = vhead;
 
-void list(char *buf){
-    uint32_t i = 1;
-    char tmp[11] = {0};
-    video *cur = vhead;
-
-    while(cur) {
-        int2str(tmp,sizeof(tmp),i++);
-        SSEND(strlen(tmp),tmp);
-        SSEND(3,".) ")
-        SSENDL(strlen(cur->name),cur->name);
-        cur = cur->next;
-    }
+  while (cur) {
+    int2str(tmp, sizeof(tmp), i++);
+    SSEND(strlen(tmp), tmp);
+    SSEND(3, ".) ")
+    SSENDL(strlen(cur->name), cur->name);
+    cur = cur->next;
+  }
 }
 
-void play(char *buf){
-    char *key;
-    video *toplay;
+void play(char *buf) {
+  char *key;
+  video *toplay;
 
-    if (streq(buf,"trolololo A")) {
-        ALLOC(0, (void**)&toplay, sizeof(video));
-        toplay->key = 'A';
-        toplay->encbuf = r_bin;
-        toplay->elen = r_bin_len-4;
-        toplay->csum = *(uint32_t*)(r_bin+r_bin_len-4);
-        decode(toplay,'A');
+  if (streq(buf, "trolololo A")) {
+    ALLOC(0, (void **)&toplay, sizeof(video));
+    toplay->key = 'A';
+    toplay->encbuf = r_bin;
+    toplay->elen = r_bin_len - 4;
+    toplay->csum = *(uint32_t *)(r_bin + r_bin_len - 4);
+    decode(toplay, 'A');
 
-        if(toplay->decbuf){
-            SSENDL(toplay->dlen,(char *)toplay->decbuf);
-            SSENDL(sizeof(FINISHED)-1,FINISHED);
-            DEALLOC((void*)toplay->decbuf, toplay->dlen);
-        }else{
-            SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        }
-
-        DEALLOC((void*)toplay, sizeof(video));
-        return;
+    if (toplay->decbuf) {
+      SSENDL(toplay->dlen, (char *)toplay->decbuf);
+      SSENDL(sizeof(FINISHED) - 1, FINISHED);
+      DEALLOC((void *)toplay->decbuf, toplay->dlen);
+    } else {
+      SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
     }
 
-    key = strchr(buf,' ');
+    DEALLOC((void *)toplay, sizeof(video));
+    return;
+  }
 
-    if(!key) {
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        return;
-    }
+  key = strchr(buf, ' ');
 
-    *key = '\0'; 
+  if (!key) {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+    return;
+  }
 
-    if(!*(key+1) || *(key+2)){
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        return;
-    }
+  *key = '\0';
 
-    key += 1;
+  if (!*(key + 1) || *(key + 2)) {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+    return;
+  }
 
-    toplay = get_video_by_name(buf);
-    if(!toplay) {
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        return;
-    }
+  key += 1;
 
-    decode(toplay,*key);
+  toplay = get_video_by_name(buf);
+  if (!toplay) {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+    return;
+  }
 
-    if(toplay->decbuf){
-        SSENDL(toplay->dlen,(char *)toplay->decbuf);
-        SSENDL(sizeof(FINISHED)-1,FINISHED);
-    }else{
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-    }
+  decode(toplay, *key);
+
+  if (toplay->decbuf) {
+    SSENDL(toplay->dlen, (char *)toplay->decbuf);
+    SSENDL(sizeof(FINISHED) - 1, FINISHED);
+  } else {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+  }
 }
 
-void add(char *buf){
-    video *vlast = NULL, *new = NULL, *cur = NULL;
-    char recvbuf[11] = {0};
-    char keyascii[3] = {0};
-    cur = vhead;
-    size_t total, rndbytes;
+void add(char *buf) {
+  video *vlast = NULL, *new = NULL, *cur = NULL;
+  char recvbuf[11] = {0};
+  char keyascii[3] = {0};
+  cur = vhead;
+  size_t total, rndbytes;
 
-    if(strlen(buf) > MAX_NAME_SIZE || strlen(buf) == 0) {
-        SSENDL(sizeof(MAGICWORD)-1,MAGICWORD);
-        _terminate(14);
-    }
+  if (strlen(buf) > MAX_NAME_SIZE || strlen(buf) == 0) {
+    SSENDL(sizeof(MAGICWORD) - 1, MAGICWORD);
+    _terminate(14);
+  }
 
-    if(get_video_by_name(buf) || strchr(buf,' ')) {
-        SSENDL(sizeof(VIDEXISTS)-1,VIDEXISTS);
-        return;
-    }
+  if (get_video_by_name(buf) || strchr(buf, ' ')) {
+    SSENDL(sizeof(VIDEXISTS) - 1, VIDEXISTS);
+    return;
+  }
 
-    SSEND(sizeof("Length: ")-1,"Length: ");
-    SRECV(sizeof(recvbuf)-1,recvbuf);
+  SSEND(sizeof("Length: ") - 1, "Length: ");
+  SRECV(sizeof(recvbuf) - 1, recvbuf);
 
-    total = str2uint(recvbuf);
+  total = str2uint(recvbuf);
 
-    #ifndef PATCHED
-    if (total > 129*1024 || total < 8 || total%4 != 0) { 
-    #else
-    if (total > 128*1024 || total < 8 || total%4 != 0) { 
-    #endif
-        SSENDL(sizeof(MAGICWORD)-1,MAGICWORD);
-        _terminate(13);
-    }
+#ifndef PATCHED
+  if (total > 129 * 1024 || total < 8 || total % 4 != 0) {
+#else
+  if (total > 128 * 1024 || total < 8 || total % 4 != 0) {
+#endif
+    SSENDL(sizeof(MAGICWORD) - 1, MAGICWORD);
+    _terminate(13);
+  }
 
-    ALLOC(0, (void**)&new, sizeof(video)+total);
+  ALLOC(0, (void **)&new, sizeof(video) + total);
 
-    //RAND(&(new->key), 1, &rndbytes);
-    new->key = 0x42; //cause we can't handle random data in poller
+  // RAND(&(new->key), 1, &rndbytes);
+  new->key = 0x42;  // cause we can't handle random data in poller
 
-    b2hex(new->key,keyascii);
+  b2hex(new->key, keyascii);
 
-    SSEND(sizeof(ACCKEY)-1,ACCKEY);
-    SSENDL(2,keyascii);
+  SSEND(sizeof(ACCKEY) - 1, ACCKEY);
+  SSENDL(2, keyascii);
 
-    
-    new->can_delete = 1;
-    strcpy(new->name,buf);
-    
-    RECV(total,((char*)new)+sizeof(video));
-    new->elen = total-4;
-    new->encbuf = ((uint8_t*)new)+sizeof(video);
-    new->csum = *((uint32_t*)(new->encbuf+total-4));
+  new->can_delete = 1;
+  strcpy(new->name, buf);
 
-    while (cur) {
-        vlast = cur;
-        cur = cur->next;
-    }
+  RECV(total, ((char *)new) + sizeof(video));
+  new->elen = total - 4;
+  new->encbuf = ((uint8_t *)new) + sizeof(video);
+  new->csum = *((uint32_t *)(new->encbuf + total - 4));
 
-    if (!vhead)
-        vhead = new;
+  while (cur) {
+    vlast = cur;
+    cur = cur->next;
+  }
 
-    if (vlast) {
-        vlast->next = new;
-        new->prev = vlast;
-    }
+  if (!vhead) vhead = new;
 
+  if (vlast) {
+    vlast->next = new;
     new->prev = vlast;
-    new->next = NULL;
+  }
 
+  new->prev = vlast;
+  new->next = NULL;
 }
 
-void remove(char *buf){
-    video *toremove;
-    
-    toremove = get_video_by_name(buf);
+void remove(char *buf) {
+  video *toremove;
 
-    if(!toremove) {
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        return;
-    }
-    
-    if(!toremove->can_delete){
-        SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
-        return;
-    }
+  toremove = get_video_by_name(buf);
 
+  if (!toremove) {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+    return;
+  }
 
-    if(toremove->next)
-        toremove->next->prev = toremove->prev;
-    
-    if(toremove->prev)
-        toremove->prev->next = toremove->next;
-    else
-        vhead = toremove->next;
+  if (!toremove->can_delete) {
+    SSENDL(sizeof(NOSUCHVID) - 1, NOSUCHVID);
+    return;
+  }
 
-    if (toremove->decbuf)
-        DEALLOC((void*)toremove->decbuf, toremove->dlen);
+  if (toremove->next) toremove->next->prev = toremove->prev;
 
-    DEALLOC((void*)toremove, sizeof(video)+toremove->elen);
-    SSENDL(sizeof(REMOVED)-1,REMOVED);
+  if (toremove->prev)
+    toremove->prev->next = toremove->next;
+  else
+    vhead = toremove->next;
 
+  if (toremove->decbuf) DEALLOC((void *)toremove->decbuf, toremove->dlen);
+
+  DEALLOC((void *)toremove, sizeof(video) + toremove->elen);
+  SSENDL(sizeof(REMOVED) - 1, REMOVED);
 }
 
-void quit(char *buf){
-    SSENDL(sizeof(GOODBYE)-1,GOODBYE);
-    _terminate(0);
+void quit(char *buf) {
+  SSENDL(sizeof(GOODBYE) - 1, GOODBYE);
+  _terminate(0);
 }

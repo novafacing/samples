@@ -38,15 +38,15 @@ typedef uint8_t bool;
 #define INT_MAX 0x7FFFFFFF
 
 // Things that don't change about the target VA space:
-#define FLAG_BGN 0x4347C000 // per CFE rules
-#define STCK_BGN 0xbaa8b000 // per CGC kernel source
-#define STCK_END 0xbaaab000 // per CGC kernel source
-#define HEAP_BGN 0xb7fff000 // empirically for this CB
-#define SZ_DATA 0x1500 // empirically for this CB
+#define FLAG_BGN 0x4347C000  // per CFE rules
+#define STCK_BGN 0xbaa8b000  // per CGC kernel source
+#define STCK_END 0xbaaab000  // per CGC kernel source
+#define HEAP_BGN 0xb7fff000  // empirically for this CB
+#define SZ_DATA 0x1500       // empirically for this CB
 
-// We run the risk of timing out during &data and &func_ptr leakage, so we help 
+// We run the risk of timing out during &data and &func_ptr leakage, so we help
 // the search along:
-#define SRCH_DATA_BGN STCK_BGN+0x1F000 // &data leaked from stack frame
+#define SRCH_DATA_BGN STCK_BGN + 0x1F000  // &data leaked from stack frame
 
 #define MAGIC_DATA_BEFORE 0xCAFEBABE
 #define MAGIC_DATA_AFTER 0xBBBBBBBB
@@ -57,75 +57,85 @@ typedef uint8_t bool;
 
 #define REGNUM_EAX 0
 
-
 #ifdef DEBUG
 #include "pov_debug.h"
-#define dbg(args...) fprintf(stderr, "[D] %s:%d @ %s | ", __FILE__, __LINE__, __func__);fprintf(stderr, args);
-#define err(args...) \
-    fprintf(stderr, "[E] %s:%d @ %s | ", __FILE__, __LINE__, __func__);\
-    fprintf(stderr, args);\
-    if(SUCCESS == ret) { ret = -1; }\
-    goto bail;
+#define dbg(args...)                                                  \
+  fprintf(stderr, "[D] %s:%d @ %s | ", __FILE__, __LINE__, __func__); \
+  fprintf(stderr, args);
+#define err(args...)                                                  \
+  fprintf(stderr, "[E] %s:%d @ %s | ", __FILE__, __LINE__, __func__); \
+  fprintf(stderr, args);                                              \
+  if (SUCCESS == ret) {                                               \
+    ret = -1;                                                         \
+  }                                                                   \
+  goto bail;
 #else
-#define dbg(args...) do { } while (0);
+#define dbg(args...) \
+  do {               \
+  } while (0);
 #define err(args...) goto bail;
 #endif
 
-#define CHK_SUCCESS(code, args...) if (SUCCESS != (ret = code)) { err(args); }
+#define CHK_SUCCESS(code, args...) \
+  if (SUCCESS != (ret = code)) {   \
+    err(args);                     \
+  }
 
 typedef enum {
-    S_REQ,
-    S_RESP,
-    S_ERROR,
-    S_EXIT,
-    S_LAST = INT_MAX,
+  S_REQ,
+  S_RESP,
+  S_ERROR,
+  S_EXIT,
+  S_LAST = INT_MAX,
 } status_t;
 
 typedef enum {
-    X_NORMAL,
-    X_SCRATCH,
-    X_STATIC,
-    X_PREV,
-    X_LAST = INT_MAX,
+  X_NORMAL,
+  X_SCRATCH,
+  X_STATIC,
+  X_PREV,
+  X_LAST = INT_MAX,
 } access_t;
 
 typedef enum {
-    A_READ,
-    A_WRITE,
-    A_LAST = INT_MAX,
+  A_READ,
+  A_WRITE,
+  A_LAST = INT_MAX,
 } action_t;
 
 typedef enum {
-    OP2_IMM,
-    OP2_MEM,
-    OP2_LAST = INT_MAX,
+  OP2_IMM,
+  OP2_MEM,
+  OP2_LAST = INT_MAX,
 } op2type_t;
 
 typedef struct __attribute__((packed)) {
-    action_t action; // 4
-    op2type_t op2type; // 8
-    uint32_t dst; // 12
-    uint32_t src; // 16
+  action_t action;    // 4
+  op2type_t op2type;  // 8
+  uint32_t dst;       // 12
+  uint32_t src;       // 16
 } instruction_t;
 
 typedef struct __attribute__((packed)) {
-    status_t status; // 4
-    // The sequence number.  Used for correlating requests & responses.
-    uint32_t seq; // 8
-    // Access type (NORMAL, STATIC, SCRATCH)
-    access_t type; // 12
-    // Operation
-    instruction_t inst; // 12 + 16 = 28
+  status_t status;  // 4
+  // The sequence number.  Used for correlating requests & responses.
+  uint32_t seq;  // 8
+  // Access type (NORMAL, STATIC, SCRATCH)
+  access_t type;  // 12
+  // Operation
+  instruction_t inst;  // 12 + 16 = 28
 } packet_t;
 
 // Support
 int recv_bytes(int fd, char *buf, unsigned int size);
 int send_bytes(int fd, const char *buf, unsigned int size);
 int inline_send_bytes(int fd, const char *buf, unsigned int size);
-int new_pkt(packet_t *pkt, status_t status, uint32_t seq, access_t type, action_t action, op2type_t op2type, uint32_t dst, uint32_t src);
+int new_pkt(packet_t *pkt, status_t status, uint32_t seq, access_t type,
+            action_t action, op2type_t op2type, uint32_t dst, uint32_t src);
 
 // Main exploit logic
-int find_needle(bool deref, uint32_t bgn, uint32_t end, uint32_t magic_before, uint32_t magic_after, uint32_t *assign);
+int find_needle(bool deref, uint32_t bgn, uint32_t end, uint32_t magic_before,
+                uint32_t magic_after, uint32_t *assign);
 int find_func_ptr(void);
 int find_data(void);
 int transmit_sc(byte_t *sc, uint32_t loc);

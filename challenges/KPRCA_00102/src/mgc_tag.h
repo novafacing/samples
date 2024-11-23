@@ -24,24 +24,23 @@
 #ifndef MGC_TAG_H_
 #define MGC_TAG_H_
 
-#define DELETED_TAG {'\x7E', '\x7E', '\x7E' }
+#define DELETED_TAG {'\x7E', '\x7E', '\x7E'}
 #include <cstring.h>
 
 #pragma pack(push, 1)
-struct mgc_tag
-{
-    char header[3];
-    char title[30];
-    char artist[30];
-    char album[30];
-    unsigned short year;
-    char comment[30];
-    char has_track;
-    char track_number;
-    char unused;
+struct mgc_tag {
+  char header[3];
+  char title[30];
+  char artist[30];
+  char album[30];
+  unsigned short year;
+  char comment[30];
+  char has_track;
+  char track_number;
+  char unused;
 
-    unsigned int id;
-    unsigned int header_size();
+  unsigned int id;
+  unsigned int header_size();
 };
 #pragma pack(pop)
 

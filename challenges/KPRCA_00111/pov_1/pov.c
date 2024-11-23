@@ -1,104 +1,88 @@
 #include <libpov.h>
 
 #ifndef DEBUG
-  #include "xlat.h"
+#include "xlat.h"
 #endif
 
 //-----
 
 #ifndef DEBUG
-  #define EOT_C '\x04'
-  #define EOT_S "\x04"
+#define EOT_C '\x04'
+#define EOT_S "\x04"
 #else
-  #define EOT_C '\n'
-  #define EOT_S "\n"
+#define EOT_C '\n'
+#define EOT_S "\n"
 #endif
 #define USERNAME_MAX 32
 #define BLUB_MAX 140
 #define QUIT_ID 0xdeadbeef
 
-void sleep(uint32_t usec)
-{
+void sleep(uint32_t usec) {
   struct timeval t;
   t.tv_sec = usec / 1000000;
   t.tv_usec = usec % 1000000;
   fdwait(1, NULL, NULL, &t, NULL);
 }
 
-static void *memmove(void *dst, const void *src, size_t n)
-{
-    unsigned char *udst = dst;
-    const unsigned char *usrc = src;
-    size_t i;
+static void* memmove(void* dst, const void* src, size_t n) {
+  unsigned char* udst = dst;
+  const unsigned char* usrc = src;
+  size_t i;
 
-    if (dst > src)
-    {
-        for (i = 0; i < n; i++)
-            udst[n - i - 1] = usrc[n - i - 1];
-    }
-    else
-    {
-        for (i = 0; i < n; i++)
-            udst[i] = usrc[i];
-    }
+  if (dst > src) {
+    for (i = 0; i < n; i++) udst[n - i - 1] = usrc[n - i - 1];
+  } else {
+    for (i = 0; i < n; i++) udst[i] = usrc[i];
+  }
 
-    return dst;
+  return dst;
 }
 
-static void _convert_unsigned(char *buf, unsigned x, int base, int upper)
-{
-    const char *numbers;
-    char *tmp = buf + 20;
+static void _convert_unsigned(char* buf, unsigned x, int base, int upper) {
+  const char* numbers;
+  char* tmp = buf + 20;
 
-    if (upper)
-        numbers = "0123456789ABCDEF";
-    else
-        numbers = "0123456789abcdef";
+  if (upper)
+    numbers = "0123456789ABCDEF";
+  else
+    numbers = "0123456789abcdef";
 
-    /* NUL terminate */
-    *(--tmp) = 0;
+  /* NUL terminate */
+  *(--tmp) = 0;
 
-    if (x == 0)
-        *(--tmp) = numbers[0];
-    else
-    {
-        while (x)
-        {
-            *(--tmp) = numbers[x % base];
-            x = x / base;
-        }
+  if (x == 0)
+    *(--tmp) = numbers[0];
+  else {
+    while (x) {
+      *(--tmp) = numbers[x % base];
+      x = x / base;
     }
+  }
 
-    /* move to beginning of buf */
-    memmove(buf, tmp, 20 - (buf - tmp));
+  /* move to beginning of buf */
+  memmove(buf, tmp, 20 - (buf - tmp));
 }
 
-static void _convert_signed(char *buf, int x, int base, int upper)
-{
-    if (x < 0)
-    {
-        *buf++ = '-';
-        x = -x;
-    }
+static void _convert_signed(char* buf, int x, int base, int upper) {
+  if (x < 0) {
+    *buf++ = '-';
+    x = -x;
+  }
 
-    _convert_unsigned(buf, x, base, upper);
+  _convert_unsigned(buf, x, base, upper);
 }
 
-static void send_string(int fd, const char* s)
-{
+static void send_string(int fd, const char* s) {
   transmit_all(fd, s, strlen(s));
 }
 
-static void strcat(char* s1, const char* s2)
-{
+static void strcat(char* s1, const char* s2) {
   char* p = s1;
   while (*p != '\0') p++;
   strcpy(p, s2);
 }
 
-int main(void)
-{
-
+int main(void) {
 #ifndef DEBUG
   xlat_seed("9an538n9av3;5");
 #endif

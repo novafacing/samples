@@ -23,9 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
 #include "error.h"
+
+#include <libcgc.h>
+
+#include "stdlib.h"
 
 void PrintErrorAndTerminate(char *message) {
   printf("ERROR: @s\n", message);

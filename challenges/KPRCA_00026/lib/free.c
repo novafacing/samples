@@ -23,25 +23,19 @@
  *
  */
 
-#include "wrapper.h"
 #include "libcgc.h"
 #include "malloc.h"
 #include "stdlib.h"
+#include "wrapper.h"
 
-static void free_huge(struct blk_t *blk)
-{
-    deallocate(blk, blk->size);
-}
+static void free_huge(struct blk_t *blk) { deallocate(blk, blk->size); }
 
-void free(void *ptr)
-{
-  if (ptr == NULL)
-    return;
+void free(void *ptr) {
+  if (ptr == NULL) return;
 
   struct blk_t *blk = (struct blk_t *)((intptr_t)ptr - HEADER_PADDING);
 
-  if (blk->free != 0)
-    return;
+  if (blk->free != 0) return;
 
   if (blk->size >= NEW_CHUNK_SIZE) {
     free_huge(blk);

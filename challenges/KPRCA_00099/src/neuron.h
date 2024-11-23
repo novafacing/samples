@@ -26,32 +26,30 @@
 
 unsigned int g_prng(void);
 
-struct Edge
-{
-    double weight;
-    double delta;
+struct Edge {
+  double weight;
+  double delta;
 };
 
-class Neuron
-{
-  public:
-    Neuron() {};
-    Neuron(unsigned int n, unsigned int outLen);
-    void setValue(double v) { m_value = v; }
-    double getValue() { return m_value; }
-    void feedForward(vector<Neuron> &prev);
-    void computeOutGrad(double target);
-    void computeHiddenGrad(vector<Neuron> &next);
-    void updateWeights(vector<Neuron> &prev);
+class Neuron {
+ public:
+  Neuron() {};
+  Neuron(unsigned int n, unsigned int outLen);
+  void setValue(double v) { m_value = v; }
+  double getValue() { return m_value; }
+  void feedForward(vector<Neuron> &prev);
+  void computeOutGrad(double target);
+  void computeHiddenGrad(vector<Neuron> &next);
+  void updateWeights(vector<Neuron> &prev);
 
-    double sigmoid(double x);
-    double dsigmoid(double x);
+  double sigmoid(double x);
+  double dsigmoid(double x);
 
-  private:
-    static double k_eta;
-    static double k_alpha;
-    double m_value;
-    double m_gradient;
-    unsigned int m_n;
-    vector<Edge> m_weights;
+ private:
+  static double k_eta;
+  static double k_alpha;
+  double m_value;
+  double m_gradient;
+  unsigned int m_n;
+  vector<Edge> m_weights;
 };

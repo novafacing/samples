@@ -23,8 +23,8 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#include "user.h"
 #include "datetime.h"
+#include "user.h"
 
 #define MAX_EVENT_NAME 128
 #define MAX_EVENT_DESC 256
@@ -35,27 +35,29 @@ typedef struct event_list event_list_t;
 struct user;
 struct user_list;
 struct event {
-    //required fields
-    int id;
-    struct user *owner;
-    char name[MAX_EVENT_NAME];
-    char desc[MAX_EVENT_DESC];
-    duration_t duration;
+  // required fields
+  int id;
+  struct user *owner;
+  char name[MAX_EVENT_NAME];
+  char desc[MAX_EVENT_DESC];
+  duration_t duration;
 
-    //Metadata
-    bool is_all_day;
+  // Metadata
+  bool is_all_day;
 };
 
 struct event_list {
-    event_list_t *next;
-    event_t *event;
+  event_list_t *next;
+  event_t *event;
 };
 
-event_t *create_event(struct user *owner, char *name, char *desc, duration_t *duration, bool is_all_day);
+event_t *create_event(struct user *owner, char *name, char *desc,
+                      duration_t *duration, bool is_all_day);
 bool delete_event(event_t **event);
 int compare_events(void *_event1, void *_event2);
 int compare_event_dates(void *_event1, void *_event2);
-event_t *find_event_from_list(char *buf, size_t buflen, int *recv_status, event_list_t *list);
+event_t *find_event_from_list(char *buf, size_t buflen, int *recv_status,
+                              event_list_t *list);
 void print_event(event_t *event);
 
 #endif

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H 1
@@ -28,22 +28,31 @@
  It is ok to release publicly for CFE
 */
 
+#include <errno.h>
 #include <libcgc.h>
 #include <stdint.h>
-#include <errno.h>
+
 #include "recv_all.h"
 
 #define FLAG_PAGE 0x4347C000
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE -1
-#define MALLOC_OK(p) do {if (NULL == p) {_terminate(ERRNO_ALLOC);}} while(0);
+#define MALLOC_OK(p)           \
+  do {                         \
+    if (NULL == p) {           \
+      _terminate(ERRNO_ALLOC); \
+    }                          \
+  } while (0);
 
 #define PAGE_SIZE (1 << 12)
 
-#define RECV(buf, sz) do {if (sz != recv_all((char *)buf, sz)) {_terminate(ERRNO_RECV);}} while(0);
-
-
+#define RECV(buf, sz)                      \
+  do {                                     \
+    if (sz != recv_all((char *)buf, sz)) { \
+      _terminate(ERRNO_RECV);              \
+    }                                      \
+  } while (0);
 
 /**
  * If e doesn't return SUCCESS, return ret;
@@ -51,11 +60,16 @@
  * @param e An expression to compare with SUCCESS
  * @return An error condition if exp doesn't return SUCCESS
  */
-#define FAILBAIL(e) do {if (SUCCESS != (ret = e)) {return ret;}} while(0);
+#define FAILBAIL(e)             \
+  do {                          \
+    if (SUCCESS != (ret = e)) { \
+      return ret;               \
+    }                           \
+  } while (0);
 
 /**
  * Return the lesser of a and b
- * 
+ *
  * @param a The first value
  * @param b The second value
  * @return a if a < b else b
@@ -88,11 +102,11 @@
  * @param ptr A pointer to a member
  * @return A pointer to the containing structure
  */
-#define CONTAINEROF(type, member, ptr) ({                               \
-    char *__ptr = (char *)(ptr);                                        \
-    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL;          \
-})
-
+#define CONTAINEROF(type, member, ptr)                         \
+  ({                                                           \
+    char *__ptr = (char *)(ptr);                               \
+    __ptr ? ((type *)(__ptr - OFFSETOF(type, member))) : NULL; \
+  })
 
 /**
  * Allocate a chunk of memory on the heap.
@@ -128,7 +142,5 @@ void *calloc(size_t size);
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
 void *realloc(void *ptr, size_t size);
-
-
 
 #endif

@@ -6,18 +6,18 @@
 
 typedef struct linecmp lc_t;
 struct linecmp {
-    char *pline;
-    char *no_ws_line;
+  char *pline;
+  char *no_ws_line;
 
-    lhash_t lhash;
-    lhash_t no_ws_lhash;
+  lhash_t lhash;
+  lhash_t no_ws_lhash;
 
-}; // line comparator
+};  // line comparator
 
 typedef struct linecmp_list lcll_t;
 struct linecmp_list {
-    lc_t *lc;
-    lcll_t *next;
+  lc_t *lc;
+  lcll_t *next;
 };
 
 lcll_t *pre_process(SFILE *sfp, size_t *wordc, size_t *linec);

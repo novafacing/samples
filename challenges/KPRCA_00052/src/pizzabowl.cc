@@ -30,51 +30,35 @@ extern "C" {
 #define BREAD_CALORIES 180
 #define BREAD_CARBS 26
 
-PizzaBowl::PizzaBowl(bool _side_of_bread)
-{
-    side_of_bread = _side_of_bread;
+PizzaBowl::PizzaBowl(bool _side_of_bread) { side_of_bread = _side_of_bread; }
+
+PizzaBowl::~PizzaBowl() {}
+
+void PizzaBowl::add_side_of_bread() { side_of_bread = true; }
+
+void PizzaBowl::remove_side_of_bread() { side_of_bread = false; }
+
+int PizzaBowl::get_calories() {
+  size_t bread_calories = side_of_bread ? BREAD_CALORIES : 0;
+  return Pizza::get_calories() + bread_calories;
 }
 
-PizzaBowl::~PizzaBowl()
-{
+int PizzaBowl::get_carbs() {
+  size_t bread_carbs = side_of_bread ? BREAD_CARBS : 0;
+  return Pizza::get_carbs() + bread_carbs;
 }
 
-void PizzaBowl::add_side_of_bread()
-{
-    side_of_bread = true;
+int PizzaBowl::get_prep_time() {
+  return Pizza::get_prep_time() + BOWL_PREP_TIME;
 }
 
-void PizzaBowl::remove_side_of_bread()
-{
-    side_of_bread = false;
-}
+void PizzaBowl::print_pizza() {
+  const char *bread_side = "WHOOPS";
+  if (side_of_bread)
+    bread_side = "Yep";
+  else
+    bread_side = "Nah";
 
-int PizzaBowl::get_calories()
-{
-    size_t bread_calories = side_of_bread ? BREAD_CALORIES : 0;
-    return Pizza::get_calories() + bread_calories;
-}
-
-
-int PizzaBowl::get_carbs()
-{
-    size_t bread_carbs = side_of_bread ? BREAD_CARBS : 0;
-    return Pizza::get_carbs() + bread_carbs;
-}
-
-int PizzaBowl::get_prep_time()
-{
-    return Pizza::get_prep_time() + BOWL_PREP_TIME;
-}
-
-void PizzaBowl::print_pizza()
-{
-    const char *bread_side = "WHOOPS";
-    if (side_of_bread)
-        bread_side = "Yep";
-    else
-        bread_side = "Nah";
-
-    printf("The Famous Pizza Bowl. Bread on the side? - %s\n", bread_side);
-    Pizza::print_pizza();
+  printf("The Famous Pizza Bowl. Bread on the side? - %s\n", bread_side);
+  Pizza::print_pizza();
 }

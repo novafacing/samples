@@ -18,21 +18,21 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
+ */
 #include "strlen.h"
 
+#include <libcgc.h>
+
 unsigned int my_strlen(const char *str, const char term) {
+  if (NULL == str) {
+    return 0;
+  }
 
-	if (NULL == str) {
-		return 0;
-	}
+  unsigned int len = 0;
+  while (term != *str) {
+    str++;
+    len++;
+  }
 
-    unsigned int len = 0;
-    while (term != *str) {
-        str++;
-        len++;
-    }
-
-    return len;
+  return len;
 }

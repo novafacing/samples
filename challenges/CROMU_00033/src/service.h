@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "file.h"
-#include "commands.h"
-#include "recv.h"
 
+#include "commands.h"
+#include "file.h"
+#include "recv.h"
 
 #endif

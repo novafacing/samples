@@ -39,4 +39,4 @@ extern "C" {
 
 #include "commandhandler.h"
 
-#endif // __COMMON_H___
+#endif  // __COMMON_H___

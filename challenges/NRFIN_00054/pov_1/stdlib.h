@@ -81,4 +81,3 @@ void srand(unsigned int seed);
 unsigned int rand(void);
 
 #endif /* STDLIB_H_ */
-

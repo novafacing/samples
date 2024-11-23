@@ -18,21 +18,21 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H 1
 
 // #define DEBUG 1
 
-// We avoid including all of stdlib because then it would be easier to bisect 
+// We avoid including all of stdlib because then it would be easier to bisect
 // which functions are stdlib across CBs.
 #include <libcgc.h>
 // #include <stdint.h>
-#include "memset.h"
 #include "memcpy.h"
+#include "memset.h"
 // #include "recv_until_delim_n.h"
-#include "send_bytes.h"
 #include "recv_bytes.h"
+#include "send_bytes.h"
 // #include "char.h"
 // #include "streq.h"
 // #include "strlen.h"
@@ -41,7 +41,7 @@
 
 typedef unsigned char uint8_t;
 typedef uint8_t byte_t;
-typedef unsigned short uint16_t; 
+typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 typedef uint8_t bool;
@@ -53,21 +53,28 @@ typedef uint8_t bool;
 #define SUCCESS 0
 #define SZ_PAGE 0x1000
 
-
 #ifdef DEBUG
 #include "debug.h"
-#define dbg(args...) fprintf(stderr, "[D] %s:%d @ %s | ", __FILE__, __LINE__, __func__);fprintf(stderr, args);
-#define err(args...) \
-	fprintf(stderr, "[E] %s:%d @ %s | ", __FILE__, __LINE__, __func__);\
-	fprintf(stderr, args);\
-	if(SUCCESS == ret) { ret = -1; }\
-	goto bail;
+#define dbg(args...)                                                  \
+  fprintf(stderr, "[D] %s:%d @ %s | ", __FILE__, __LINE__, __func__); \
+  fprintf(stderr, args);
+#define err(args...)                                                  \
+  fprintf(stderr, "[E] %s:%d @ %s | ", __FILE__, __LINE__, __func__); \
+  fprintf(stderr, args);                                              \
+  if (SUCCESS == ret) {                                               \
+    ret = -1;                                                         \
+  }                                                                   \
+  goto bail;
 #else
-#define dbg(args...) do { } while (0);
+#define dbg(args...) \
+  do {               \
+  } while (0);
 #define err(args...) goto bail;
 #endif
 
-
-#define CHK_SUCCESS(code, args...) if (SUCCESS != (ret = code)) { err(args); }
+#define CHK_SUCCESS(code, args...) \
+  if (SUCCESS != (ret = code)) {   \
+    err(args);                     \
+  }
 
 #endif

@@ -18,17 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef CSUM_H
 #define CSUM_H
 #include "stdint.h"
-uint64_t additive(uint8_t* data, uint32_t s); 
-uint64_t addxoradd(uint8_t *data, uint32_t s); 
+uint64_t additive(uint8_t *data, uint32_t s);
+uint64_t addxoradd(uint8_t *data, uint32_t s);
 uint32_t crc32(uint8_t *data, uint32_t s);
 double fpadditive(uint8_t *data, uint32_t s);
-void md5(uint8_t *data, size_t s, uint32_t* out);
+void md5(uint8_t *data, size_t s, uint32_t *out);
 #endif
-
-

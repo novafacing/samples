@@ -30,34 +30,31 @@ THE SOFTWARE.
 
 // each piece has a pointer for each of its sides
 // if pointer is null, no road on that side
-// if pointer is not null but doesn't point to another piede yet, it will be set to ROAD
-// if pointer is not null and not equal to ROAD, it points to another piece, 
+// if pointer is not null but doesn't point to another piede yet, it will be set
+// to ROAD if pointer is not null and not equal to ROAD, it points to another
+// piece,
 //   with the Road_Link's side set to the side of the piece we're connecting to
 #define ROAD -3
 #define NO_ROAD -4
 
 // describes the piece and side where a road connects to
-typedef struct 
-{
-	char target; // number of target piece this connects to
-	char side;  // 0-3, which side on the target piece this road connects with
+typedef struct {
+  char target;  // number of target piece this connects to
+  char side;    // 0-3, which side on the target piece this road connects with
 } Road_Link;
-
 
 // describes a game piece
 // each side can be null (no road)
 // or can be a pointer to another game piece
-typedef struct
-{
-	// describes each side and what it points to
-	char piece_num; // just keeps track of each piece
-	Road_Link sides[4];
+typedef struct {
+  // describes each side and what it points to
+  char piece_num;  // just keeps track of each piece
+  Road_Link sides[4];
 } Piece;
 
-typedef struct
-{
-	Piece stack[MAX_PIECES];
-	int top_element; // how many pieces in this stack (-1 because zero counting)?
+typedef struct {
+  Piece stack[MAX_PIECES];
+  int top_element;  // how many pieces in this stack (-1 because zero counting)?
 } Game_Stack;
 
 Game_Stack game_stack;
@@ -65,14 +62,14 @@ Game_Stack game_stack;
 // stores
 extern char current_max_road_len;
 
-extern int goal_len; // length the user is trying to reach
+extern int goal_len;  // length the user is trying to reach
 
 void push_piece(Piece *piece);
 void pop_piece(Piece *piece);
 int connect_pieces(Piece *pieceA, char sideA, Piece *pieceB, char sideB);
 int get_max_road_len();
 int isTopPiecePlaced();
-void piece_to_pkt(Piece *piece, char* str);
+void piece_to_pkt(Piece *piece, char *str);
 int discard_piece();
 int create_random_piece(Piece *piece);
 int get_piece(char pce);

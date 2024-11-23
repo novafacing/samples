@@ -26,11 +26,10 @@ THE SOFTWARE.
 #ifndef __CUTIL_VECTOR_H__
 #define __CUTIL_VECTOR_H__
 
-extern "C"
-{
-#include <stdint.h>
+extern "C" {
 #include <libcgc.h>
 #include <stddef.h>
+#include <stdint.h>
 }
 
 #ifdef NULL
@@ -40,118 +39,110 @@ extern "C"
 
 // Cromulence Utilities Library
 // Vector utility class
-namespace CUtil
-{
-#define VECTOR( T ) Vector<T>
+namespace CUtil {
+#define VECTOR(T) Vector<T>
 
-	template<class T>
-	class Vector
-	{
-	public:
-		static const uint32_t VECTOR_BASE_ALLOC_SIZE = 10;
-		static const uint32_t VECTOR_ADD_ALLOC_SIZE = 10;
+template <class T>
+class Vector {
+ public:
+  static const uint32_t VECTOR_BASE_ALLOC_SIZE = 10;
+  static const uint32_t VECTOR_ADD_ALLOC_SIZE = 10;
 
-	public:
-		Vector();
-		Vector( uint32_t allocSize );
-		Vector( uint32_t allocSize, uint32_t growSize );
-		~Vector();
+ public:
+  Vector();
+  Vector(uint32_t allocSize);
+  Vector(uint32_t allocSize, uint32_t growSize);
+  ~Vector();
 
-		uint32_t GetSize( void ) const { return m_vectorSize; };
-		uint32_t GetAllocSize( void ) const { return m_allocSize; };
+  uint32_t GetSize(void) const { return m_vectorSize; };
+  uint32_t GetAllocSize(void) const { return m_allocSize; };
 
-		T GetAt( uint32_t pos );
-		void AppendLast( T );
+  T GetAt(uint32_t pos);
+  void AppendLast(T);
 
-		bool IsEmpty( void );
+  bool IsEmpty(void);
 
-	private:
-		void GrowVector( void );
+ private:
+  void GrowVector(void);
 
-		T *m_pContainer;
+  T *m_pContainer;
 
-		uint32_t m_vectorSize;
-		uint32_t m_allocSize;
-		uint32_t m_growSize;
-	};
+  uint32_t m_vectorSize;
+  uint32_t m_allocSize;
+  uint32_t m_growSize;
+};
 
-	template<class T>
-	Vector<T>::Vector( )
-		: m_allocSize( VECTOR_BASE_ALLOC_SIZE ), m_growSize( VECTOR_ADD_ALLOC_SIZE ), m_vectorSize( 0 )	
-	{
-		m_pContainer = new T[ VECTOR_BASE_ALLOC_SIZE ];
-	}
-
-	template<class T>
-	Vector<T>::Vector( uint32_t allocSize )
-		: m_allocSize( allocSize ), m_growSize( VECTOR_ADD_ALLOC_SIZE ), m_vectorSize( 0 )
-	{
-		m_pContainer = new T[ allocSize ];
-	}
-
-	template<class T>
-	Vector<T>::Vector( uint32_t allocSize, uint32_t growSize )
-		: m_allocSize( allocSize ), m_growSize( growSize ), m_vectorSize( 0 )
-	{
-		m_pContainer = new T[ allocSize ];
-	}
-
-	template<class T>
-	Vector<T>::~Vector( )
-	{
-		if ( m_pContainer )
-			delete [] m_pContainer;
-
-		m_allocSize = 0;
-		m_vectorSize = 0;
-	}	
-
-	template<class T>
-	T Vector<T>::GetAt( uint32_t pos )
-	{
-		if ( pos < m_vectorSize )
-			return (m_pContainer[ pos ]);
-		else
-			return T(0); // TODO: BAD VECTOR
-	}
-
-	template<class T>
-	void Vector<T>::AppendLast( T item )
-	{
-		if ( m_vectorSize >= m_allocSize )
-		{
-			// Grow vector
-			GrowVector();
-		}
-
-		m_pContainer[ m_vectorSize ] = item;
-
-		m_vectorSize++;
-	}
-
-	template<class T>
-	void Vector<T>::GrowVector( void )
-	{
-		T *pTemp = new T[ m_vectorSize ];
-
-		memcpy( pTemp, m_pContainer, (m_vectorSize * sizeof(T)) );
-
-		delete [] m_pContainer;
-
-		m_pContainer = new T[ m_vectorSize + m_growSize ];
-
-		m_allocSize += m_growSize;
-
-		memcpy( m_pContainer, pTemp, (m_vectorSize * sizeof(T)) );
-
-		delete [] pTemp;
-	}
-
-	template<class T>
-	bool Vector<T>::IsEmpty( void )
-	{
-		return (m_vectorSize == 0);
-	}
+template <class T>
+Vector<T>::Vector()
+    : m_allocSize(VECTOR_BASE_ALLOC_SIZE),
+      m_growSize(VECTOR_ADD_ALLOC_SIZE),
+      m_vectorSize(0) {
+  m_pContainer = new T[VECTOR_BASE_ALLOC_SIZE];
 }
 
-#endif // __CUTIL_VECTOR_H__
+template <class T>
+Vector<T>::Vector(uint32_t allocSize)
+    : m_allocSize(allocSize),
+      m_growSize(VECTOR_ADD_ALLOC_SIZE),
+      m_vectorSize(0) {
+  m_pContainer = new T[allocSize];
+}
+
+template <class T>
+Vector<T>::Vector(uint32_t allocSize, uint32_t growSize)
+    : m_allocSize(allocSize), m_growSize(growSize), m_vectorSize(0) {
+  m_pContainer = new T[allocSize];
+}
+
+template <class T>
+Vector<T>::~Vector() {
+  if (m_pContainer) delete[] m_pContainer;
+
+  m_allocSize = 0;
+  m_vectorSize = 0;
+}
+
+template <class T>
+T Vector<T>::GetAt(uint32_t pos) {
+  if (pos < m_vectorSize)
+    return (m_pContainer[pos]);
+  else
+    return T(0);  // TODO: BAD VECTOR
+}
+
+template <class T>
+void Vector<T>::AppendLast(T item) {
+  if (m_vectorSize >= m_allocSize) {
+    // Grow vector
+    GrowVector();
+  }
+
+  m_pContainer[m_vectorSize] = item;
+
+  m_vectorSize++;
+}
+
+template <class T>
+void Vector<T>::GrowVector(void) {
+  T *pTemp = new T[m_vectorSize];
+
+  memcpy(pTemp, m_pContainer, (m_vectorSize * sizeof(T)));
+
+  delete[] m_pContainer;
+
+  m_pContainer = new T[m_vectorSize + m_growSize];
+
+  m_allocSize += m_growSize;
+
+  memcpy(m_pContainer, pTemp, (m_vectorSize * sizeof(T)));
+
+  delete[] pTemp;
+}
+
+template <class T>
+bool Vector<T>::IsEmpty(void) {
+  return (m_vectorSize == 0);
+}
+}  // namespace CUtil
+
+#endif  // __CUTIL_VECTOR_H__

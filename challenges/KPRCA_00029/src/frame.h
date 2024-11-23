@@ -25,7 +25,7 @@
 
 #include "buffer.h"
 
-#define FRAME_SIZE 112 // number of bits
+#define FRAME_SIZE 112  // number of bits
 #define FRAME_DATA_SIZE 72
 
 #define FRAME_FAIL 0

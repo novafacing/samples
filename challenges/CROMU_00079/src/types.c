@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "types.h"
+
+#include <libcgc.h>
 
 #define c(NAME, SIZE) chk(SIZE, sizeof(NAME))
 
@@ -42,7 +43,7 @@ void types_check() {
   c(uint64, 8);
   c(sint64, 8);
   c(float32, 4);
-  c(float64, 8); 
+  c(float64, 8);
 }
 
 void chk(size_t expected, size_t got) {

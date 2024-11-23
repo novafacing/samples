@@ -26,11 +26,10 @@ THE SOFTWARE.
 #ifndef __CUTIL_STRING_H__
 #define __CUTIL_STRING_H__
 
-extern "C"
-{
-#include <stdint.h>
+extern "C" {
 #include <libcgc.h>
 #include <stddef.h>
+#include <stdint.h>
 }
 
 #ifdef NULL
@@ -43,60 +42,58 @@ extern "C"
 // Cromulence Utilities Library
 // String class
 
-namespace CUtil
-{
-	class String
-	{
-	public:
-		// End position marker
-		const static size_t npos = 0xffffffff;
+namespace CUtil {
+class String {
+ public:
+  // End position marker
+  const static size_t npos = 0xffffffff;
 
-	public:
-		String( );
-		String( const String &str );
-		String( const char *pszStr );
+ public:
+  String();
+  String(const String &str);
+  String(const char *pszStr);
 
-		~String( );
+  ~String();
 
-		// Operators
-		bool operator==( const String &rhs ) const;
-		bool operator!=( const String &rhs ) const;
-		void operator=( const String &rhs );
-		void operator=( const char *rhs );
+  // Operators
+  bool operator==(const String &rhs) const;
+  bool operator!=(const String &rhs) const;
+  void operator=(const String &rhs);
+  void operator=(const char *rhs);
 
-		const String& operator+( const String &rhs ) const;
-		String& operator+=( const String &rhs );
+  const String &operator+(const String &rhs) const;
+  String &operator+=(const String &rhs);
 
-		// Conversion
-		const char* c_str( void ) const;
-		String Upper( void ) const;
-		String Lower( void ) const;
+  // Conversion
+  const char *c_str(void) const;
+  String Upper(void) const;
+  String Lower(void) const;
 
-		// Trim to a specific length
-		String Trim( size_t length ) const;
+  // Trim to a specific length
+  String Trim(size_t length) const;
 
-		// Accessor method
-		char operator[]( const size_t &loc ) const;
+  // Accessor method
+  char operator[](const size_t &loc) const;
 
-		// Get string within string from start to end positions
-		String SubString( size_t startPos, size_t endPos ) const;
-		
-		// Trim leading spaces (TrimSpaces)	
-		String TrimSpaces( void ) const;
+  // Get string within string from start to end positions
+  String SubString(size_t startPos, size_t endPos) const;
 
-		bool ToInt( uint32_t &value );
+  // Trim leading spaces (TrimSpaces)
+  String TrimSpaces(void) const;
 
-		size_t GetLength( void ) const;
-		bool IsEmpty( void ) const;
+  bool ToInt(uint32_t &value);
 
-	protected:
-		void SetInternal( const String &str );
-		void SetInternal( const char *pszStr );
-	
-	protected:
-		char 	*m_pData;
-		size_t	m_length;	
-	};
-}
+  size_t GetLength(void) const;
+  bool IsEmpty(void) const;
 
-#endif // __CUTIL_STRING_H__
+ protected:
+  void SetInternal(const String &str);
+  void SetInternal(const char *pszStr);
+
+ protected:
+  char *m_pData;
+  size_t m_length;
+};
+}  // namespace CUtil
+
+#endif  // __CUTIL_STRING_H__

@@ -21,22 +21,21 @@
  *
  */
 
+#include "request.h"
+
 #include <stdlib.h>
 #include <string.h>
-#include "request.h"
+
 #include "packet.h"
 
-#define SFD_SERVER  3
+#define SFD_SERVER 3
 #define SFD_CLIENT 4
 
-void send_request(void *req, enum cmd_t cmd)
-{
+void send_request(void *req, enum cmd_t cmd) {
   packet_t *packet = new_packet(T_REQUEST, cmd);
-  if (packet == NULL)
-    return;
+  if (packet == NULL) return;
 
-  switch (cmd)
-  {
+  switch (cmd) {
     case CMD_REGISTER:
       packet->body_len = sizeof(register_req_t);
       break;
@@ -49,12 +48,11 @@ void send_request(void *req, enum cmd_t cmd)
     case CMD_VIEW:
       packet->body_len = sizeof(view_req_t);
       break;
-    case CMD_SEND:
-      {
-        send_req_t *sr = (send_req_t *)req;
-        packet->body_len = sizeof(send_req_t) - sizeof(message_t *) + sizeof(message_t) - sizeof(char *) + sr->msg->text_len;
-      }
-      break;
+    case CMD_SEND: {
+      send_req_t *sr = (send_req_t *)req;
+      packet->body_len = sizeof(send_req_t) - sizeof(message_t *) +
+                         sizeof(message_t) - sizeof(char *) + sr->msg->text_len;
+    } break;
     case CMD_DELETE:
       packet->body_len = sizeof(delete_req_t);
       break;
@@ -65,11 +63,9 @@ void send_request(void *req, enum cmd_t cmd)
       goto done;
   }
   packet->body = malloc(packet->body_len);
-  if (packet->body)
-  {
+  if (packet->body) {
     size_t size;
-    if (cmd == CMD_SEND)
-    {
+    if (cmd == CMD_SEND) {
       char *pb = packet->body;
       send_req_t *sr = (send_req_t *)req;
       size = sizeof(send_req_t) - sizeof(message_t *);
@@ -79,9 +75,7 @@ void send_request(void *req, enum cmd_t cmd)
       memcpy(pb, (char *)(sr->msg), size);
       pb += size;
       memcpy(pb, sr->msg->text, sr->msg->text_len);
-    }
-    else
-    {
+    } else {
       memcpy(packet->body, (char *)req, packet->body_len);
     }
     packet->checksum = calc_checksum(packet);

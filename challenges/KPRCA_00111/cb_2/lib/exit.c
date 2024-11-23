@@ -22,9 +22,9 @@
  */
 #include <libcgc.h>
 
-void exit(int code)
-{
-    _terminate(code);
+void exit(int code) {
+  _terminate(code);
 
-    while (1) {};
+  while (1) {
+  };
 }

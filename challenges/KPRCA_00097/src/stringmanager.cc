@@ -21,25 +21,23 @@
  *
  */
 #include "stringmanager.h"
+
 #include "string.h"
 
-template<> StringManager *Singleton<StringManager>::d_instance = nullptr;
-template<> void Singleton<StringManager>::_create()
-{
-    d_instance = new StringManager();
+template <>
+StringManager *Singleton<StringManager>::d_instance = nullptr;
+template <>
+void Singleton<StringManager>::_create() {
+  d_instance = new StringManager();
 }
 
-StringManager::StringManager()
-{
-}
+StringManager::StringManager() {}
 
-const String *StringManager::intern(const char *str)
-{
-    String **result, *s;
-    result = d_intern_map.lookup(str);
-    if (result != nullptr)
-        return *result;
-    s = String::create(str);
-    d_intern_map.insert(s->cstr(), s);
-    return s;
+const String *StringManager::intern(const char *str) {
+  String **result, *s;
+  result = d_intern_map.lookup(str);
+  if (result != nullptr) return *result;
+  s = String::create(str);
+  d_intern_map.insert(s->cstr(), s);
+  return s;
 }

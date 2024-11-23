@@ -25,22 +25,24 @@
 
 #include "brc_protocol.h"
 
-class BrcCommand: public BrcProtocol {
-  public:
-      BrcCommand(unsigned short recv_length);
-      BrcCommand(const char *username, const char *cmd, unsigned short username_len, unsigned short cmd_len);
-      virtual ~BrcCommand();
+class BrcCommand : public BrcProtocol {
+ public:
+  BrcCommand(unsigned short recv_length);
+  BrcCommand(const char *username, const char *cmd, unsigned short username_len,
+             unsigned short cmd_len);
+  virtual ~BrcCommand();
 
-      virtual bool Recv(FILE *fd_in);
+  virtual bool Recv(FILE *fd_in);
 
-      virtual const unsigned int protocol_id() const;
-      const unsigned short username_length() const;
-      const unsigned short cmd_length() const;
-      const char *username() const;
-      const char *cmd() const;
-  private:
-    unsigned short username_len_;
-    unsigned short cmd_len_;
+  virtual const unsigned int protocol_id() const;
+  const unsigned short username_length() const;
+  const unsigned short cmd_length() const;
+  const char *username() const;
+  const char *cmd() const;
+
+ private:
+  unsigned short username_len_;
+  unsigned short cmd_len_;
 };
 
 #endif /* BRC_COMMAND_H_ */

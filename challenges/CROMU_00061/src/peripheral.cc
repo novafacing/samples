@@ -23,8 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,105 +32,68 @@ extern "C"
 
 #include "peripheral.h"
 
-CPeripheral::CPeripheral( uint8_t peripheralID )
-	: m_peripheralID( peripheralID )
-{
+CPeripheral::CPeripheral(uint8_t peripheralID) : m_peripheralID(peripheralID) {}
 
+CPeripheral::~CPeripheral() {}
+
+CSendDevice::CSendDevice(uint8_t peripheralID) : CPeripheral(peripheralID) {}
+
+CSendDevice::~CSendDevice() {}
+
+bool CSendDevice::Init(void) { return (true); }
+
+bool CSendDevice::Read(uint8_t *pDest, uint16_t length) {
+  // Does nothing
+  return (true);
 }
 
-CPeripheral::~CPeripheral( )
-{
+bool CSendDevice::Write(uint8_t *pDest, uint16_t length) {
+  if (!pDest) return (false);
 
+  uint32_t writePos = 0;
+  while (writePos < length) {
+    size_t tx_bytes;
+    uint32_t writeRemaining = (length - writePos);
+
+    if (transmit(STDOUT, (const void *)(pDest + writePos), writeRemaining,
+                 &tx_bytes) != 0)
+      _terminate(-1);
+
+    if (tx_bytes == 0) _terminate(-1);
+
+    writePos += tx_bytes;
+  }
+
+  return (true);
 }
 
-CSendDevice::CSendDevice( uint8_t peripheralID )
-	: CPeripheral( peripheralID )
-{
+CReadDevice::CReadDevice(uint8_t deviceID) : CPeripheral(deviceID) {}
 
+CReadDevice::~CReadDevice() {}
+
+bool CReadDevice::Init(void) { return (true); }
+
+bool CReadDevice::Read(uint8_t *pDest, uint16_t length) {
+  if (!pDest) return (false);
+
+  uint32_t readPos = 0;
+  while (readPos < length) {
+    size_t rx_bytes;
+    uint32_t readRemaining = (length - readPos);
+
+    if (receive(STDIN, (void *)(pDest + readPos), readRemaining, &rx_bytes) !=
+        0)
+      _terminate(-1);
+
+    if (rx_bytes == 0) _terminate(-1);
+
+    readPos += rx_bytes;
+  }
+
+  return (true);
 }
 
-CSendDevice::~CSendDevice( )
-{
-
-}
-
-bool CSendDevice::Init( void )
-{
-
-	return (true);
-}
-
-bool CSendDevice::Read( uint8_t *pDest, uint16_t length )
-{
-	// Does nothing
-	return (true);
-}
-
-bool CSendDevice::Write( uint8_t *pDest, uint16_t length )
-{
-	if ( !pDest )
-		return (false);
-
-	uint32_t writePos = 0;
-	while ( writePos < length )
-	{
-		size_t tx_bytes;
-		uint32_t writeRemaining = (length - writePos);
-
-		if ( transmit( STDOUT, (const void *)(pDest + writePos), writeRemaining, &tx_bytes ) != 0 )
-		      _terminate( -1 );
-
-		if ( tx_bytes == 0 )
-			_terminate( -1 );
-
-		writePos += tx_bytes;		
-	}
-
-	return (true);
-}
-
-CReadDevice::CReadDevice( uint8_t deviceID )
-	: CPeripheral( deviceID )
-{
-
-}
-
-CReadDevice::~CReadDevice( )
-{
-
-}
-
-bool CReadDevice::Init( void )
-{
-
-	return (true);
-}
-
-bool CReadDevice::Read( uint8_t *pDest, uint16_t length )
-{
-	if ( !pDest )
-		return (false);
-
-	uint32_t readPos = 0;
-	while ( readPos < length )
-	{
-		size_t rx_bytes;
-		uint32_t readRemaining = (length - readPos);
-
-		if ( receive( STDIN, (void *)(pDest + readPos), readRemaining, &rx_bytes ) != 0 )
-		      _terminate( -1 );
-
-		if ( rx_bytes == 0 )
-			_terminate( -1 );
-
-		readPos += rx_bytes;		
-	}
-
-	return (true);
-}
-
-bool CReadDevice::Write( uint8_t *pDest, uint16_t length )
-{
-	// Does nothing
-	return (true);
+bool CReadDevice::Write(uint8_t *pDest, uint16_t length) {
+  // Does nothing
+  return (true);
 }

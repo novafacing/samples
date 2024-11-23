@@ -24,18 +24,11 @@
 
 uint32_t ticks;
 
-void Time::Reset(void)
-{
-  ticks = 0;
-}
+void Time::Reset(void) { ticks = 0; }
 
-uint32_t Time::GetTime(void)
-{
+uint32_t Time::GetTime(void) {
   ticks++;
   return ticks;
 }
 
-void Time::Tick(void)
-{
-  ++ticks;
-}
+void Time::Tick(void) { ++ticks; }

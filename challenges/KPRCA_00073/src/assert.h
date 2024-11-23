@@ -25,21 +25,20 @@
 
 #include <libcgc.h>
 #include <stdio.h>
+
 #include "safe.h"
 
-#define Assert(_x, _msg) \
-  if (!(_x)) \
-  { \
+#define Assert(_x, _msg)           \
+  if (!(_x)) {                     \
     fprintf(stderr, "%s\n", _msg); \
-    _terminate(1); \
+    _terminate(1);                 \
   }
 
 #ifdef DEBUG
-#define DebugAssert(_x, _msg) \
-  if (!(_x)) \
-  { \
+#define DebugAssert(_x, _msg)                      \
+  if (!(_x)) {                                     \
     fprintf(stderr, "[Debug Assert]: %s\n", _msg); \
-    _terminate(1); \
+    _terminate(1);                                 \
   }
 #else
 #define DebugAssert(_x, _msg)

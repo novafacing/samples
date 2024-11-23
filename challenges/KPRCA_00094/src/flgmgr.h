@@ -24,32 +24,32 @@
 #ifndef FLAG_H
 #define FLAG_H
 
-#include "user.h"
-#include "error.h"
 #include "challenge.h"
+#include "error.h"
+#include "user.h"
 
 typedef struct {
-    team_t *team;
-    chal_t *chal;
-    char *flag;
-    int valid;
-    int idx;
-    char *shout;
+  team_t *team;
+  chal_t *chal;
+  char *flag;
+  int valid;
+  int idx;
+  char *shout;
 } flag_t;
 
 typedef struct {
-    size_t num_submit;
-    size_t num_valid;
-    size_t sz_submit;
-    flag_t **submits;
-    chal_t **chals;
-    size_t *num_chals;
+  size_t num_submit;
+  size_t num_valid;
+  size_t sz_submit;
+  flag_t **submits;
+  chal_t **chals;
+  size_t *num_chals;
 } flgmgr_t;
 
 error_t flg_init(flgmgr_t *flg, chal_t **chals, size_t *num_chals);
-error_t flg_add_submit(flgmgr_t *flg, team_t *team, const char* flag);
+error_t flg_add_submit(flgmgr_t *flg, team_t *team, const char *flag);
 error_t flg_get_solves(flgmgr_t *flg, flag_t ***flags, chal_t *chal, size_t *n);
-error_t flg_find_chal(flgmgr_t *flg, chal_t **chal, const char* flag);
+error_t flg_find_chal(flgmgr_t *flg, chal_t **chal, const char *flag);
 int flg_team_did_solve(flgmgr_t *flg, team_t *team, chal_t *chal);
 
 #endif

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef CUSTOMER_H
 #define CUSTOMER_H 1
@@ -26,17 +26,17 @@
 #include "menu.h"
 
 typedef struct {
-	unsigned int id;
-	Appetizer a;
-	Meal m;
-	Dessert d;
-	void *next;
+  unsigned int id;
+  Appetizer a;
+  Meal m;
+  Dessert d;
+  void *next;
 } Customer;
 
 /**
  * Get the first customer from the list
  *
- * @param c_list 	Pointer to list of Customer's 
+ * @param c_list 	Pointer to list of Customer's
  * @return Pointer to first customer or NULL if list is empty
  */
 Customer *pop_customer_from_list(Customer **c_list);
@@ -72,4 +72,3 @@ void print_customer_list(Customer *c_list);
 void print_customer(Customer *c);
 
 #endif
-

@@ -26,10 +26,8 @@
 #include <libcgc.h>
 #include <string.h>
 
-char *strsep(char **stringp, const char *delim)
-{
-  if (*stringp == NULL)
-    return NULL;
+char *strsep(char **stringp, const char *delim) {
+  if (*stringp == NULL) return NULL;
 
   char *i;
   for (i = *stringp; *i && !strchr(delim, *i); i++);
@@ -43,5 +41,5 @@ char *strsep(char **stringp, const char *delim)
     *stringp = NULL;
   }
 
-  return (char *) delim;
+  return (char *)delim;
 }

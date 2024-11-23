@@ -26,38 +26,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "readuntil.h"
 #include "otp.h"
+#include "readuntil.h"
 
-int main()
-{
-    otp_t *o = NULL;
-    unsigned int cmd = 0;
+int main() {
+  otp_t *o = NULL;
+  unsigned int cmd = 0;
 
-    fbuffered(stdout, 1);
+  fbuffered(stdout, 1);
 
-    while (1)
+  while (1) {
+    if (read_n(STDIN, (char *)&cmd, sizeof(unsigned int)) !=
+        sizeof(unsigned int))
+      return 0;
+    if (cmd == 0x4b414853)  // SHAK
+      otp_handshake(&o);
+    else if (cmd == 0x4f4e4547)  // GENO
+      otp_generate_otp(o);
+    else if (cmd == 0x444e5458)  // XTND
+      otp_extend_session(o);
+    else if (cmd == 0x44454553)  // SEED
+      otp_set_seeds(o);
+    else if (cmd == 0x49524556)  // VERI
+      otp_verify_otp(o);
+    else if (cmd == 0x54495551)  // QUIT
     {
-        if (read_n(STDIN, (char *)&cmd, sizeof(unsigned int)) != sizeof(unsigned int))
-            return 0;
-        if (cmd == 0x4b414853)          // SHAK
-            otp_handshake(&o);
-        else if (cmd == 0x4f4e4547)     // GENO
-            otp_generate_otp(o);
-        else if (cmd == 0x444e5458)     // XTND
-            otp_extend_session(o);
-        else if (cmd == 0x44454553)     // SEED
-            otp_set_seeds(o);
-        else if (cmd == 0x49524556)     // VERI
-            otp_verify_otp(o);
-        else if (cmd == 0x54495551)     // QUIT
-        {
-            fwrite("\x00", 1, stdout);
-            fflush(stdout);
-            _terminate(0);
-        }
-        else
-            fwrite("\xFF", 1, stdout);
-    }
-    return 0;
+      fwrite("\x00", 1, stdout);
+      fflush(stdout);
+      _terminate(0);
+    } else
+      fwrite("\xFF", 1, stdout);
+  }
+  return 0;
 }

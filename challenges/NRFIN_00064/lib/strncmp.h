@@ -18,16 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
 
 /**
-* Compare size bytes of s1 and s2
-* 
-* @param s1 address of buffer to compare
-* @param s2 address of buffer to compare
-* @param size the number of bytes to compare
-*
-* @return 0 if buffers are the same, -1 if s1 < s2, 1 if s1 > s2
-*/
+ * Compare size bytes of s1 and s2
+ *
+ * @param s1 address of buffer to compare
+ * @param s2 address of buffer to compare
+ * @param size the number of bytes to compare
+ *
+ * @return 0 if buffers are the same, -1 if s1 < s2, 1 if s1 > s2
+ */
 int strncmp(const char* s1, const char* s2, size_t size);

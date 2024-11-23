@@ -23,32 +23,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdint.h"
-#include "stdio.h"
-#include "malloc.h"
 #include "cstring.h"
 
-int ReceiveBytes(char *buffer, int length)
-{
+#include <libcgc.h>
+
+#include "malloc.h"
+#include "stdint.h"
+#include "stdio.h"
+
+int ReceiveBytes(char *buffer, int length) {
   int totalBytes = 0;
   int returnValue;
   size_t bytesReceived;
 
-  if (buffer == NULL) 
-  {
+  if (buffer == NULL) {
     return -1;
   }
 
-  while (totalBytes < length)
-  {
-    returnValue = receive(STDIN, buffer + totalBytes, length - totalBytes, &bytesReceived);
-    if (returnValue != 0) 
-    {
+  while (totalBytes < length) {
+    returnValue = receive(STDIN, buffer + totalBytes, length - totalBytes,
+                          &bytesReceived);
+    if (returnValue != 0) {
       _terminate(-1);
     }
-    if (bytesReceived == 0)
-    {
+    if (bytesReceived == 0) {
       _terminate(-1);
     }
     totalBytes += bytesReceived;
@@ -56,22 +54,18 @@ int ReceiveBytes(char *buffer, int length)
   return totalBytes;
 }
 
-
-int TransmitBytes(char *buffer, int length)
-{
+int TransmitBytes(char *buffer, int length) {
   int totalBytes = 0;
   int returnValue = 0;
   size_t bytesSent;
 
-  while (totalBytes < length)
-  {
-    returnValue = transmit(STDOUT, buffer + totalBytes, length - totalBytes, &bytesSent);
-    if (returnValue != 0)
-    {
+  while (totalBytes < length) {
+    returnValue =
+        transmit(STDOUT, buffer + totalBytes, length - totalBytes, &bytesSent);
+    if (returnValue != 0) {
       _terminate(-1);
     }
-    if (bytesSent == 0)
-    {
+    if (bytesSent == 0) {
       _terminate(-1);
     }
     totalBytes += bytesSent;
@@ -79,24 +73,21 @@ int TransmitBytes(char *buffer, int length)
   return 0;
 }
 
-cString *ReceiveCString(int maxLen)
-{
+cString *ReceiveCString(int maxLen) {
   cString *newString = calloc(sizeof(cString));
-  if (ReceiveBytes((char *)&newString->length, sizeof(newString->length)) != sizeof(newString->length))
-  {
+  if (ReceiveBytes((char *)&newString->length, sizeof(newString->length)) !=
+      sizeof(newString->length)) {
     DestroyCString(newString);
     return NULL;
   }
-  if (newString->length > maxLen)
-  {
+  if (newString->length > maxLen) {
     printf("FATAL\n");
     _terminate(-2);
   }
-  if (newString->length > 0)
-    {
-    newString->string = calloc(newString->length + 1) ;
-    if (ReceiveBytes(newString->string, newString->length) != newString->length)
-    {
+  if (newString->length > 0) {
+    newString->string = calloc(newString->length + 1);
+    if (ReceiveBytes(newString->string, newString->length) !=
+        newString->length) {
       DestroyCString(newString);
       return NULL;
     }
@@ -104,18 +95,14 @@ cString *ReceiveCString(int maxLen)
   return newString;
 }
 
-void DestroyCString(cString *s)
-{
-  if (s)
-  {
+void DestroyCString(cString *s) {
+  if (s) {
     free(s->string);
   }
   free(s);
 }
 
-void TransmitCString(cString *s)
-{
+void TransmitCString(cString *s) {
   TransmitBytes((char *)&s->length, sizeof(s->length));
   TransmitBytes(s->string, s->length);
 }
-

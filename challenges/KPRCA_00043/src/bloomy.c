@@ -21,28 +21,24 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "bloomy.h"
 
-bloomy_t* bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3)
-{
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+bloomy_t *bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3) {
   bloomy_t *bloomy;
 
-  if (size < 1)
-    return NULL;
+  if (size < 1) return NULL;
 
-  bloomy = (bloomy_t *) malloc(sizeof(bloomy_t));
-  if (bloomy == NULL)
-    goto fail;
+  bloomy = (bloomy_t *)malloc(sizeof(bloomy_t));
+  if (bloomy == NULL) goto fail;
   memset(bloomy, 0, sizeof(bloomy_t));
   bloomy->size = size;
 
-  bloomy->bits = (uint8_t *) malloc(size);
-  if (bloomy->bits == NULL)
-    goto fail;
+  bloomy->bits = (uint8_t *)malloc(size);
+  if (bloomy->bits == NULL) goto fail;
   memset(bloomy->bits, 0, size);
 
   bloomy->hashes[0] = hash1;
@@ -56,46 +52,35 @@ fail:
   return NULL;
 }
 
-void bloomy_free(bloomy_t *bloomy)
-{
-  if (bloomy)
-  {
-    if (bloomy->bits)
-      free(bloomy->bits);
+void bloomy_free(bloomy_t *bloomy) {
+  if (bloomy) {
+    if (bloomy->bits) free(bloomy->bits);
     free(bloomy);
   }
 }
 
-int bloomy_check(bloomy_t *bloomy, const char *buf)
-{
+int bloomy_check(bloomy_t *bloomy, const char *buf) {
   uint8_t bit;
   unsigned int i, n;
-  if (bloomy == NULL || bloomy->bits == NULL)
-    return -1;
-  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i)
-  {
-    if (bloomy->hashes[i])
-    {
+  if (bloomy == NULL || bloomy->bits == NULL) return -1;
+  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i) {
+    if (bloomy->hashes[i]) {
       n = (bloomy->hashes[i](buf, strlen(buf)) % bloomy->size);
-      bit = (bloomy->bits[n/8] & (1 << (n%8)));
-      if (!bit)
-        return 0;
+      bit = (bloomy->bits[n / 8] & (1 << (n % 8)));
+      if (!bit) return 0;
     }
   }
   return 1;
 }
 
-void bloomy_add(bloomy_t *bloomy, const char *buf)
-{
+void bloomy_add(bloomy_t *bloomy, const char *buf) {
   uint8_t bit;
   unsigned int i, n;
 
-  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i)
-  {
-    if (bloomy->hashes[i])
-    {
+  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i) {
+    if (bloomy->hashes[i]) {
       n = (bloomy->hashes[i](buf, strlen(buf)) % bloomy->size);
-      bloomy->bits[n/8] |= (1 << (n%8));
+      bloomy->bits[n / 8] |= (1 << (n % 8));
     }
   }
 }

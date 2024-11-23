@@ -25,4 +25,5 @@ THE SOFTWARE.
 */
 
 int32_t GraphTemps(double *);
-double TGridAverage(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+double TGridAverage(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t,
+                    uint32_t);

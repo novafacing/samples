@@ -24,67 +24,65 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdio.h"
-#include "malloc.h"
+
+#include "ctype.h"
 #include "libc.h"
+#include "lookup.h"
+#include "malloc.h"
+#include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "ctype.h"
-#include "lookup.h"
-
 
 int gets(char *buf) {
-    size_t bytes_received = 0;
-    int bytes_total = 0;
-    int ret;
-    while (1) {
-        ret = receive(STDIN, buf, 1, &bytes_received);
-        if ((ret != 0) || (bytes_received == 0)) {
-            return bytes_total;
-        }
-        bytes_total++;
-        if (*buf == '\n') {
-            *buf = '\0';
-            return bytes_total;
-        }
-        buf++;
-    } 
+  size_t bytes_received = 0;
+  int bytes_total = 0;
+  int ret;
+  while (1) {
+    ret = receive(STDIN, buf, 1, &bytes_received);
+    if ((ret != 0) || (bytes_received == 0)) {
+      return bytes_total;
+    }
+    bytes_total++;
+    if (*buf == '\n') {
+      *buf = '\0';
+      return bytes_total;
+    }
+    buf++;
+  }
 }
 
 void lookupd() {
-
-    char input[512];
-    int bytes_received = 0;
+  char input[512];
+  int bytes_received = 0;
 
 #ifdef PATCHED_1
-    bytes_received = receive_until(input, sizeof(input), '\n');
-    bytes_received = force_newline(input, sizeof(input), bytes_received);
+  bytes_received = receive_until(input, sizeof(input), '\n');
+  bytes_received = force_newline(input, sizeof(input), bytes_received);
 #else
-    bytes_received = gets(input);
+  bytes_received = gets(input);
 #endif
-    char *args[20];
-    int i = 0;
-    // parse input
-    char *p = input;
+  char *args[20];
+  int i = 0;
+  // parse input
+  char *p = input;
 
-    while (i < 19) {
-        while(isspace(*p)) p++;
-        if (!*p)
-            break;
-        if (*p == '/' && (p[1] == 'W' || p[1] == 'w')) {
-            p += 2;
-            args[i++] = "-l";
-        }
-        if (*p && !isspace(*p)) {
-            args[i++] = p;
-            while (*p && !isspace(*p)) p++;
-            *p++ = '\0';
-        }
+  while (i < 19) {
+    while (isspace(*p)) p++;
+    if (!*p) break;
+    if (*p == '/' && (p[1] == 'W' || p[1] == 'w')) {
+      p += 2;
+      args[i++] = "-l";
     }
-    // Null terminate argument list
-    args[i] = 0;
+    if (*p && !isspace(*p)) {
+      args[i++] = p;
+      while (*p && !isspace(*p)) p++;
+      *p++ = '\0';
+    }
+  }
+  // Null terminate argument list
+  args[i] = 0;
 
-    lookup(i, args);
+  lookup(i, args);
 }
 
 user *root_user;
@@ -92,71 +90,70 @@ int num_users;
 list *short_list;
 
 char *gen_random_str(int min, int max) {
-    int length = random_in_range(min, max);
-    char *s = calloc(length);
-    for(int i=0; i<length - 2; i++) {
-        s[i] = random_in_range(0x30, 0x7e);
-    }
-    return s;
+  int length = random_in_range(min, max);
+  char *s = calloc(length);
+  for (int i = 0; i < length - 2; i++) {
+    s[i] = random_in_range(0x30, 0x7e);
+  }
+  return s;
 }
 
 user *gen_random_user() {
-    user *new_user = calloc(sizeof(user));
-    new_user->name = gen_random_str(5, 32);
-    char *hn = gen_random_str(5, 32);
-    strcpy(new_user->hostname, hn);
-    free(hn);
-    new_user->idletime = rand() & 0xffffff;
-    new_user->realname = gen_random_str(5, 64);
-    new_user->phone = gen_random_str(9,9);
-    new_user->online = random_in_range(0,1);
+  user *new_user = calloc(sizeof(user));
+  new_user->name = gen_random_str(5, 32);
+  char *hn = gen_random_str(5, 32);
+  strcpy(new_user->hostname, hn);
+  free(hn);
+  new_user->idletime = rand() & 0xffffff;
+  new_user->realname = gen_random_str(5, 64);
+  new_user->phone = gen_random_str(9, 9);
+  new_user->online = random_in_range(0, 1);
 
-    return new_user;
+  return new_user;
 }
-  
 
 int main(void) {
-    char *sp;
-    char input[512];
-    int bytes_received = 0;
-    fd_set fds;
-    int ready_fds;
-    struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-    int ret;
+  char *sp;
+  char input[512];
+  int bytes_received = 0;
+  fd_set fds;
+  int ready_fds;
+  struct timeval timeout;
+  timeout.tv_sec = 0;
+  timeout.tv_usec = 0;
+  int ret;
 
-    // Initialize user list
-    srand();
-    root_user = gen_random_user();
+  // Initialize user list
+  srand();
+  root_user = gen_random_user();
+  num_users++;
+  user *u = root_user;
+  short_list = calloc(sizeof(short_list));
+  short_list->object = root_user;
+  for (int i = 0; i < 10; i++) {
+    u->next = gen_random_user();
+    u = u->next;
     num_users++;
-    user *u = root_user;
-    short_list = calloc(sizeof(short_list));
-    short_list->object = root_user;
-    for(int i=0; i<10; i++) {
-        u->next = gen_random_user();
-        u = u->next;
-        num_users++;
+  }
+
+  // read input
+  while (1) {
+    FD_ZERO(&fds);
+    FD_SET(FD_FROM_MAIN, &fds);
+    ret = fdwait(FD_FROM_MAIN + 1, &fds, NULL, &timeout, &ready_fds);
+    bytes_received = receive_until_fd(FD_FROM_MAIN, input, sizeof(input), '\n');
+    bytes_received = force_newline(input, sizeof(input), bytes_received);
+    if (equals(input, "terminate\n")) {
+      goto EXIT;
     }
+    if (bytes_received > 0) {
+      lookupd();
+      // Tell main program lookupd is done
+      send_all_fd(FD_TO_MAIN, "\0\n", 2);
+    }
+  }
 
-    // read input
-    while (1) {
-        FD_ZERO(&fds);
-        FD_SET(FD_FROM_MAIN, &fds);
-        ret = fdwait(FD_FROM_MAIN + 1, &fds, NULL, &timeout, &ready_fds);
-        bytes_received = receive_until_fd(FD_FROM_MAIN, input, sizeof(input), '\n');
-        bytes_received = force_newline(input, sizeof(input), bytes_received);
-        if (equals(input, "terminate\n")) {
-            goto EXIT;
-        }
-        if (bytes_received > 0) {
-            lookupd();
-            // Tell main program lookupd is done
-            send_all_fd(FD_TO_MAIN, "\0\n", 2);       
-        }
-    } 
-
-    EXIT:
-    // exit
-    return 0;
+EXIT:
+  // exit
+  return 0;
 }

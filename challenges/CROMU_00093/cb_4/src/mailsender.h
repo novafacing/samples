@@ -31,7 +31,7 @@ typedef struct address_s {
   char *home_server;
   int mode;
   struct address_s *next;
-}address;
+} address;
 
 typedef struct message_s {
   address *sender;
@@ -41,10 +41,10 @@ typedef struct message_s {
   char *data;
   int data_length;
   struct message_s *next;
-}message;
+} message;
 
 typedef struct address_book_s {
-  int num_entries;    
+  int num_entries;
   address *root;
 } address_book;
 
@@ -53,15 +53,15 @@ typedef struct mail_queue_s {
   char *name;
   message *root;
   struct mail_queue_s *next;
-}mail_queue;
+} mail_queue;
 
 extern address_book *abook;
 extern mail_queue *root_queue;
 char *gen_random_string(int min, int max);
-address *add_random_addressbook_entry() ;
-void initialize_address_book() ;
-address *pick_address() ;
-mail_queue *add_random_queue() ;
+address *add_random_addressbook_entry();
+void initialize_address_book();
+address *pick_address();
+mail_queue *add_random_queue();
 message *add_random_message(mail_queue *mq);
 void initialize_mail_queues();
 void print_address_book();
@@ -69,6 +69,6 @@ void mailsend_post(char *line);
 mail_queue *locate_queue(char *name);
 
 void list_queue(char *line);
-void list_all_queues() ;
+void list_all_queues();
 
 #endif

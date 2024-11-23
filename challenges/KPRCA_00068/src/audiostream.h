@@ -22,43 +22,37 @@
  */
 #pragma once
 #include <cstdint.h>
+
 #include "gain.h"
 
 #define SAMPLE_RATE 8000
 
-class AudioStream
-{
-public:
-    ~AudioStream();
-    static AudioStream *fromSilence(unsigned int samples);
-    static AudioStream *fromSineWave(unsigned int samples, unsigned int hz);
-    static AudioStream *fromSquareWave(unsigned int samples, unsigned int hz);
+class AudioStream {
+ public:
+  ~AudioStream();
+  static AudioStream *fromSilence(unsigned int samples);
+  static AudioStream *fromSineWave(unsigned int samples, unsigned int hz);
+  static AudioStream *fromSquareWave(unsigned int samples, unsigned int hz);
 
-    inline unsigned int getLength() const
-    {
-        return length;
-    }
-    inline int32_t getSample(unsigned int i) const
-    {
-        if (i < length)
-            return samples[i];
-        return 0;
-    }
+  inline unsigned int getLength() const { return length; }
+  inline int32_t getSample(unsigned int i) const {
+    if (i < length) return samples[i];
+    return 0;
+  }
 
-    void setLength(unsigned int length);
-    inline void setSample(unsigned int i, int32_t sample)
-    {
-        if (i >= length)
-            setLength(i+1);
-        samples[i] = sample;
-    }
-    void addSilence(unsigned int length);
-    void mix(const AudioStream &src, Gain gain);
-private:
-    AudioStream(unsigned int length);
-    void enlarge(unsigned int length);
+  void setLength(unsigned int length);
+  inline void setSample(unsigned int i, int32_t sample) {
+    if (i >= length) setLength(i + 1);
+    samples[i] = sample;
+  }
+  void addSilence(unsigned int length);
+  void mix(const AudioStream &src, Gain gain);
 
-    unsigned int length;
-    unsigned int size;
-    int32_t *samples;
+ private:
+  AudioStream(unsigned int length);
+  void enlarge(unsigned int length);
+
+  unsigned int length;
+  unsigned int size;
+  int32_t *samples;
 };

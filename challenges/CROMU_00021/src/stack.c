@@ -25,43 +25,39 @@ THE SOFTWARE.
 */
 
 #include "stack.h"
+
 #include <libcgc.h>
 #include <stdlib.h>
 
 void *pop(stack *myStack) {
-	void *ret;
-	ret = (void *)myStack->items[myStack->top];
-	myStack->top--;
-	return ret;
+  void *ret;
+  ret = (void *)myStack->items[myStack->top];
+  myStack->top--;
+  return ret;
 }
 
 void push(stack *myStack, void *value) {
-	#ifdef PATCHED
-	if(myStack->top < 31) {
-	#endif
-		myStack->top++;
-		myStack->items[myStack->top] = value;
-	#ifdef PATCHED
-	}
-	#endif
+#ifdef PATCHED
+  if (myStack->top < 31) {
+#endif
+    myStack->top++;
+    myStack->items[myStack->top] = value;
+#ifdef PATCHED
+  }
+#endif
 }
 
-int isEmpty(stack *myStack) {
-	return myStack->top == 0;
-}
-
+int isEmpty(stack *myStack) { return myStack->top == 0; }
 
 stack *initStack() {
-	stack *ret;
+  stack *ret;
 
-	ret = calloc(sizeof(stack), 1);
-	if(ret != NULL) {
+  ret = calloc(sizeof(stack), 1);
+  if (ret != NULL) {
+  } else {
+    puts("Critical memory error.  Corwardly exiting.");
+    _terminate(-1);
+  }
 
-	} else {
-		puts("Critical memory error.  Corwardly exiting.");
-		_terminate(-1);
-	}
-
-	return ret;
-
+  return ret;
 }

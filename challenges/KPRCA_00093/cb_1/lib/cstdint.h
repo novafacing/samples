@@ -1,4 +1,3 @@
-extern "C"
-{
+extern "C" {
 #include <stdint.h>
 }

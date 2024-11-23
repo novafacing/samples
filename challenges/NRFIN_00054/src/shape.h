@@ -25,21 +25,15 @@
 
 #include "vector.h"
 
-enum shape_type {
-    SPHERE,
-    PLANE
-};
+enum shape_type { SPHERE, PLANE };
 
-enum surface_type {
-    DIFFUSE,
-    SPECULAR
-};
+enum surface_type { DIFFUSE, SPECULAR };
 
 struct shape {
-    struct shape *next;
-    enum shape_type type;
-    enum surface_type material;
-    struct vector position, color, emission;
+  struct shape *next;
+  enum shape_type type;
+  enum surface_type material;
+  struct vector position, color, emission;
 };
 
 /**
@@ -52,8 +46,8 @@ struct shape {
  * @param color The color of the new shape
  * @param emission The emission of the new shape
  */
-void shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
-        struct vector position, struct vector color, struct vector emission);
+void shape_init(struct shape *shape, enum shape_type type,
+                enum surface_type material, struct vector position,
+                struct vector color, struct vector emission);
 
 #endif /* SHAPE_H_ */
-

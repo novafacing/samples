@@ -21,48 +21,40 @@
  *
  */
 #include "ptrlist.h"
+
 #include <string.h>
 
-ptrlist_t *create_ptrlist()
-{
-    ptrlist_t *ptrlist = calloc(1, sizeof(ptrlist_t));
-    if (ptrlist == NULL)
-        return NULL;
+ptrlist_t *create_ptrlist() {
+  ptrlist_t *ptrlist = calloc(1, sizeof(ptrlist_t));
+  if (ptrlist == NULL) return NULL;
 
-    ptrlist->size = 8;
-    ptrlist->length = 0;
-    ptrlist->datalist = calloc(1, sizeof(void *) * (ptrlist->size));
-    if (ptrlist->datalist == NULL)
-        return NULL;
+  ptrlist->size = 8;
+  ptrlist->length = 0;
+  ptrlist->datalist = calloc(1, sizeof(void *) * (ptrlist->size));
+  if (ptrlist->datalist == NULL) return NULL;
 
-    return ptrlist;
+  return ptrlist;
 }
 
-int add_item(ptrlist_t *ptrlist, void *pdata)
-{
-    if (!ptrlist || !pdata)
-        return -1;
+int add_item(ptrlist_t *ptrlist, void *pdata) {
+  if (!ptrlist || !pdata) return -1;
 
-    if (ptrlist->size == ptrlist->length) {
-        void *expanded_list = malloc(sizeof(void *) * (ptrlist->size * 2));
-        if (!expanded_list )
-            return -1;
+  if (ptrlist->size == ptrlist->length) {
+    void *expanded_list = malloc(sizeof(void *) * (ptrlist->size * 2));
+    if (!expanded_list) return -1;
 
-        memcpy(expanded_list , ptrlist->datalist, sizeof(void *) * (ptrlist->size));
-        free(ptrlist->datalist);
-        ptrlist->size *= 2;
-        ptrlist->datalist = expanded_list ;
-    }
+    memcpy(expanded_list, ptrlist->datalist, sizeof(void *) * (ptrlist->size));
+    free(ptrlist->datalist);
+    ptrlist->size *= 2;
+    ptrlist->datalist = expanded_list;
+  }
 
-    ptrlist->datalist[ptrlist->length++] = pdata;
-    return 0;
+  ptrlist->datalist[ptrlist->length++] = pdata;
+  return 0;
 }
 
-void *get_pdata(ptrlist_t *ptrlist, size_t idx)
-{
-    if (!ptrlist || idx > ptrlist->length)
-        return NULL;
+void *get_pdata(ptrlist_t *ptrlist, size_t idx) {
+  if (!ptrlist || idx > ptrlist->length) return NULL;
 
-    return ptrlist->datalist[idx];
+  return ptrlist->datalist[idx];
 }
-

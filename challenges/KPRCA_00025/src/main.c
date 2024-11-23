@@ -22,18 +22,13 @@
  */
 #include "Program.h"
 
-int main()
-{
-    InitClasses();
+int main() {
+  InitClasses();
 
-    Try
-        Program *p = new(Program);
-        $(p, run);
-    Finally
-        if (exc_code())
-            fdprintf(STDERR, "Caught exception %d\n", exc_code());
-    EndTry
+  Try Program *p = new (Program);
+  $(p, run);
+  Finally if (exc_code()) fdprintf(STDERR, "Caught exception %d\n", exc_code());
+  EndTry
 
-    return 0;
+      return 0;
 }
-

@@ -20,18 +20,18 @@
  * THE SOFTWARE.
  *
  */
-#include <cstring.h>
-#include <cstdlib.h>
-
 #include "blubber.h"
+
+#include <cstdlib.h>
+#include <cstring.h>
+
 #include "constants.h"
+#include "rand.h"
 #include "time.h"
 #include "vector.h"
-#include "rand.h"
 #include "words.h"
 
-blub::blub(char* _author, char* data)
-{
+blub::blub(char* _author, char* data) {
   id = (uint32_t)this;
 
   size_t l = strlen(_author);
@@ -42,44 +42,30 @@ blub::blub(char* _author, char* data)
   ts = tick();
 }
 
-blubber::blubber(void)
-{
-  last_read = 0;
-}
+blubber::blubber(void) { last_read = 0; }
 
-void blubber::set_username(char* _username)
-{
-  strcpy(username, _username);
-}
+void blubber::set_username(char* _username) { strcpy(username, _username); }
 
-blub* blubber::gen_blub(void)
-{
+blub* blubber::gen_blub(void) {
   char buf[BLUB_MAX + 1];
   size_t rem = BLUB_MAX;
   int misses = 0;
 
   memset(buf, 0, BLUB_MAX + 1);
 
-  while (0 < rem && misses < 8)
-  {
-    const char* word = words[choice() % (sizeof(words) / sizeof(char *))];
-    if (strlen(word) + strlen(" ") <= rem)
-    {
+  while (0 < rem && misses < 8) {
+    const char* word = words[choice() % (sizeof(words) / sizeof(char*))];
+    if (strlen(word) + strlen(" ") <= rem) {
       size_t offset = strlen(buf);
-      if (offset > 0)
-      {
+      if (offset > 0) {
         strcpy(buf + offset, " ");
         strcpy(buf + offset + 1, word);
-      }
-      else
-      {
+      } else {
         strcpy(buf + offset, word);
       }
 
       rem = BLUB_MAX - strlen(buf);
-    }
-    else
-    {
+    } else {
       misses++;
     }
   }
@@ -90,24 +76,19 @@ blub* blubber::gen_blub(void)
   return n;
 }
 
-void blubber::subscribe(blubber* b)
-{
-  if (!subs.contains(b))
-  {
+void blubber::subscribe(blubber* b) {
+  if (!subs.contains(b)) {
     subs.add(b);
   }
 }
 
-void blubber::unsubscribe(blubber* b)
-{
-  if (subs.contains(b))
-  {
+void blubber::unsubscribe(blubber* b) {
+  if (subs.contains(b)) {
     subs.remove(subs.index_of(b));
   }
 }
 
-blub* blubber::record_blub(char* buf)
-{
+blub* blubber::record_blub(char* buf) {
   blub* n = new blub(username, buf);
   blubs.add(n);
   return n;

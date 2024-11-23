@@ -3,8 +3,8 @@
 
 typedef struct queue queue_t;
 struct queue {
-    char *data;
-    queue_t *next;
+  char *data;
+  queue_t *next;
 };
 
 char *peek_front(queue_t *queue);

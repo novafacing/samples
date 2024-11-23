@@ -26,113 +26,97 @@ THE SOFTWARE.
 #include "service.h"
 #include "stdlib.h"
 
+int remove_dives(logbook_type *Info) {
+  char buf[1024];
+  int rcv_cnt;
 
-int remove_dives(logbook_type *Info)  {
+  dive_log_type *next_dive, *prev_dive, *temp_dive;
+  struct dive_data *temp_ptr, *next_ptr;
 
-	char buf[1024];
-	int rcv_cnt;
+  next_dive = Info->dives;
 
-	dive_log_type *next_dive, *prev_dive, *temp_dive;
-	struct dive_data *temp_ptr, *next_ptr;
+  int dive_count = 1;
 
-	next_dive = Info->dives;
+  int dive_number_to_delete = 0;
 
-	int dive_count = 1;
+  if (next_dive == 0) {
+    printf("\n");
+    printf("Dive Log is empty\n");
+    return 0;
+  }
 
-	int dive_number_to_delete = 0;
+  // show all the dives
+  list_dives(Info);
 
-	if (next_dive == 0) {
+  printf("\n");
+  printf("Enter Dive # to delete or blank to abort: ");
 
-		printf("\n");
-		printf("Dive Log is empty\n");
-		return 0;
-	}
+  rcv_cnt = getline(buf, sizeof(buf));
 
-	// show all the dives
-	list_dives(Info);
+  if (rcv_cnt == 0) return 0;
 
-	printf("\n");
-	printf("Enter Dive # to delete or blank to abort: ");
+  dive_number_to_delete = atoi(buf);
 
-	rcv_cnt=getline(buf, sizeof(buf));
-		
-	if (rcv_cnt==0)
-		return 0;
+  next_dive = Info->dives;
 
-	dive_number_to_delete=atoi(buf);
+  // if its the dive at the head of the list take care of it a bit differently
+  if (dive_number_to_delete == 1) {
+    temp_dive = next_dive->next;
 
-	next_dive = Info->dives;
+    // if there are downloaded dive log samples, first delete them before the
+    // dive log entry
+    if (next_dive->data != 0) {
+      temp_ptr = next_dive->data;
 
-	// if its the dive at the head of the list take care of it a bit differently
-	if (dive_number_to_delete == 1) {
+      while (temp_ptr != 0) {
+        next_ptr = temp_ptr->next;
 
-		temp_dive=next_dive->next;
+        free(temp_ptr);
 
-		// if there are downloaded dive log samples, first delete them before the dive log entry
-		if (next_dive->data != 0) {
+        temp_ptr = next_ptr;
+      }
+    }
+    // now free the dive log entry
+    free(next_dive);
 
-			temp_ptr=next_dive->data;
+    Info->dives = temp_dive;
+    return 0;
+  }
 
-			while (temp_ptr!= 0) {
+  // it wasn't at the head, so work through the list until its found
+  dive_count = 1;
 
-				next_ptr=temp_ptr->next;
+  while (dive_count < dive_number_to_delete && next_dive != 0) {
+    ++dive_count;
 
-				free(temp_ptr);
+    prev_dive = next_dive;
+    next_dive = next_dive->next;
+  }
 
-				temp_ptr=next_ptr;
-			}
+  // make sure we didn't hit the end of the list
+  if (dive_count == dive_number_to_delete && next_dive != 0) {
+    // join the prior and next nodes in the linked list
+    prev_dive->next = next_dive->next;
 
-		}
-		// now free the dive log entry
-		free(next_dive);
+    // if there are downloaded dive log samples, first delete them before the
+    // dive log entry
+    if (next_dive->data != 0) {
+      temp_ptr = next_dive->data;
 
-		Info->dives = temp_dive;
-		return 0;
-	}
+      while (temp_ptr != 0) {
+        next_ptr = temp_ptr->next;
 
+        free(temp_ptr);
 
-	// it wasn't at the head, so work through the list until its found
-	dive_count = 1;
+        temp_ptr = next_ptr;
+      }
+    }
 
-	while (dive_count < dive_number_to_delete && next_dive!= 0) {
+    // now free the dive log entry
+    free(next_dive);
+  } else {
+    printf("Invalid dive number entered\n");
+  }
 
-		++dive_count;
-
-		prev_dive=next_dive;
-		next_dive=next_dive->next;
-
-	}
-
-	// make sure we didn't hit the end of the list
-	if (dive_count == dive_number_to_delete && next_dive != 0) {
-
-		// join the prior and next nodes in the linked list
-		prev_dive->next = next_dive->next;
-
-		// if there are downloaded dive log samples, first delete them before the dive log entry
-		if (next_dive->data != 0) {
-
-			temp_ptr=next_dive->data;
-
-			while (temp_ptr!= 0) {
-
-				next_ptr=temp_ptr->next;
-
-				free(temp_ptr);
-
-				temp_ptr=next_ptr;
-			}
-		
-		}
-
-		// now free the dive log entry
-		free (next_dive);
-	}
-	else {
-
-		printf("Invalid dive number entered\n");
-	}
-
-	return 0;
+  return 0;
 }
-

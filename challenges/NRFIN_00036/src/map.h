@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define TRANSMIT_ERROR 1
 #define RECEIVE_ERROR 2
 #define ALLOCATE_ERROR 3
@@ -30,14 +30,12 @@
 #define MAX_VALUE_SIZE 16
 
 typedef struct map_t {
-	struct map_t *next;
-	int value;
-	char key[MAX_KEY_SIZE+1];
+  struct map_t* next;
+  int value;
+  char key[MAX_KEY_SIZE + 1];
 } Map;
 
-int setMap(Map **map, char* key, int value);
+int setMap(Map** map, char* key, int value);
 int getValue(Map* map, char* key);
 uint32_t getSize(Map* map);
-void removeMap(Map **map, char* key);
-
-
+void removeMap(Map** map, char* key);

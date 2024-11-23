@@ -26,41 +26,41 @@
 #define PACKED __attribute__((packed))
 
 struct game_state {
-    unsigned char spew[0xfff4];
-    unsigned int defcon_level;
-    union {
-        struct {
-            unsigned int cookie;
-            unsigned int round;
-        } PACKED hugman;
-        struct {
-            char move[4];
-        } PACKED chess;
-        struct {
-            unsigned int cookie;
-            unsigned int unused;
-            int fitness;
-        } PACKED sudoku;
-        struct {
-            unsigned int cookie;
-            unsigned int encounter_data;
-            unsigned short unused;
-            unsigned char party[6];
-        } PACKED safari_zone;
-        struct {
-            unsigned int cookie;
-            unsigned int unused;
-            unsigned short tank_size;
-        } PACKED gallon_challenge;
-        struct {
-            unsigned int cookie;
-            unsigned char unused[6];
-            unsigned char options[6];
-        } PACKED chance_of_survival;
-        struct {
-            unsigned int cookie;
-        } PACKED lesson_in_futility;
-    } games;
+  unsigned char spew[0xfff4];
+  unsigned int defcon_level;
+  union {
+    struct {
+      unsigned int cookie;
+      unsigned int round;
+    } PACKED hugman;
+    struct {
+      char move[4];
+    } PACKED chess;
+    struct {
+      unsigned int cookie;
+      unsigned int unused;
+      int fitness;
+    } PACKED sudoku;
+    struct {
+      unsigned int cookie;
+      unsigned int encounter_data;
+      unsigned short unused;
+      unsigned char party[6];
+    } PACKED safari_zone;
+    struct {
+      unsigned int cookie;
+      unsigned int unused;
+      unsigned short tank_size;
+    } PACKED gallon_challenge;
+    struct {
+      unsigned int cookie;
+      unsigned char unused[6];
+      unsigned char options[6];
+    } PACKED chance_of_survival;
+    struct {
+      unsigned int cookie;
+    } PACKED lesson_in_futility;
+  } games;
 } PACKED;
 
 extern struct game_state game_state;
@@ -78,49 +78,49 @@ void init_cookie(void);
  */
 int check_cookie(unsigned int cookie);
 
-/** 
+/**
  * Play a game of hugman.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_hugman(void);
 
-/** 
+/**
  * Play a game of chess.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_chess(void);
 
-/** 
+/**
  * Play a game of sudoku.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_sudoku(void);
 
-/** 
+/**
  * Play a game of gallon challenge.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_gallon_challenge(void);
 
-/** 
+/**
  * Play a game of safari zone.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_safari_zone(void);
 
-/** 
+/**
  * Play a game of chance of survival.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int do_chance_of_survival(void);
 
-/** 
+/**
  * Play a game of lesson in futility.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
@@ -128,4 +128,3 @@ int do_chance_of_survival(void);
 int do_lesson_in_futility(void);
 
 #endif /* GAMES_H_ */
-

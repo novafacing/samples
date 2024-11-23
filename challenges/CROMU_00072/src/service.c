@@ -24,27 +24,28 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
+
+#include "graph.h"
+#include "io.h"
+#include "ll.h"
+#include "malloc.h"
 #include "stdint.h"
 #include "stdio.h"
-#include "malloc.h"
-#include "graph.h"
-#include "ll.h"
-#include "io.h"
+#include "stdlib.h"
 
 pNode Nodes;
 pEdge Edges;
 
 int main(void) {
-	uint32_t count = 0;
-	// initialize the graph pointers
-	Nodes = NULL;
-	Edges = NULL;
+  uint32_t count = 0;
+  // initialize the graph pointers
+  Nodes = NULL;
+  Edges = NULL;
 
-	while (ReadCmd() && count < 0x20) {
-		count++;
-	}
+  while (ReadCmd() && count < 0x20) {
+    count++;
+  }
 
-	DestroyNodes();
-	DestroyEdges();
+  DestroyNodes();
+  DestroyEdges();
 }

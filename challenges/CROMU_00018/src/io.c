@@ -23,77 +23,75 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <stdlib.h>
-#include <libcgc.h>
 #include "io.h"
+
+#include <libcgc.h>
+#include <stdlib.h>
 
 int g_currentWriteFD;
 int g_currentReadFD;
 
-void setup_io( int readFD, int writeFD )
-{
-    // Store the FD for I/O operations
-    g_currentReadFD = readFD;
-    g_currentWriteFD = writeFD;
+void setup_io(int readFD, int writeFD) {
+  // Store the FD for I/O operations
+  g_currentReadFD = readFD;
+  g_currentWriteFD = writeFD;
 }
 
-uint8_t read_u8( void )
-{
-    int retvalue;
-    uint8_t temp;
-    size_t rx_count = 1;
+uint8_t read_u8(void) {
+  int retvalue;
+  uint8_t temp;
+  size_t rx_count = 1;
 
-    if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue = receive(g_currentReadFD, &temp, sizeof(temp), &rx_count)) !=
+      0)
+    _terminate(IO_ERROR_TERMINATE);
 
-    return (temp);
+  return (temp);
 }
 
-uint16_t read_u16( void )
-{
-    int retvalue;
-    uint16_t temp;
-    size_t rx_count = 1;
+uint16_t read_u16(void) {
+  int retvalue;
+  uint16_t temp;
+  size_t rx_count = 1;
 
-    if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue = receive(g_currentReadFD, &temp, sizeof(temp), &rx_count)) !=
+      0)
+    _terminate(IO_ERROR_TERMINATE);
 
-    return (temp);
+  return (temp);
 }
 
-uint32_t read_u32( void )
-{
-    int retvalue;
-    uint32_t temp;
-    size_t rx_count = 1;
+uint32_t read_u32(void) {
+  int retvalue;
+  uint32_t temp;
+  size_t rx_count = 1;
 
-    if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue = receive(g_currentReadFD, &temp, sizeof(temp), &rx_count)) !=
+      0)
+    _terminate(IO_ERROR_TERMINATE);
 
-    return (temp);
+  return (temp);
 }
 
-void write_u8( uint8_t value )
-{
-    int retvalue;
-    size_t tx_bytes = 1;
+void write_u8(uint8_t value) {
+  int retvalue;
+  size_t tx_bytes = 1;
 
-    if ( (retvalue = transmit( g_currentWriteFD, &value, sizeof(value), &tx_bytes )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue =
+           transmit(g_currentWriteFD, &value, sizeof(value), &tx_bytes)) != 0)
+    _terminate(IO_ERROR_TERMINATE);
 }
 
-void write_u16( uint16_t value )
-{
-    int retvalue;
+void write_u16(uint16_t value) {
+  int retvalue;
 
-    if ( (retvalue = transmit( g_currentWriteFD, &value, sizeof(value), NULL )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue = transmit(g_currentWriteFD, &value, sizeof(value), NULL)) != 0)
+    _terminate(IO_ERROR_TERMINATE);
 }
 
-void write_u32( uint32_t value )
-{
-    int retvalue;
+void write_u32(uint32_t value) {
+  int retvalue;
 
-    if ( (retvalue = transmit( g_currentWriteFD, &value, sizeof(value), NULL )) != 0 )
-        _terminate( IO_ERROR_TERMINATE );
+  if ((retvalue = transmit(g_currentWriteFD, &value, sizeof(value), NULL)) != 0)
+    _terminate(IO_ERROR_TERMINATE);
 }

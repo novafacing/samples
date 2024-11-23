@@ -24,4 +24,5 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "stdlib.h"

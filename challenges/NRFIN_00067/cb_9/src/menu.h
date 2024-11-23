@@ -18,53 +18,53 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef MENU_H
 #define MENU_H 1
 
-#define FOODSZ	20
+#define FOODSZ 20
 
-#define APP_NAME_SZ 	FOODSZ
+#define APP_NAME_SZ FOODSZ
 
-#define MEAL_NAME_SZ 	FOODSZ
-#define MEAL_MAIN_SZ 	FOODSZ
-#define MEAL_VEG_SZ 	FOODSZ
-#define MEAL_SIDE_SZ 	FOODSZ
+#define MEAL_NAME_SZ FOODSZ
+#define MEAL_MAIN_SZ FOODSZ
+#define MEAL_VEG_SZ FOODSZ
+#define MEAL_SIDE_SZ FOODSZ
 
-#define DES_NAME_SZ 	FOODSZ
+#define DES_NAME_SZ FOODSZ
 
 typedef enum {
-	APP_TYPE = 0,
-	MEAL_TYPE = 1,
-	DES_TYPE = 2,
-	FOOD_TYPES = 3,
+  APP_TYPE = 0,
+  MEAL_TYPE = 1,
+  DES_TYPE = 2,
+  FOOD_TYPES = 3,
 } FoodTypes;
 
 typedef struct __attribute__((packed)) {
-	FoodTypes ftype;
-	char name[APP_NAME_SZ];
-	void *next;
+  FoodTypes ftype;
+  char name[APP_NAME_SZ];
+  void *next;
 } Appetizer;
 
 typedef struct __attribute__((packed)) {
-	FoodTypes ftype;
-	char name[MEAL_NAME_SZ];
-	char main[MEAL_MAIN_SZ];
-	char veggies[MEAL_VEG_SZ];
-	char side[MEAL_SIDE_SZ];
-	void *next;
+  FoodTypes ftype;
+  char name[MEAL_NAME_SZ];
+  char main[MEAL_MAIN_SZ];
+  char veggies[MEAL_VEG_SZ];
+  char side[MEAL_SIDE_SZ];
+  void *next;
 } Meal;
 
 typedef struct __attribute__((packed)) {
-	FoodTypes ftype;
-	char name[DES_NAME_SZ];
-	void *next;
+  FoodTypes ftype;
+  char name[DES_NAME_SZ];
+  void *next;
 } Dessert;
 
 typedef struct {
-	Appetizer *appetizer_list;
-	Meal *meal_list;
-	Dessert *dessert_list;
+  Appetizer *appetizer_list;
+  Meal *meal_list;
+  Dessert *dessert_list;
 } Menu;
 
 /**
@@ -134,6 +134,5 @@ void print_meal(Meal *m);
  * @param d 	Dessert pointer
  */
 void print_dessert(Dessert *d);
-
 
 #endif

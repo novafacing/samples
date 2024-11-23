@@ -24,25 +24,25 @@
 #define DEBUG_BRC_H_
 
 #define SERVER
-//#define DEBUG
+// #define DEBUG
 
 #define FOUT stderr
 
 #ifdef DEBUG
 #define _PRINTF(...) fprintf(FOUT, __VA_ARGS__)
-#define PRINTF(...) \
-    do { \
-        fprintf(FOUT, "SERVER: "); \
-        fprintf(FOUT, __VA_ARGS__); \
-    } while(0)
+#define PRINTF(...)             \
+  do {                          \
+    fprintf(FOUT, "SERVER: ");  \
+    fprintf(FOUT, __VA_ARGS__); \
+  } while (0)
 #else
 #define _PRINTF(...) \
-    do { \
-    } while(0)
+  do {               \
+  } while (0)
 
 #define PRINTF(...) \
-    do { \
-    } while(0)
+  do {              \
+  } while (0)
 #endif
 
 void print_byte_array(const char *bytes, const unsigned short length);

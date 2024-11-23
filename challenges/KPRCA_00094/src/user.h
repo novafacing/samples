@@ -28,20 +28,20 @@
 
 struct team_t;
 typedef struct user_t {
-    char nick[16];
-    char pass[32];
-    struct team_t *team;
+  char nick[16];
+  char pass[32];
+  struct team_t *team;
 } user_t;
 
 typedef struct team_t {
-    char code[33];
-    char name[32];
-    struct user_t** members;
-    struct user_t *leader;
-    size_t num_members;
-    size_t sz_members;
-    char *shout;
-    unsigned int score;
+  char code[33];
+  char name[32];
+  struct user_t **members;
+  struct user_t *leader;
+  size_t num_members;
+  size_t sz_members;
+  char *shout;
+  unsigned int score;
 } team_t;
 
 /* User */

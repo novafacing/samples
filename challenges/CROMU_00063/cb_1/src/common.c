@@ -24,65 +24,66 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
-#include "stdint.h"
-#include "string.h"
+
 #include "L2.h"
+#include "stdint.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 extern char pname[10];
 
 // kill all downstream processes
 void KillAll(void) {
-	char die[] = "diedie!";
-	transmit(FD_ROUTER, die, 7, NULL);
-	transmit(FD_CB3, die, 7, NULL);
+  char die[] = "diedie!";
+  transmit(FD_ROUTER, die, 7, NULL);
+  transmit(FD_CB3, die, 7, NULL);
 }
 
 uint8_t ReceiveBytes(int fd, size_t NumBytes, unsigned char *buf) {
-	size_t TotalBytes = 0;
-	size_t rx_bytes;
-	
-	if (!buf) {
-		return(0);
-	}
+  size_t TotalBytes = 0;
+  size_t rx_bytes;
 
-	while (TotalBytes < NumBytes) {
-		if (receive(fd, buf+TotalBytes, NumBytes-TotalBytes, &rx_bytes) != 0) {
-			#ifdef SWITCH
-			KillAll();
-			#endif
-			_terminate(0);
-		}
-		if (rx_bytes == 0) {
-			#ifdef SWITCH
-			KillAll();
-			#endif
-			_terminate(0);
-		}
-		TotalBytes += rx_bytes;	
-	}
+  if (!buf) {
+    return (0);
+  }
 
-	return(TotalBytes);
+  while (TotalBytes < NumBytes) {
+    if (receive(fd, buf + TotalBytes, NumBytes - TotalBytes, &rx_bytes) != 0) {
+#ifdef SWITCH
+      KillAll();
+#endif
+      _terminate(0);
+    }
+    if (rx_bytes == 0) {
+#ifdef SWITCH
+      KillAll();
+#endif
+      _terminate(0);
+    }
+    TotalBytes += rx_bytes;
+  }
+
+  return (TotalBytes);
 }
 
 uint8_t SendBytes(int fd, size_t NumBytes, unsigned char *buf) {
-	size_t TotalBytes = 0;
-	size_t tx_bytes;
+  size_t TotalBytes = 0;
+  size_t tx_bytes;
 
-	if (!buf) {
-		return(0);
-	}
+  if (!buf) {
+    return (0);
+  }
 
-	while (TotalBytes < NumBytes) {
-		if (transmit(fd, buf, NumBytes-TotalBytes, &tx_bytes) != 0) {
-			return(TotalBytes);
-		}
-		if (tx_bytes == 0) {
-			return(TotalBytes);
-		}
-		TotalBytes += tx_bytes;
-	}
+  while (TotalBytes < NumBytes) {
+    if (transmit(fd, buf, NumBytes - TotalBytes, &tx_bytes) != 0) {
+      return (TotalBytes);
+    }
+    if (tx_bytes == 0) {
+      return (TotalBytes);
+    }
+    TotalBytes += tx_bytes;
+  }
 
-	return(TotalBytes);
+  return (TotalBytes);
 }

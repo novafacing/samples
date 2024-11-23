@@ -36,12 +36,13 @@
 #define REMOTE_ADMIN_TOKEN_REQUEST_CMD_ID 7777
 
 #include <cstdio.h>
+
 #include "brc_command.h"
 #include "user.h"
 
 namespace BrcClient {
 
-//Server Interactions
+// Server Interactions
 void InitServerFd(FILE *fd_in, FILE *fd_out);
 User *RegisterUser(const char *name, unsigned short length);
 bool SearchForUser(const char *user_name, unsigned short user_length);
@@ -50,12 +51,15 @@ bool DeleteUser(User *user, const char *pass, unsigned short pass_length);
 bool JoinChannel(User *user, const char *chan_name, unsigned short chan_length);
 bool SearchForChannel(const char *chan_name, unsigned short chan_length);
 bool PartChannel(User *user, const char *chan_name, unsigned short chan_length);
-bool DeleteChannel(User *user, const char *chan_name, unsigned short chan_length);
-bool ChannelChat(User *user, const char *chan_name, unsigned short chan_length, const char *chat_msg, unsigned short chat_length);
-bool UserChat(User *user, const char *recp_name, unsigned short recp_length, const char *chat_msg, unsigned short chat_length);
+bool DeleteChannel(User *user, const char *chan_name,
+                   unsigned short chan_length);
+bool ChannelChat(User *user, const char *chan_name, unsigned short chan_length,
+                 const char *chat_msg, unsigned short chat_length);
+bool UserChat(User *user, const char *recp_name, unsigned short recp_length,
+              const char *chat_msg, unsigned short chat_length);
 bool ExitServer();
 bool RemoteAdminTokenRequest(User *user, unsigned short page_idx, int *token);
 
-}
+}  // namespace BrcClient
 
 #endif /* CLIENT_COMMANDS_H_ */

@@ -27,35 +27,32 @@ THE SOFTWARE.
 #define PAGESIZE 4096
 #endif
 
-
 #ifndef llist_h
 #define llist_h
 
-
 typedef struct dListNode_s {
-	struct dListNode_s *prev;
-	struct dListNode_s *next;
-	void *this;
-	char data[128];
-}dListNode, *pdListNode;
+  struct dListNode_s *prev;
+  struct dListNode_s *next;
+  void *this;
+  char data[128];
+} dListNode, *pdListNode;
 
 typedef struct sListNode_s {
-	char data[4080];
-	struct sListNode_s *next;
-	unsigned int count;
-}sListNode, *psListNode;
+  char data[4080];
+  struct sListNode_s *next;
+  unsigned int count;
+} sListNode, *psListNode;
 
 typedef struct dList_s {
-	pdListNode listRoot;
-	int count;
-}dList, *pdList;
+  pdListNode listRoot;
+  int count;
+} dList, *pdList;
 
 typedef struct sList_s {
-	psListNode listRoot;
-	int count;
-	int countRemaining;
-}sList, *psList;
-
+  psListNode listRoot;
+  int count;
+  int countRemaining;
+} sList, *psList;
 
 psListNode get_last_element_s(psList thisList);
 pdListNode get_last_element_d(pdList thisList);

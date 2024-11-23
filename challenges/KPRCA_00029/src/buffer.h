@@ -27,10 +27,10 @@
 #include <stdlib.h>
 
 typedef struct {
-    uint64_t read_idx;
-    uint64_t write_idx;
-    uint8_t *buffer;
-    size_t length;
+  uint64_t read_idx;
+  uint64_t write_idx;
+  uint8_t *buffer;
+  size_t length;
 } buffer_t;
 
 // read functions

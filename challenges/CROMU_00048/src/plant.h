@@ -27,8 +27,9 @@ THE SOFTWARE.
 #define PLANT_H
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "plant_system.h"
+#include "stdlib.h"
 
 void RandomInfluent(void);
 void InitPlant(void);

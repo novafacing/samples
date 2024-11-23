@@ -28,6 +28,7 @@
 
 int readline(char *buf, size_t buf_size);
 int readnum(char *buf, size_t buf_size, int *num);
-char *q_and_a(char *question, int maxlen, char *buf, size_t buflen, int *recv_status, bool allow_empty);
+char *q_and_a(char *question, int maxlen, char *buf, size_t buflen,
+              int *recv_status, bool allow_empty);
 
 #endif

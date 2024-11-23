@@ -18,43 +18,43 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <errno.h>
+ */
 #include "recv_until_delim_n.h"
 
+#include <errno.h>
+#include <libcgc.h>
+
 int recv_until_delim_n(int fd, char delim, char *buf, unsigned int size) {
+  if ((NULL == buf) || (0 == size)) {
+    return ERRNO_RECV;
+  }
 
-	if ((NULL == buf) || (0 == size)) {
-		return ERRNO_RECV;
-	}
+  size_t bytes_read_iter = 0;
+  unsigned int bytes_read_total = 0;
 
-	size_t bytes_read_iter = 0;
-	unsigned int bytes_read_total = 0;
+  unsigned int i = 0;
+  for (i = 0; i < size; i++) {
+    if (0 != (receive(fd, &buf[i], 1, &bytes_read_iter))) {
+      return ERRNO_RECV;
+    }
 
-	unsigned int i = 0;
-	for (i = 0; i < size; i++) {
-        if (0 != (receive(fd, &buf[i], 1, &bytes_read_iter))) {
-        	return ERRNO_RECV;
-        }
+    if (0 == bytes_read_iter) {
+      break;
+    }
 
-        if (0 == bytes_read_iter) {
-        	break;
-        }
+    bytes_read_total++;
 
-        bytes_read_total++;
+    if (delim == buf[i]) {
+      break;
+    }
+  }
 
-        if (delim == buf[i]) {
-        	break;
-        }
-	}
+  // bug: if size bytes are read into buf, and the last byte is not the
+  // 	delim char, then this will read 1 byte beyond the end of buf.
+  //	That will cause segfault if buf is against the edge of mapped memory.
+  if (delim != buf[i]) {
+    return ERRNO_RECV;
+  }
 
-	// bug: if size bytes are read into buf, and the last byte is not the
-	// 	delim char, then this will read 1 byte beyond the end of buf.
-	//	That will cause segfault if buf is against the edge of mapped memory.
-	if (delim != buf[i]) {
-		return ERRNO_RECV;
-	}
-
-	return bytes_read_total;
+  return bytes_read_total;
 }

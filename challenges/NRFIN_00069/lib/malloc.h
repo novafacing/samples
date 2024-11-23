@@ -18,13 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <libcgc.h>
+
 #include "cbstring.h"
 
-#define setBit(A, k)   ( A[((k)/32)] |=  (1 << ((k)%32)) )
-#define clearBit(A, k) ( A[((k)/32)] &= ~(1 << ((k)%32)) )
-#define testBit(A, k)  ( A[((k)/32)] &   (1 << ((k)%32)) )
+#define setBit(A, k) (A[((k) / 32)] |= (1 << ((k) % 32)))
+#define clearBit(A, k) (A[((k) / 32)] &= ~(1 << ((k) % 32)))
+#define testBit(A, k) (A[((k) / 32)] & (1 << ((k) % 32)))
 
 #define _SC_PAGESIZE 4096
 #define MAX_RUNS 10
@@ -34,36 +35,36 @@
 #define ALLOCATE_ERROR 1
 
 typedef struct {
-	unsigned int bitmap[64];
-	unsigned int size;
-	void* memory;
-	void* next;
+  unsigned int bitmap[64];
+  unsigned int size;
+  void* memory;
+  void* next;
 } Run;
 
 typedef struct {
-	Run run[MAX_RUNS];
+  Run run[MAX_RUNS];
 } Pool;
 
 typedef struct {
-	size_t size;
-	void* memory;
-	void* next;
+  size_t size;
+  void* memory;
+  void* next;
 } LargeChunk;
 
 /**
-* Allocate size number of bytes from the heap
-* 
-* @param size The number of bytes to allocate
-*
-* @return a pointer the allocated memory
-*/
+ * Allocate size number of bytes from the heap
+ *
+ * @param size The number of bytes to allocate
+ *
+ * @return a pointer the allocated memory
+ */
 void* malloc(size_t size);
 
 /**
-* Deallocate the chunk of memory at address ptr
-* 
-* @param ptr The address of the chunk to deallocate
-*
-* @return None
-*/
+ * Deallocate the chunk of memory at address ptr
+ *
+ * @param ptr The address of the chunk to deallocate
+ *
+ * @return None
+ */
 void free(void* ptr);

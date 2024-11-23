@@ -18,9 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
 #include "libc.h"
 
 #define DEBUG 0
@@ -31,24 +32,34 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
-
 #define EDGRBUF "Edgar: "
 #define WILLBUF "William: "
 #define ELIZBUF "Elizabeth: "
 #define JOHNBUF "John: "
 #define EBUF "ERROR: input too large"
-#define SEND(b,s,o) o=sendall(STDOUT,b,s); if (o<=0) _terminate(1);
-#define SENDL(b,s,o) o=sendline(STDOUT,b,s); if (o<=0) _terminate(1);
-#define RECV(b,s,o) o=recvline(STDIN,b,s); if(o<0){SENDL(EBUF,sizeof(EBUF)-1,o);  _terminate(2);}
-#define ALLOC(s,x,a,o) o=allocate(s,x,a); if(o!=0) _terminate(3);
+#define SEND(b, s, o)        \
+  o = sendall(STDOUT, b, s); \
+  if (o <= 0) _terminate(1);
+#define SENDL(b, s, o)        \
+  o = sendline(STDOUT, b, s); \
+  if (o <= 0) _terminate(1);
+#define RECV(b, s, o)                 \
+  o = recvline(STDIN, b, s);          \
+  if (o < 0) {                        \
+    SENDL(EBUF, sizeof(EBUF) - 1, o); \
+    _terminate(2);                    \
+  }
+#define ALLOC(s, x, a, o) \
+  o = allocate(s, x, a);  \
+  if (o != 0) _terminate(3);
 
 typedef struct htreq {
-    size_t resplen;
-    char recv[1044];
-    char resp[1024];
-    void (*match)(struct htreq*);
-    void (*nomatch)(struct htreq*);
-        
+  size_t resplen;
+  char recv[1044];
+  char resp[1024];
+  void (*match)(struct htreq *);
+  void (*nomatch)(struct htreq *);
+
 } htreq;
 
 int prompt(char *pmpt, char *buf, size_t size);

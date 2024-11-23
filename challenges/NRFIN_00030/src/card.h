@@ -18,17 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef CARD_H
 #define CARD_H 1
 
 struct card {
-	uint8_t suit; // 1: Diamonds, 2: Clubs, 3: Hearts, 4: Spades
-	uint8_t rank; // 1: Ace, 2-10: Face Value, 11: Jack, 12: Queen, 13: King
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
+  uint8_t suit;  // 1: Diamonds, 2: Clubs, 3: Hearts, 4: Spades
+  uint8_t rank;  // 1: Ace, 2-10: Face Value, 11: Jack, 12: Queen, 13: King
+  uint8_t unk1;  // push size to mult of 4 bytes
+  uint8_t unk2;  // push size to mult of 4 bytes
 };
 
 /*
@@ -82,12 +81,12 @@ extern int is_valid_rank(uint8_t rank);
 extern int is_equal(struct card *c1, struct card *c2);
 
 /**
- * Test if arrays cards1 and cards2 contain the same number of cards and 
+ * Test if arrays cards1 and cards2 contain the same number of cards and
  * the same set of cards.
  *
  * Note: This function expects cards1 and cards2 to have at least
  * allocated space for one (1) struct card *.
- * Also expects cards1 and cards2 to have at least qty allocated spaces for 
+ * Also expects cards1 and cards2 to have at least qty allocated spaces for
  * struct card * when qty > 0.
  *
  * @param cards1 Array of cards
@@ -95,6 +94,7 @@ extern int is_equal(struct card *c1, struct card *c2);
  * @param qty Number of cards expected in both arrays
  * @return TRUE if cards1 and cards2 have the same cards, FALSE if not.
  */
-extern int is_set_equal(struct card *cards1[], struct card *cards2[], uint8_t qty);
+extern int is_set_equal(struct card *cards1[], struct card *cards2[],
+                        uint8_t qty);
 
 #endif

@@ -22,13 +22,10 @@
  */
 #include <string.h>
 
-char *strncpy(char *dest, const char *src, size_t len)
-{
+char *strncpy(char *dest, const char *src, size_t len) {
   char *p;
-  for (p = dest; *src != '\0' && p - dest < len; src++, p++)
-    *p = *src;
+  for (p = dest; *src != '\0' && p - dest < len; src++, p++) *p = *src;
 
-  for (; p - dest < len; p++)
-	*p = '\0';
+  for (; p - dest < len; p++) *p = '\0';
   return dest;
 }

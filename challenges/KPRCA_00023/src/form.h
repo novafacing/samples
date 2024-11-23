@@ -10,7 +10,7 @@ typedef struct question {
   char *answer;
   char optional;
   struct question *prev, *next;
-  int (*validator) (char *input);
+  int (*validator)(char *input);
 } question_t;
 
 typedef struct page {
@@ -24,8 +24,8 @@ typedef struct form {
   const char *greeting;
   const char *ending;
   const char *help;
-  void (*init) (void);
-  int (*handlers[NUM_CMDS]) (struct form *_form, char *arg);
+  void (*init)(void);
+  int (*handlers[NUM_CMDS])(struct form *_form, char *arg);
   page_t *pages;
   page_t *cur_page;
   question_t *cur_question;
@@ -40,25 +40,21 @@ int handle_line(form_t *form, char *arg);
 void print_prompt(form_t *form, int with_page, int done);
 void print_greeting(form_t *form);
 
-#define DEC_Q(_name, _title, _hint, _optional, _validator)  \
-  static question_t _name = {                               \
-    .title = _title,                                        \
-    .hint = _hint,                                          \
-    .answer = NULL,                                         \
-    .optional = _optional,                                  \
-    .prev = NULL,                                           \
-    .next = NULL,                                           \
-    .validator = _validator                                 \
-  }
+#define DEC_Q(_name, _title, _hint, _optional, _validator) \
+  static question_t _name = {.title = _title,              \
+                             .hint = _hint,                \
+                             .answer = NULL,               \
+                             .optional = _optional,        \
+                             .prev = NULL,                 \
+                             .next = NULL,                 \
+                             .validator = _validator}
 
-#define DEC_P(_name, _title)  \
-  static page_t _name = {     \
-    .title = _title,          \
-    .prev = NULL,             \
-    .next = NULL,             \
-    .questions = NULL,        \
-    .completed = 0            \
-}
+#define DEC_P(_name, _title)                \
+  static page_t _name = {.title = _title,   \
+                         .prev = NULL,      \
+                         .next = NULL,      \
+                         .questions = NULL, \
+                         .completed = 0}
 
 #define LINK(e, _prev, _next) \
   do {                        \

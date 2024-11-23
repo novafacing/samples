@@ -28,10 +28,10 @@ int FindCode(char *);
 
 #define MAX_CODE 7
 struct language {
-	char c;
-	char code[MAX_CODE];
-	struct language *dit;
-	struct language *dah;
+  char c;
+  char code[MAX_CODE];
+  struct language *dit;
+  struct language *dah;
 };
 
 // Initialize the language structures

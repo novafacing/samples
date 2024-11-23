@@ -26,8 +26,7 @@
 
 #include "mgc_frame.h"
 
-namespace MgcHeaderInfo
-{
+namespace MgcHeaderInfo {
 
 bool Synced(mgc_frame *mframe);
 bool SongV1(mgc_frame *mframe);
@@ -38,6 +37,6 @@ unsigned short SamplesPerFrame(mgc_frame *mframe);
 unsigned short NumAdditionalFrames(mgc_frame *mframe);
 unsigned int CalcFrameSize(mgc_frame *mframe);
 
-}
+}  // namespace MgcHeaderInfo
 
 #endif

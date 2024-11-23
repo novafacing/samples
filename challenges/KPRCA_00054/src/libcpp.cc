@@ -27,32 +27,24 @@ extern "C" {
 
 extern void terminate(int);
 extern "C" {
-  void __cxa_pure_virtual() { exit(0); }
+void __cxa_pure_virtual() { exit(0); }
 };
 
-void *operator new(unsigned int sz) {
-  return malloc(sz);
-}
+void *operator new(unsigned int sz) { return malloc(sz); }
 
-void *operator new[](unsigned int sz) {
-  return ::operator new(sz);
-}
+void *operator new[](unsigned int sz) { return ::operator new(sz); }
 
-void operator delete(void *p) {
-  free(p);
-}
+void operator delete(void *p) { free(p); }
 
-void operator delete[](void *p) {
-  ::operator delete(p);
-}
+void operator delete[](void *p) { ::operator delete(p); }
 
 #define __hidden __attribute__((__visibility__("hidden")))
 
 void *__dso_handle; /* required symbol, but not used */
 
 extern "C" {
-  extern void (*__init_array_start[])(int, char **, char **) __hidden;
-  extern void (*__init_array_end[])(int, char **, char **) __hidden;
+extern void (*__init_array_start[])(int, char **, char **) __hidden;
+extern void (*__init_array_end[])(int, char **, char **) __hidden;
 };
 
 void call_inits(void) {
@@ -62,13 +54,12 @@ void call_inits(void) {
   asize = __init_array_end - __init_array_start;
   for (size_t n = 0; n < asize; n++) {
     fn = __init_array_start[n];
-    if (fn && (long)fn != 1)
-      fn(0, (char **)NULL, (char **)NULL);
+    if (fn && (long)fn != 1) fn(0, (char **)NULL, (char **)NULL);
   }
 }
 
 extern "C" {
-  int __cxa_atexit(void (*func)(void *), void *arg, void *dso);
+int __cxa_atexit(void (*func)(void *), void *arg, void *dso);
 };
 
 static struct exit_handlers {
@@ -78,7 +69,7 @@ static struct exit_handlers {
 static int nhandlers = 0;
 
 int __cxa_atexit(void (*func)(void *), void *arg, void *dso) {
-  if (nhandlers == sizeof(exit_handlers)/sizeof(exit_handlers[0]))
+  if (nhandlers == sizeof(exit_handlers) / sizeof(exit_handlers[0]))
     return (-1);
   exit_handlers[nhandlers].func = func;
   exit_handlers[nhandlers].arg = arg;

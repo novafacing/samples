@@ -15,36 +15,36 @@
 #define INFORMATION_REQUEST 0xA
 #define INFORMATION_RESPONSE 0xB
 
-typedef struct __attribute__ ((__packed__)) {
-    unsigned length : 16;
-    unsigned channel : 16;
-    unsigned char payload[];
+typedef struct __attribute__((__packed__)) {
+  unsigned length : 16;
+  unsigned channel : 16;
+  unsigned char payload[];
 } session_hdr_t;
 
-typedef struct __attribute__ ((__packed__)) {
-    unsigned code : 8;
-    unsigned id : 8;
-    unsigned length : 16;
+typedef struct __attribute__((__packed__)) {
+  unsigned code : 8;
+  unsigned id : 8;
+  unsigned length : 16;
 } control_hdr_t;
 
 typedef struct {
-    control_hdr_t hdr;
-    unsigned char payload[];
+  control_hdr_t hdr;
+  unsigned char payload[];
 } command_t;
 
 typedef union {
-    int type;
+  int type;
 #define RX_EVENT 0
 #define DISCONNECT_EVENT 1
-    struct {
-        int type;
-        unsigned char *data;
-        unsigned int length;
-    } rx;
+  struct {
+    int type;
+    unsigned char *data;
+    unsigned int length;
+  } rx;
 } event_t;
 
-typedef void (*connect_handler_t) (void *channel);
-typedef void (*event_handler_t) (void *channel, void *userdata, event_t *event);
+typedef void (*connect_handler_t)(void *channel);
+typedef void (*event_handler_t)(void *channel, void *userdata, event_t *event);
 
 void session_loop();
 void session_register_psm(unsigned int psm, connect_handler_t handler);

@@ -18,11 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 #include <libcgc.h>
 #include <pov/types.h>
-
 
 // VA defs for xxprintf functions
 // #ifndef _VA_LIST
@@ -44,17 +43,17 @@
  *
  * @param al Arguments list
  */
-#define va_end(al)          __builtin_va_end(al)
+#define va_end(al) __builtin_va_end(al)
 
 /**
- * Expand to an expression that has the type and value of the 
+ * Expand to an expression that has the type and value of the
  *  next argement in the function call.
  *
  * @param al Arguments list
  * @param t Type
  * @return Expression that has given type and value of next argument
  */
-#define va_arg(al, t)    __builtin_va_arg(al, t)
+#define va_arg(al, t) __builtin_va_arg(al, t)
 
 /**
  * Copy the state of the variable agruments list, s, which was previously
@@ -65,7 +64,7 @@
  * @param d Destination variable arguments list
  * @param s Source variable arguments list
  */
-#define va_copy(d, s)       __builtin_va_copy(d, s)
+#define va_copy(d, s) __builtin_va_copy(d, s)
 
 /**
  * A simple, non-standard vsnprintf.
@@ -77,11 +76,11 @@
  *  'L' for char (one single char)
  *  'H' for hex
  *
- * Note: 
- *	 If L is replaced by the term char, then there will be a 
+ * Note:
+ *	 If L is replaced by the term char, then there will be a
  *	term char in the middle of the string. So uses of the resulting
  *	string will cause issues if strlen, etc are used.
- *   If I (itoan) contains term char, then the string will get 
+ *   If I (itoan) contains term char, then the string will get
  *	the decimal representation of the term char in it.
  *
  * Format string marker is dynamic
@@ -92,7 +91,7 @@
  * For each format specifier, it will take a value from args
  *  and insert it at that location as that type.
  *
- * Note: vsnprintf does not call va_end, because it takes a va_list, 
+ * Note: vsnprintf does not call va_end, because it takes a va_list,
  *  caller does so.
  *
  * @param buf Output buffer
@@ -103,7 +102,8 @@
  * @param args Ptr to va_list of arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, va_list args);
+int vsnprintf(char *buf, size_t buf_size, const char fsm, const char term,
+              const char *fmt, va_list args);
 
 /**
  * A simple, non-standard snprintf.
@@ -115,11 +115,11 @@ int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, cons
  *  'L' for char (one single char)
  *  'H' for hex
  *
- * Note: 
- *	 If L is replaced by the term char, then there will be a 
+ * Note:
+ *	 If L is replaced by the term char, then there will be a
  *	term char in the middle of the string. So uses of the resulting
  *	string will cause issues if strlen, etc are used.
- *   If I (itoan) contains term char, then the string will get 
+ *   If I (itoan) contains term char, then the string will get
  *	the decimal representation of the term char in it.
  *
  * Format string marker is dynamic
@@ -138,7 +138,8 @@ int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, cons
  * @param ... Optional arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int snprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, ...);
+int snprintf(char *buf, size_t buf_size, const char fsm, const char term,
+             const char *fmt, ...);
 
 /**
  * A simple, non-standard vfdprintf.
@@ -150,11 +151,11 @@ int snprintf(char * buf, size_t buf_size, const char fsm, const char term, const
  *  'L' for char (one single char)
  *  'H' for hex
  *
- * Note: 
- *	 If L is replaced by the term char, then there will be a 
+ * Note:
+ *	 If L is replaced by the term char, then there will be a
  *	term char in the middle of the string. So uses of the resulting
  *	string will cause issues if strlen, etc are used.
- *   If I (itoan) contains term char, then the string will get 
+ *   If I (itoan) contains term char, then the string will get
  *	the decimal representation of the term char in it.
  *
  * Format string marker is dynamic
@@ -165,7 +166,7 @@ int snprintf(char * buf, size_t buf_size, const char fsm, const char term, const
  * For each format specifier, it will take a value from args
  *  and insert it at that location as that type.
  *
- * Note: vfdprintf does not call va_end, because it takes a va_list, 
+ * Note: vfdprintf does not call va_end, because it takes a va_list,
  *  caller does so.
  *
  * @param fd file descriptor to write to
@@ -175,7 +176,8 @@ int snprintf(char * buf, size_t buf_size, const char fsm, const char term, const
  * @param args Ptr to va_list of arguments to insert into fmt
  * @return Number of bytes sent, not counting term
  */
-int vfdprintf(int fd, const char fsm, const char term, const char *fmt, va_list args);
+int vfdprintf(int fd, const char fsm, const char term, const char *fmt,
+              va_list args);
 
 /**
  * A simple, non-standard fdprintf.
@@ -187,11 +189,11 @@ int vfdprintf(int fd, const char fsm, const char term, const char *fmt, va_list 
  *  'L' for char (one single char)
  *  'H' for hex
  *
- * Note: 
- *	 If L is replaced by the term char, then there will be a 
+ * Note:
+ *	 If L is replaced by the term char, then there will be a
  *	term char in the middle of the string. So uses of the resulting
  *	string will cause issues if strlen, etc are used.
- *   If I (itoan) contains term char, then the string will get 
+ *   If I (itoan) contains term char, then the string will get
  *	the decimal representation of the term char in it.
  *
  * Format string marker is dynamic
@@ -221,11 +223,11 @@ int fdprintf(int fd, const char fsm, const char term, const char *fmt, ...);
  *  'L' for char (one single char)
  *  'H' for hex
  *
- * Note: 
- *	 If L is replaced by the term char, then there will be a 
+ * Note:
+ *	 If L is replaced by the term char, then there will be a
  *	term char in the middle of the string. So uses of the resulting
  *	string will cause issues if strlen, etc are used.
- *   If I (itoan) contains term char, then the string will get 
+ *   If I (itoan) contains term char, then the string will get
  *	the decimal representation of the term char in it.
  *
  * Format string marker is dynamic
@@ -243,4 +245,3 @@ int fdprintf(int fd, const char fsm, const char term, const char *fmt, ...);
  * @return Number of bytes sent to stdout, not counting term
  */
 int fprintf(const char fsm, const char term, const char *fmt, ...);
-

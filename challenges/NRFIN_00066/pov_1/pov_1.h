@@ -24,6 +24,7 @@
 // #define DEBUG 1
 
 #include <libpov.h>
+
 #include "pov_debug.h"
 
 // common things
@@ -45,14 +46,17 @@
 #define PIPE_RECV STDIN
 #define PIPE_SEND STDOUT
 
-#define CHK_SUCCESS(code, args...) if (SUCCESS != (ret = code)) { ERR(args); }
+#define CHK_SUCCESS(code, args...) \
+  if (SUCCESS != (ret = code)) {   \
+    ERR(args);                     \
+  }
 
-#define SZ_PAGE 0x1000 // 4096
+#define SZ_PAGE 0x1000  // 4096
 
 #define REGNUM_EAX 0
 
 #define DST_CLIENT 3
-#define DST_SERVER 5  
+#define DST_SERVER 5
 #define DST_EXIT 0xdeadbeef
 
 #define OP_ADD 0
@@ -65,20 +69,18 @@
 /////////////////////
 
 typedef struct msg {
-    uint32_t dst; // 4B
-    uint32_t x; // 8B
-    uint32_t y; // 12B
-    uint8_t op; // 13B
-    uint8_t nmb; // 14B
-    uint8_t pad[2]; // 16B
-    uint64_t result; // 24B
+  uint32_t dst;     // 4B
+  uint32_t x;       // 8B
+  uint32_t y;       // 12B
+  uint8_t op;       // 13B
+  uint8_t nmb;      // 14B
+  uint8_t pad[2];   // 16B
+  uint64_t result;  // 24B
 } msg;
 
-
- /**
- * The main exploit logic.  
- * Call helper functions to leak auth_token.  
+/**
+ * The main exploit logic.
+ * Call helper functions to leak auth_token.
  * Use auth_token to exercise vuln #2.
  */
 int main(void);
-

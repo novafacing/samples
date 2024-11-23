@@ -24,39 +24,30 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
+
 #include "stdint.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 #define CSI "\x1b\x5b"
 
-void EraseToEOL(void) {
-	printf("$sK", CSI);
-}
+void EraseToEOL(void) { printf("$sK", CSI); }
 
 void EraseLine(uint8_t StartingX) {
-	// move to X
-	printf("$s$dG", CSI, StartingX);
-	// clear to the end of the line
-	EraseToEOL();
+  // move to X
+  printf("$s$dG", CSI, StartingX);
+  // clear to the end of the line
+  EraseToEOL();
 }
 
-void MoveCursor(uint8_t x, uint8_t y) {
-	printf("$s$d;$dH", CSI, x, y);
-}
+void MoveCursor(uint8_t x, uint8_t y) { printf("$s$d;$dH", CSI, x, y); }
 
 void ClearScreen(void) {
-	printf("$s$d$c", CSI, 2, 'J');
-	MoveCursor(1,1);
+  printf("$s$d$c", CSI, 2, 'J');
+  MoveCursor(1, 1);
 }
 
-void CursorRight(uint8_t NumSpaces) {
-	printf("$s$dC", CSI, NumSpaces);
-}
+void CursorRight(uint8_t NumSpaces) { printf("$s$dC", CSI, NumSpaces); }
 
-void CursorLeft(uint8_t NumSpaces) {
-	printf("$s$dD", CSI, NumSpaces);
-}
-
-
+void CursorLeft(uint8_t NumSpaces) { printf("$s$dD", CSI, NumSpaces); }

@@ -18,11 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STDINT_H
 #define STDINT_H 1
-
 
 /** The max value of an int */
 #define INT_MAX (2147483647)
@@ -32,9 +31,9 @@
 #define UINT_MAX (4294967295)
 /** The min value of an unsigned int */
 #define UINT_MIN (0)
- 
-#define	FALSE 0
-#define	TRUE 1
+
+#define FALSE 0
+#define TRUE 1
 
 #define SUCCESS 0
 

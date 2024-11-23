@@ -29,35 +29,30 @@
 
 static usb_t usb;
 
-static size_t _send(const void *buf, size_t length)
-{
-    size_t bytes;
-    ssize_t ret = transmit(STDOUT, buf, length, &bytes);
-    if (ret != 0 || bytes != length) return 0;
-    return ret;
+static size_t _send(const void *buf, size_t length) {
+  size_t bytes;
+  ssize_t ret = transmit(STDOUT, buf, length, &bytes);
+  if (ret != 0 || bytes != length) return 0;
+  return ret;
 }
 
-static size_t _recv(void *buf, size_t length)
-{
-    size_t bytes, count;
-    for (count = 0; count != length;)
-    {
-        size_t to_read = length - count;
-        ssize_t ret = receive(STDIN, buf, to_read, &bytes);
-        if (ret != 0 || bytes == 0) break;
-        count += bytes;
-    }
-    return count;
+static size_t _recv(void *buf, size_t length) {
+  size_t bytes, count;
+  for (count = 0; count != length;) {
+    size_t to_read = length - count;
+    ssize_t ret = receive(STDIN, buf, to_read, &bytes);
+    if (ret != 0 || bytes == 0) break;
+    count += bytes;
+  }
+  return count;
 }
 
-int main()
-{
-    usb_init(&usb);
-    usb.send = _send;
-    usb.recv = _recv;
-    do {
-        if (!usb_handle_packet(&usb))
-            break;
-    } while (1);
-    return 0;
+int main() {
+  usb_init(&usb);
+  usb.send = _send;
+  usb.recv = _recv;
+  do {
+    if (!usb_handle_packet(&usb)) break;
+  } while (1);
+  return 0;
 }

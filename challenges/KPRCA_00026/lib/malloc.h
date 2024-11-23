@@ -26,8 +26,8 @@
 #ifndef MALLOC_COMMON_H
 #define MALLOC_COMMON_H
 
-#include <stdint.h>
 #include <mutex.h>
+#include <stdint.h>
 
 #define NUM_FREE_LISTS 32
 #define HEADER_PADDING 24
@@ -35,7 +35,7 @@
 #define ALIGNMENT 32
 
 #ifdef FILAMENTS
-    extern mutex_t malloc_mutex;
+extern mutex_t malloc_mutex;
 #endif
 
 extern struct blk_t *free_lists[NUM_FREE_LISTS];

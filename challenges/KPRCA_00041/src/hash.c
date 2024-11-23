@@ -24,21 +24,21 @@
 #include "hash.h"
 
 lhash_t get_lhash(char *str) {
-    lhash_t lhash;
-    unsigned long hash1 = 261, hash2 = 0;
-    unsigned char c;
+  lhash_t lhash;
+  unsigned long hash1 = 261, hash2 = 0;
+  unsigned char c;
 
-    //hash = hash * magick + c
-    while ((c = *str++)) {
-        // unsigned long magick = 33
-        hash1 = (hash1 << 5) + hash1 + c;
+  // hash = hash * magick + c
+  while ((c = *str++)) {
+    // unsigned long magick = 33
+    hash1 = (hash1 << 5) + hash1 + c;
 
-        // unsigned long magick = 65599
-        hash2 = (hash2 << 16) + (hash2 << 6) - hash2 + c;
-    }
+    // unsigned long magick = 65599
+    hash2 = (hash2 << 16) + (hash2 << 6) - hash2 + c;
+  }
 
-    lhash.hash1 = hash1;
-    lhash.hash2 = hash2;
+  lhash.hash1 = hash1;
+  lhash.hash2 = hash2;
 
-    return lhash;
+  return lhash;
 }

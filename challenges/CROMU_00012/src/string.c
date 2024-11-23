@@ -24,30 +24,31 @@ THE SOFTWARE.
 
 */
 
-//asan enhanced string functions.
+// asan enhanced string functions.
 #include <libcgc.h>
+
 #include "asan.h"
 
 void *memcpy(void *dst, void *src, unsigned int n) {
-	void *tmpDst;
-	void *tmpSrc;
+  void *tmpDst;
+  void *tmpSrc;
 
-	tmpDst = dst;
-	tmpSrc = src;
+  tmpDst = dst;
+  tmpSrc = src;
 
-	validatePtr(dst);
-	validatePtr(src);
-	validatePtr(dst+n);
-	validatePtr(src+n);
-	while(n) {
-		validatePtr(tmpDst);
-		validatePtr(tmpSrc);
-		*((char *)tmpDst)=*((char *)tmpSrc);
-		tmpDst++;
-		tmpSrc++;
-		n--;
-	}
-	*((char *)tmpDst)=*((char *)tmpSrc);
-	validateRet();
-	return dst;
+  validatePtr(dst);
+  validatePtr(src);
+  validatePtr(dst + n);
+  validatePtr(src + n);
+  while (n) {
+    validatePtr(tmpDst);
+    validatePtr(tmpSrc);
+    *((char *)tmpDst) = *((char *)tmpSrc);
+    tmpDst++;
+    tmpSrc++;
+    n--;
+  }
+  *((char *)tmpDst) = *((char *)tmpSrc);
+  validateRet();
+  return dst;
 }

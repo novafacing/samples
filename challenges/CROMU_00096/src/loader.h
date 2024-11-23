@@ -28,55 +28,58 @@ THE SOFTWARE.
 
 #define EXECUTABLE_FILE_MAGIC 0xC67CC76C
 
-#define EXECUTABLE_TYPE_LIBRARY     0xe1
-#define EXECUTABLE_TYPE_EXECUTABLE  0xe2
+#define EXECUTABLE_TYPE_LIBRARY 0xe1
+#define EXECUTABLE_TYPE_EXECUTABLE 0xe2
 
-#define OPCODE_READ_MEM   0x37  
-#define OPCODE_WRITE_MEM  0x38
-#define OPCODE_WRITE_REG  0x39
-#define OPCODE_EXIT       0x40
-#define OPCODE_OUTPUT     0x41
-#define OPCODE_INPUT      0x42
+#define OPCODE_READ_MEM 0x37
+#define OPCODE_WRITE_MEM 0x38
+#define OPCODE_WRITE_REG 0x39
+#define OPCODE_EXIT 0x40
+#define OPCODE_OUTPUT 0x41
+#define OPCODE_INPUT 0x42
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 typedef struct ExecutableFileHeader_s {
-  uint32_t  size;
-  uint32_t  magic;
-  uint8_t   type;
-  uint16_t  functionCount;
-  uint16_t  functionTableOffset;
-  uint16_t  resourceCount;
-  uint16_t  resourceOffset;
-  uint16_t  functionsSize;
-  uint16_t  functionsOffset;
+  uint32_t size;
+  uint32_t magic;
+  uint8_t type;
+  uint16_t functionCount;
+  uint16_t functionTableOffset;
+  uint16_t resourceCount;
+  uint16_t resourceOffset;
+  uint16_t functionsSize;
+  uint16_t functionsOffset;
 } ExecutableFileHeader;
 // Followed by Function Table
 // Followed by Resource Entries
 // FOllowed by function bodies
 
 typedef struct FunctionTableEntry_s {
-  char      name[64];
-  uint16_t  index;
-  uint32_t  offset; // offset within file when in file, offset in functions when in memory
+  char name[64];
+  uint16_t index;
+  uint32_t offset;  // offset within file when in file, offset in functions when
+                    // in memory
 } FunctionTableEntry;
 
 typedef struct ResourceEntry_s {
-  uint16_t  type;
-  char      value[64];
+  uint16_t type;
+  char value[64];
 } ResourceEntry;
 #pragma pack(pop)
 
 typedef struct ExecutableInMemory_s {
-  uint8_t             type;
-  uint16_t            functionCount;
-  FunctionTableEntry  *functionTable;
-  uint16_t            resourceCount;
-  ResourceEntry       *resourceTable;
-  uint8_t             *functions;
+  uint8_t type;
+  uint16_t functionCount;
+  FunctionTableEntry *functionTable;
+  uint16_t resourceCount;
+  ResourceEntry *resourceTable;
+  uint8_t *functions;
 } ExecutableInMemory;
 
-ExecutableInMemory *LoadSharedLibrary(FileNode *file); // Calls SharedLibraryMain inside
-uint8_t *GetFunctionAddress(char *name, ExecutableInMemory *sl); // Get the address of the function
+ExecutableInMemory *LoadSharedLibrary(
+    FileNode *file);  // Calls SharedLibraryMain inside
+uint8_t *GetFunctionAddress(
+    char *name, ExecutableInMemory *sl);  // Get the address of the function
 void FreeLibrary(ExecutableInMemory *sl);
 int ExecuteFunction(uint8_t *address);
 char *LookupResource(ExecutableInMemory *sl, uint16_t index);

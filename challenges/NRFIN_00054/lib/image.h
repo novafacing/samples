@@ -30,12 +30,12 @@
 #define IMG_MAX_HEIGHT (40)
 
 struct pixel {
-    unsigned char r, g, b;
+  unsigned char r, g, b;
 } __attribute__((packed));
 
 struct image {
-    unsigned int width, height;
-    struct pixel data[0];
+  unsigned int width, height;
+  struct pixel data[0];
 } __attribute__((packed));
 
 /**
@@ -64,7 +64,8 @@ void image_destroy(struct image *img);
  * @param pixel The color to write
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel);
+int image_write_pixel(struct image *img, unsigned x, unsigned y,
+                      struct pixel pixel);
 
 /**
  * Get a pixel from the image at a specific coordinate
@@ -75,7 +76,8 @@ int image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pi
  * @param pixel Out parameter for the color
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel);
+int image_get_pixel(struct image *img, unsigned x, unsigned y,
+                    struct pixel *pixel);
 
 /**
  * Convert a vector representing a color to a pixel value
@@ -87,4 +89,3 @@ int image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pix
 struct pixel color_to_pixel(struct vector color, double gamma);
 
 #endif /* IMAGE_H_ */
-

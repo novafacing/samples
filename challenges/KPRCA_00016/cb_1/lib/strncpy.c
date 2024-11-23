@@ -22,12 +22,10 @@
  */
 #include <string.h>
 
-char *strncpy(char *dest, const char *src, size_t n)
-{
+char *strncpy(char *dest, const char *src, size_t n) {
   char *ret = dest;
   size_t i = 0;
-  while (i < n)
-  {
+  while (i < n) {
     *dest = *src;
     ++dest;
     ++src;

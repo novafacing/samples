@@ -21,55 +21,44 @@
  *
  */
 
-#include <stdlib.h>
 #include "slist.h"
 
-sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp)
-{
+#include <stdlib.h>
+
+sl_node *sl_insert(sl_node *head, void *elem, cmp_fn cmp) {
   sl_node *cur, *prev, *new;
 
   /* Check null */
-  if (elem)
-  {
-    new = (sl_node *) malloc(sizeof(sl_node));
-    if (new)
-    {
+  if (elem) {
+    new = (sl_node *)malloc(sizeof(sl_node));
+    if (new) {
       new->elem = elem;
 
-      if (head == NULL)
-      {
+      if (head == NULL) {
         /* New element should be the head */
         head = new;
         head->next = NULL;
-      }
-      else
-      {
+      } else {
         /* Find the right place to insert */
         cur = head;
         prev = NULL;
-        while (cur)
-        {
-          if (cmp(cur->elem, new->elem) > 0)
-            break;
+        while (cur) {
+          if (cmp(cur->elem, new->elem) > 0) break;
           prev = cur;
           cur = cur->next;
         }
 
         /* New element should be the tail */
-        if (cur == NULL)
-          prev->next = new;
+        if (cur == NULL) prev->next = new;
         /* Else */
-        else
-        {
+        else {
           /* New element belongs to the head */
-          if (prev == NULL)
-          {
+          if (prev == NULL) {
             new->next = head;
             head = new;
           }
           /* New element should be in the middle */
-          else
-          {
+          else {
             new->next = prev->next;
             prev->next = new;
           }
@@ -80,19 +69,16 @@ sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp)
   return head;
 }
 
-void sl_destroy(sl_node *head, free_fn ffn)
-{
+void sl_destroy(sl_node *head, free_fn ffn) {
   sl_node *cur, *tmp;
 
   /* Initialize node pointers */
   cur = tmp = head;
 
   /* Free each node and its element inside */
-  while (cur)
-  {
+  while (cur) {
     tmp = cur->next;
-    if (cur->elem)
-      ffn(cur->elem);
+    if (cur->elem) ffn(cur->elem);
     free(cur);
     cur = tmp;
   }

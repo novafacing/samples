@@ -21,42 +21,47 @@
  *
  */
 
-#include <libcgc.h>
-
 #include <ctype.h>
-#include <string.h>
+#include <libcgc.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "form.h"
 
-static const char *valid_education_levels[] = {
-  "HS", "COLLEGE", "ADV", NULL
-};
+static const char *valid_education_levels[] = {"HS", "COLLEGE", "ADV", NULL};
 
 static const char *valid_eye_colors[] = {
-  "Black", "Blue", "Brown", "Gray", "Green", "Hazel", "Maroon", "Multicolored",
-  "Pink", "Unknown", NULL
-};
+    "Black",  "Blue",         "Brown", "Gray",    "Green", "Hazel",
+    "Maroon", "Multicolored", "Pink",  "Unknown", NULL};
 
-static const char *valid_hair_colors[] = {
-  "Bald", "Black", "Blonde or Strawbery", "Brown", "Gray or Partially Gray",
-  "Red or Auburn", "Sandy", "White", "Blue", "Green", "Orange", "Pink",
-  "Purple", "Unspecified or Unknown", NULL
-};
+static const char *valid_hair_colors[] = {"Bald",
+                                          "Black",
+                                          "Blonde or Strawbery",
+                                          "Brown",
+                                          "Gray or Partially Gray",
+                                          "Red or Auburn",
+                                          "Sandy",
+                                          "White",
+                                          "Blue",
+                                          "Green",
+                                          "Orange",
+                                          "Pink",
+                                          "Purple",
+                                          "Unspecified or Unknown",
+                                          NULL};
 
 static const char *valid_states[] = {
-  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID",
-  "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO",
-  "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA",
-  "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", NULL
-};
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA",
+    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA",
+    "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY",
+    "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX",
+    "UT", "VT", "VA", "WA", "WV", "WI", "WY", NULL};
 
-static const char *valid_suffixes[] = {
-  "Jr", "Sr", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Other", NULL
-};
+static const char *valid_suffixes[] = {"Jr", "Sr",    "II",  "III",  "IV",
+                                       "V",  "VI",    "VII", "VIII", "IX",
+                                       "X",  "Other", NULL};
 
-int contains(const char *arr[], char *e)
-{
+int contains(const char *arr[], char *e) {
   const char **cur = arr;
   while (*cur != NULL) {
     if (strncmp((char *)*cur, e, strlen(*cur)) == 0) {
@@ -69,39 +74,25 @@ int contains(const char *arr[], char *e)
   return 0;
 }
 
-int validate_edu(char *input)
-{
+int validate_edu(char *input) {
   return contains(valid_education_levels, input);
 }
 
-int validate_eye_color(char *input)
-{
+int validate_eye_color(char *input) {
   return contains(valid_eye_colors, input);
 }
 
-int validate_hair_color(char *input)
-{
+int validate_hair_color(char *input) {
   return contains(valid_hair_colors, input);
 }
 
-int validate_state(char *input)
-{
-  return contains(valid_states, input);
-}
+int validate_state(char *input) { return contains(valid_states, input); }
 
-int validate_suffix(char *input)
-{
-  return contains(valid_suffixes, input);
-}
+int validate_suffix(char *input) { return contains(valid_suffixes, input); }
 
+int within(int min, int max, int x) { return x >= min && x <= max; }
 
-int within(int min, int max, int x)
-{
-  return x >= min && x <= max;
-}
-
-int all_digits(char *input)
-{
+int all_digits(char *input) {
   for (size_t i = 0; i < strlen(input); i++)
     if (!isdigit(input[i])) {
       return 0;
@@ -110,58 +101,48 @@ int all_digits(char *input)
   return 1;
 }
 
-int validate_day(char *input)
-{
+int validate_day(char *input) {
   if (!all_digits(input)) return 0;
   return within(1, 31, strtol(input, NULL, 10));
 }
 
-int validate_month(char *input)
-{
+int validate_month(char *input) {
   if (!all_digits(input)) return 0;
   return within(1, 12, strtol(input, NULL, 10));
 }
 
-int validate_year(char *input)
-{
+int validate_year(char *input) {
   if (!all_digits(input)) return 0;
   return within(1900, 2014, strtol(input, NULL, 10));
 }
 
-int validate_height_inches(char *input)
-{
+int validate_height_inches(char *input) {
   if (!all_digits(input)) return 0;
   return within(0, 11, strtol(input, NULL, 10));
 }
 
-int validate_height_feet(char *input)
-{
+int validate_height_feet(char *input) {
   if (!all_digits(input)) return 0;
   return within(1, 9, strtol(input, NULL, 10));
 }
 
-int validate_weight(char *input)
-{
+int validate_weight(char *input) {
   if (!all_digits(input)) return 0;
   return within(50, 500, strtol(input, NULL, 10));
 }
 
-int validate_name(char *input)
-{
+int validate_name(char *input) {
   for (size_t i = 0; i < strlen(input); i++)
-    if (!isprint(input[i]) && input[i] != '\'')
-      return 0;
+    if (!isprint(input[i]) && input[i] != '\'') return 0;
 
   return 1;
 }
 
-int validate_email(char *input)
-{
+int validate_email(char *input) {
   int has_at = 0;
   char c;
 
-  if (strlen(input) < 3 || strlen(input) > 64)
-    return 0;
+  if (strlen(input) < 3 || strlen(input) > 64) return 0;
 
   for (size_t i = 0; i < strlen(input); i++) {
     c = input[i];
@@ -175,17 +156,14 @@ int validate_email(char *input)
       }
     }
 
-    if (!(isalnum(c) || c == '.' || c == '-' || c == '_'))
-      return 0;
+    if (!(isalnum(c) || c == '.' || c == '-' || c == '_')) return 0;
   }
 
   return has_at;
 }
 
-int validate_street(char *input)
-{
-  if (strlen(input) > 32 || strlen(input) < 3)
-    return 0;
+int validate_street(char *input) {
+  if (strlen(input) > 32 || strlen(input) < 3) return 0;
 
   for (size_t i = 0; i < strlen(input); i++)
     if (!(isalnum(input[i]) || isspace(input[i]) || ispunct(input[i])))
@@ -194,10 +172,8 @@ int validate_street(char *input)
   return 1;
 }
 
-int validate_city(char *input)
-{
-  if (strlen(input) > 32 || strlen(input) < 4)
-    return 0;
+int validate_city(char *input) {
+  if (strlen(input) > 32 || strlen(input) < 4) return 0;
 
   for (size_t i = 0; i < strlen(input); i++)
     if (!(isalnum(input[i]) || isspace(input[i]) || ispunct(input[i])))
@@ -206,66 +182,50 @@ int validate_city(char *input)
   return 1;
 }
 
-int validate_zip(char *input)
-{
-  if (strlen(input) != 5)
-    return 0;
+int validate_zip(char *input) {
+  if (strlen(input) != 5) return 0;
 
   for (int i = 0; i < 5; i++)
-    if (!isdigit(input[i]))
-      return 0;
+    if (!isdigit(input[i])) return 0;
 
   return 1;
 }
 
-int validate_phone(char *input)
-{
-  if (strlen(input) != 12)
-    return 0;
+int validate_phone(char *input) {
+  if (strlen(input) != 12) return 0;
 
   for (int i = 0; i < 12; i++)
     if ((i == 3 || i == 7)) {
-      if (input[i] != '-')
-        return 0;
+      if (input[i] != '-') return 0;
     } else {
-      if (!isdigit(input[i]))
-        return 0;
+      if (!isdigit(input[i])) return 0;
     }
 
   return 1;
 }
 
-int validate_sex(char *input)
-{
-  if (strlen(input) != 1)
-    return 0;
+int validate_sex(char *input) {
+  if (strlen(input) != 1) return 0;
 
-  if (input[0] != 'M' && input[0] != 'F')
-    return 0;
+  if (input[0] != 'M' && input[0] != 'F') return 0;
 
   return 1;
 }
 
-int validate_yes_no(char *input)
-{
-  if (strlen(input) != 1)
-    return 0;
+int validate_yes_no(char *input) {
+  if (strlen(input) != 1) return 0;
 
-  if (input[0] != 'Y' && input[0] != 'N')
-    return 0;
+  if (input[0] != 'Y' && input[0] != 'N') return 0;
 
   return 1;
 }
 
-int validate_gpa(char *input)
-{
-  if (strlen(input) != 4)
-    return 0;
+int validate_gpa(char *input) {
+  if (strlen(input) != 4) return 0;
 
   for (int i = 0; i < 4; i++) {
     if (i == 1) {
-      if (input[i] != '.')
-        return 0;
+      if (input[i] != '.') return 0;
     } else if (!isdigit(input[i]))
       return 0;
   }
@@ -331,7 +291,8 @@ DEC_Q(wzip, "Zip Code", NULL, 0, validate_zip);
 DEC_Q(sup_last_name, "Supervisor Last Name", NULL, 0, validate_name);
 DEC_Q(sup_first_name, "Supervisor First Name", NULL, 0, validate_name);
 DEC_Q(sup_title, "Supervisor Title", NULL, 0, validate_name);
-DEC_Q(sphone, "Supervisor Telephone Number", " [XXX-XXX-XXXX]", 0, validate_phone);
+DEC_Q(sphone, "Supervisor Telephone Number", " [XXX-XXX-XXXX]", 0,
+      validate_phone);
 DEC_Q(semail, "Supervisor e-mail", NULL, 1, validate_email);
 
 // Final
@@ -347,8 +308,7 @@ DEC_P(employment, "Employment");
 DEC_P(final, "Final Questions");
 DEC_P(fin, NULL);
 
-void init_af86(void)
-{
+void init_af86(void) {
   // Pages
   LINK(candidate, NULL, &contact);
   LINK(contact, &candidate, &address);
@@ -426,38 +386,36 @@ void init_af86(void)
 }
 
 form_t af86 = {
-  .ending = "\n\n"
-    "You have completed your application with the Sea Eye Association.\nYou "
-    "may review the form. Navigate through the application with **prev and "
-    "**next.\nOnce your are satisfied type **exit to exit and submit the "
-    "form\nIf you wish to discard your application, please use Control-C\n",
+    .ending =
+        "\n\n"
+        "You have completed your application with the Sea Eye "
+        "Association.\nYou "
+        "may review the form. Navigate through the application with **prev and "
+        "**next.\nOnce your are satisfied type **exit to exit and submit the "
+        "form\nIf you wish to discard your application, please use Control-C\n",
 
-  .greeting = "\n\n"
-    "Thanks for your interest in the Sea Eye Association.\n"
-    "In order to be considered for the job complete the preliminary online "
-    "background check\nDue to the secure nature of the position you are "
-    "applying for you may be asked to\nsubmit additional paperwork after "
-    "your preliminary background check has been approved.\nThank you for "
-    "your cooperation\n",
+    .greeting =
+        "\n\n"
+        "Thanks for your interest in the Sea Eye Association.\n"
+        "In order to be considered for the job complete the preliminary online "
+        "background check\nDue to the secure nature of the position you are "
+        "applying for you may be asked to\nsubmit additional paperwork after "
+        "your preliminary background check has been approved.\nThank you for "
+        "your cooperation\n",
 
-  .help = "All commands begin with '**' and may be entered at any time\n"
-    "**prev <Return to the previous page>\n"
-    "**next <Move to the next page>\n"
-    "**update [id] <Update field, ex: \"Update First Name\">\n"
-    "**help <Print this dialogue>\n"
-    "**exit <Exit application>\n",
+    .help =
+        "All commands begin with '**' and may be entered at any time\n"
+        "**prev <Return to the previous page>\n"
+        "**next <Move to the next page>\n"
+        "**update [id] <Update field, ex: \"Update First Name\">\n"
+        "**help <Print this dialogue>\n"
+        "**exit <Exit application>\n",
 
-  .init = init_af86,
+    .init = init_af86,
 
-  .handlers = {
-    handle_next,
-    handle_prev,
-    handle_update,
-    handle_help,
-    handle_exit
-  },
+    .handlers = {handle_next, handle_prev, handle_update, handle_help,
+                 handle_exit},
 
-  .pages = &candidate,
-  .cur_page = &candidate,
-  .cur_question = &last_name
-};
+    .pages = &candidate,
+    .cur_page = &candidate,
+    .cur_question = &last_name};

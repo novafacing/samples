@@ -25,143 +25,126 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
+
 #include "stdlib.h"
 
+unsigned char encoder_values[] = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C',
+    'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-', '+'};
 
-unsigned char encoder_values[] = { 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-							'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 
-							'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 
-							'y', 'z', '1', '2', '3', '4', '5', '6',
-							'7', '8', '9', '0', 'A', 'B', 'C', 'D',
-							'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-							'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-							'U', 'V', 'W', 'X', 'Y', 'Z', '-', '+' 
-						};
+unsigned char *My64Encode(size_t data_size, unsigned char *data,
+                          size_t *out_data_size) {
+  unsigned char *output_data;
+  unsigned char *padded_input_data;
 
+  size_t output_size;
+  size_t padded_input_size;
 
-unsigned char *My64Encode(size_t data_size, unsigned char *data, size_t *out_data_size) {
+  unsigned char byteA, byteB, byteC, byteD;
 
-unsigned char *output_data;
-unsigned char *padded_input_data;
+  size_t i, j;
 
-size_t output_size;
-size_t padded_input_size;
+  switch (data_size % 3) {
+    case (2):
 
-unsigned char byteA, byteB, byteC, byteD;
+      padded_input_size = data_size + 1;
+      output_size = (padded_input_size) * 4 / 3;
+      break;
 
-size_t i, j;
+    case (1):
 
+      padded_input_size = data_size + 2;
+      output_size = (padded_input_size) * 4 / 3;
+      break;
 
-		switch (data_size%3) {
+    case (0):
 
+      padded_input_size = data_size;
+      output_size = padded_input_size * 4 / 3;
+      break;
+  }
 
-			case (2):
+  padded_input_data = malloc(padded_input_size);
 
-				padded_input_size = data_size + 1;
-				output_size = (padded_input_size) * 4 / 3;
-				break;
+  if (padded_input_data == 0) {
+    printf("unable to malloc()\n");
+    _terminate(-1);
+  }
 
-			case (1):
+  bzero(padded_input_data, padded_input_size);
 
-				padded_input_size = data_size + 2;
-				output_size = (padded_input_size) * 4 / 3;
-				break;
+  memcpy(padded_input_data, data, data_size);
 
-			case (0):
+  output_data = malloc(output_size);
 
-				padded_input_size = data_size;
-				output_size = padded_input_size * 4 / 3;
-				break;
-		}	
+  if (output_data == 0) {
+    printf("unable to malloc()\n");
+    _terminate(-1);
+  }
 
-		padded_input_data = malloc(padded_input_size);
+  bzero(output_data, output_size);
 
-		if (padded_input_data == 0) {
+  for (i = 0, j = 0; i < padded_input_size; i += 3, j += 4) {
+    byteA = padded_input_data[i] >> 2;
+    byteB =
+        ((padded_input_data[i] & 0x3) << 4) | (padded_input_data[i + 1] >> 4);
+    byteC = ((padded_input_data[i + 1] & 0xf) << 2) |
+            ((padded_input_data[i + 2] & 0xc0) >> 6);
+    byteD = (padded_input_data[i + 2] & 0x3f);
 
-			printf("unable to malloc()\n");
-			_terminate(-1);
-		}
+    output_data[j] = encoder_values[byteA];
+    output_data[j + 1] = encoder_values[byteB];
+    output_data[j + 2] = encoder_values[byteC];
+    output_data[j + 3] = encoder_values[byteD];
+  }
 
-		bzero(padded_input_data, padded_input_size);
+  free(padded_input_data);
 
-		memcpy(padded_input_data, data, data_size);
+  *out_data_size = output_size;
 
-		output_data = malloc(output_size);
-
-		if (output_data == 0) {
-
-			printf("unable to malloc()\n");
-			_terminate(-1);
-
-		}
-
-		bzero(output_data, output_size);
-
-		for (i=0, j=0; i< padded_input_size; i+=3, j+=4) {
-
-			byteA = padded_input_data[i]  >> 2;
-			byteB = ((padded_input_data[i] & 0x3) << 4) | (padded_input_data[i+1]>>4);
-			byteC = ((padded_input_data[i+1] & 0xf) <<2) | ((padded_input_data[i+2] & 0xc0)>> 6);
-			byteD = (padded_input_data[i+2] & 0x3f);
-
-			output_data[j] = encoder_values[byteA];
-			output_data[j+1] = encoder_values[byteB];
-			output_data[j+2] = encoder_values[byteC];
-			output_data[j+3] = encoder_values[byteD];
-
-		}
-
-		free(padded_input_data);
-
-		*out_data_size = output_size;
-
-		return output_data;
+  return output_data;
 }
 
-
 void encode_command(char *cmd) {
+  char buffer[1024];
+  unsigned char *encoded;
+  size_t encoded_size;
+  size_t i;
+  int count;
+  unsigned char *input_data;
 
-char buffer[1024];
-unsigned char *encoded;
-size_t encoded_size;
-size_t i;
-int count;
-unsigned char *input_data;
+  printf("How many bytes of data:\n");
 
-	printf("How many bytes of data:\n");
+  getline(buffer, 100);
 
-	getline( buffer, 100 );
+  count = atoi(buffer);
 
-	count = atoi(buffer);
+  if (count > 0) {
+    input_data = malloc(count);
 
-	if (count > 0) {
-	
-		input_data = malloc(count);
+    if (input_data == 0) {
+      printf("unable to malloc()\n");
+      _terminate(-1);
+    }
+  } else
+    return;
 
-		if (input_data == 0) {
+  printf("Enter data to be encoded:\n");
 
-			printf("unable to malloc()\n");
-			_terminate(-1);
-		}
-	}
-	else
-		return;
+  receive_bytes(input_data, count);
 
-	printf("Enter data to be encoded:\n");
+  encoded = My64Encode(count, input_data, &encoded_size);
 
-	receive_bytes( input_data, count );
+  // this was added to keep an extra long input from being passed onto the
+  // routine that reads the main menu
+  flush_input(STDIN);
 
-	encoded=My64Encode(count, input_data, &encoded_size);
+  for (i = 0; i < encoded_size; ++i) printf("@c", encoded[i]);
 
-	// this was added to keep an extra long input from being passed onto the routine that reads the main menu
-	flush_input(STDIN);
+  printf("\n");
 
-	for (i=0; i< encoded_size; ++i)
-			printf("@c", encoded[i]);
-
-	printf("\n");
-
-	free(encoded);
-
-
+  free(encoded);
 }

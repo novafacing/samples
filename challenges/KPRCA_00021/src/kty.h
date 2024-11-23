@@ -21,10 +21,11 @@
  *
  */
 
-#ifndef KTY_H 
+#ifndef KTY_H
 #define KTY_H
 
 #include <libcgc.h>
+
 #include "array.h"
 #include "hashtable.h"
 
@@ -60,8 +61,8 @@ typedef struct kty_item {
   } item;
 } kty_item_t;
 
-typedef void (kty_dumps_fn) (kty_item_t *kty);
-typedef kty_item_t* (kty_loads_fn) (char *str);
+typedef void(kty_dumps_fn)(kty_item_t *kty);
+typedef kty_item_t *(kty_loads_fn)(char *str);
 
 typedef struct kty_parser {
   unsigned int cats;
@@ -74,6 +75,6 @@ int kty_init(kty_parser_t *parser);
 void free_kty_item(void *e);
 
 void kty_dumps(kty_item_t *kty);
-kty_item_t* kty_loads(char *str);
+kty_item_t *kty_loads(char *str);
 
 #endif

@@ -1,17 +1,13 @@
 #include <string.h>
 
-char *strncpy(char *dest, const char *src, size_t n)
-{
-    size_t i;
-    for (i = 0; i < n; i++)
-    {
-        dest[i] = src[i];
-        if (dest[i] == '\0')
-            break;
-    }
+char *strncpy(char *dest, const char *src, size_t n) {
+  size_t i;
+  for (i = 0; i < n; i++) {
+    dest[i] = src[i];
+    if (dest[i] == '\0') break;
+  }
 
-    for (; i < n; i++)
-        dest[i] = 0;
+  for (; i < n; i++) dest[i] = 0;
 
-    return dest;
+  return dest;
 }

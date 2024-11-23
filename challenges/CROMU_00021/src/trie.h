@@ -28,14 +28,14 @@ THE SOFTWARE.
 #define _TRIE_H
 
 typedef struct _trie {
-	struct _trie * children;
-	struct _trie * next;
-	char tag;
-	char *value;
+  struct _trie *children;
+  struct _trie *next;
+  char tag;
+  char *value;
 } trie;
 
-trie * initTrie();
-void insertInTrie(trie *root, char *key, void * value);
-trie * findInTrie(trie *root, char * key);
+trie *initTrie();
+void insertInTrie(trie *root, char *key, void *value);
+trie *findInTrie(trie *root, char *key);
 
 #endif

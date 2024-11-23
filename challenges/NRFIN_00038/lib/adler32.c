@@ -22,17 +22,14 @@
 
 #include "adler32.h"
 
-unsigned int
-adler32ish(unsigned char *buf, size_t n)
-{
-    unsigned short a = 1, b = 0;
-    size_t i;
+unsigned int adler32ish(unsigned char *buf, size_t n) {
+  unsigned short a = 1, b = 0;
+  size_t i;
 
-    for (i = 0; i < n; i++) {
-        a = a + buf[i];
-        b = b + a;
-    }
+  for (i = 0; i < n; i++) {
+    a = a + buf[i];
+    b = b + a;
+  }
 
-    return ((unsigned int)b << 16) | a;
+  return ((unsigned int)b << 16) | a;
 }
-

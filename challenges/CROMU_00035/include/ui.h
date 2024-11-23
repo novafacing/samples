@@ -29,13 +29,12 @@ THE SOFTWARE.
 
 unsigned int get_int(char *);
 unsigned int get_string(char *, unsigned int, char *);
-void start_UI(pDataStruct );
+void start_UI(pDataStruct);
 void displayWallOfText();
-void main_loop(pDataStruct );
-void date_from_epoch(unsigned int , int *);
-void strofdate( unsigned int );
-unsigned int make_epoch( int, int, int, int, int, int);
+void main_loop(pDataStruct);
+void date_from_epoch(unsigned int, int *);
+void strofdate(unsigned int);
+unsigned int make_epoch(int, int, int, int, int, int);
 unsigned int get_time();
-
 
 #endif

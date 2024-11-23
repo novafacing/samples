@@ -28,8 +28,8 @@ THE SOFTWARE.
 #define _STACK_H
 
 typedef struct _stack {
-	int top;
-	void * items[32];
+  int top;
+  void *items[32];
 } stack;
 
 stack *initStack();

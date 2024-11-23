@@ -24,19 +24,18 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdint.h"
-#include "stdlib.h"
-#include "stdio.h"
+
+#include "cgcmb.h"
+#include "cgcrpc.h"
+#include "fs.h"
 #include "malloc.h"
+#include "stdint.h"
+#include "stdio.h"
+#include "stdlib.h"
 #include "transport.h"
 #include "user.h"
-#include "fs.h"
-#include "cgcrpc.h"
-#include "cgcmb.h"
 
-
-int main(void) 
-{
+int main(void) {
   TransportMessage *tpMessage;
   CGCMB_Message *mbMessage;
 
@@ -46,35 +45,30 @@ int main(void)
   mbServerState->sessionKey = 0;
 
   srand();
-  
+
   GenerateUsers();
   InitializeFileSystem();
   InitializeCGCRPC();
- 
+
 TOP:
-  if (ReceiveTransportMessage(&tpMessage) != 0)
-  {
+  if (ReceiveTransportMessage(&tpMessage) != 0) {
     goto NEXT_MSG;
   }
 
-  if (ReceiveCGCMBMessage(tpMessage, &mbMessage) != 0)
-  {
+  if (ReceiveCGCMBMessage(tpMessage, &mbMessage) != 0) {
     goto NEXT_MSG;
   }
 
-  if (ParseCGCMBMessage(mbMessage) != 0)
-  {
+  if (ParseCGCMBMessage(mbMessage) != 0) {
     goto NEXT_MSG;
   }
 
-  if (HandleCGCMBMessage(mbMessage) != 0)
-  {
+  if (HandleCGCMBMessage(mbMessage) != 0) {
     return 0;
   }
-    
+
 NEXT_MSG:
   DestroyCGCMBMessage(&mbMessage);
   DestroyTransportMessage(&tpMessage);
   goto TOP;
-
 }

@@ -18,19 +18,18 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "memset.h"
 
 unsigned int memset(void *buf, unsigned char ch, unsigned int n) {
+  if (0 == n) {
+    return 0;
+  }
 
-	if (0 == n) {
-		return 0;
-	}
+  unsigned char *p_buf = (unsigned char *)buf;
+  for (unsigned int i = 0; i < n; i++) {
+    p_buf[i] = ch;
+  }
 
-	unsigned char *p_buf = (unsigned char *)buf;
-	for (unsigned int i = 0; i < n; i++) {
-		p_buf[i] = ch;
-	}
-
-	return n;
+  return n;
 }

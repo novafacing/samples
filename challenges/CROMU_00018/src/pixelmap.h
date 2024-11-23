@@ -28,7 +28,8 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *rgb_data, uint32_t width, uint32_t height );
-int32_t pixelmap_get_size( uint32_t width, uint32_t height );
+int32_t pixelmap_write_file(uint8_t **pFileData, uint32_t *pFileSize,
+                            uint8_t *rgb_data, uint32_t width, uint32_t height);
+int32_t pixelmap_get_size(uint32_t width, uint32_t height);
 
-#endif // __PIXELMAP_H___
+#endif  // __PIXELMAP_H___

@@ -23,66 +23,49 @@
 #pragma once
 #include <cstdint.h>
 #include <cstdlib.h>
+
 #include "audiostream.h"
 #include "gain.h"
 
-class AudioTrack
-{
-public:
-    AudioTrack(AudioStream *);
-    AudioTrack(AudioStream *, AudioStream *);
-    ~AudioTrack();
+class AudioTrack {
+ public:
+  AudioTrack(AudioStream *);
+  AudioTrack(AudioStream *, AudioStream *);
+  ~AudioTrack();
 
-    inline unsigned int getLength() const
-    {
-        return channels[0]->getLength();
-    }
-    inline bool getStereo() const
-    {
-        return stereo;
-    }
-    inline AudioStream *getChannel(unsigned int i) const
-    {
-        if (i == 0)
-            return channels[0];
+  inline unsigned int getLength() const { return channels[0]->getLength(); }
+  inline bool getStereo() const { return stereo; }
+  inline AudioStream *getChannel(unsigned int i) const {
+    if (i == 0) return channels[0];
 
-        if (stereo)
-            return channels[1];
-        else
-            return NULL;
-    }
+    if (stereo)
+      return channels[1];
+    else
+      return NULL;
+  }
 
-    void setLength(unsigned int length);
-    inline void setGain(Gain level)
-    {
-        gain = level;
-    }
-    inline void setPan(int32_t value)
-    {
-        pan = value;
-    }
-    inline void setMute(bool value)
-    {
-        mute = value;
-    }
-    inline AudioTrack *toMono()
-    {
-        if (!stereo)
-            return NULL;
+  void setLength(unsigned int length);
+  inline void setGain(Gain level) { gain = level; }
+  inline void setPan(int32_t value) { pan = value; }
+  inline void setMute(bool value) { mute = value; }
+  inline AudioTrack *toMono() {
+    if (!stereo) return NULL;
 
-        stereo = false;
-        return new AudioTrack(channels[1]);
-    }
-    bool toStereo(AudioTrack *other);
-    void mix(const AudioTrack &src);
-public:
-    unsigned int id;
-private:
-    AudioTrack();
+    stereo = false;
+    return new AudioTrack(channels[1]);
+  }
+  bool toStereo(AudioTrack *other);
+  void mix(const AudioTrack &src);
 
-    bool stereo;
-    AudioStream *channels[2];
-    Gain gain;
-    int32_t pan;
-    bool mute;
+ public:
+  unsigned int id;
+
+ private:
+  AudioTrack();
+
+  bool stereo;
+  AudioStream *channels[2];
+  Gain gain;
+  int32_t pan;
+  bool mute;
 };

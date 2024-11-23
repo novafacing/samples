@@ -21,25 +21,21 @@
  *
  */
 
-#include <libcgc.h>
-#include <string.h>
 #include "user.h"
 
-int add_user(user_list_t *list, user_t *user)
-{
-  if (user)
-  {
+#include <libcgc.h>
+#include <string.h>
+
+int add_user(user_list_t *list, user_t *user) {
+  if (user) {
     user_t *u;
     int auth_code;
     random(&auth_code, sizeof(auth_code), NULL);
 
-    if (*list == NULL)
-    {
+    if (*list == NULL) {
       user->user_id = 1;
       *list = user;
-    }
-    else
-    {
+    } else {
       for (u = *list; u->next != NULL; u = u->next);
       user->user_id = u->user_id + 1;
       u->next = user;
@@ -51,15 +47,11 @@ int add_user(user_list_t *list, user_t *user)
   return -1;
 }
 
-user_t* find_user(user_list_t list, char *username)
-{
+user_t *find_user(user_list_t list, char *username) {
   user_t *ret = NULL;
-  if (list && username)
-  {
-    for (user_t *u = list; u != NULL; u = u->next)
-    {
-      if (strcmp(username, u->username) == 0)
-      {
+  if (list && username) {
+    for (user_t *u = list; u != NULL; u = u->next) {
+      if (strcmp(username, u->username) == 0) {
         ret = u;
         break;
       }
@@ -68,15 +60,11 @@ user_t* find_user(user_list_t list, char *username)
   return ret;
 }
 
-user_t* find_user_by_id(user_list_t list, unsigned short user_id)
-{
+user_t *find_user_by_id(user_list_t list, unsigned short user_id) {
   user_t *ret = NULL;
-  if (list)
-  {
-    for (user_t *u = list; u != NULL; u = u->next)
-    {
-      if (user_id == u->user_id)
-      {
+  if (list) {
+    for (user_t *u = list; u != NULL; u = u->next) {
+      if (user_id == u->user_id) {
         ret = u;
         break;
       }

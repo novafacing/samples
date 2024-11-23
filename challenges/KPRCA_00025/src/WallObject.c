@@ -24,12 +24,8 @@
 
 DefineClass(WallObject, MapObject)
 
-DefineFunction(WallObject, void, $init)
-{
-    this->m_icon = '#';
+    DefineFunction(WallObject, void, $init) {
+  this->m_icon = '#';
 }
 
-DefineFunction(WallObject, int, on_collide, Player *p)
-{
-    return 1;
-}
+DefineFunction(WallObject, int, on_collide, Player *p) { return 1; }

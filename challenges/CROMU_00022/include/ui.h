@@ -25,23 +25,23 @@ THE SOFTWARE.
 */
 #ifndef ui_h
 #define ui_h
-#define Change_Diver_Info 		0x43
-#define Log_New_Dive 			0x4c
-#define Download_Dive_Data 		0x44
-#define Edit_Dive				0x45
-#define Print_Dive_Logs			0x50
-#define Remove_Dive				0x52
-#define Diver_Statistics        0x53
-#define Exit					0x58
+#define Change_Diver_Info 0x43
+#define Log_New_Dive 0x4c
+#define Download_Dive_Data 0x44
+#define Edit_Dive 0x45
+#define Print_Dive_Logs 0x50
+#define Remove_Dive 0x52
+#define Diver_Statistics 0x53
+#define Exit 0x58
 
-void MainMenu ( pDiverInfo );
-void ChangeDiverInfo( pDiverInfo );
-void ChangeDive( pDiveEntry );
+void MainMenu(pDiverInfo);
+void ChangeDiverInfo(pDiverInfo);
+void ChangeDive(pDiveEntry);
 void SanitizeDate(char date[32]);
-void LogNewDive( pDiverInfo );
-void DownloadDiveData( pDiverInfo );
-void EditDive( pDiverInfo );
-void PrintDiveLogs( pDiverInfo );
-void RemoveDive( pDiverInfo );
-void DiverStatistics( pDiverInfo );
+void LogNewDive(pDiverInfo);
+void DownloadDiveData(pDiverInfo);
+void EditDive(pDiverInfo);
+void PrintDiveLogs(pDiverInfo);
+void RemoveDive(pDiverInfo);
+void DiverStatistics(pDiverInfo);
 #endif

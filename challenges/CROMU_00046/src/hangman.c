@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include "words.h"
+#include "gamestate.h"
 #include "libc.h"
 #include "utility.h"
-#include "gamestate.h"
+#include "words.h"
 
 extern gamestate *state;
 
@@ -34,104 +34,97 @@ char *renderBoard(gamestate *state);
 char *pickaword(gamestate *state);
 
 char *pickaword(gamestate *state) {
-	return words[hugsnextrand(state) % (sizeof(words) / 4)];
+  return words[hugsnextrand(state) % (sizeof(words) / 4)];
 }
 
 void hangman() {
-	char *toguess;
-	int i;
-	char correct[128];
-	char guess[4];
-	unsigned int len = 0;
-	int right;
-	int correctcount = 0;
-	unsigned int wagered = 0;
+  char *toguess;
+  int i;
+  char correct[128];
+  char guess[4];
+  unsigned int len = 0;
+  int right;
+  int correctcount = 0;
+  unsigned int wagered = 0;
 
-	bzero(correct, 128);
-	toguess = pickaword(state);
-	len = strlen(toguess);
-	state->hangmanguess = 0;
+  bzero(correct, 128);
+  toguess = pickaword(state);
+  len = strlen(toguess);
+  state->hangmanguess = 0;
 
-	wagered = getBet(state);
-	if(wagered == -1)
-		return;
+  wagered = getBet(state);
+  if (wagered == -1) return;
 
-	while(state->hangmanguess < 5)
-	{
-		right = 0;
-		bzero(guess, 4);
-		put(renderBoard(state));
-		for(i=0;i<len;i++)
-		{
-			if(correct[i] == 0)
-				put("_");
-			else {
-				put(&correct[i]);
-				i+= strlen(&correct[i])-1;
-			}
-		}
+  while (state->hangmanguess < 5) {
+    right = 0;
+    bzero(guess, 4);
+    put(renderBoard(state));
+    for (i = 0; i < len; i++) {
+      if (correct[i] == 0)
+        put("_");
+      else {
+        put(&correct[i]);
+        i += strlen(&correct[i]) - 1;
+      }
+    }
 
-		put("\n");
-		put("Please enter a guess: ");
-		recvUntil(0, guess, 3, '\n');
-		for(i=0;i<len;i++)
-		{
-			if(guess[0] == toguess[i])
-			{
-				correct[i] = guess[0];
-				right = 1;
-				correctcount++;
-			}
-		}
-		if(right == 0)
-			state->hangmanguess++;
-		if(strlen(correct) == strlen(toguess))
-		{
-			handleOutcome(state, 1, wagered);
-			return;
-		}
-	}
-	handleOutcome(state, 0, wagered);
+    put("\n");
+    put("Please enter a guess: ");
+    recvUntil(0, guess, 3, '\n');
+    for (i = 0; i < len; i++) {
+      if (guess[0] == toguess[i]) {
+        correct[i] = guess[0];
+        right = 1;
+        correctcount++;
+      }
+    }
+    if (right == 0) state->hangmanguess++;
+    if (strlen(correct) == strlen(toguess)) {
+      handleOutcome(state, 1, wagered);
+      return;
+    }
+  }
+  handleOutcome(state, 0, wagered);
 }
 
-char * renderBoard(gamestate *state) {
-	switch(state->hangmanguess) {
-		case 0:
-		return "|---|\n\
+char *renderBoard(gamestate *state) {
+  switch (state->hangmanguess) {
+    case 0:
+      return "|---|\n\
 |\n\
 |\n\
 |\n\
 |\n\
 ______\n";
-		case 1:
-		return "|---|\n\
+    case 1:
+      return "|---|\n\
 |   O\n\
 |\n\
 |\n\
 |\n\
 ______\n";
 
-		case 2:
-		return "|---|\n\
+    case 2:
+      return "|---|\n\
 |   O\n\
 |   |\n\
 |\n\
 |\n\
 ______\n";
-		case 3:
-		return "|---|\n\
+    case 3:
+      return "|---|\n\
 |   O\n\
 |  -|-\n\
 |\n\
 |\n\
 ______\n";
-		case 4:
-		return "|---|\n\
+    case 4:
+      return "|---|\n\
 |   O\n\
 |  -|-\n\
 |  / \\\n\
 |\n\
 ______\n";
-	}
-	return "???\n";
+  }
+  return "???\n";
 }

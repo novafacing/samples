@@ -26,12 +26,11 @@ THE SOFTWARE.
 
 #include "common.h"
 
-int main(void)
-{
-    CUserManager oUserManager;
+int main(void) {
+  CUserManager oUserManager;
 
-    // Run the user manager system
-    oUserManager.Run();
+  // Run the user manager system
+  oUserManager.Run();
 
-    return 0;
+  return 0;
 }

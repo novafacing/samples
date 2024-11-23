@@ -24,37 +24,23 @@ THE SOFTWARE.
 
 */
 
-extern "C"
-{
-#include <malloc.h>
+extern "C" {
 #include <libcgc.h>
+#include <malloc.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 }
 
-void *operator new( uint32_t size )
-{
-	return (void *)malloc( size );
-}	
+void *operator new(uint32_t size) { return (void *)malloc(size); }
 
-void *operator new[]( uint32_t size )
-{
-	return (void *)malloc( size );
-}
+void *operator new[](uint32_t size) { return (void *)malloc(size); }
 
-void operator delete( void *ptr )
-{
-	free( ptr );
-}
+void operator delete(void *ptr) { free(ptr); }
 
-void operator delete[]( void *ptr )
-{
-	free( ptr );
-}
+void operator delete[](void *ptr) { free(ptr); }
 
-extern "C" void __cxa_pure_virtual( void )
-{
-	printf( "Program abort@cxa_pure_virtual\n" );
-	_terminate(-1);
+extern "C" void __cxa_pure_virtual(void) {
+  printf("Program abort@cxa_pure_virtual\n");
+  _terminate(-1);
 }

@@ -18,165 +18,161 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+#include "list.h"
+
 #include <libcgc.h>
 #include <stdint.h>
-#include "list.h"
+
 #include "malloc.h"
 
-
 struct node *list_create_node(void *data) {
-
-	struct node *np = malloc(sizeof(struct node));
-	if (NULL == np) {
-		return np;
-	}
-	np->data = data;
-	np->next = 0;
-	np->prev = 0;
-	return np;
+  struct node *np = malloc(sizeof(struct node));
+  if (NULL == np) {
+    return np;
+  }
+  np->data = data;
+  np->next = 0;
+  np->prev = 0;
+  return np;
 }
 
 void list_destroy_node(struct list *l, struct node **n) {
+  // destroy node->data
+  if (NULL != l->ndf) {
+    l->ndf((*n)->data);
+  }
+  (*n)->data = NULL;
+  (*n)->next = NULL;
+  (*n)->prev = NULL;
 
-	// destroy node->data
-	if (NULL != l->ndf) {
-		l->ndf((*n)->data);
-	}
-	(*n)->data = NULL;
-	(*n)->next = NULL;
-	(*n)->prev = NULL;
-
-	// destroy node
-	free(*n);
-	*n = NULL;
+  // destroy node
+  free(*n);
+  *n = NULL;
 }
 
 void list_init(struct list *l, nodeDataFreeFn ndf) {
-	l->length = 0;
-	l->dummy.data = NULL;
-	l->dummy.next = &(l->dummy);
-	l->dummy.prev = &(l->dummy);
-	l->ndf = ndf;
+  l->length = 0;
+  l->dummy.data = NULL;
+  l->dummy.next = &(l->dummy);
+  l->dummy.prev = &(l->dummy);
+  l->ndf = ndf;
 }
 
 void list_destroy(struct list *l) {
-	if ((NULL != l) && (0 < list_length(l))) {
-		while (NULL != list_head_node(l)) {
-			struct node *h = list_pop(l);
-			list_destroy_node(l, &h);
-		}
-	}
-	l->dummy.next = &(l->dummy);
-	l->dummy.prev = &(l->dummy);
+  if ((NULL != l) && (0 < list_length(l))) {
+    while (NULL != list_head_node(l)) {
+      struct node *h = list_pop(l);
+      list_destroy_node(l, &h);
+    }
+  }
+  l->dummy.next = &(l->dummy);
+  l->dummy.prev = &(l->dummy);
 }
 
 void list_insert_node_at_end(struct list *l, struct node *new) {
-	if ((NULL != l) && (NULL != new)) {
-		struct node *t = list_tail_node(l);
+  if ((NULL != l) && (NULL != new)) {
+    struct node *t = list_tail_node(l);
 
-		new->next = &(l->dummy);
-		new->prev = l->dummy.prev;
+    new->next = &(l->dummy);
+    new->prev = l->dummy.prev;
 
-		l->dummy.prev = new;
+    l->dummy.prev = new;
 
-		if (NULL == t) {
-			l->dummy.next = new;
-		} else {
-			t->next = new;
-		}
+    if (NULL == t) {
+      l->dummy.next = new;
+    } else {
+      t->next = new;
+    }
 
-		l->length++;
-	}
+    l->length++;
+  }
 }
 
 void list_insert_at_end(struct list *l, void *d) {
-	if (NULL != l) {
-		struct node *new = list_create_node(d);
-		list_insert_node_at_end(l, new);
-	}
+  if (NULL != l) {
+    struct node *new = list_create_node(d);
+    list_insert_node_at_end(l, new);
+  }
 }
 
 void list_insert_node_at_start(struct list *l, struct node *new) {
-	if ((NULL != l) && (NULL != new)) {
-		struct node *h = list_head_node(l);
+  if ((NULL != l) && (NULL != new)) {
+    struct node *h = list_head_node(l);
 
-		new->prev = &(l->dummy);
-		new->next = l->dummy.next;
+    new->prev = &(l->dummy);
+    new->next = l->dummy.next;
 
-		l->dummy.next = new;
+    l->dummy.next = new;
 
-		if (NULL == h) {
-			l->dummy.prev = new;
-		} else {
-			h->prev = new;
-		}
+    if (NULL == h) {
+      l->dummy.prev = new;
+    } else {
+      h->prev = new;
+    }
 
-		l->length++;
-	}
+    l->length++;
+  }
 }
 
 void list_insert_at_start(struct list *l, void *d) {
-	if (NULL != l) {
-		struct node *new = list_create_node(d);
-		list_insert_node_at_start(l, new);
-	}
+  if (NULL != l) {
+    struct node *new = list_create_node(d);
+    list_insert_node_at_start(l, new);
+  }
 }
 
 struct node *list_pop(struct list *l) {
-	if (NULL == l) {
-		return NULL;
-	}
+  if (NULL == l) {
+    return NULL;
+  }
 
-	struct node *h = list_head_node(l);
-	list_remove_node(l, h);
-	return h;
+  struct node *h = list_head_node(l);
+  list_remove_node(l, h);
+  return h;
 }
 
 void list_remove_node(struct list *l, struct node *n) {
-	if ((NULL != n) && (0 < l->length)) {
-		struct node *prev = n->prev;
-		struct node *next = n->next;
-		prev->next = next;
-		next->prev = prev;
+  if ((NULL != n) && (0 < l->length)) {
+    struct node *prev = n->prev;
+    struct node *next = n->next;
+    prev->next = next;
+    next->prev = prev;
 
-		n->prev = NULL;
-		n->next = NULL;
-		l->length--;
-	}
+    n->prev = NULL;
+    n->next = NULL;
+    l->length--;
+  }
 }
 
 struct node *list_head_node(struct list *l) {
-	if (&(l->dummy) == l->dummy.next) {
-		return NULL;
-	}
-	return l->dummy.next;
+  if (&(l->dummy) == l->dummy.next) {
+    return NULL;
+  }
+  return l->dummy.next;
 }
 
 struct node *list_tail_node(struct list *l) {
-	if (&(l->dummy) == l->dummy.prev) {
-		return NULL;
-	}
-	return l->dummy.prev;
+  if (&(l->dummy) == l->dummy.prev) {
+    return NULL;
+  }
+  return l->dummy.prev;
 }
 
-unsigned int list_length(struct list *l) {
-	return l->length;
+unsigned int list_length(struct list *l) { return l->length; }
+
+struct node *list_find_node_with_data(
+    struct list *l, unsigned char (*predFn)(const void *, void *), void *data) {
+  if ((NULL != l) && (NULL != data)) {
+    struct node *n = list_head_node(l);
+    for (unsigned int i = 0; i < l->length; i++) {
+      if (TRUE == predFn((const void *)n->data, data)) {
+        return n;
+      } else {
+        n = n->next;
+      }
+    }
+  }
+
+  return NULL;
 }
-
-struct node *list_find_node_with_data(struct list *l, unsigned char (*predFn)(const void *, void *), void *data) {
-
-	if ((NULL != l) && (NULL != data)) {
-		struct node *n = list_head_node(l);
-		for (unsigned int i = 0; i < l->length; i++) {
-			if (TRUE == predFn((const void *)n->data, data)) {
-				return n;
-			} else {
-				n = n->next;
-			}
-		}
-	}
-
-	return NULL;
-}
-

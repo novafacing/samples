@@ -28,49 +28,45 @@
 
 #include <stdint.h>
 
-static int16_t comp_decode(uint8_t usample)
-{
-    usample = ~usample;
-    int sign = usample & 0x80;
-    int exp = (usample >> 4) & 7;
-    
-    int16_t sample = ((((usample & 0xF) << 1) | 0x21) << exp) - 33;
-    if (sign)
-        return -sample;
-    else
-        return sample;
+static int16_t comp_decode(uint8_t usample) {
+  usample = ~usample;
+  int sign = usample & 0x80;
+  int exp = (usample >> 4) & 7;
+
+  int16_t sample = ((((usample & 0xF) << 1) | 0x21) << exp) - 33;
+  if (sign)
+    return -sample;
+  else
+    return sample;
 }
 
-static uint8_t comp_encode(int16_t sample)
-{
-    int exp;
-    int sign = sample & 0x8000;
-    if (sign)
-        sample = -sample;
+static uint8_t comp_encode(int16_t sample) {
+  int exp;
+  int sign = sample & 0x8000;
+  if (sign) sample = -sample;
 
-    if (sample > 8158)
-        sample = 8158;
-    
-    sample += 33;
-    
-    if (sample & (1 << 12))
-        exp = 7;
-    else if (sample & (1 << 11))
-        exp = 6;
-    else if (sample & (1 << 10))
-        exp = 5;
-    else if (sample & (1 << 9))
-        exp = 4;
-    else if (sample & (1 << 8))
-        exp = 3;
-    else if (sample & (1 << 7))
-        exp = 2;
-    else if (sample & (1 << 6))
-        exp = 1;
-    else
-        exp = 0;
+  if (sample > 8158) sample = 8158;
 
-    return ~(((sample >> (exp + 1)) & 0xF) | (exp << 4) | (sign >> 8));
+  sample += 33;
+
+  if (sample & (1 << 12))
+    exp = 7;
+  else if (sample & (1 << 11))
+    exp = 6;
+  else if (sample & (1 << 10))
+    exp = 5;
+  else if (sample & (1 << 9))
+    exp = 4;
+  else if (sample & (1 << 8))
+    exp = 3;
+  else if (sample & (1 << 7))
+    exp = 2;
+  else if (sample & (1 << 6))
+    exp = 1;
+  else
+    exp = 0;
+
+  return ~(((sample >> (exp + 1)) & 0xF) | (exp << 4) | (sign >> 8));
 }
 
 #endif /* !COMP_H_ */

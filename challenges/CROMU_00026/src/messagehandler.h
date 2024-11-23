@@ -28,130 +28,110 @@ THE SOFTWARE.
 
 class CFullMessage;
 
-class CMessageFragmentList
-{
-public:
-    CMessageFragmentList( void )
-    {
-        m_fragmentCount = 0;
+class CMessageFragmentList {
+ public:
+  CMessageFragmentList(void) { m_fragmentCount = 0; }
+
+  ~CMessageFragmentList() { m_fragmentList.DeleteAll(); }
+
+  bool AddFragment(CMessagePacket *pPacket, CFullMessage *&pNewFullMessage);
+
+ private:
+  class CFragmentData : public CDoubleListElement {
+   public:
+    CFragmentData(uint16_t sequenceNumber)
+        : CDoubleListElement(), m_sequenceNumber(sequenceNumber) {
+      m_fragmentTotalCount = 0;
+
+      for (uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++)
+        m_pMessageFragments[i] = NULL;
     }
 
-    ~CMessageFragmentList( )
-    {
-        m_fragmentList.DeleteAll();
+    ~CFragmentData() {
+      for (uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++) {
+        if (m_pMessageFragments[i]) delete m_pMessageFragments[i];
+      }
     }
 
-    bool AddFragment( CMessagePacket *pPacket, CFullMessage *&pNewFullMessage );
+    uint16_t GetSequenceNumber(void) const { return m_sequenceNumber; };
 
-private:
-    class CFragmentData : public CDoubleListElement
-    {
-    public:
-        CFragmentData( uint16_t sequenceNumber ) : CDoubleListElement( ), m_sequenceNumber( sequenceNumber )
-        {
-            m_fragmentTotalCount = 0;
+    bool SetTotalFragmentCount(uint8_t fragmentTotalCount) {
+      if (fragmentTotalCount > MAX_MESSAGE_FRAGMENTS) return (false);
 
-            for ( uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
-                m_pMessageFragments[i] = NULL;
-        }
+      m_fragmentTotalCount = fragmentTotalCount;
 
-        ~CFragmentData( )
-        {
-            for ( uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
-            {
-                if ( m_pMessageFragments[i] )
-                    delete m_pMessageFragments[i];
-            }
-        }
+      return (true);
+    }
 
-        uint16_t GetSequenceNumber( void ) const { return m_sequenceNumber; };
+    bool AddFragmentData(CMessagePacket *pPacket, uint8_t fragmentIndex) {
+      if (fragmentIndex >= MAX_MESSAGE_FRAGMENTS) return (false);
 
-        bool SetTotalFragmentCount( uint8_t fragmentTotalCount )
-        {
-            if ( fragmentTotalCount > MAX_MESSAGE_FRAGMENTS )
-                return (false);
+      if (m_pMessageFragments[fragmentIndex] != NULL)
+        return (false);  // Don't add in fragments we already have??
 
-            m_fragmentTotalCount = fragmentTotalCount;
+      m_pMessageFragments[fragmentIndex] = pPacket;
 
-            return (true);
-        }
+      return (true);
+    }
 
-        bool AddFragmentData( CMessagePacket *pPacket, uint8_t fragmentIndex )
-        {
-            if ( fragmentIndex >= MAX_MESSAGE_FRAGMENTS )
-                return (false);
+    bool HasAllFragments(void) const {
+      uint32_t fragmentCount = 0;
 
-            if ( m_pMessageFragments[fragmentIndex] != NULL )
-                return (false);     // Don't add in fragments we already have??
+      if (m_fragmentTotalCount == 0) return (false);
 
-            m_pMessageFragments[fragmentIndex] = pPacket;
+      for (uint32_t i = 0; i < m_fragmentTotalCount; i++) {
+        if (m_pMessageFragments[i]) fragmentCount++;
+      }
 
-            return (true);
-        }
+      return (fragmentCount == m_fragmentTotalCount);
+    }
 
-        bool HasAllFragments( void ) const
-        {
-            uint32_t fragmentCount = 0;
+    uint32_t GetAssembledMessageSize(void) const;
+    CFullMessage *AssembleFragments(void) const;
 
-            if ( m_fragmentTotalCount == 0 )
-                return (false);
+   private:
+    CMessagePacket *m_pMessageFragments[MAX_MESSAGE_FRAGMENTS];
+    uint8_t m_fragmentTotalCount;
+    uint16_t m_sequenceNumber;
+  };
 
-            for ( uint32_t i = 0; i < m_fragmentTotalCount; i++ )
-            {
-                if ( m_pMessageFragments[i] )
-                    fragmentCount++;
-            }
+  CFragmentData *GetFragmentForSequenceNumber(uint16_t sequenceNumber);
 
-            return (fragmentCount == m_fragmentTotalCount);
-        }
-
-        uint32_t GetAssembledMessageSize( void ) const;
-        CFullMessage *AssembleFragments( void ) const;
-
-    private:
-        CMessagePacket *m_pMessageFragments[MAX_MESSAGE_FRAGMENTS];
-        uint8_t m_fragmentTotalCount;
-        uint16_t m_sequenceNumber;
-    };
-
-    CFragmentData *GetFragmentForSequenceNumber( uint16_t sequenceNumber );
-
-private:
-    uint32_t m_fragmentCount;
-    CDoubleList m_fragmentList;
+ private:
+  uint32_t m_fragmentCount;
+  CDoubleList m_fragmentList;
 };
 
-class CFullMessage : public CDoubleListElement
-{
-public:
-    CFullMessage( uint8_t *pMessageData, uint32_t messageLen, bool bCopyData = false );
-    ~CFullMessage( );
+class CFullMessage : public CDoubleListElement {
+ public:
+  CFullMessage(uint8_t *pMessageData, uint32_t messageLen,
+               bool bCopyData = false);
+  ~CFullMessage();
 
-    uint8_t *GetData( void ) const { return m_pMessageData; };
-    uint32_t GetLength( void ) const { return m_messageLen; };
+  uint8_t *GetData(void) const { return m_pMessageData; };
+  uint32_t GetLength(void) const { return m_messageLen; };
 
-private:
-    uint8_t *m_pMessageData;
-    uint32_t m_messageLen;
+ private:
+  uint8_t *m_pMessageData;
+  uint32_t m_messageLen;
 };
 
 // Receives message packets and assembles them into parsed messages
 // to send to the message renderer
-class CMessageHandler
-{
-public:
-    CMessageHandler();
-    ~CMessageHandler();
+class CMessageHandler {
+ public:
+  CMessageHandler();
+  ~CMessageHandler();
 
-    void ReceivePacket( CMessagePacket *pPacket );
+  void ReceivePacket(CMessagePacket *pPacket);
 
-    bool IsMsgAvailable( void );
+  bool IsMsgAvailable(void);
 
-    CFullMessage *PopFirstMessage( void );
+  CFullMessage *PopFirstMessage(void);
 
-private:
-    CMessageFragmentList m_messageFragmentList;
-    CDoubleList m_fullMessageList;
+ private:
+  CMessageFragmentList m_messageFragmentList;
+  CDoubleList m_fullMessageList;
 };
 
-#endif // __MESSAGE_HANDLER_H__
+#endif  // __MESSAGE_HANDLER_H__

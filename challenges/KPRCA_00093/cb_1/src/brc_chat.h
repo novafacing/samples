@@ -27,31 +27,30 @@
 #define CHANNEL_CHAT 29
 #define USER_CHAT 81
 
-class BrcChat: public BrcProtocol {
-  public:
-    BrcChat(unsigned short recv_length);
-    BrcChat(char *sender_name, char *recp_name, char *chat_msg, short chat_type,
-            unsigned short sender_name_length, unsigned short recp_name_length,
-            unsigned short chat_msg_length);
-    virtual ~BrcChat();
+class BrcChat : public BrcProtocol {
+ public:
+  BrcChat(unsigned short recv_length);
+  BrcChat(char *sender_name, char *recp_name, char *chat_msg, short chat_type,
+          unsigned short sender_name_length, unsigned short recp_name_length,
+          unsigned short chat_msg_length);
+  virtual ~BrcChat();
 
-    virtual bool Recv(FILE *fd_in);
+  virtual bool Recv(FILE *fd_in);
 
-    virtual const unsigned int protocol_id() const;
-    const short chat_type() const;
-    const unsigned short sender_name_length() const;
-    const unsigned short recipient_name_length() const;
-    const unsigned short chat_msg_length() const;
-    const char *sender_name() const;
-    const char *recp_name() const;
-    const char *chat_msg() const;
+  virtual const unsigned int protocol_id() const;
+  const short chat_type() const;
+  const unsigned short sender_name_length() const;
+  const unsigned short recipient_name_length() const;
+  const unsigned short chat_msg_length() const;
+  const char *sender_name() const;
+  const char *recp_name() const;
+  const char *chat_msg() const;
 
-  private:
-    short chat_type_;
-    unsigned short sender_name_len_;
-    unsigned short recipient_name_len_;
-    unsigned short chat_msg_len_;
+ private:
+  short chat_type_;
+  unsigned short sender_name_len_;
+  unsigned short recipient_name_len_;
+  unsigned short chat_msg_len_;
 };
 
 #endif /* BRC_CHAT_H_ */
-

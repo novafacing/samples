@@ -24,4 +24,4 @@ THE SOFTWARE.
 
 */
 
-char sort_n_sum(char *, unsigned int );
+char sort_n_sum(char *, unsigned int);

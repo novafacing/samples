@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef STACK_H
 #define STACK_H
 
@@ -27,10 +27,10 @@
 #define MAX_STACK_SIZE 2000000
 
 typedef struct {
-	int top;
-	int elementSize;
-	int numElements;
-	void *elements;
+  int top;
+  int elementSize;
+  int numElements;
+  void *elements;
 } Stack;
 
 void initStack(Stack *stack, int numElements, int elementSize);
@@ -39,7 +39,7 @@ void destroyStack(Stack *stack);
 int isStackFull(Stack *stack);
 int isStackEmpty(Stack *stack);
 
-void pushElement(Stack *stack, void* element);
-void* popElement(Stack *stack);
+void pushElement(Stack *stack, void *element);
+void *popElement(Stack *stack);
 
 #endif /* STACK_H */

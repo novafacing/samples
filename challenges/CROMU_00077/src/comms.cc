@@ -23,79 +23,63 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
+#include <fs.h>
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
-#include <fs.h>
 }
 
 #include "comms.h"
 
-CNetworkComm::CNetworkComm( int32_t recvFD, int32_t sendFD )
-	: m_recvFD( recvFD ), m_sendFD( sendFD )
-{
+CNetworkComm::CNetworkComm(int32_t recvFD, int32_t sendFD)
+    : m_recvFD(recvFD), m_sendFD(sendFD) {}
 
+CNetworkComm::~CNetworkComm() {}
+
+uint32_t CNetworkComm::RecvData(uint8_t *pDest, uint32_t recvLen) {
+  if (pDest == NULL) return (0);
+
+  if (recvLen == 0) return (0);
+
+  uint32_t curRecvLen = 0;
+
+  while (curRecvLen < recvLen) {
+    size_t num_bytes;
+    uint32_t recvRemaining = (recvLen - curRecvLen);
+
+    if (receive(m_recvFD, (pDest + curRecvLen), recvRemaining, &num_bytes) != 0)
+      _terminate(-1);
+
+    if (num_bytes == 0) _terminate(-1);
+
+    curRecvLen += num_bytes;
+  }
+
+  return curRecvLen;
 }
 
-CNetworkComm::~CNetworkComm( )
-{
+uint32_t CNetworkComm::SendData(uint8_t *pSource, uint32_t sendLen) {
+  if (pSource == NULL) return (0);
 
-}
+  if (sendLen == 0) return (0);
 
-uint32_t CNetworkComm::RecvData( uint8_t *pDest, uint32_t recvLen )
-{
-	if ( pDest == NULL )
-		return (0);
+  uint32_t curSendLen = 0;
 
-	if ( recvLen == 0 )
-		return (0);
+  while (curSendLen < sendLen) {
+    size_t num_bytes;
+    uint32_t sendRemaining = (sendLen - curSendLen);
 
-	uint32_t curRecvLen = 0;
+    if (transmit(m_sendFD, (pSource + curSendLen), sendRemaining, &num_bytes) !=
+        0)
+      _terminate(-1);
 
-	while ( curRecvLen < recvLen )
-	{
-		size_t num_bytes;
-		uint32_t recvRemaining = (recvLen - curRecvLen);
+    if (num_bytes == 0) _terminate(-1);
 
-		if ( receive( m_recvFD, (pDest+curRecvLen), recvRemaining, &num_bytes ) != 0 )
-			_terminate( -1 );
+    curSendLen += num_bytes;
+  }
 
-		if ( num_bytes == 0 )
-			_terminate( -1 );
-
-		curRecvLen += num_bytes;			 
-	}
-
-	return curRecvLen;
-}
-
-uint32_t CNetworkComm::SendData( uint8_t *pSource, uint32_t sendLen )
-{
-	if ( pSource == NULL )
-		return (0);
-
-	if ( sendLen == 0 )
-		return (0);
-
-	uint32_t curSendLen = 0;
-
-	while ( curSendLen < sendLen )
-	{
-		size_t num_bytes;
-		uint32_t sendRemaining = (sendLen - curSendLen);
-
-		if ( transmit( m_sendFD, (pSource+curSendLen), sendRemaining, &num_bytes ) != 0 )
-			_terminate( -1 );
-
-		if ( num_bytes == 0 )
-			_terminate( -1 );
-
-		curSendLen += num_bytes;
-	}
-
-	return (curSendLen);
+  return (curSendLen);
 }

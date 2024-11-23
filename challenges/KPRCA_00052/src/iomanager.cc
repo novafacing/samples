@@ -22,69 +22,63 @@
  */
 #include "iomanager.h"
 
-IoManager::IoManager(size_t _line_size)
-{
-    line_size = _line_size;
-    line_len = 0;
-    line = new char[line_size];
-    fd = STDIN;
+IoManager::IoManager(size_t _line_size) {
+  line_size = _line_size;
+  line_len = 0;
+  line = new char[line_size];
+  fd = STDIN;
 }
 
-IoManager::~IoManager()
-{
-    delete line;
-    line_size = 0;
-    line_len = 0;
+IoManager::~IoManager() {
+  delete line;
+  line_size = 0;
+  line_len = 0;
 }
 
-bool IoManager::readline(size_t max_size)
-{
-    size_t rx, i = 0;
-    max_size = max_size ? max_size : line_size;
-    line_len = 0;
+bool IoManager::readline(size_t max_size) {
+  size_t rx, i = 0;
+  max_size = max_size ? max_size : line_size;
+  line_len = 0;
 
 #ifdef PATCHED
-    while (i < max_size && receive(fd, &line[i], 1, &rx) == 0 && rx == 1) {
+  while (i < max_size && receive(fd, &line[i], 1, &rx) == 0 && rx == 1) {
 #else
-    while (receive(fd, &line[i], 1, &rx) == 0 && rx == 1 && i < max_size) {
+  while (receive(fd, &line[i], 1, &rx) == 0 && rx == 1 && i < max_size) {
 #endif
-        if(line[i] == '\n') {
-            line[i] = '\0';
-            break;
-        }
-
-        i++;
+    if (line[i] == '\n') {
+      line[i] = '\0';
+      break;
     }
 
-    if (!i || i == max_size)
-        return false;
+    i++;
+  }
 
-    line_len = i;
-    return true;
+  if (!i || i == max_size) return false;
+
+  line_len = i;
+  return true;
 }
 
-int IoManager::readnum(size_t max_size)
-{
-    size_t rx, i = 0;
-    max_size = max_size ? max_size : line_size;
-    line_len = 0;
+int IoManager::readnum(size_t max_size) {
+  size_t rx, i = 0;
+  max_size = max_size ? max_size : line_size;
+  line_len = 0;
 
 #ifdef PATCHED
-    while (i < max_size && receive(fd, &line[i], 1, &rx) == 0 && rx == 1) {
+  while (i < max_size && receive(fd, &line[i], 1, &rx) == 0 && rx == 1) {
 #else
-    while (receive(fd, &line[i], 1, &rx) == 0 && rx == 1 && i < max_size) {
+  while (receive(fd, &line[i], 1, &rx) == 0 && rx == 1 && i < max_size) {
 #endif
-        if(line[i] < '0' || line[i] > '9') {
-            line[i] = '\0';
-            break;
-        }
-
-        i++;
+    if (line[i] < '0' || line[i] > '9') {
+      line[i] = '\0';
+      break;
     }
 
-    if (!i || i == max_size)
-        return 0;
+    i++;
+  }
 
-    line_len = i;
-    return strtol(&line[0], NULL, 10);
+  if (!i || i == max_size) return 0;
+
+  line_len = i;
+  return strtol(&line[0], NULL, 10);
 }

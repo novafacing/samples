@@ -24,12 +24,8 @@
 
 DefineClass(EmptyObject, MapObject)
 
-DefineFunction(EmptyObject, void, $init)
-{
-    this->m_icon = ' ';
+    DefineFunction(EmptyObject, void, $init) {
+  this->m_icon = ' ';
 }
 
-DefineFunction(EmptyObject, int, on_collide, Player *p)
-{
-    return 0;
-}
+DefineFunction(EmptyObject, int, on_collide, Player *p) { return 0; }

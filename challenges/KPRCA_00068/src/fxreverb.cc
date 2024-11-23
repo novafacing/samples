@@ -20,37 +20,33 @@
  * THE SOFTWARE.
  *
  */
-#include <cstring.h>
 #include "fxreverb.h"
 
-FxReverb::FxReverb(unsigned int delay_) : delay(delay_)
-{
+#include <cstring.h>
+
+FxReverb::FxReverb(unsigned int delay_) : delay(delay_) {}
+
+void FxReverb::apply(AudioTrack &track) const {
+  apply(*track.getChannel(0));
+  if (track.getStereo()) apply(*track.getChannel(1));
 }
 
-void FxReverb::apply(AudioTrack &track) const
-{
-    apply(*track.getChannel(0));
-    if (track.getStereo())
-        apply(*track.getChannel(1));
-}
+void FxReverb::apply(AudioStream &stream) const {
+  Gain gain = Gain::fromRational(-50, 100);
+  int32_t *buffer = new int32_t[delay];
+  memset(buffer, 0, sizeof(int32_t) * delay);
 
-void FxReverb::apply(AudioStream &stream) const
-{
-    Gain gain = Gain::fromRational(-50, 100);
-    int32_t *buffer = new int32_t[delay];
-    memset(buffer, 0, sizeof(int32_t) * delay);
+  for (unsigned int i = 0; i < stream.getLength(); i++) {
+    long long sample =
+        gain.adjustSample(buffer[i % delay]);  // mix-in delayed audio
+    sample += stream.getSample(i);             // mix-in original audio
+    if (sample > INT32_MAX)
+      sample = INT32_MAX;
+    else if (sample < INT32_MIN)
+      sample = INT32_MIN;
+    buffer[i % delay] = sample;   // put mix back into the buffer
+    stream.setSample(i, sample);  // put mix into audio stream
+  }
 
-    for (unsigned int i = 0; i < stream.getLength(); i++)
-    {
-        long long sample = gain.adjustSample(buffer[i % delay]); // mix-in delayed audio
-        sample += stream.getSample(i); // mix-in original audio
-        if (sample > INT32_MAX)
-            sample = INT32_MAX;
-        else if (sample < INT32_MIN)
-            sample = INT32_MIN;
-        buffer[i % delay] = sample; // put mix back into the buffer
-        stream.setSample(i, sample); // put mix into audio stream
-    }
-
-    delete buffer;
+  delete buffer;
 }

@@ -21,37 +21,33 @@
  *
  */
 #include "neuron.h"
+
 #include <cstdio.h>
 
 double Neuron::k_eta = 0.20;
 double Neuron::k_alpha = 0.50;
 
-Neuron::Neuron(unsigned int n, unsigned int outLen)
-{
+Neuron::Neuron(unsigned int n, unsigned int outLen) {
   unsigned int i;
   m_n = n;
-  for (i = 0; i < outLen; ++i)
-  {
+  for (i = 0; i < outLen; ++i) {
     m_weights.push_back(Edge());
     double w = int(g_prng() & 0xFFFF) * 1.0 / double(0xFFFF);
     m_weights.back().weight = w;
   }
 }
 
-double Neuron::sigmoid(double x)
-{
+double Neuron::sigmoid(double x) {
   double abs_x = (x < 0) ? -x : x;
   return (x / (1 + abs_x));
 }
 
-double Neuron::dsigmoid(double x)
-{
+double Neuron::dsigmoid(double x) {
   double abs_x = (x < 0) ? -x : x;
   return (1 / ((abs_x + 1) * (abs_x + 1)));
 }
 
-void Neuron::feedForward(vector<Neuron> &prev)
-{
+void Neuron::feedForward(vector<Neuron> &prev) {
   unsigned int i;
   double val = 0.0;
   for (i = 0; i < prev.size(); ++i)
@@ -59,13 +55,11 @@ void Neuron::feedForward(vector<Neuron> &prev)
   m_value = sigmoid(val);
 }
 
-void Neuron::computeOutGrad(double target)
-{
+void Neuron::computeOutGrad(double target) {
   m_gradient = (target - m_value) * dsigmoid(m_value);
 }
 
-void Neuron::computeHiddenGrad(vector<Neuron> &next)
-{
+void Neuron::computeHiddenGrad(vector<Neuron> &next) {
   unsigned int i;
   double val = 0.0;
   for (i = 0; i < next.size() - 1; ++i)
@@ -73,12 +67,10 @@ void Neuron::computeHiddenGrad(vector<Neuron> &next)
   m_gradient = val * dsigmoid(m_value);
 }
 
-void Neuron::updateWeights(vector<Neuron> &prev)
-{
+void Neuron::updateWeights(vector<Neuron> &prev) {
   double old, tmp;
   unsigned int i;
-  for (i = 0; i < prev.size(); ++i)
-  {
+  for (i = 0; i < prev.size(); ++i) {
     old = prev[i].m_weights[m_n].delta;
     tmp = k_eta * prev[i].getValue() * m_gradient + k_alpha * old;
     prev[i].m_weights[m_n].delta = tmp;

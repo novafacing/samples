@@ -28,12 +28,12 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-size_t strlen( const char *str );
+size_t strlen(const char *str);
 void bzero(void *s, size_t n);
-void *memset( void *ptr, int value, size_t num );
+void *memset(void *ptr, int value, size_t num);
 char *strchr(char *s, int c);
 char *strtok(char *str, char *sep);
 int strcmp(const char *s1, const char *s2);
 char *strcat(char *restrict s1, const char *restrict s2);
 
-#endif // __STRING_H__
+#endif  // __STRING_H__

@@ -20,76 +20,59 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "bitset.h"
+
 #include "stdlib.h"
 #include "string.h"
 
-#include "bitset.h"
-
 static int bitset_set_bit_value(struct bitset *, unsigned int, int);
 
-void
-bitset_init(struct bitset *bitset, size_t size)
-{
-    bitset->size = size;
-    bitset_clear(bitset);
+void bitset_init(struct bitset *bitset, size_t size) {
+  bitset->size = size;
+  bitset_clear(bitset);
 }
 
-void
-bitset_clear(struct bitset *bitset)
-{
-    memset(bitset->data, '\0', ALIGN(bitset->size, 8) / 8);
+void bitset_clear(struct bitset *bitset) {
+  memset(bitset->data, '\0', ALIGN(bitset->size, 8) / 8);
 }
 
-static int
-bitset_set_bit_value(struct bitset *bitset, unsigned int bit, int value)
-{
-    unsigned int index = bit / 8;
-    unsigned char mask = 1 << (bit % 8);
+static int bitset_set_bit_value(struct bitset *bitset, unsigned int bit,
+                                int value) {
+  unsigned int index = bit / 8;
+  unsigned char mask = 1 << (bit % 8);
 
-    if (bit > bitset->size)
-        return EXIT_FAILURE;
+  if (bit > bitset->size) return EXIT_FAILURE;
 
-    if (value)
-        bitset->data[index] |= mask;
-    else
-        bitset->data[index] &= ~mask;
+  if (value)
+    bitset->data[index] |= mask;
+  else
+    bitset->data[index] &= ~mask;
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
-int
-bitset_set_bit(struct bitset *bitset, unsigned int bit)
-{
-    return bitset_set_bit_value(bitset, bit, 1);
+int bitset_set_bit(struct bitset *bitset, unsigned int bit) {
+  return bitset_set_bit_value(bitset, bit, 1);
 }
 
-int
-bitset_clear_bit(struct bitset *bitset, unsigned int bit)
-{
-    return bitset_set_bit_value(bitset, bit, 0);
+int bitset_clear_bit(struct bitset *bitset, unsigned int bit) {
+  return bitset_set_bit_value(bitset, bit, 0);
 }
 
-int
-bitset_get_bit(struct bitset *bitset, unsigned int bit)
-{
-    unsigned int index = bit / 8;
-    unsigned char mask = 1 << (bit % 8);
+int bitset_get_bit(struct bitset *bitset, unsigned int bit) {
+  unsigned int index = bit / 8;
+  unsigned char mask = 1 << (bit % 8);
 
-    if (bit > bitset->size)
-        return EXIT_FAILURE;
+  if (bit > bitset->size) return EXIT_FAILURE;
 
-    return bitset->data[index] & mask ? 1 : 0;
+  return bitset->data[index] & mask ? 1 : 0;
 }
 
-int
-bitset_find_first(struct bitset *bitset, int set)
-{
-    unsigned int i;
+int bitset_find_first(struct bitset *bitset, int set) {
+  unsigned int i;
 
-    for (i = 0; i < bitset->size; i++)
-        if (bitset_get_bit(bitset, i) == set)
-            return i;
+  for (i = 0; i < bitset->size; i++)
+    if (bitset_get_bit(bitset, i) == set) return i;
 
-    return EXIT_FAILURE;
+  return EXIT_FAILURE;
 }
-

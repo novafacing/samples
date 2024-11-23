@@ -23,403 +23,347 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 }
 #include "tcm.h"
 
-CTCM::CTCM( CLANBus *pLANBus, uint64_t equipmentID )
-	: CSimulationComponent( pLANBus ), m_equipmentID( equipmentID )
-{
-	// Off by default
-	m_bEnableTC = false;
+CTCM::CTCM(CLANBus *pLANBus, uint64_t equipmentID)
+    : CSimulationComponent(pLANBus), m_equipmentID(equipmentID) {
+  // Off by default
+  m_bEnableTC = false;
 
-	// Engine off by default
-	m_bEngineRunning = false;
+  // Engine off by default
+  m_bEngineRunning = false;
 
-	m_wheelSpeed[0] = 0;
-	m_wheelSpeed[1] = 0;
-	m_wheelSpeed[2] = 0;
-	m_wheelSpeed[3] = 0;
+  m_wheelSpeed[0] = 0;
+  m_wheelSpeed[1] = 0;
+  m_wheelSpeed[2] = 0;
+  m_wheelSpeed[3] = 0;
 }
 
-CTCM::~CTCM()
-{
+CTCM::~CTCM() {}
 
+void CTCM::Run(void) {
+  uint8_t destList[] = {TCM_LANBUS_ID, 0xFF};
+
+  CLANMessage *pMsg = m_pLANBus->RecvMessage(destList, sizeof(destList));
+
+  for (; pMsg;
+       pMsg = m_pLANBus->RecvMessage(destList, sizeof(destList), pMsg)) {
+    if (pMsg->GetDestID() == TCM_LANBUS_ID)
+      ProcessMessage(pMsg);
+    else if (pMsg->GetDestID() == 0xFF)
+      ProcessBroadcastMessage(pMsg);
+  }
+
+  // Run TCM management
+  TCMTick();
 }
 
-void CTCM::Run( void )
-{
-	uint8_t destList[] = { TCM_LANBUS_ID, 0xFF };
+void CTCM::ProcessBroadcastMessage(CLANMessage *pMessage) {
+  // Handle broadcast messages from ECM
+  if (pMessage->GetSourceID() == ECM_LANBUS_ID) {
+    uint8_t *pData = pMessage->GetMessageData();
+    uint16_t dataLen = pMessage->GetMessageLen();
 
-	CLANMessage *pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList) );
+    do {
+      if (dataLen < 3) break;
 
-	for ( ; pMsg; pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList), pMsg ) )
-	{
-		if ( pMsg->GetDestID() == TCM_LANBUS_ID )
-			ProcessMessage( pMsg );
-		else if ( pMsg->GetDestID() == 0xFF )
-			ProcessBroadcastMessage( pMsg );
-	}
+      uint8_t messageType = pData[0];
+      uint16_t messageLen = *((uint16_t *)(pData + 1));
+      uint8_t *pMsgData = pData + 3;
 
-	// Run TCM management
-	TCMTick();
+      if (dataLen < (messageLen + 3)) break;
+
+      if (messageType == 0x1 && messageLen == 1) {
+        // State change -- engine state
+        if (pMsgData[0] == 0x1)
+          m_bEngineRunning = true;
+        else if (pMsgData[0] == 0x0)
+          m_bEngineRunning = false;
+      }
+
+      pData += (messageLen + 3);
+      dataLen -= (messageLen + 3);
+
+    } while (dataLen > 0);
+  }
 }
 
-void CTCM::ProcessBroadcastMessage( CLANMessage *pMessage )
-{
-	// Handle broadcast messages from ECM
-	if ( pMessage->GetSourceID() == ECM_LANBUS_ID )
-	{
-		uint8_t *pData = pMessage->GetMessageData();
-		uint16_t dataLen = pMessage->GetMessageLen();
+void CTCM::ProcessMessage(CLANMessage *pMessage) {
+  uint8_t *pData = pMessage->GetMessageData();
+  uint16_t dataLen = pMessage->GetMessageLen();
 
-		do
-		{
-			if ( dataLen < 3 )
-				break;
+  uint8_t srcID = pMessage->GetSourceID();
+  uint8_t destID = pMessage->GetDestID();
 
-			uint8_t messageType = pData[0];
-			uint16_t messageLen = *((uint16_t*)(pData+1));
-			uint8_t *pMsgData = pData+3;
-			
-			if ( dataLen < (messageLen+3) )
-				break;
+  // Handle messages
+  if (dataLen == 0) return;
 
-			if ( messageType == 0x1 && messageLen == 1 )
-			{
-				// State change -- engine state
-				if ( pMsgData[0] == 0x1 )
-					m_bEngineRunning = true;
-				else if ( pMsgData[0] == 0x0 )
-					m_bEngineRunning = false;
-			}
+  // Process messages
+  CResponse oResponse;
 
-			pData += (messageLen+3);
-			dataLen -= (messageLen+3);
+  do {
+    if (dataLen < 3) {
+      // Send failure response
+      uint8_t failureResponse[4];
+      failureResponse[0] = FAILURE_RESPONSE_TYPE;
+      *((uint16_t *)(failureResponse + 1)) = 1;
+      failureResponse[3] = FAILURE_INVALID_DATA;
 
-		} while ( dataLen > 0 );
-	}
+      oResponse.AddResponse(failureResponse, 4);
+      break;
+    }
+
+    uint8_t messageTypeID = pData[0];
+    uint16_t messageLength = *((uint16_t *)(pData + 1));
+
+    if (dataLen < (messageLength + 3)) {
+      // Send failure response
+      uint8_t failureResponse[4];
+      failureResponse[0] = FAILURE_RESPONSE_TYPE;
+      *((uint16_t *)(failureResponse + 1)) = 1;
+      failureResponse[3] = FAILURE_INVALID_DATA;
+
+      oResponse.AddResponse(failureResponse, 4);
+      break;
+    }
+
+    // Handle a TLV message
+    HandleTLVMessage(messageTypeID, messageLength, pData + 3, &oResponse);
+
+    // Continue to next TLV field
+    dataLen -= (messageLength + 3);
+    pData += (messageLength + 3);
+  } while (dataLen > 0);
+
+  // Get response data
+  uint16_t responseLength = oResponse.GetResponseLength();
+
+  if (responseLength > 0) {
+    uint8_t *pResponseData = new uint8_t[responseLength];
+
+    if (oResponse.GetResponseData(pResponseData, responseLength))
+      m_pLANBus->SendMessage(destID, srcID, pResponseData, responseLength);
+  }
 }
 
-void CTCM::ProcessMessage( CLANMessage *pMessage )
-{
-	uint8_t *pData = pMessage->GetMessageData();
-	uint16_t dataLen = pMessage->GetMessageLen();
+void CTCM::HandleTLVMessage(uint8_t typeID, uint16_t length, uint8_t *pData,
+                            CResponse *pResponse) {
+  if (pResponse == NULL) return;
 
-	uint8_t srcID = pMessage->GetSourceID();
-	uint8_t destID = pMessage->GetDestID();
+  if (pData == NULL) return;
 
-	// Handle messages
-	if ( dataLen == 0 )
-		return;
+  if (length == 0) return;
 
-	// Process messages
-	CResponse oResponse;
-	
-	do
-	{
-		if ( dataLen < 3 )
-		{
-			// Send failure response
-			uint8_t failureResponse[4];
-			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
-			failureResponse[3] = FAILURE_INVALID_DATA;
-			
-			oResponse.AddResponse( failureResponse, 4 );
-			break;
-		}
+  // Begin parsing message
+  switch (typeID) {
+    case READ_DATA_TYPE:
+      HandleReadDataMessage(pData, length, pResponse);
+      break;
 
-		uint8_t messageTypeID = pData[0];
-		uint16_t messageLength = *((uint16_t *)(pData+1));
+    case SET_DATA_TYPE:
+      HandleSetDataMessage(pData, length, pResponse);
+      break;
 
-		if ( dataLen < (messageLength+3) )
-		{
-			// Send failure response
-			uint8_t failureResponse[4];
-			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
-			failureResponse[3] = FAILURE_INVALID_DATA;
-			
-			oResponse.AddResponse( failureResponse, 4 );
-			break;	
-		}
+    case ACTION_DATA_TYPE:
+      HandleActionMessage(pData, length, pResponse);
+      break;
 
-		// Handle a TLV message
-		HandleTLVMessage( messageTypeID, messageLength, pData+3, &oResponse );
+    case CHECK_EQUIPMENT_TYPE:
+      if (length < 8) {
+        // Fail
+        uint8_t setResponse[4];
+        setResponse[0] = CHECK_RESPONSE_TYPE;
+        *((uint16_t *)(setResponse + 1)) = 1;
+        setResponse[3] = CHECK_RESPONSE_INVALID_LENGTH;
 
-		// Continue to next TLV field
-		dataLen -= (messageLength+3);
-		pData += (messageLength+3);	
-	}
-	while ( dataLen > 0 );
+        pResponse->AddResponse(setResponse, 4);
+      } else {
+        uint64_t checkID = *((uint64_t *)(pData));
 
-	// Get response data
-	uint16_t responseLength = oResponse.GetResponseLength();
+        uint8_t checkResponse[4];
+        checkResponse[0] = CHECK_RESPONSE_TYPE;
+        *((uint16_t *)(checkResponse + 1)) = 1;
 
-	if ( responseLength > 0 )
-	{
-		uint8_t *pResponseData = new uint8_t[responseLength];
+        if (checkID == m_equipmentID)
+          checkResponse[3] = 1;
+        else
+          checkResponse[3] = 0;
 
-		if ( oResponse.GetResponseData( pResponseData, responseLength ) )
-			m_pLANBus->SendMessage( destID, srcID, pResponseData, responseLength );
-	}
+        pResponse->AddResponse(checkResponse, 4);
+      }
+      break;
+
+    default:
+      // Unknown...
+      return;
+  }
 }
 
-void CTCM::HandleTLVMessage( uint8_t typeID, uint16_t length, uint8_t *pData, CResponse *pResponse )
-{
-	if ( pResponse == NULL )
-		return;
+void CTCM::HandleReadDataMessage(uint8_t *pData, uint16_t length,
+                                 CResponse *pResponse) {
+  if (length <= 1) return;
 
-	if ( pData == NULL )
-		return;
+  uint8_t fieldID = pData[0];
 
-	if ( length == 0 )
-		return;
+  switch (fieldID) {
+    case READ_WHEELSPEED_COMMAND: {
+      if (!m_bEnableTC) {
+        uint8_t readFailureResponse[6];
+        readFailureResponse[0] = READ_RESPONSE_TYPE;
+        *((uint16_t *)(readFailureResponse + 1)) = 1;
+        readFailureResponse[3] = READ_FAILURE_TC_OFF_RESPONSE;
 
-	// Begin parsing message
-	switch( typeID )
-	{
-	case READ_DATA_TYPE:
-		HandleReadDataMessage( pData, length, pResponse );
-		break;
+        pResponse->AddResponse(readFailureResponse, 4);
+        return;
+      }
 
-	case SET_DATA_TYPE:
-		HandleSetDataMessage( pData, length, pResponse );
-		break;
+      if (length < 2) return;
 
-	case ACTION_DATA_TYPE:
-		HandleActionMessage( pData, length, pResponse );
-		break;
+      uint8_t wheelCount = pData[1];
 
-	case CHECK_EQUIPMENT_TYPE:
-                if ( length < 8 )
-                {
-                        // Fail
-			uint8_t setResponse[4];
-			setResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 1;
-			setResponse[3] = CHECK_RESPONSE_INVALID_LENGTH;
+      if (wheelCount > 4) return;
 
-			pResponse->AddResponse( setResponse, 4 );
-		}
-		else
-		{
-			uint64_t checkID = *((uint64_t*)(pData));
+      if (length < (wheelCount + 2)) return;
 
-			uint8_t checkResponse[4];
-			checkResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(checkResponse+1)) = 1;
+      uint16_t resultList[4];
 
-			if ( checkID == m_equipmentID )
-				checkResponse[3] = 1;
-			else
-				checkResponse[3] = 0;
-
-			pResponse->AddResponse( checkResponse, 4 );
-		}
-		break;
-
-	default:
-		// Unknown...
-		return;
-	}
-}
-
-void CTCM::HandleReadDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length <= 1 )
-		return;
-
-	uint8_t fieldID = pData[0];
-
-	switch( fieldID )
-	{
-	case READ_WHEELSPEED_COMMAND:
-		{
-			if ( !m_bEnableTC )
-			{
-				uint8_t readFailureResponse[6];
-				readFailureResponse[0] = READ_RESPONSE_TYPE;
-				*((uint16_t*)(readFailureResponse+1)) = 1;
-				readFailureResponse[3] = READ_FAILURE_TC_OFF_RESPONSE;
-
-				pResponse->AddResponse( readFailureResponse, 4 );
-				return;	
-			}
-
-			if ( length < 2 )
-				return;
-
-			uint8_t wheelCount = pData[1];
-
-			if ( wheelCount > 4 )
-				return;
-
-			if ( length < (wheelCount+2) )
-				return;
-
-			uint16_t resultList[4];
-
-			for ( uint8_t pos = 0; pos < wheelCount; pos++ )
-			{
-				// BUG:: Allow them to access up to 512-8 bytes past the array
+      for (uint8_t pos = 0; pos < wheelCount; pos++) {
+        // BUG:: Allow them to access up to 512-8 bytes past the array
 #ifdef PATCHED_1
-				if ( pData[pos+2] >= 4 )
-				       return;	
+        if (pData[pos + 2] >= 4) return;
 #endif
-				resultList[pos] = m_wheelSpeed[pData[pos+2]];	
-			}
+        resultList[pos] = m_wheelSpeed[pData[pos + 2]];
+      }
 
-			// Send result...
-			uint8_t readWheelSpeedResponse[20];
-			readWheelSpeedResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readWheelSpeedResponse+1)) = (2+(sizeof(uint16_t)*wheelCount));
-			readWheelSpeedResponse[3] = READ_WHEELSPEED_RESPONSE;
-			readWheelSpeedResponse[4] = wheelCount;
-			memcpy( readWheelSpeedResponse+5, resultList, sizeof(uint16_t)*wheelCount );
+      // Send result...
+      uint8_t readWheelSpeedResponse[20];
+      readWheelSpeedResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readWheelSpeedResponse + 1)) =
+          (2 + (sizeof(uint16_t) * wheelCount));
+      readWheelSpeedResponse[3] = READ_WHEELSPEED_RESPONSE;
+      readWheelSpeedResponse[4] = wheelCount;
+      memcpy(readWheelSpeedResponse + 5, resultList,
+             sizeof(uint16_t) * wheelCount);
 
-			pResponse->AddResponse( readWheelSpeedResponse, 5+(wheelCount*sizeof(uint16_t)) );
-		}	
-		break;
+      pResponse->AddResponse(readWheelSpeedResponse,
+                             5 + (wheelCount * sizeof(uint16_t)));
+    } break;
 
-	default:
-		break;
-	}
+    default:
+      break;
+  }
 }
 
-void CTCM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length <= 1 )
-		return;
+void CTCM::HandleSetDataMessage(uint8_t *pData, uint16_t length,
+                                CResponse *pResponse) {
+  if (length <= 1) return;
 
-	uint8_t fieldID = pData[0];
+  uint8_t fieldID = pData[0];
 
-	switch( fieldID )
-	{
-	case SET_WHEELSPEED_COMMAND:
-		{
-			if ( !m_bEnableTC )
-			{
-				uint8_t setFailureResponse[6];
-				setFailureResponse[0] = SET_RESPONSE_TYPE;
-				*((uint16_t*)(setFailureResponse+1)) = 1;
-				setFailureResponse[3] = SET_FAILURE_TC_OFF_RESPONSE;
+  switch (fieldID) {
+    case SET_WHEELSPEED_COMMAND: {
+      if (!m_bEnableTC) {
+        uint8_t setFailureResponse[6];
+        setFailureResponse[0] = SET_RESPONSE_TYPE;
+        *((uint16_t *)(setFailureResponse + 1)) = 1;
+        setFailureResponse[3] = SET_FAILURE_TC_OFF_RESPONSE;
 
-				pResponse->AddResponse( setFailureResponse, 4 );
-				return;	
-			}
+        pResponse->AddResponse(setFailureResponse, 4);
+        return;
+      }
 
-			if ( length < 2 )
-				return;
+      if (length < 2) return;
 
-			uint8_t wheelCount = pData[1];
+      uint8_t wheelCount = pData[1];
 
-			if ( wheelCount > 4 )
-				return;
+      if (wheelCount > 4) return;
 
-			if ( length < ((wheelCount+2)+(wheelCount*3)) )
-				return;
+      if (length < ((wheelCount + 2) + (wheelCount * 3))) return;
 
-			for ( uint8_t pos = 0; pos < wheelCount; pos++ )
-			{
-				if ( pData[pos+2] >= 4 )
-				       return;	
-				
-				m_wheelSpeed[pData[pos+2]] = ((uint16_t*)(pData+wheelCount+2))[pos];
-			}
+      for (uint8_t pos = 0; pos < wheelCount; pos++) {
+        if (pData[pos + 2] >= 4) return;
 
-			// Send result...
-			uint8_t setWheelSpeedResponse[20];
-			setWheelSpeedResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setWheelSpeedResponse+1)) = 2+(3*wheelCount);
-			setWheelSpeedResponse[3] = SET_WHEELSPEED_RESPONSE;
-			setWheelSpeedResponse[4] = wheelCount;
-			memcpy( setWheelSpeedResponse+5, pData+2, 3*wheelCount );
-			
-			pResponse->AddResponse( setWheelSpeedResponse, 5+(wheelCount*3) );
-		}
-		break;
-	}
+        m_wheelSpeed[pData[pos + 2]] =
+            ((uint16_t *)(pData + wheelCount + 2))[pos];
+      }
+
+      // Send result...
+      uint8_t setWheelSpeedResponse[20];
+      setWheelSpeedResponse[0] = SET_RESPONSE_TYPE;
+      *((uint16_t *)(setWheelSpeedResponse + 1)) = 2 + (3 * wheelCount);
+      setWheelSpeedResponse[3] = SET_WHEELSPEED_RESPONSE;
+      setWheelSpeedResponse[4] = wheelCount;
+      memcpy(setWheelSpeedResponse + 5, pData + 2, 3 * wheelCount);
+
+      pResponse->AddResponse(setWheelSpeedResponse, 5 + (wheelCount * 3));
+    } break;
+  }
 }
 
-void CTCM::HandleActionMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length < 1 )
-		return;
+void CTCM::HandleActionMessage(uint8_t *pData, uint16_t length,
+                               CResponse *pResponse) {
+  if (length < 1) return;
 
-	uint8_t fieldID = pData[0];
+  uint8_t fieldID = pData[0];
 
-	if ( !m_bEngineRunning )
-		return;
+  if (!m_bEngineRunning) return;
 
-	switch( fieldID )
-	{
-	case TC_ON_COMMAND:
-		{
-			// Check state
-			if ( m_bEnableTC )
-			{
-				// Already on -- do nothing
-			}
+  switch (fieldID) {
+    case TC_ON_COMMAND: {
+      // Check state
+      if (m_bEnableTC) {
+        // Already on -- do nothing
+      }
 
-			uint8_t actionResponse[6];
-			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 2;
-			actionResponse[3] = ACTION_TC_ENABLE_RESPONSE;
-			actionResponse[4] = 1;
-				
-			pResponse->AddResponse( actionResponse, 5 );
-		
-			m_bEnableTC = true;
-		}
-		break;
+      uint8_t actionResponse[6];
+      actionResponse[0] = ACTION_RESPONSE_TYPE;
+      *((uint16_t *)(actionResponse + 1)) = 2;
+      actionResponse[3] = ACTION_TC_ENABLE_RESPONSE;
+      actionResponse[4] = 1;
 
-	case TC_OFF_COMMAND:
-		{
-			// Check state
-			if ( !m_bEnableTC )
-			{
-				// Already off -- do nothing
-			}
+      pResponse->AddResponse(actionResponse, 5);
 
-			uint8_t actionResponse[6];
-			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 2;
-			actionResponse[3] = ACTION_TC_ENABLE_RESPONSE;
-			actionResponse[4] = 0;
-				
-			pResponse->AddResponse( actionResponse, 5 );
-		
-			m_bEnableTC = false;
-		}
-		break;
-	}
+      m_bEnableTC = true;
+    } break;
+
+    case TC_OFF_COMMAND: {
+      // Check state
+      if (!m_bEnableTC) {
+        // Already off -- do nothing
+      }
+
+      uint8_t actionResponse[6];
+      actionResponse[0] = ACTION_RESPONSE_TYPE;
+      *((uint16_t *)(actionResponse + 1)) = 2;
+      actionResponse[3] = ACTION_TC_ENABLE_RESPONSE;
+      actionResponse[4] = 0;
+
+      pResponse->AddResponse(actionResponse, 5);
+
+      m_bEnableTC = false;
+    } break;
+  }
 }
 
-void CTCM::TCMTick( void )
-{
-	if ( m_bEnableTC && !m_bEngineRunning )
-	{
-		// TCM is on and engine stopped running -- shut off
-		m_bEnableTC = false;
-	}
+void CTCM::TCMTick(void) {
+  if (m_bEnableTC && !m_bEngineRunning) {
+    // TCM is on and engine stopped running -- shut off
+    m_bEnableTC = false;
+  }
 
-	if ( !m_bEnableTC )
-	{
-		m_wheelSpeed[0] = 0;
-		m_wheelSpeed[1] = 0;
-		m_wheelSpeed[2] = 0;
-		m_wheelSpeed[3] = 0;
-	}
-	else
-	{
-		m_wheelSpeed[0] = 300;
-		m_wheelSpeed[1] = 300;
-		m_wheelSpeed[2] = 300;
-		m_wheelSpeed[3] = 300;
-	}
+  if (!m_bEnableTC) {
+    m_wheelSpeed[0] = 0;
+    m_wheelSpeed[1] = 0;
+    m_wheelSpeed[2] = 0;
+    m_wheelSpeed[3] = 0;
+  } else {
+    m_wheelSpeed[0] = 300;
+    m_wheelSpeed[1] = 300;
+    m_wheelSpeed[2] = 300;
+    m_wheelSpeed[3] = 300;
+  }
 }

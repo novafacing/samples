@@ -18,14 +18,15 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef RECV_UNTIL_DELIM_H
 #define RECV_UNTIL_DELIM_H 1
 #include <libcgc.h>
 
 /**
- * Receive delimiter terminated bytes from file descriptor and writes into buffer.
+ * Receive delimiter terminated bytes from file descriptor and writes into
+ * buffer.
  *
  * @param fd Source file descriptor
  * @param buf Destination buffer; will not be NULL terminated

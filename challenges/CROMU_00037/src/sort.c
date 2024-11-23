@@ -24,26 +24,27 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "jlib.h"
 
 char sort_n_sum(char *array, unsigned int len) {
-	int swapped = 1;
-	char t;
-	int i;
-	char sum;
+  int swapped = 1;
+  char t;
+  int i;
+  char sum;
 
-	while (swapped) {
-		swapped = 0;
-		sum = array[0];
-		for (i = 1; i < len; i++) {
-			if (array[i-1] > array[i]) {
-				t = array[i-1];
-				array[i-1] = array[i];
-				array[i] = t;
-				swapped = 1;
-			}
-			sum ^= array[i];
-		}
-	}
-	return(sum);
+  while (swapped) {
+    swapped = 0;
+    sum = array[0];
+    for (i = 1; i < len; i++) {
+      if (array[i - 1] > array[i]) {
+        t = array[i - 1];
+        array[i - 1] = array[i];
+        array[i] = t;
+        swapped = 1;
+      }
+      sum ^= array[i];
+    }
+  }
+  return (sum);
 }

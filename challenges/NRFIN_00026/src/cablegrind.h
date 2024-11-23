@@ -18,26 +18,27 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include <stdint.h>
+
 #include "libdupe.h"
 #ifndef CABLEGRIND_H
 #define CABLEGRIND_H
 
 #define SIZEERR "Not cool."
 typedef struct rofl_hdr {
-    uint64_t to;
-    uint64_t from;
-    uint32_t time;
-    uint32_t type;
+  uint64_t to;
+  uint64_t from;
+  uint32_t time;
+  uint32_t type;
 } rofl_hdr_t;
 
 typedef struct lol_hdr {
-    uint32_t time;
-    uint32_t from;
-    uint32_t to;
-    uint32_t type;
-    uint32_t csum;
+  uint32_t time;
+  uint32_t from;
+  uint32_t to;
+  uint32_t type;
+  uint32_t csum;
 } lol_hdr_t;
 
 /**
@@ -61,5 +62,5 @@ void process_lol(uint8_t *payload, int size);
  *
  * @param f Pointer to DUPE file
  */
-void process_dupe(dupefile_t *f); 
+void process_dupe(dupefile_t *f);
 #endif

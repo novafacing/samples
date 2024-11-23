@@ -25,99 +25,79 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
+
 #include "stdlib.h"
 
+int receive_bytes(char *buffer, size_t count) {
+  size_t total;
+  size_t rxbytes;
 
-int receive_bytes (char *buffer, size_t count) 
-{
-size_t total;
-size_t rxbytes;
+  if (buffer == 0) {
+    return -1;
+  }
 
+  total = 0;
 
-    if (buffer == 0 ) {
+  while (total < count) {
+    rxbytes = 0;
 
-        return -1;
+    if (receive(STDIN, buffer + total, count - total, &rxbytes) == 0) {
+      total += rxbytes;
 
+    } else {
+      return (-1);
     }
-    
-    total = 0;
+  }
 
-    while(total < count)  {
-
-        rxbytes = 0;
-
-        if (receive(STDIN, buffer+total, count-total, &rxbytes)==0 ) {
-
-            total += rxbytes;
-
-        }
-        else {
-
-            return(-1);
-        }
-
-    }
-
-    return 0;
-
+  return 0;
 }
 
+// Buffered receive_until function.  Will return up to "limit" characters in
+// "buffer", but note that buffer[limit] will have a null written so ensure the
+// incoming buffer is limit+1 in size
+size_t receive_until(char *buffer, char delim, size_t limit) {
+  const int maxLen = 512;
+  static char circ_buffer[maxLen];
+  static int head = 0;
+  static int end = 0;
+  int maxRead;
+  size_t len = 0;
+  size_t rx = 0;
 
-// Buffered receive_until function.  Will return up to "limit" characters in "buffer", but
-// note that buffer[limit] will have a null written so ensure the incoming buffer is limit+1 in size
-size_t receive_until( char *buffer, char delim, size_t limit )
-{
-    const int maxLen = 512;
-    static char circ_buffer[maxLen];
-    static int head = 0;
-    static int end = 0;
-    int maxRead;
-    size_t len = 0;
-    size_t rx = 0;
+  while (1) {
+    for (; head < end; ++head) {
+      if (*(circ_buffer + head) == delim) {
+        *buffer = 0;
+        ++head;
+        return len;
+      }
 
-    while (1) {
+      *buffer = *(circ_buffer + head);
+      ++len;
+      ++buffer;
 
-        for ( ; head < end; ++head ) {
+      if (len == limit) {
+        *buffer = 0;
+        return len;
+      }
+    }
 
-            if (*(circ_buffer+head) == delim ) {
+    // wrap around to the beginning of the circular buffer
+    if (head == maxLen) {
+      head = 0;
+      end = 0;
+    }
 
-                *buffer = 0;
-                ++head;
-                return len;
-            }
+    if (end < head) {
+      maxRead = head - end;
+    } else {
+      maxRead = maxLen - end;
+    }
 
-            *buffer = *(circ_buffer+head);
-            ++len;
-            ++buffer;
+    if (receive(STDIN, (void *)circ_buffer + end, maxRead, &rx) != 0)
+      _terminate(-1);
 
-            if (len == limit) {
+    end += rx;
 
-                *buffer = 0;
-                return len;
-            }
-        }
-
-        // wrap around to the beginning of the circular buffer
-        if ( head == maxLen ) {
-
-            head = 0;
-            end = 0;
-        }
-
-        if (end < head) {
-
-            maxRead = head - end;
-        }
-        else {
-
-            maxRead = maxLen - end;
-        }
-
-        if (receive(STDIN, (void *)circ_buffer + end, maxRead, &rx) != 0 ) 
-            _terminate(-1);
-
-        end += rx;
-
-    } // while (1)
-
+  }  // while (1)
 }

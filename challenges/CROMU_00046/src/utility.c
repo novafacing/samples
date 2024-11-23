@@ -26,45 +26,44 @@ THE SOFTWARE.
 #include "utility.h"
 
 unsigned int getBet(gamestate *state) {
-	char got[16];
-	unsigned int wager;
+  char got[16];
+  unsigned int wager;
 
-	put("How much would you like to wager? ");
-	bzero(got, 16);
-	recvUntil(0, got, 15, '\n');
-	wager = atoi(got);
-	if(wager > 0 && wager <= state->hugcount) {
-		if(wager > 1000)
-			put("HIGH ROLLER COMING THROUGH!\n");
-		return wager;
-	} else {
-		put("You can't bet that many hugs. Sorry. :(\n");
-		return -1;
-	}
+  put("How much would you like to wager? ");
+  bzero(got, 16);
+  recvUntil(0, got, 15, '\n');
+  wager = atoi(got);
+  if (wager > 0 && wager <= state->hugcount) {
+    if (wager > 1000) put("HIGH ROLLER COMING THROUGH!\n");
+    return wager;
+  } else {
+    put("You can't bet that many hugs. Sorry. :(\n");
+    return -1;
+  }
 }
 
-void hugsrand(gamestate* state, unsigned int seed) {
-    state->gamerand = seed;
-}
+void hugsrand(gamestate *state, unsigned int seed) { state->gamerand = seed; }
 
 unsigned int hugsnextrand(gamestate *state) {
-	unsigned int bits;
+  unsigned int bits;
 
-	bits = ((state->gamerand >> 0) ^ (state->gamerand >> 2) ^ (state->gamerand >> 3) ^ (state->gamerand >> 5)) & 1;
-	state->gamerand = (state->gamerand >> 1) | (bits << 31);
-    return state->gamerand;
+  bits = ((state->gamerand >> 0) ^ (state->gamerand >> 2) ^
+          (state->gamerand >> 3) ^ (state->gamerand >> 5)) &
+         1;
+  state->gamerand = (state->gamerand >> 1) | (bits << 31);
+  return state->gamerand;
 }
 
 void handleOutcome(gamestate *state, char outcome, unsigned int wagered) {
-	if(outcome == 1) {
-		put("YOU WIN!\nAdding ");
-		put(itoa(wagered));
-		put(" to your hug balance.\n\n");
-		state->hugcount+=wagered;
-	} else {
-		put("YOU LOSE!\nDebiting ");
-		put(itoa(wagered));
-		put(" from your hug balance.\n\n");
-		state->hugcount-=wagered;
-	}
+  if (outcome == 1) {
+    put("YOU WIN!\nAdding ");
+    put(itoa(wagered));
+    put(" to your hug balance.\n\n");
+    state->hugcount += wagered;
+  } else {
+    put("YOU LOSE!\nDebiting ");
+    put(itoa(wagered));
+    put(" from your hug balance.\n\n");
+    state->hugcount -= wagered;
+  }
 }

@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STATIC_H
 #define STATIC_H
 
 #include <libcgc.h>
 
-#define STATIC_MAX_SWITCH 0x10000-sizeof(size_t)
+#define STATIC_MAX_SWITCH 0x10000 - sizeof(size_t)
 
 /**
  * A massive switch statement that maps idx to a 4B return value.
@@ -34,6 +34,5 @@
  * @return The 4B requested at idx.
  */
 size_t static_switch(size_t idx);
-
 
 #endif /* STATIC_H */

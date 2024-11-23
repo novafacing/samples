@@ -21,75 +21,61 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
 #include "io.h"
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 static uint8_t ikey = 0xAA;
 static uint8_t okey = 0x55;
 
-int read_bytes(void *_buf, size_t n)
-{
-    size_t bytes, i;
-    char *buf = _buf;
+int read_bytes(void *_buf, size_t n) {
+  size_t bytes, i;
+  char *buf = _buf;
 
-    while (n != 0)
-    {
-        if (receive(STDIN, buf, n, &bytes) != 0 || bytes == 0)
-            return 0;
-        for (i = 0; i < bytes; i++)
-        {
-            buf[i] ^= ikey;
-            ikey += buf[i];
-        }
-        n -= bytes;
-        buf += bytes;
+  while (n != 0) {
+    if (receive(STDIN, buf, n, &bytes) != 0 || bytes == 0) return 0;
+    for (i = 0; i < bytes; i++) {
+      buf[i] ^= ikey;
+      ikey += buf[i];
     }
-    return 1;
+    n -= bytes;
+    buf += bytes;
+  }
+  return 1;
 }
 
-int read_until(char *buf, size_t n, char el)
-{
-    size_t i;
-    for (i = 0; i < n; i++)
-    {
-        if (read_bytes(&buf[i], 1) == 0)
-            return 0;
-        if (buf[i] == el)
-            break;
-    }
+int read_until(char *buf, size_t n, char el) {
+  size_t i;
+  for (i = 0; i < n; i++) {
+    if (read_bytes(&buf[i], 1) == 0) return 0;
+    if (buf[i] == el) break;
+  }
 
-    if (i < n)
-        buf[i] = 0;
-    else
-        buf[n-1] = 0;
+  if (i < n)
+    buf[i] = 0;
+  else
+    buf[n - 1] = 0;
 
-    return 1;
+  return 1;
 }
 
-void write_bytes(void *_buf, size_t n)
-{
-    size_t bytes, i;
-    char *buf = _buf;
+void write_bytes(void *_buf, size_t n) {
+  size_t bytes, i;
+  char *buf = _buf;
 
-    for (i = 0; i < n; i++)
-    {
-        char val = buf[i];
-        buf[i] ^= okey;
-        okey += val;
-    }
+  for (i = 0; i < n; i++) {
+    char val = buf[i];
+    buf[i] ^= okey;
+    okey += val;
+  }
 
-    while (n != 0)
-    {
-        if (transmit(STDOUT, buf, n, &bytes) != 0 || bytes == 0)
-            return;
-        n -= bytes;
-        buf += bytes;
-    }
+  while (n != 0) {
+    if (transmit(STDOUT, buf, n, &bytes) != 0 || bytes == 0) return;
+    n -= bytes;
+    buf += bytes;
+  }
 }
 
-void write_string(char *buf)
-{
-    write_bytes(buf, strlen(buf));
-}
+void write_string(char *buf) { write_bytes(buf, strlen(buf)); }

@@ -22,16 +22,16 @@
  * THE SOFTWARE.
  *
  */
-#include "wrapper.h"
 #include <libcgc.h>
 
-int strcmp(const char *s1, const char *s2)
-{
-    while (*s1 && *s2)
-      if (*s1 != *s2)
-        break;
-      else
-        s1++, s2++;
+#include "wrapper.h"
 
-    return *s2 - *s1;
+int strcmp(const char *s1, const char *s2) {
+  while (*s1 && *s2)
+    if (*s1 != *s2)
+      break;
+    else
+      s1++, s2++;
+
+  return *s2 - *s1;
 }

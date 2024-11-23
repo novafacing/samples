@@ -23,13 +23,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *strdup(const char *s1)
-{
+char *strdup(const char *s1) {
   size_t len = strlen(s1);
   char *cpy = malloc(len + 1);
 
-  if (!cpy)
-    return NULL;
+  if (!cpy) return NULL;
 
   memcpy(cpy, s1, len);
   cpy[len] = '\0';

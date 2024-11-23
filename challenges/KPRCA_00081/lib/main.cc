@@ -23,58 +23,52 @@
 #include <cstdlib.h>
 
 #define __hidden __attribute__((__visibility__("hidden")))
-typedef struct
-{
-    void (*fn) (void *arg);
-    void *arg;
+typedef struct {
+  void (*fn)(void *arg);
+  void *arg;
 } atexit_fn_t;
 static atexit_fn_t atexit_handlers[256];
 static int atexit_idx = 0;
 
-extern "C"
-{
-    extern void (*__init_array_start[])(int, char **, char **) __hidden;
-    extern void (*__init_array_end[])(int, char **, char **) __hidden;
-    void *__dso_handle;
+extern "C" {
+extern void (*__init_array_start[])(int, char **, char **) __hidden;
+extern void (*__init_array_end[])(int, char **, char **) __hidden;
+void *__dso_handle;
 };
 
-void ctors()
-{
-    size_t i;
-    for (i = 0; i < __init_array_end - __init_array_start; i++)
-    {
-        void (*fn) (int, char **, char **) = __init_array_start[i];
-        if (fn != NULL && (unsigned int)fn != 1)
-            fn(0, NULL, NULL);
-    }
+void ctors() {
+  size_t i;
+  for (i = 0; i < __init_array_end - __init_array_start; i++) {
+    void (*fn)(int, char **, char **) = __init_array_start[i];
+    if (fn != NULL && (unsigned int)fn != 1) fn(0, NULL, NULL);
+  }
 }
 
-extern "C" int __cxa_atexit(void (*func)(void *), void *arg, void *dso)
-{
-    if (atexit_idx == 256) return -1;
+extern "C" int __cxa_atexit(void (*func)(void *), void *arg, void *dso) {
+  if (atexit_idx == 256) return -1;
 
-    atexit_fn_t *fn = &atexit_handlers[atexit_idx++];
-    fn->fn = func;
-    fn->arg = arg;
-    return 0;
+  atexit_fn_t *fn = &atexit_handlers[atexit_idx++];
+  fn->fn = func;
+  fn->arg = arg;
+  return 0;
 }
 
-void dtors()
-{
-    size_t i;
-    for (i = 0; i < atexit_idx; i++)
-        atexit_handlers[i].fn(atexit_handlers[i].arg);
+void dtors() {
+  size_t i;
+  for (i = 0; i < atexit_idx; i++)
+    atexit_handlers[i].fn(atexit_handlers[i].arg);
 }
 
 #ifdef CPLUSPLUS
 #undef main
 
-extern "C" int __attribute__((fastcall)) _main(int secret_page_i, char *unused[]);
-extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
-{
-    ctors();
-    _main(secret_page_i, unused);
-    dtors();
+extern "C" int __attribute__((fastcall)) _main(int secret_page_i,
+                                               char *unused[]);
+extern "C" int __attribute__((fastcall)) main(int secret_page_i,
+                                              char *unused[]) {
+  ctors();
+  _main(secret_page_i, unused);
+  dtors();
 }
 
 #endif

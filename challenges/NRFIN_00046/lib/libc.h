@@ -18,23 +18,24 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H 1
 
 // #define DEBUG 1
 
 #include <stdint.h>
-#include "memset.h"
-#include "memcpy.h"
-#include "recv_until_delim_n.h"
-#include "send_bytes.h"
-#include "recv_bytes.h"
+
 #include "char.h"
-#include "streq.h"
-#include "strlen.h"
 #include "list.h"
 #include "malloc.h"
+#include "memcpy.h"
+#include "memset.h"
+#include "recv_bytes.h"
+#include "recv_until_delim_n.h"
+#include "send_bytes.h"
+#include "streq.h"
+#include "strlen.h"
 
 #ifdef DEBUG
 #include "debug.h"
@@ -44,12 +45,12 @@
 
 #define uint8_t unsigned char
 #define uint16_t unsigned short
-#define uint32_t unsigned int 
-#define uint64_t unsigned long long 
+#define uint32_t unsigned int
+#define uint64_t unsigned long long
 
 #define MAX_UINT8 0xff
 #define MAX_UINT32 0xffffffff
- 
+
 #define BASE_ADDR_SZ 3
 
 #define FLAG_PAGE 0x4347C000

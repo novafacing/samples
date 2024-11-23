@@ -24,56 +24,49 @@
 
 #include "node.h"
 
-class Query
-{
-private:
-    enum class Op
-    {
-        ERROR = 0x00,
-        ANCESTORS = 0x01,
-        DESCENDANTS = 0x02,
-        PARENT = 0x03,
-        CHILDREN = 0x04,
-        SIBLINGS = 0x05,
-        RETURN = 0x80,
-        TAG = 0x81,
-        NAMESPACE = 0x82,
-        ATTRIBUTE = 0x83,
-        INDEX = 0x84
+class Query {
+ private:
+  enum class Op {
+    ERROR = 0x00,
+    ANCESTORS = 0x01,
+    DESCENDANTS = 0x02,
+    PARENT = 0x03,
+    CHILDREN = 0x04,
+    SIBLINGS = 0x05,
+    RETURN = 0x80,
+    TAG = 0x81,
+    NAMESPACE = 0x82,
+    ATTRIBUTE = 0x83,
+    INDEX = 0x84
+  };
+  class Instruction {
+   public:
+    Op d_op;
+    union {
+      String *d_op1_s;
+      unsigned int d_op1_u;
     };
-    class Instruction
-    {
-    public:
-        Op d_op;
-        union {
-            String *d_op1_s;
-            unsigned int d_op1_u;
-        };
-        union {
-            String *d_op2_s;
-            unsigned int d_op2_u;
-        };
+    union {
+      String *d_op2_s;
+      unsigned int d_op2_u;
     };
-    void destroy_insns();
-    void parse(unsigned const char *str, unsigned int length);
-    Node *apply(Node *root, Instruction *cur, unsigned int index);
-public:
-    enum class Error
-    {
-        SUCCESS = 0,
-        NOT_FOUND = 1,
-        RECURSION = 2,
-        INVALID = 3
-    };
-    Query(unsigned const char *str, unsigned int length);
-    ~Query();
+  };
+  void destroy_insns();
+  void parse(unsigned const char *str, unsigned int length);
+  Node *apply(Node *root, Instruction *cur, unsigned int index);
 
-    Node *match(Node *root);
-    inline Error error() { return d_error; }
-private:
-    static const int MAX_DEPTH = 256;
-    static const int MAX_RECURSION = 1024;
-    Instruction d_insn[MAX_DEPTH + 1];
-    Error d_error;
-    int d_depth;
+ public:
+  enum class Error { SUCCESS = 0, NOT_FOUND = 1, RECURSION = 2, INVALID = 3 };
+  Query(unsigned const char *str, unsigned int length);
+  ~Query();
+
+  Node *match(Node *root);
+  inline Error error() { return d_error; }
+
+ private:
+  static const int MAX_DEPTH = 256;
+  static const int MAX_RECURSION = 1024;
+  Instruction d_insn[MAX_DEPTH + 1];
+  Error d_error;
+  int d_depth;
 };

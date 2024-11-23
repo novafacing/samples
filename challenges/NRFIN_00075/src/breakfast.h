@@ -18,15 +18,15 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERIALIZE_H
 #define SERIALIZE_H 1
 
 typedef struct {
-    char type[4];			// type of content (Plain or Serialized)
-    unsigned short size;	// number of bytes in content
-    char content[];			// buffer to store content
+  char type[4];         // type of content (Plain or Serialized)
+  unsigned short size;  // number of bytes in content
+  char content[];       // buffer to store content
 } Stream;
 
 /**
@@ -43,6 +43,5 @@ ssize_t process_serialized_input(Stream *input_stream);
  * @return 0 on success, else -1 on error
  */
 ssize_t process_plain_input(Stream *input_stream);
-
 
 #endif

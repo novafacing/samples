@@ -1,10 +1,11 @@
 #include <libcgc.h>
-#include "libc.h"
-#include "charter.h"
+
 #include "bars.h"
-#include "sparks.h"
-#include "rand.h"
+#include "charter.h"
 #include "data.h"
+#include "libc.h"
+#include "rand.h"
+#include "sparks.h"
 
 void echo();
 void sparks(data_package);
@@ -31,34 +32,34 @@ void read_data(uint32 datum_count) {
     data[cur] = datum;
   }
 
-  while(1) {
+  while (1) {
     transmit_all(STDOUT, "CHRT", 4);
     transmit_all(STDOUT, (char*)(&datum_count), 4);
 
     uint32 choice;
     read(&choice, sizeof(choice));
-    
-    switch(choice) {
-    case 1:
-      sparks(pack);
-      break;
-    case 3:
-      bars(pack);
-      break;
-    case 4:
-      echo();
-      break;
-    case 5:
-      seed();
-      break;
-    case 6:
-      noise();
-      break;
-    case 7:
-      replacer(pack);
-      break;
-    default:
-      _terminate(0);
+
+    switch (choice) {
+      case 1:
+        sparks(pack);
+        break;
+      case 3:
+        bars(pack);
+        break;
+      case 4:
+        echo();
+        break;
+      case 5:
+        seed();
+        break;
+      case 6:
+        noise();
+        break;
+      case 7:
+        replacer(pack);
+        break;
+      default:
+        _terminate(0);
     }
   }
 }

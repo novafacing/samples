@@ -18,20 +18,22 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
 
 // Messages
 #define INITMSG "Welcome to Tick-A-Tack.\n"
-#define INITCHOICES "Make your selection:\n" \
-		        "PLAY\n" \
-        		"QUIT\n"
-#define REPLAYCHOICES "Make your selection:\n" \
-        		"PLAY AGAIN\n" \
-        		"START OVER\n" \
-        		"QUIT\n"
+#define INITCHOICES        \
+  "Make your selection:\n" \
+  "PLAY\n"                 \
+  "QUIT\n"
+#define REPLAYCHOICES      \
+  "Make your selection:\n" \
+  "PLAY AGAIN\n"           \
+  "START OVER\n"           \
+  "QUIT\n"
 #define WAT "Wat?\n"
 #define COMPMOVE "Computer's move: ~n ~n.\n"
 #define CHARCHOICE "P goes first. Do you want P or Q?\n"

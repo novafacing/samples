@@ -24,70 +24,64 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "stdlib.h"
 
 #define BUFF_SIZE 100
 
-int split_ingredient(char *input, char *measure, int measure_size, char *ingredient, int ingredient_size) {
+int split_ingredient(char *input, char *measure, int measure_size,
+                     char *ingredient, int ingredient_size) {
+  char *tmp;
+  char buffer[BUFF_SIZE];
+  int i;
 
+  measure[0] = 0;
+  tmp = input;
+  i = 0;
 
-char *tmp;
-char buffer[BUFF_SIZE];
-int i;
+  bzero(buffer, BUFF_SIZE);
 
-	measure[0] = 0;
-	tmp = input;
-	i = 0;
+  while (tmp[i] != ' ' && i < BUFF_SIZE - 1 && i < strlen(tmp)) {
+    buffer[i] = tmp[i];
+    ++i;
+  }
 
-	bzero(buffer, BUFF_SIZE);
+  buffer[i] = 0;
 
-	while (tmp[i] != ' ' && i < BUFF_SIZE-1 && i < strlen(tmp)) {
+  tmp = input + i + 1;
 
-		buffer[i] = tmp[i];
-		++i;
-	}
+  // first validate that the first term is a measurement value
+  for (i = 0; i < strlen(buffer); ++i) {
+    if (!isdigit(buffer[i]) && buffer[i] != '.' && buffer[i] != '/') {
+      strcpy(ingredient, input);
+      measure[0] = 0;
 
-	buffer[i] = 0;
+      return 0;
+    }
+  }
 
-	tmp = input+i+1;
+  strcpy(measure, buffer);
 
-	// first validate that the first term is a measurement value
-	for (i=0; i < strlen(buffer); ++i) {
+  bzero(buffer, BUFF_SIZE);
+  i = 0;
 
-		if (!isdigit(buffer[i]) && buffer[i]!='.' && buffer[i]!='/') {
+  while (tmp[i] != ' ' && i < BUFF_SIZE - 1 && i < strlen(tmp)) {
+    buffer[i] = tmp[i];
+    ++i;
+  }
 
-			strcpy(ingredient, input);
-			measure[0] = 0;
+  buffer[i] = 0;
 
-			return 0;
-		}
+  if (strcmp(buffer, "tsp") == 0 || strcmp(buffer, "tbsp") == 0 ||
+      strcmp(buffer, "cup") == 0 || strcmp(buffer, "cups") == 0 ||
+      strcmp(buffer, "oz") == 0) {
+    strcat(measure, " ");
+    strcat(measure, buffer);
 
-	}
+    tmp = tmp + i + 1;
+  }
 
-	strcpy(measure, buffer);
+  strcpy(ingredient, tmp);
 
-	bzero(buffer, BUFF_SIZE);
-	i = 0;
-
-	while (tmp[i] != ' ' && i < BUFF_SIZE-1 && i < strlen(tmp)) {
-
-		buffer[i] = tmp[i];
-		++i;
-	}
-
-	buffer[i]=0;
-
-	if (strcmp(buffer, "tsp") == 0 || strcmp(buffer, "tbsp") == 0 || strcmp(buffer, "cup") == 0 
-		|| strcmp(buffer, "cups") ==0 || strcmp(buffer, "oz")== 0 ) {
-
-		strcat(measure, " ");
-		strcat(measure, buffer);
-
-		tmp = tmp + i + 1;
-	}
-
-	strcpy(ingredient, tmp);
-
-	return 0;
-
+  return 0;
 }

@@ -23,19 +23,17 @@
 
 #include <libcgc.h>
 
-int readline(int fd, char *line, size_t size)
-{
-    size_t i, rx;
+int readline(int fd, char *line, size_t size) {
+  size_t i, rx;
 
-    for (i = 0; i < size; i++) {
-        if (receive(fd, &line[i], 1, &rx) != 0 || rx == 0)
-            return -1;
-        if (line[i] == '\n') {
-            line[i] = '\0';
-            return 0;
-        }
+  for (i = 0; i < size; i++) {
+    if (receive(fd, &line[i], 1, &rx) != 0 || rx == 0) return -1;
+    if (line[i] == '\n') {
+      line[i] = '\0';
+      return 0;
     }
+  }
 
-    line[i - 1] = '\0';
-    return 1;
+  line[i - 1] = '\0';
+  return 1;
 }

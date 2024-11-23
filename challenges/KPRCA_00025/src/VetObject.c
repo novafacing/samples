@@ -20,33 +20,30 @@
  * THE SOFTWARE.
  *
  */
+#include "VetObject.h"
+
 #include <ctype.h>
 
 #include "Program.h"
-#include "VetObject.h"
 
 DefineClass(VetObject, MapObject)
 
-DefineFunction(VetObject, void, $init)
-{
-    this->m_icon = 'V';
+    DefineFunction(VetObject, void, $init) {
+  this->m_icon = 'V';
 }
 
-DefineFunction(VetObject, int, on_collide, Player *p)
-{
-    $(p, vet_menu);
-    return 1;
+DefineFunction(VetObject, int, on_collide, Player *p) {
+  $(p, vet_menu);
+  return 1;
 }
 
-DefineFunction(VetObject, void, serialize, Buffer *buf)
-{
-    $(buf, write_number, 0); // used by MapObject_deserialize
-    // do nothing
+DefineFunction(VetObject, void, serialize, Buffer *buf) {
+  $(buf, write_number, 0);  // used by MapObject_deserialize
+                            // do nothing
 }
 
-DefineFunction(VetObject, void, deserialize, Buffer *buf)
-{
-    unsigned int type = $(buf, read_number);
-    ASSERT_OR_RAISE(type == 0, EXC_BAD_STATE);
-    // do nothing
+DefineFunction(VetObject, void, deserialize, Buffer *buf) {
+  unsigned int type = $(buf, read_number);
+  ASSERT_OR_RAISE(type == 0, EXC_BAD_STATE);
+  // do nothing
 }

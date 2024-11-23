@@ -24,25 +24,24 @@
 #include "enums.h"
 #include "num_gen.h"
 
-class Gridder
-{
-  public:
-    Gridder();
-    Gridder(const Gridder &copy);
-    void ResetBoard();
-    bool CopyGridder(unsigned int *pboard, int size);
-    bool GenerateNewGridder(int cell_idx, NumGen *pngen);
-    void MakeGridderSolveable(int difficulty, NumGen *pngen);
-    Gridder *FindSolution(int cell_idx);
-    bool HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit);
-    bool ValidateGridder(const Gridder &master);
-    void Serialize(FILE *out);
-    unsigned int *GetRawGridder(int *size);
-    void Debug();
+class Gridder {
+ public:
+  Gridder();
+  Gridder(const Gridder &copy);
+  void ResetBoard();
+  bool CopyGridder(unsigned int *pboard, int size);
+  bool GenerateNewGridder(int cell_idx, NumGen *pngen);
+  void MakeGridderSolveable(int difficulty, NumGen *pngen);
+  Gridder *FindSolution(int cell_idx);
+  bool HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit);
+  bool ValidateGridder(const Gridder &master);
+  void Serialize(FILE *out);
+  unsigned int *GetRawGridder(int *size);
+  void Debug();
 
-  private:
-    bool ValidAddNumber(int val, int row, int col);
-    bool ValidCell(int row, int col);
+ private:
+  bool ValidAddNumber(int val, int row, int col);
+  bool ValidCell(int row, int col);
 
-    unsigned int board_[SET_SIZE][SET_SIZE];
+  unsigned int board_[SET_SIZE][SET_SIZE];
 };

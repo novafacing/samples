@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
-#include "libc.h"
+
 #include "dealer.h"
+#include "libc.h"
 
 static char OK[8] = {0};
 
@@ -30,31 +31,29 @@ static char OK[8] = {0};
  * Create a checksum of the flag page to use as the OK byte string
  */
 void gen_ok(void) {
-    const char *fp = (char *)FLAG_PAGE;
-    for (unsigned int idx = 0; idx < 4096; idx++) {
-        OK[idx % 8] ^= fp[idx];
-    }
+  const char *fp = (char *)FLAG_PAGE;
+  for (unsigned int idx = 0; idx < 4096; idx++) {
+    OK[idx % 8] ^= fp[idx];
+  }
 }
 
 int main(void) {
+  ssize_t ret = 0;
+  DBG("STARTING.\n");
+  gen_ok();
 
-    ssize_t ret = 0;
-    DBG("STARTING.\n");
-    gen_ok();
+  while (TRUE) {
+    ret = process();
 
-    while (TRUE) {
-        ret = process();
+    SEND(STDOUT, (char *)OK, sizeof(OK));
 
-        SEND(STDOUT, (char *)OK, sizeof(OK));
-
-        if (0 == ret) {
-            DBG("process ok\n");
-        } else {
-            DBG("process quitting: %I\n", ret);
-	        break;
-        }
-
+    if (0 == ret) {
+      DBG("process ok\n");
+    } else {
+      DBG("process quitting: %I\n", ret);
+      break;
     }
+  }
 
-    return 0;
+  return 0;
 }

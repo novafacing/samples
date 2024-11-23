@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef HASHTIME_H
 #define HASHTIME_H
 #include "libc.h"
-void checksum(uint32_t acct_id, uint32_t qty, char * symbol, float price, char *dst);
+void checksum(uint32_t acct_id, uint32_t qty, char *symbol, float price,
+              char *dst);
 
 #endif

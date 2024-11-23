@@ -24,66 +24,60 @@ THE SOFTWARE.
 
 */
 
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
 }
 
-#include "common.h"
 #include "clf.h"
-#include "vm.h"
+#include "common.h"
 #include "peripheral.h"
+#include "vm.h"
 
-void InitRNG( void *secret_page )
-{
-	seed_prng_array( (uint32_t*)secret_page, 32 );
+void InitRNG(void *secret_page) {
+  seed_prng_array((uint32_t *)secret_page, 32);
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
-{
-	void *secret_page = (void *)secret_page_i;
+int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+  void *secret_page = (void *)secret_page_i;
 
-	InitRNG( secret_page );
+  InitRNG(secret_page);
 
-	CCLF oLoader;
+  CCLF oLoader;
 
-	uint32_t fileSize;
+  uint32_t fileSize;
 
-	ReadBytes( (uint8_t*)&fileSize, 4 );
+  ReadBytes((uint8_t *)&fileSize, 4);
 
-	if ( fileSize > CCLF::MAX_LOADER_FILE_SIZE )
-	{
-		printf( "Exiting\n" );
-		return (-1);
-	}
+  if (fileSize > CCLF::MAX_LOADER_FILE_SIZE) {
+    printf("Exiting\n");
+    return (-1);
+  }
 
-	uint8_t *pLoaderFile = new uint8_t[fileSize];
+  uint8_t *pLoaderFile = new uint8_t[fileSize];
 
-	ReadBytes( pLoaderFile, fileSize );
+  ReadBytes(pLoaderFile, fileSize);
 
-	// Begin loading
-	if ( !oLoader.LoadFile( pLoaderFile, fileSize ) )
-	{
-		printf( "Exiting\n" );
-		return (-1);
-	}
+  // Begin loading
+  if (!oLoader.LoadFile(pLoaderFile, fileSize)) {
+    printf("Exiting\n");
+    return (-1);
+  }
 
-	// Delete file -- not needed anymore
-	delete pLoaderFile;
+  // Delete file -- not needed anymore
+  delete pLoaderFile;
 
-	CVM oVM( secret_page );
+  CVM oVM(secret_page);
 
-	if ( !oVM.Init( &oLoader ) )
-	{
-		printf( "Exiting\n" );
-		return (-1);
-	}
+  if (!oVM.Init(&oLoader)) {
+    printf("Exiting\n");
+    return (-1);
+  }
 
-	oVM.Run( );
+  oVM.Run();
 
-	return 0;
+  return 0;
 }

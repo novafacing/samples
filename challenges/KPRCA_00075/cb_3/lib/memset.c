@@ -22,12 +22,10 @@
  */
 #include <string.h>
 
-void *memset(void *s, int c, size_t n)
-{
-    size_t i;
-    unsigned char *buf = s;
+void *memset(void *s, int c, size_t n) {
+  size_t i;
+  unsigned char *buf = s;
 
-    for (i = 0; i < n; i++)
-        buf[i] = c;
-    return s;
+  for (i = 0; i < n; i++) buf[i] = c;
+  return s;
 }

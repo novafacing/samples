@@ -24,13 +24,14 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
+
 #include "canvas.h"
-#include "paint.h"
 #include "io.h"
-#include "vgf.h"
+#include "paint.h"
 #include "pmp.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "vgf.h"
 
 int main() {
   uint16_t file_length;
@@ -39,7 +40,7 @@ int main() {
   if (ReceiveAll(&file_length, sizeof(file_length)) != 0) {
     return -1;
   }
-  
+
   // Allocate space for file
   uint8_t *file_data;
   if (allocate(file_length, 0, (void **)&file_data) != 0) {
@@ -47,7 +48,7 @@ int main() {
   }
   uint8_t *file_end = file_data + file_length;
 
-  // Read VGF File 
+  // Read VGF File
   if (ReceiveAll(file_data, file_length) != 0) {
     return -1;
   }
@@ -69,14 +70,14 @@ int main() {
   }
 
   // Process image objects (render layers)
-  if (VGFProcess(&file_data,file_end, c) != 0) {
+  if (VGFProcess(&file_data, file_end, c) != 0) {
     return -1;
   }
 
   // Process image colors
   uint8_t num_colors = *file_data;
   file_data += 1;
- 
+
   if (num_colors > CANVAS_MAX_COLORS) {
     return -1;
   }
@@ -91,7 +92,7 @@ int main() {
     c->colors[i].green = *(uint8_t *)file_data;
     file_data += sizeof(RGB_Color);
   }
-    
+
   // Flatten Canvas
   FlattenCanvas(c);
 
@@ -109,6 +110,6 @@ int main() {
   // Deallocate the PMP file and canvas
   PMPDeallocate(&pmp);
   DestroyCanvas(&c);
-  
+
   return 0;
 }

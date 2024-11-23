@@ -20,20 +20,18 @@
  * THE SOFTWARE.
  *
  */
-#include <cstring.h>
-#include <new.h>
-#include "smalloc.h"
 #include "string.h"
 
-String::String(const char *str)
-{
-    strcpy(d_data, str);
-}
+#include <cstring.h>
+#include <new.h>
 
-String *String::create(const char *str)
-{
-    unsigned int length = strlen(str) + 1;
-    void *mem = safe_malloc(sizeof(String) + length);
-    String *s = new(mem) String(str);
-    return s;
+#include "smalloc.h"
+
+String::String(const char *str) { strcpy(d_data, str); }
+
+String *String::create(const char *str) {
+  unsigned int length = strlen(str) + 1;
+  void *mem = safe_malloc(sizeof(String) + length);
+  String *s = new (mem) String(str);
+  return s;
 }

@@ -20,68 +20,57 @@
  * THE SOFTWARE.
  *
  */
+#include "ticket.h"
+
+#include <cstdio.h>
 #include <cstdlib.h>
 #include <cstring.h>
-#include <cstdio.h>
-#include "ticket.h"
+
 #include "time.h"
 
 #define MAX_PRIORITY CRITICAL
 
 static uint32_t g_ticket_id = 1;
 
-Ticket *Ticket::GetTicket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority)
-{
-    if (!email || !desc || !entry_time || !priority || priority > MAX_PRIORITY)
-        return (Ticket *)NULL;
+Ticket *Ticket::GetTicket(char *email, char *desc, uint32_t entry_time,
+                          uint32_t duration, PRIORITY priority) {
+  if (!email || !desc || !entry_time || !priority || priority > MAX_PRIORITY)
+    return (Ticket *)NULL;
 
-    return new Ticket(email, desc, entry_time, duration, priority);
+  return new Ticket(email, desc, entry_time, duration, priority);
 }
 
-void Ticket::DeleteTicket(Ticket *ticket)
-{
-    if (ticket)
-        delete ticket;
+void Ticket::DeleteTicket(Ticket *ticket) {
+  if (ticket) delete ticket;
 }
 
-Ticket::Ticket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority)
-{
-    id_ = g_ticket_id++;
-    uint32_t email_len = strlen(email) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(email);
-    uint32_t desc_len = strlen(desc) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(desc);
-    memset(email_, 0, sizeof(email_));
-    memset(desc_, 0, sizeof(desc_));
-    memcpy(email_,  email, email_len);
-    memcpy(desc_,  desc, desc_len);
-    entry_time_ = entry_time;
-    status_ = OPEN;
-    duration_ = duration;
-    priority_ = priority;
+Ticket::Ticket(char *email, char *desc, uint32_t entry_time, uint32_t duration,
+               PRIORITY priority) {
+  id_ = g_ticket_id++;
+  uint32_t email_len =
+      strlen(email) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(email);
+  uint32_t desc_len = strlen(desc) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(desc);
+  memset(email_, 0, sizeof(email_));
+  memset(desc_, 0, sizeof(desc_));
+  memcpy(email_, email, email_len);
+  memcpy(desc_, desc, desc_len);
+  entry_time_ = entry_time;
+  status_ = OPEN;
+  duration_ = duration;
+  priority_ = priority;
 }
 
-Ticket::~Ticket()
-{
+Ticket::~Ticket() {}
+
+void Ticket::UpdateStatus(STATUS status) { status_ = status; }
+
+void Ticket::WorkOn() {
+  if (duration_ > 0) --duration_;
 }
 
-void Ticket::UpdateStatus(STATUS status)
-{
-    status_ = status;
-}
+bool Ticket::CheckDone(void) { return duration_ == 0; }
 
-void Ticket::WorkOn()
-{
-  if (duration_ > 0)
-    --duration_;
-}
-
-bool Ticket::CheckDone(void)
-{
-  return duration_ == 0;
-}
-
-
-void Ticket::Display()
-{
+void Ticket::Display() {
   printf("%d" EOL, id());
   printf("%s" EOL, email());
   printf("%s" EOL, description());
@@ -91,37 +80,16 @@ void Ticket::Display()
   printf("%d" EOL, duration());
 }
 
-uint32_t Ticket::id()
-{
-    return id_;
-}
+uint32_t Ticket::id() { return id_; }
 
-char *Ticket::email()
-{
-    return email_;
-}
+char *Ticket::email() { return email_; }
 
-char *Ticket::description()
-{
-    return desc_;
-}
+char *Ticket::description() { return desc_; }
 
-uint32_t Ticket::entry_time()
-{
-    return entry_time_;
-}
+uint32_t Ticket::entry_time() { return entry_time_; }
 
-PRIORITY Ticket::priority()
-{
-    return priority_;
-}
+PRIORITY Ticket::priority() { return priority_; }
 
-STATUS Ticket::status()
-{
-    return status_;
-}
+STATUS Ticket::status() { return status_; }
 
-uint32_t Ticket::duration()
-{
-    return duration_;
-}
+uint32_t Ticket::duration() { return duration_; }

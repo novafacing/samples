@@ -20,117 +20,110 @@
  * THE SOFTWARE.
  *
  */
-#include <stdio.h>
 #include "calendar.h"
+
+#include <stdio.h>
 
 #define MAX_AGENDA_EVENTS 8
 #define AGENDA_LOOKAHEAD 3
 
-void view_day(calendar_t * cal, date_t date)
-{
-    char date_str[16];
-    get_date_str(date_str, &date);
+void view_day(calendar_t *cal, date_t date) {
+  char date_str[16];
+  get_date_str(date_str, &date);
 
-    event_list_t *iter = cal->events;
-    int datecmp = 0;
-    printf("Viewing Calendar Appointments for %s\n", date_str);
-    while(iter) {
-        datecmp = compare_date(&iter->event->duration.start.date, &date);
-        if (datecmp > 0)
-            break;
+  event_list_t *iter = cal->events;
+  int datecmp = 0;
+  printf("Viewing Calendar Appointments for %s\n", date_str);
+  while (iter) {
+    datecmp = compare_date(&iter->event->duration.start.date, &date);
+    if (datecmp > 0) break;
 
-        if (date_within(iter->event->duration, date)) {
-            printf("------------------------\n");
-            print_event(iter->event);
-        }
-        iter = iter->next;
+    if (date_within(iter->event->duration, date)) {
+      printf("------------------------\n");
+      print_event(iter->event);
     }
-    printf("------------------------\n");
+    iter = iter->next;
+  }
+  printf("------------------------\n");
 }
 
-void view_month(calendar_t * cal, date_t date)
-{
-    char date_str[16];
-    get_date_str(date_str, &date);
+void view_month(calendar_t *cal, date_t date) {
+  char date_str[16];
+  get_date_str(date_str, &date);
 
-    event_list_t *iter = cal->events;
-    int datecmp = 0;
-    char *month = get_month(&date);
-    printf("Viewing Monthly Calendar for %s %d\n", month, date.year);
-    while(iter) {
-        if (iter->event->duration.start.date.month >= date.month &&
-            iter->event->duration.end.date.month <= date.month) {
-            printf("------------------------\n");
-            print_event(iter->event);
-        }
-        iter = iter->next;
+  event_list_t *iter = cal->events;
+  int datecmp = 0;
+  char *month = get_month(&date);
+  printf("Viewing Monthly Calendar for %s %d\n", month, date.year);
+  while (iter) {
+    if (iter->event->duration.start.date.month >= date.month &&
+        iter->event->duration.end.date.month <= date.month) {
+      printf("------------------------\n");
+      print_event(iter->event);
     }
-    printf("------------------------\n");
+    iter = iter->next;
+  }
+  printf("------------------------\n");
 }
 
-date_t calc_agenda_lookahead(date_t date)
-{
-    date_t lookahead = date;
-    lookahead.year += AGENDA_LOOKAHEAD / 12;
-    if (AGENDA_LOOKAHEAD % 12 == 0)
-        return lookahead;
+date_t calc_agenda_lookahead(date_t date) {
+  date_t lookahead = date;
+  lookahead.year += AGENDA_LOOKAHEAD / 12;
+  if (AGENDA_LOOKAHEAD % 12 == 0) return lookahead;
 
-    lookahead.month = (date.month + AGENDA_LOOKAHEAD);
-    if (lookahead.month > 12) {
-        lookahead.year++;
-        lookahead.month %= 12;
-    }
+  lookahead.month = (date.month + AGENDA_LOOKAHEAD);
+  if (lookahead.month > 12) {
+    lookahead.year++;
+    lookahead.month %= 12;
+  }
 
-    return lookahead;
+  return lookahead;
 }
 
-void view_agenda(calendar_t *cal, date_t date)
-{
-    int i = 0, printed_events = 0;
-    char date_str[16];
-    get_date_str(date_str, &date);
-    date_t lookahead = calc_agenda_lookahead(date);
+void view_agenda(calendar_t *cal, date_t date) {
+  int i = 0, printed_events = 0;
+  char date_str[16];
+  get_date_str(date_str, &date);
+  date_t lookahead = calc_agenda_lookahead(date);
 
-    event_list_t *iter = cal->events;
-    int datecmp = 0;
-    char *month = get_month(&date);
-    printf("Agenda View\n");
-    while(i++ < cal->num_events && printed_events < MAX_AGENDA_EVENTS) {
-        datecmp = compare_date(&iter->event->duration.start.date, &date);
-        if (datecmp < 0) {
-            iter = iter->next;
-            continue;
-        }
-
-        if (compare_date(&iter->event->duration.start.date, &lookahead) <= 0) {
-            printf("------------------------\n");
-            print_event(iter->event);
-            printed_events++;
-        } else {
-            break;
-        }
-        iter = iter->next;
+  event_list_t *iter = cal->events;
+  int datecmp = 0;
+  char *month = get_month(&date);
+  printf("Agenda View\n");
+  while (i++ < cal->num_events && printed_events < MAX_AGENDA_EVENTS) {
+    datecmp = compare_date(&iter->event->duration.start.date, &date);
+    if (datecmp < 0) {
+      iter = iter->next;
+      continue;
     }
-    printf("------------------------\n");
+
+    if (compare_date(&iter->event->duration.start.date, &lookahead) <= 0) {
+      printf("------------------------\n");
+      print_event(iter->event);
+      printed_events++;
+    } else {
+      break;
+    }
+    iter = iter->next;
+  }
+  printf("------------------------\n");
 }
 
-bool add_calendar_event(calendar_t *cal, event_t *event)
-{
-    if (insert_in_order((list_t **)&cal->events, event, &compare_event_dates)) {
-        cal->num_events++;
-        return true;
-    }
+bool add_calendar_event(calendar_t *cal, event_t *event) {
+  if (insert_in_order((list_t **)&cal->events, event, &compare_event_dates)) {
+    cal->num_events++;
+    return true;
+  }
 
-    return false;
+  return false;
 }
 
-bool remove_calendar_event(calendar_t *cal, event_t *event)
-{
-    event = pop((list_t **)&cal->events, event, &compare_events);
-    if (delete_event(&event)) {
-        cal->num_events--;
-        return true;
-    }
+bool remove_calendar_event(calendar_t *cal, event_t *event) {
+  event = pop((list_t **)&cal->events, event, &compare_events);
+  if (delete_event(&event)) {
+    cal->num_events--;
+    return true;
+  }
 
-    return false;
+  return false;
 }

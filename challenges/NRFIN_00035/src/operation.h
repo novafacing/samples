@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef OPERATION_H
 #define OPERATION_H 1
@@ -27,20 +26,20 @@
 #include "tank.h"
 
 enum {
-	OPEN_VALVE = 12,
-	CLOSE_VALVE = 13,
-	NO_CHANGE = 14,
-	SET_IN_SERVICE = 15,
-	SET_OUT_OF_SERVICE = 16,
-	SET_END_OF_LIFE = 17,
+  OPEN_VALVE = 12,
+  CLOSE_VALVE = 13,
+  NO_CHANGE = 14,
+  SET_IN_SERVICE = 15,
+  SET_OUT_OF_SERVICE = 16,
+  SET_END_OF_LIFE = 17,
 };
 
 struct tankset {
-	uint8_t count;
-	uint8_t unk;
-	uint8_t unk1;
-	uint8_t unk2;
-	struct tank *tanks[]; 
+  uint8_t count;
+  uint8_t unk;
+  uint8_t unk1;
+  uint8_t unk2;
+  struct tank *tanks[];
 };
 
 /**
@@ -89,4 +88,3 @@ extern int check_levels(struct tankset *t);
 extern int rxtx(struct tankset *t);
 
 #endif
- 

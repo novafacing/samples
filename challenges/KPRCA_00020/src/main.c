@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "asl6.h"
@@ -31,13 +31,10 @@
 #define MAX_SIZE (sizeof(uint8_t) * 1024 * 32)
 int fdprintf(int fd, const char *fmt, ...);
 
-static int read_exactly(int fd, uint8_t *buf, size_t n)
-{
-
+static int read_exactly(int fd, uint8_t *buf, size_t n) {
   size_t rx;
   while (n > 0) {
-    if (receive(fd, buf, n, &rx) != 0)
-      return -1;
+    if (receive(fd, buf, n, &rx) != 0) return -1;
     n -= rx;
     buf += n;
   }
@@ -45,30 +42,25 @@ static int read_exactly(int fd, uint8_t *buf, size_t n)
   return 0;
 }
 
-int main(void)
-{
+int main(void) {
   unsigned size = 0;
   size_t read = 0;
   uint8_t buf[MAX_SIZE];
   memset(buf, 0, sizeof(buf));
 
-  if (receive(STDIN, &size, sizeof(size), &read) != 0)
-    exit(1);
+  if (receive(STDIN, &size, sizeof(size), &read) != 0) exit(1);
 
-  if (read != 4)
-    exit(1);
+  if (read != 4) exit(1);
 
   if (size > MAX_SIZE) {
     printf("too big\n");
     exit(1);
   }
 
-  if (read_exactly(STDIN, buf, size) != 0)
-    exit(1);
+  if (read_exactly(STDIN, buf, size) != 0) exit(1);
 
-  element *e = decode(buf, (unsigned) buf + size);
-  if (e == NULL)
-    exit(1);
+  element *e = decode(buf, (unsigned)buf + size);
+  if (e == NULL) exit(1);
 
   pprint(e);
 }

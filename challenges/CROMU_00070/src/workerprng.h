@@ -26,39 +26,39 @@ THE SOFTWARE.
 #ifndef __WORKER_PRNG_H__
 #define __WORKER_PRNG_H__
 
-// Needlessly complex PRNG that does unnecessary work (memory allocations/transformations/etc.)
-#define PRNG_MATRIX_MAX_SIZE	(4096)
-#define DEFAULT_MATRIX_SIZE	(512)
+// Needlessly complex PRNG that does unnecessary work (memory
+// allocations/transformations/etc.)
+#define PRNG_MATRIX_MAX_SIZE (4096)
+#define DEFAULT_MATRIX_SIZE (512)
 
-#define MAGIC_PAGE_MASK		(0xA5C1B301)
+#define MAGIC_PAGE_MASK (0xA5C1B301)
 
-#define MAGIC_PAGE_SIZE_DWORD	(1024)
+#define MAGIC_PAGE_SIZE_DWORD (1024)
 
-class CPRNG
-{
-public:
-	CPRNG( uint32_t *pMagicPage, uint32_t magicPageByteSize );
-	~CPRNG( );
+class CPRNG {
+ public:
+  CPRNG(uint32_t *pMagicPage, uint32_t magicPageByteSize);
+  ~CPRNG();
 
-	uint32_t GetRandomU32( void );
-	uint16_t GetRandomU16( void );
-	uint8_t GetRandomU8( void );
-	
-	uint32_t GetRandomRange( uint32_t start, uint32_t end );
+  uint32_t GetRandomU32(void);
+  uint16_t GetRandomU16(void);
+  uint8_t GetRandomU8(void);
 
-private:
-	uint32_t GetRandomInternal( void );
+  uint32_t GetRandomRange(uint32_t start, uint32_t end);
 
-	void GenerateMatrix( void );	
+ private:
+  uint32_t GetRandomInternal(void);
 
-private:
-	uint32_t m_matrixPosition;
-	uint32_t m_matrixSize;
-	uint32_t *m_pGeneratorMatrix;
-	
-	uint32_t m_magicPagePosition;
-	uint32_t m_magicPageSize;	
-	uint32_t *m_pMagicPage;
+  void GenerateMatrix(void);
+
+ private:
+  uint32_t m_matrixPosition;
+  uint32_t m_matrixSize;
+  uint32_t *m_pGeneratorMatrix;
+
+  uint32_t m_magicPagePosition;
+  uint32_t m_magicPageSize;
+  uint32_t *m_pMagicPage;
 };
 
-#endif // __WORKER_PRNG_H__
+#endif  // __WORKER_PRNG_H__

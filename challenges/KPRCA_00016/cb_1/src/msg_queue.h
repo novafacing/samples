@@ -31,10 +31,10 @@ typedef struct node {
   struct node *next;
 } node_t;
 
-typedef node_t* msg_queue;
+typedef node_t *msg_queue;
 
 int enq_msg(msg_queue *, message_t *);
-message_t* deq_msg(msg_queue *);
-message_t* deq_msg_at(msg_queue *, int);
+message_t *deq_msg(msg_queue *);
+message_t *deq_msg_at(msg_queue *, int);
 
 #endif

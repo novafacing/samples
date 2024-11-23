@@ -28,43 +28,41 @@ THE SOFTWARE.
 
 class CDoubleList;
 
-class CDoubleListElement
-{
-public:
-    CDoubleListElement( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
-    ~CDoubleListElement( ) { };
+class CDoubleListElement {
+ public:
+  CDoubleListElement() : m_pNext(NULL), m_pPrev(NULL) {};
+  ~CDoubleListElement() {};
 
-    CDoubleListElement *GetNext( void ) const { return m_pNext; };
-    CDoubleListElement *GetPrev( void ) const { return m_pPrev; };
+  CDoubleListElement *GetNext(void) const { return m_pNext; };
+  CDoubleListElement *GetPrev(void) const { return m_pPrev; };
 
-public:
-    friend class CDoubleList;
+ public:
+  friend class CDoubleList;
 
-private:
-    CDoubleListElement *m_pNext;
-    CDoubleListElement *m_pPrev;
+ private:
+  CDoubleListElement *m_pNext;
+  CDoubleListElement *m_pPrev;
 };
 
-class CDoubleList
-{
-public:
-    CDoubleList( );
-    ~CDoubleList( );
+class CDoubleList {
+ public:
+  CDoubleList();
+  ~CDoubleList();
 
-    void DeleteAll( void );
+  void DeleteAll(void);
 
-    void InsertHead( CDoubleListElement *pItem );
-    void InsertTail( CDoubleListElement *pItem );
-    void InsertAfter( CDoubleListElement *pPrev, CDoubleListElement *pItem );
+  void InsertHead(CDoubleListElement *pItem);
+  void InsertTail(CDoubleListElement *pItem);
+  void InsertAfter(CDoubleListElement *pPrev, CDoubleListElement *pItem);
 
-    CDoubleListElement *GetFirst( void ) const { return m_pFirst; };
-    CDoubleListElement *GetLast( void ) const { return m_pFirst; };
+  CDoubleListElement *GetFirst(void) const { return m_pFirst; };
+  CDoubleListElement *GetLast(void) const { return m_pFirst; };
 
-    void Unlink( CDoubleListElement *pItem );
+  void Unlink(CDoubleListElement *pItem);
 
-private:
-    CDoubleListElement *m_pFirst;
-    CDoubleListElement *m_pLast;
+ private:
+  CDoubleListElement *m_pFirst;
+  CDoubleListElement *m_pLast;
 };
 
-#endif // __DOUBLE_LIST_H__
+#endif  // __DOUBLE_LIST_H__

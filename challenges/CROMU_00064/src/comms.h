@@ -29,77 +29,72 @@ THE SOFTWARE.
 
 #include <cutil_string.h>
 
-
 //
 // Handles all return messages
 //
-class CommsMessage
-{
-protected:
+class CommsMessage {
+ protected:
+  // uint16_t header
+  // uint16_t version
+  // uint8_t* body
+  // uint16_t body length
 
-	// uint16_t header
-	// uint16_t version
-	// uint8_t* body
-	// uint16_t body length
+  // uint16_t message type
+  // uint16_t status
+  // uint32_t extended body len
 
-	// uint16_t message type
-	// uint16_t status
-	// uint32_t extended body len
+  // Entire message
+  CUtil::String m_message;
 
-	// Entire message
-	CUtil::String m_message;
+  // Body of message
+  CUtil::String m_body;
 
-	// Body of message
-	CUtil::String m_body;
+ public:
+  CommsMessage();
+  ~CommsMessage();
 
-public:
-	CommsMessage();
-	~CommsMessage();
-	
-	void SetBody(CUtil::String);
-	CUtil::String GetBody() { return m_body; }
-	CUtil::String GetMessage() { return m_message; }
-	uint16_t GetType();
-	uint16_t GetValue();
-	uint16_t GetLenValue();
+  void SetBody(CUtil::String);
+  CUtil::String GetBody() { return m_body; }
+  CUtil::String GetMessage() { return m_message; }
+  uint16_t GetType();
+  uint16_t GetValue();
+  uint16_t GetLenValue();
 };
 
-class IncomingMessage : public CommsMessage
-{
-private:
-	bool m_checksum_passed;
+class IncomingMessage : public CommsMessage {
+ private:
+  bool m_checksum_passed;
 
-public:
+ public:
+  // read from input
+  // store all variables
+  void ReadInput();
 
-	// read from input
-	// store all variables
-	void ReadInput();
+  uint16_t GetSensorId();
+  uint32_t GetSensorAddress();
+  uint32_t GetSensorCoefficient();
 
-	uint16_t GetSensorId();
-	uint32_t GetSensorAddress();
-	uint32_t GetSensorCoefficient();
-
-	void GetProgramValues( uint32_t, uint32_t &, uint32_t &, uint32_t & );
-
+  void GetProgramValues(uint32_t, uint32_t &, uint32_t &, uint32_t &);
 };
 
-class OutgoingMessage : public CommsMessage
-{
-private:
-	CUtil::String m_version;
-	uint16_t m_response;
-	CUtil::String m_message;
+class OutgoingMessage : public CommsMessage {
+ private:
+  CUtil::String m_version;
+  uint16_t m_response;
+  CUtil::String m_message;
 
-public:
+ public:
+  void SetResponse(uint16_t resp) { m_response = resp; }
+  void SetVersion(uint16_t);
+  void SetExtMessage(uint32_t, uint8_t *);
 
-	void SetResponse( uint16_t resp ) { m_response = resp; }
-	void SetVersion( uint16_t ); 
-	void SetExtMessage( uint32_t, uint8_t* );
+  void SendAsExtended();
+  void SendAsBasic();
 
-	void SendAsExtended();
-	void SendAsBasic();
-
-	void Reset() { m_version = ""; m_response = 0; }
+  void Reset() {
+    m_version = "";
+    m_response = 0;
+  }
 };
 
 #endif

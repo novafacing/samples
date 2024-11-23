@@ -1,12 +1,12 @@
 #define MAX_ARGS 10
 
 typedef struct _ShellCmds {
-	char *command;
-	int (*handler)(void);
-	char *help;
+  char *command;
+  int (*handler)(void);
+  char *help;
 } ShellCmds;
 
-int readUntil(char *, int , char);
+int readUntil(char *, int, char);
 int ExitHandler(void);
 int MkdirHandler(void);
 int RmdirHandler(void);

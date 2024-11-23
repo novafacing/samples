@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "auth.h"
+
 #include "libc.h"
 
-char* privateKey=NULL;
+char* privateKey = NULL;
 
 /**
  * Locate a user with the same token
@@ -32,13 +33,11 @@ char* privateKey=NULL;
  *               INVALID_TOKEN otherwise.
  */
 unsigned int authenticateToken(User* users, char* token) {
+  for (User* user = users; user != NULL; user = user->next) {
+    if (user->token && !strcmp(user->token, token)) return VALID_TOKEN;
+  }
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(user->token && !strcmp(user->token, token)) 
-			return VALID_TOKEN;
-	}
-
-	return INVALID_TOKEN;
+  return INVALID_TOKEN;
 }
 
 /**
@@ -47,46 +46,43 @@ unsigned int authenticateToken(User* users, char* token) {
  * @return           The address of the generated token string
  */
 char* generateRandomToken(unsigned int tokenSize) {
-	char* token;
-	unsigned int idx=0;
-	char randomBuffer[1024];
-	size_t rnd_bytes;
+  char* token;
+  unsigned int idx = 0;
+  char randomBuffer[1024];
+  size_t rnd_bytes;
 
-	if(tokenSize > 1024) {
-		return NULL;
-	}
+  if (tokenSize > 1024) {
+    return NULL;
+  }
 
-	if(!(token = malloc(tokenSize+1)))
-		return NULL;
+  if (!(token = malloc(tokenSize + 1))) return NULL;
 
-	memset(token, 0, tokenSize+1);
+  memset(token, 0, tokenSize + 1);
 
-	if(random((void*)randomBuffer, sizeof(randomBuffer), &rnd_bytes))
-		return NULL;
+  if (random((void*)randomBuffer, sizeof(randomBuffer), &rnd_bytes))
+    return NULL;
 
-	if(rnd_bytes < sizeof(randomBuffer))
-		return NULL;
+  if (rnd_bytes < sizeof(randomBuffer)) return NULL;
 
+  for (int c = 0; c < tokenSize; c++) {
+    unsigned int randomVal;
 
-	for(int c=0; c<tokenSize; c++) {
-		unsigned int randomVal;
+    randomVal = randomBuffer[c];
 
-		randomVal = randomBuffer[c];
+    if (c != 0 && c % 9 == 0) {
+      token[c] = '-';
+    } else if (randomVal % 2 == 0) {
+      if (randomVal % 4 == 0) {
+        token[c] = 'A' + randomVal % 26;
+      } else {
+        token[c] = 'a' + randomVal % 26;
+      }
+    } else {
+      token[c] = '0' + randomVal % 10;
+    }
+  }
 
-		if(c != 0 && c % 9 == 0) {
-			token[c] = '-';
-		} else if(randomVal % 2 == 0) {
-			if(randomVal % 4 == 0) {
-				token[c] = 'A' + randomVal % 26;
-			} else {
-				token[c] = 'a' + randomVal % 26;
-			}
-		} else {
-			token[c] = '0' + randomVal % 10;
-		}
-	}
-
-	return token;
+  return token;
 }
 
 /**
@@ -97,37 +93,37 @@ char* generateRandomToken(unsigned int tokenSize) {
  * @return          The address of a new User structure
  */
 User* newUser(User** usersPtr, char* name, char* password) {
-	User* user=NULL;
-	User* users=NULL;
+  User* user = NULL;
+  User* users = NULL;
 
-	users = *usersPtr;
+  users = *usersPtr;
 
-	if(!(user = malloc(sizeof(User)))) {
-		return NULL;
-	}
+  if (!(user = malloc(sizeof(User)))) {
+    return NULL;
+  }
 
-	if(!(user->name = malloc(strlen(name)+1))) {
-		free(user);
-		return NULL;
-	}
-	memset(user->name, 0, strlen(name)+1);
-	strcpy(user->name, name);
+  if (!(user->name = malloc(strlen(name) + 1))) {
+    free(user);
+    return NULL;
+  }
+  memset(user->name, 0, strlen(name) + 1);
+  strcpy(user->name, name);
 
-	if(!(user->password = malloc(strlen(password)+1))) {
-		free(user->name);
-		free(user);
-		return NULL;
-	}
-	memset(user->password, 0, strlen(password)+1);
-	strcpy(user->password, password);
+  if (!(user->password = malloc(strlen(password) + 1))) {
+    free(user->name);
+    free(user);
+    return NULL;
+  }
+  memset(user->password, 0, strlen(password) + 1);
+  strcpy(user->password, password);
 
-	user->token = NULL;
-	user->signingKey = NULL;
-	user->subscriptions = NULL;
-	user->next = *usersPtr;
-	*usersPtr = user;
+  user->token = NULL;
+  user->signingKey = NULL;
+  user->subscriptions = NULL;
+  user->next = *usersPtr;
+  *usersPtr = user;
 
-	return user;
+  return user;
 }
 
 /**
@@ -138,14 +134,13 @@ User* newUser(User** usersPtr, char* name, char* password) {
  *               NULL if not found.
  */
 User* getUserByToken(User* users, char* token) {
+  for (User* user = users; user != NULL; user = user->next) {
+    if (user->token && !strcmp(user->token, token)) {
+      return user;
+    }
+  }
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(user->token && !strcmp(user->token, token)) {
-			return user;
-		}
-	}
-
-	return NULL;
+  return NULL;
 }
 
 /**
@@ -156,14 +151,13 @@ User* getUserByToken(User* users, char* token) {
  *               NULL if not found.
  */
 User* getUserByName(User* users, char* name) {
+  for (User* user = users; user != NULL; user = user->next) {
+    if (!strcmp(user->name, name)) {
+      return user;
+    }
+  }
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(!strcmp(user->name, name)) {
-			return user;
-		}
-	}
-
-	return NULL;
+  return NULL;
 }
 
 /**
@@ -172,10 +166,9 @@ User* getUserByName(User* users, char* name) {
  * @return      The address of the modified User structure
  */
 User* newToken(User* user) {
+  user->token = generateRandomToken(TOKEN_SIZE);
 
-	user->token = generateRandomToken(TOKEN_SIZE);
-
-	return user;
+  return user;
 }
 
 /**
@@ -184,22 +177,19 @@ User* newToken(User* user) {
  * @return         The address of the signing key string
  */
 unsigned char* generateSigningKey(size_t keySize) {
-	unsigned char* signingKey;
-	char* randomBuffer;
-	size_t rnd_bytes;
+  unsigned char* signingKey;
+  char* randomBuffer;
+  size_t rnd_bytes;
 
-	if(!(signingKey = malloc(keySize+1)))
-		return NULL;
+  if (!(signingKey = malloc(keySize + 1))) return NULL;
 
-	memset(signingKey, 0, keySize+1);
+  memset(signingKey, 0, keySize + 1);
 
-	if(random((void*)signingKey, keySize, &rnd_bytes))
-		return NULL;
+  if (random((void*)signingKey, keySize, &rnd_bytes)) return NULL;
 
-	if(rnd_bytes < keySize)
-		return NULL;
+  if (rnd_bytes < keySize) return NULL;
 
-	return signingKey;
+  return signingKey;
 }
 
 /**
@@ -207,15 +197,16 @@ unsigned char* generateSigningKey(size_t keySize) {
  * @param subscriptionsPtr The address of the list of subscriptions
  */
 void reverseSubscriptionList(Subscription** subscriptionsPtr) {
-	Subscription* prevSub=NULL, *nextSub=NULL;
+  Subscription *prevSub = NULL, *nextSub = NULL;
 
-	for(Subscription* subscription=*subscriptionsPtr; subscription!=NULL; subscription=nextSub) {
-		nextSub = subscription->next;
-		subscription->next = prevSub;
-		prevSub = subscription;
-	}
+  for (Subscription* subscription = *subscriptionsPtr; subscription != NULL;
+       subscription = nextSub) {
+    nextSub = subscription->next;
+    subscription->next = prevSub;
+    prevSub = subscription;
+  }
 
-	*subscriptionsPtr = prevSub;
+  *subscriptionsPtr = prevSub;
 }
 
 /**
@@ -225,27 +216,30 @@ void reverseSubscriptionList(Subscription** subscriptionsPtr) {
  * @return            VALID_SIGNATURE if the signature is valid
  *                    INVALID_SIGNATURE otherwise.
  */
-unsigned int verifySignature(AuthResponse* response, unsigned char* signingKey) {
-	char* subscriptionString;
-	unsigned int idx=0;
+unsigned int verifySignature(AuthResponse* response,
+                             unsigned char* signingKey) {
+  char* subscriptionString;
+  unsigned int idx = 0;
 
-	reverseSubscriptionList(&response->subscriptions);
+  reverseSubscriptionList(&response->subscriptions);
 
-	for(Subscription* subscription=response->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		size_t stringSize;
+  for (Subscription* subscription = response->subscriptions;
+       subscription != NULL; subscription = subscription->next) {
+    size_t stringSize;
 
-		stringSize = strlen(subscription->name);
-		for(int c=0; c<stringSize; c++) {
-			unsigned char sigChar;
+    stringSize = strlen(subscription->name);
+    for (int c = 0; c < stringSize; c++) {
+      unsigned char sigChar;
 
-			sigChar = to_bin(response->signature[idx++]) * 16 + to_bin(response->signature[idx++]);
+      sigChar = to_bin(response->signature[idx++]) * 16 +
+                to_bin(response->signature[idx++]);
 
-			if(subscription->name[c] != (signingKey[(idx-2)/2] ^ sigChar))
-				return INVALID_SIGNATURE;
-		}
-	}
+      if (subscription->name[c] != (signingKey[(idx - 2) / 2] ^ sigChar))
+        return INVALID_SIGNATURE;
+    }
+  }
 
-	return VALID_SIGNATURE;
+  return VALID_SIGNATURE;
 }
 
 /**
@@ -254,40 +248,38 @@ unsigned int verifySignature(AuthResponse* response, unsigned char* signingKey) 
  * @return      The address of the signature string
  */
 char* computeSignature(User* user) {
-	char *signature, *signatureString;
-	size_t signatureSize=0, signatureStringSize=0;
+  char *signature, *signatureString;
+  size_t signatureSize = 0, signatureStringSize = 0;
 
-	for(Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		signatureSize += strlen(subscription->name);
-	}
+  for (Subscription* subscription = user->subscriptions; subscription != NULL;
+       subscription = subscription->next) {
+    signatureSize += strlen(subscription->name);
+  }
 
-	if(!(user->signingKey = generateSigningKey(signatureSize)))
-		return NULL;
+  if (!(user->signingKey = generateSigningKey(signatureSize))) return NULL;
 
-	if(!(signature = malloc(signatureSize+1)))
-		return NULL;
+  if (!(signature = malloc(signatureSize + 1))) return NULL;
 
-	memset(signature, 0, signatureSize+1);
+  memset(signature, 0, signatureSize + 1);
 
-	for(Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		strcat(signature, subscription->name);
-	}
+  for (Subscription* subscription = user->subscriptions; subscription != NULL;
+       subscription = subscription->next) {
+    strcat(signature, subscription->name);
+  }
 
-	for(int idx=0; idx<signatureSize; idx++) {
-		signature[idx] = signature[idx] ^ user->signingKey[idx];
-	}
+  for (int idx = 0; idx < signatureSize; idx++) {
+    signature[idx] = signature[idx] ^ user->signingKey[idx];
+  }
 
-	signatureStringSize = signatureSize*2 + 1;
-	if(!(signatureString = malloc(signatureStringSize+1)))
-		return NULL;
+  signatureStringSize = signatureSize * 2 + 1;
+  if (!(signatureString = malloc(signatureStringSize + 1))) return NULL;
 
-	memset(signatureString, 0, signatureStringSize+1);
+  memset(signatureString, 0, signatureStringSize + 1);
 
-	for(unsigned int i=0; i < signatureSize*2; i++) {
-		signatureString[i++] = to_hex((unsigned char) *signature / 16 % 16);
-		signatureString[i] = to_hex((unsigned char) *signature++ % 16);
-	}
+  for (unsigned int i = 0; i < signatureSize * 2; i++) {
+    signatureString[i++] = to_hex((unsigned char)*signature / 16 % 16);
+    signatureString[i] = to_hex((unsigned char)*signature++ % 16);
+  }
 
-	return signatureString;
-
+  return signatureString;
 }

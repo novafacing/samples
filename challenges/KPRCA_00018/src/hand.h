@@ -4,10 +4,9 @@
 #include "card.h"
 
 typedef struct hand hand_t;
-struct hand
-{
-    card_t *card;
-    hand_t *next;
+struct hand {
+  card_t *card;
+  hand_t *next;
 };
 
 int get_card(hand_t **h, card_t *card);

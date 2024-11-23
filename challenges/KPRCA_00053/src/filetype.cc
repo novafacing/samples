@@ -22,33 +22,26 @@
  */
 #include "filetype.h"
 
-const filetype supported_files[] = {
-    {ASCIIART, "ASC", 13873},
-    {PICTURE, "PIC", 49},
-    {PJEG, "PJG", 121212},
-    {ICON, "ICO", 1939}
-};
+const filetype supported_files[] = {{ASCIIART, "ASC", 13873},
+                                    {PICTURE, "PIC", 49},
+                                    {PJEG, "PJG", 121212},
+                                    {ICON, "ICO", 1939}};
 
+const filetype *get_filetype_m(unsigned int magic) {
+  for (int i = 0; i < sizeof(supported_files) / sizeof(filetype); i++) {
+    if (magic == supported_files[i].magic) return &supported_files[i];
+  }
 
-const filetype *get_filetype_m(unsigned int magic)
-{
-    for (int i = 0; i < sizeof(supported_files)/sizeof(filetype); i++) {
-        if (magic == supported_files[i].magic)
-            return &supported_files[i];
-    }
-
-    return NULL;
+  return NULL;
 }
 
-const filetype *get_filetype_e(char *extension)
-{
-    if (!extension || !*extension)
-        return NULL;
+const filetype *get_filetype_e(char *extension) {
+  if (!extension || !*extension) return NULL;
 
-    for (int i = 0; i < sizeof(supported_files)/sizeof(filetype); i++) {
-        if (strcasecmp(supported_files[i].extension, extension) == 0)
-            return &supported_files[i];
-    }
+  for (int i = 0; i < sizeof(supported_files) / sizeof(filetype); i++) {
+    if (strcasecmp(supported_files[i].extension, extension) == 0)
+      return &supported_files[i];
+  }
 
-    return NULL;
+  return NULL;
 }

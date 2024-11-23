@@ -25,25 +25,27 @@
 #define MGC_FILE_H_
 
 #include <cstdio.h>
+
 #include "mgc_frame.h"
 
-class MgcFile
-{
-  public:
-    MgcFile();
-    bool ReadMgcFile(FILE *stream);
-    const mgc_frame *GetFrame(unsigned int idx) const;
-    void Clear();
-    void Remix(unsigned char *mix_buf, unsigned int *idx, unsigned int buf_size); //idx incrememts by 33
-    void PrintFrameData();
+class MgcFile {
+ public:
+  MgcFile();
+  bool ReadMgcFile(FILE *stream);
+  const mgc_frame *GetFrame(unsigned int idx) const;
+  void Clear();
+  void Remix(unsigned char *mix_buf, unsigned int *idx,
+             unsigned int buf_size);  // idx incrememts by 33
+  void PrintFrameData();
 
-    unsigned TotalFrames();
-  private:
-    mgc_frame **frames_;
-    unsigned int num_frames_;
-    unsigned int size_;
+  unsigned TotalFrames();
 
-    bool AddFrame(mgc_frame *frame);
+ private:
+  mgc_frame **frames_;
+  unsigned int num_frames_;
+  unsigned int size_;
+
+  bool AddFrame(mgc_frame *frame);
 };
 
 #endif

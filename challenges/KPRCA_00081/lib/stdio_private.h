@@ -30,27 +30,24 @@
 #define F_WRITE 2
 
 struct FILE {
-    int fd;
-    int rw;
-    int idx;
-    int length;
-    char buffer[1024];
+  int fd;
+  int rw;
+  int idx;
+  int length;
+  char buffer[1024];
 };
 
-static inline int transmit_all(int fd, const void *buf, size_t count)
-{
-    const char *cbuf = (const char *)buf;
-    size_t i;
+static inline int transmit_all(int fd, const void *buf, size_t count) {
+  const char *cbuf = (const char *)buf;
+  size_t i;
 
-    for (i = 0; i < count; )
-    {
-        size_t bytes;
-        if (transmit(fd, cbuf + i, count - i, &bytes) != 0)
-            return -1;
-        i += bytes;
-    }
+  for (i = 0; i < count;) {
+    size_t bytes;
+    if (transmit(fd, cbuf + i, count - i, &bytes) != 0) return -1;
+    i += bytes;
+  }
 
-    return 0;
+  return 0;
 }
 
 #endif

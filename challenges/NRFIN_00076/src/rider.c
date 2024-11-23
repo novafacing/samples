@@ -18,12 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "rider.h"
 
 #include <libcgc.h>
 #include <stdint.h>
+
 #include "libc.h"
-#include "rider.h"
 
 /**
  * Function to check the health of a rider when they run out of energy
@@ -32,17 +34,16 @@
  * @param id 	Rider ID
  */
 void __attribute__((regparm(2))) rider_health_check(Rider *r, uint32_t r_id) {
-
-	uint32_t *results = &r->health_code;
+  uint32_t *results = &r->health_code;
 #ifdef PATCHED_1
-	if (0 == r->energy_level) {
-		*results = r->health_code;
-	}
+  if (0 == r->energy_level) {
+    *results = r->health_code;
+  }
 #else
-	if (0 == r->energy_level) {
-		*results++ = r->health_code;
-	}
-	*results = r->health_code;
+  if (0 == r->energy_level) {
+    *results++ = r->health_code;
+  }
+  *results = r->health_code;
 #endif
 }
 
@@ -54,25 +55,24 @@ void __attribute__((regparm(2))) rider_health_check(Rider *r, uint32_t r_id) {
  * @return SUCCESS on success, else -1
  */
 int32_t rider_new(Rider **rider, uint32_t settings[4]) {
+  Rider *new = calloc(sizeof(Rider));
+  MALLOC_OK(new);
 
-	Rider *new = calloc(sizeof(Rider));
-	MALLOC_OK(new);
+  new->id = settings[0];
+  new->r_type = settings[1];
+  new->energy_level = settings[2];
+  new->initial_energy_level = new->energy_level;
+  new->health_code = settings[3];
+  new->health_check = rider_health_check;
 
-	new->id = settings[0];
-	new->r_type = settings[1];
-	new->energy_level = settings[2];
-	new->initial_energy_level = new->energy_level;
-	new->health_code = settings[3];
-	new->health_check = rider_health_check;
+  if ((new->energy_level == 0) ||
+      ((new->r_type != SKIER) && (new->r_type != BOARDER))) {
+    free(new);
+    return -1;
+  }
 
-	if ((new->energy_level == 0) ||
-		((new->r_type != SKIER) && (new->r_type != BOARDER))) {
-		free(new);
-		return -1;
-	}	
-
-	*rider = new;
-	return SUCCESS;
+  *rider = new;
+  return SUCCESS;
 }
 
 /**
@@ -81,8 +81,8 @@ int32_t rider_new(Rider **rider, uint32_t settings[4]) {
  * @param rider 	Rider
  */
 void rider_destroy(Rider **rider) {
-	free(*rider);
-	*rider = NULL;
+  free(*rider);
+  *rider = NULL;
 }
 
 /**
@@ -91,34 +91,34 @@ void rider_destroy(Rider **rider) {
  * @param riders 	List of Riders
  */
 void rider_destroy_list(Rider **riders) {
-	Rider *this = *riders;
-	while (NULL != this) {
-		this = rider_pop(riders);
-		rider_destroy(&this);
-		this = *riders;
-	}
-	*riders = NULL;
+  Rider *this = *riders;
+  while (NULL != this) {
+    this = rider_pop(riders);
+    rider_destroy(&this);
+    this = *riders;
+  }
+  *riders = NULL;
 }
 
 /**
  * Append on or more riders to the list of riders
  *
  * @param riders 	List of riders that will be appended to
- * @param rider 	A single rider or a list of riders to append 
+ * @param rider 	A single rider or a list of riders to append
  */
 void rider_append(Rider **riders, Rider *rider) {
-	Rider *this = *riders;
-	Rider *prev = *riders;
+  Rider *this = *riders;
+  Rider *prev = *riders;
 
-	if (NULL == this) { // was empty list, to rider is first
-		*riders = rider;
-	} else {  // find end of riders then append
-		while (NULL != this) {
-			prev = this;
-			this = this->next;
-		}
-		prev->next = rider;
-	}
+  if (NULL == this) {  // was empty list, to rider is first
+    *riders = rider;
+  } else {  // find end of riders then append
+    while (NULL != this) {
+      prev = this;
+      this = this->next;
+    }
+    prev->next = rider;
+  }
 }
 
 /**
@@ -128,16 +128,16 @@ void rider_append(Rider **riders, Rider *rider) {
  * @return pointer to first rider or NULL if empty list
  */
 Rider *rider_pop(Rider **riders) {
-	Rider *this = *riders;
-	if (NULL != this) {
-		*riders = this->next;
-		this->next = NULL;
-	}
-	return this;
+  Rider *this = *riders;
+  if (NULL != this) {
+    *riders = this->next;
+    this->next = NULL;
+  }
+  return this;
 }
 
 void rider_reset(Rider *rider) {
-	rider->energy_level = rider->initial_energy_level;
-	rider->trail_count = 0;
-	rider->trail_distance = 0;
+  rider->energy_level = rider->initial_energy_level;
+  rider->trail_count = 0;
+  rider->trail_distance = 0;
 }

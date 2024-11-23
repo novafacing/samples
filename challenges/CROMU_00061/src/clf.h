@@ -26,53 +26,51 @@ THE SOFTWARE.
 #ifndef __CLF_H__
 #define __CLF_H__
 
-class CCLF
-{
-public:
-	friend class CVM;
+class CCLF {
+ public:
+  friend class CVM;
 
-public:
-	CCLF();
-	~CCLF();
+ public:
+  CCLF();
+  ~CCLF();
 
-	bool LoadFile( uint8_t *pFileData, uint32_t fileSize );
+  bool LoadFile(uint8_t *pFileData, uint32_t fileSize);
 
-public:
-	static const uint32_t MAX_LOADER_FILE_SIZE = 64000;
+ public:
+  static const uint32_t MAX_LOADER_FILE_SIZE = 64000;
 
-	static const uint32_t CLF_HEADER_MAGIC = 0xc3585c51;	// push ecx, pop esp, pop eax, ret
+  static const uint32_t CLF_HEADER_MAGIC =
+      0xc3585c51;  // push ecx, pop esp, pop eax, ret
 
-	static const uint32_t CLF_MAX_SECTION_COUNT = 10;
+  static const uint32_t CLF_MAX_SECTION_COUNT = 10;
 
-private:
-	enum 
-	{
-		SECTION_TYPE_EXECUTE = 0,
-		SECTION_TYPE_DATA = 1,
-		SECTION_TYPE_COMMENT = 2
-	} eSectionType;
+ private:
+  enum {
+    SECTION_TYPE_EXECUTE = 0,
+    SECTION_TYPE_DATA = 1,
+    SECTION_TYPE_COMMENT = 2
+  } eSectionType;
 
-	// Section file header
-	typedef struct SECTION_FILE_HEADER
-	{
-		uint8_t sectionType;
-		uint16_t sectionSize;
-		uint16_t sectionAddress;
-		uint32_t fileOffset;
-	} __attribute__((packed))  tSectionFileHeader;
+  // Section file header
+  typedef struct SECTION_FILE_HEADER {
+    uint8_t sectionType;
+    uint16_t sectionSize;
+    uint16_t sectionAddress;
+    uint32_t fileOffset;
+  } __attribute__((packed)) tSectionFileHeader;
 
-	// Section headers define loadable sections, such as execute, data, and comment
-	typedef struct SECTION_DATA
-	{
-		uint8_t sectionType;
-		uint16_t sectionSize;
-		uint16_t sectionAddress;
-		uint8_t *pSectionData;	
-	} tSectionData;
+  // Section headers define loadable sections, such as execute, data, and
+  // comment
+  typedef struct SECTION_DATA {
+    uint8_t sectionType;
+    uint16_t sectionSize;
+    uint16_t sectionAddress;
+    uint8_t *pSectionData;
+  } tSectionData;
 
-	tSectionData *m_pSections;
-	uint8_t m_sectionCount;
-	uint16_t m_entryAddress;
+  tSectionData *m_pSections;
+  uint8_t m_sectionCount;
+  uint16_t m_entryAddress;
 };
 
-#endif // __CLF_H__
+#endif  // __CLF_H__

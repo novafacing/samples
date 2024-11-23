@@ -5,8 +5,8 @@
 #define MAXQS 2048
 
 typedef struct qs {
-    char key[128];
-    char data[256];
+  char key[128];
+  char data[256];
 } qs;
 
 int load_data();

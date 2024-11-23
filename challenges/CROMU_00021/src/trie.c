@@ -27,94 +27,91 @@ THE SOFTWARE.
 #include "trie.h"
 
 #include <libcgc.h>
+
 #include "stdlib.h"
 
-trie * initTrie() {
-	trie *ret;
-	ret = calloc(sizeof(trie), 1);
-	return ret;
+trie *initTrie() {
+  trie *ret;
+  ret = calloc(sizeof(trie), 1);
+  return ret;
 }
 
-void insertInTrie(trie *root, char *key,  void* value) {
-	int i;
-	trie *ptr;
+void insertInTrie(trie *root, char *key, void *value) {
+  int i;
+  trie *ptr;
 
-	ptr = root;
-	if(ptr->children == NULL) {
-		ptr->children = calloc(sizeof(trie), 1);
-		ptr->children->tag = key[0];
-	}
+  ptr = root;
+  if (ptr->children == NULL) {
+    ptr->children = calloc(sizeof(trie), 1);
+    ptr->children->tag = key[0];
+  }
 
-	ptr = ptr->children;
+  ptr = ptr->children;
 
-	for(i=0;i<=strlen(key);i++) {
-		while(ptr->next != NULL) {
-			if(ptr->tag == key[i]) {
-				break;
-			} else {
-				ptr = ptr->next;
-			}
-		}
-		if(ptr->tag == key[i])
-		{
-			if (key[i] == 0)
-  				break;
-			if(ptr->children == NULL) {
-				ptr->children = calloc(sizeof(trie), 1);
-				ptr->children->tag = key[i+1];
-			}
-			ptr = ptr->children;
-		} else {
-			ptr->next = calloc(sizeof(trie), 1);
-			ptr->next->tag = key[i];
-			ptr = ptr->next;
-			while(i<strlen(key)) {
-				ptr->children = calloc(sizeof(trie), 1);
-				ptr->children->tag = key[++i];
-				ptr = ptr->children;
-			}
-			break;
-		}
-	}
+  for (i = 0; i <= strlen(key); i++) {
+    while (ptr->next != NULL) {
+      if (ptr->tag == key[i]) {
+        break;
+      } else {
+        ptr = ptr->next;
+      }
+    }
+    if (ptr->tag == key[i]) {
+      if (key[i] == 0) break;
+      if (ptr->children == NULL) {
+        ptr->children = calloc(sizeof(trie), 1);
+        ptr->children->tag = key[i + 1];
+      }
+      ptr = ptr->children;
+    } else {
+      ptr->next = calloc(sizeof(trie), 1);
+      ptr->next->tag = key[i];
+      ptr = ptr->next;
+      while (i < strlen(key)) {
+        ptr->children = calloc(sizeof(trie), 1);
+        ptr->children->tag = key[++i];
+        ptr = ptr->children;
+      }
+      break;
+    }
+  }
 
-	ptr->value = value;
+  ptr->value = value;
 }
 
-trie * findInTrie(trie *root, char * key) {
-	trie *ptr;
-	trie *current;
-	trie *ret = NULL;
-	int i = 0;
+trie *findInTrie(trie *root, char *key) {
+  trie *ptr;
+  trie *current;
+  trie *ret = NULL;
+  int i = 0;
 
-	current = root;
+  current = root;
 
-	if(current->children != NULL) {
-		current = current->children;
-	} else {
-		return NULL;
-	}
+  if (current->children != NULL) {
+    current = current->children;
+  } else {
+    return NULL;
+  }
 
-	while(1) {
-		for(ptr = current; ptr != NULL; ptr = ptr->next) {
-			if(ptr->tag == key[i]) {
-				ret = ptr;
-				break;
-			}
-		}
-		if(ret == NULL)
-			return ptr;
+  while (1) {
+    for (ptr = current; ptr != NULL; ptr = ptr->next) {
+      if (ptr->tag == key[i]) {
+        ret = ptr;
+        break;
+      }
+    }
+    if (ret == NULL) return ptr;
 
-		if(key[i] == 0) {
-			if(ret->value == NULL)
-				return NULL;
-			return ret;
-		}
+    if (key[i] == 0) {
+      if (ret->value == NULL) return NULL;
+      return ret;
+    }
 
-		if(ptr != NULL)
-			current = ptr->children;
-		else
-			return NULL;
-		i++;
-	}
-	return ret;
+    if (ptr != NULL)
+      current = ptr->children;
+    else
+      return NULL;
+    i++;
+  }
+  return ret;
 }

@@ -23,22 +23,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "malloc.h"
-#include "error.h"
-#include "tree.h"
-#include "page.h"
 #include "command.h"
 
+#include <libcgc.h>
+
+#include "error.h"
+#include "malloc.h"
+#include "page.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "tree.h"
+
 // Decode the data
-int DecodeData(uint8_t *data, int decoded_size, char *encoded_data, int encoded_size) {
+int DecodeData(uint8_t *data, int decoded_size, char *encoded_data,
+               int encoded_size) {
   char *start = (char *)data;
   data++[0] = (encoded_data[0] >> 1) & 0x7f;
   for (int i = 1; i <= decoded_size; i++) {
-    *data++ = 0x7f & ((*encoded_data << (7 - i%8)) | ((*(encoded_data + 1) & 0xff) >> (i%8 + 1)));
-    if (i%8 != 7) {
+    *data++ = 0x7f & ((*encoded_data << (7 - i % 8)) |
+                      ((*(encoded_data + 1) & 0xff) >> (i % 8 + 1)));
+    if (i % 8 != 7) {
       encoded_data++;
     }
   }
@@ -131,11 +135,11 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
       return -1;
     }
     decoded_size = (encoded_size * 8) / 7;
-    #ifdef PATCHED
+#ifdef PATCHED
     if (decoded_size <= 0) {
       return -1;
     }
-    #endif 
+#endif
     command->data = calloc(decoded_size + 1, 1);
     VerifyPointerOrTerminate(command->data, "command->data during parsing");
     char *encoded_data;
@@ -147,12 +151,13 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
       return -1;
     }
     // Decode the data
-    if (DecodeData(command->data, decoded_size, encoded_data, encoded_size) != 0) {
+    if (DecodeData(command->data, decoded_size, encoded_data, encoded_size) !=
+        0) {
       free(encoded_data);
       return -1;
     }
-    if (command->data[decoded_size-1] == '\0') {
-      command->data_size = decoded_size -1;
+    if (command->data[decoded_size - 1] == '\0') {
+      command->data_size = decoded_size - 1;
     } else {
       command->data_size = decoded_size;
     }
@@ -167,7 +172,6 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
     return -2;
   }
   return 0;
-
 }
 
 void HandleCommand(CommandStruct *command) {
@@ -189,7 +193,7 @@ void HandleCommand(CommandStruct *command) {
       TreeNode *new_node = calloc(sizeof(TreeNode), 1);
       VerifyPointerOrTerminate(command->data, "new_node during SEND");
       memcpy(new_node->name, command->name, sizeof(new_node->name));
-      new_node->page = (char *) command->data;
+      new_node->page = (char *)command->data;
       new_node->page_size = command->data_size;
       if (InsertNodeInTree(new_node) == 0) {
         command->data = NULL;

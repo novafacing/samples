@@ -24,12 +24,13 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
+
 #include "io.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 int main(void) {
-	while (RecvCommand()) {
-	}
-	return(0);
+  while (RecvCommand()) {
+  }
+  return (0);
 }

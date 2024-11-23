@@ -25,15 +25,15 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
+
+#include "io.h"
+#include "packet_analysis.h"
 #include "service.h"
 #include "stdlib.h"
-#include "packet_analysis.h"
-#include "io.h"
 
 // Receives the initialization packet and checks format
 // Returns 0 for success, -1 for failure
 int ReceiveAndVerifyInitializationPacket(SystemState *state) {
-
   uint32_t sync;
   ReceiveBytes(&sync, sizeof(sync));
   if (sync != 0xA55AA55A) {
@@ -56,12 +56,12 @@ int ReceiveAndVerifyInitializationPacket(SystemState *state) {
   return 0;
 }
 
-
 // Receives packet filters and checks format
 // Returns 0 for success, -1 for failure
 int ReceiveAndVerifyFilters(SystemState *state) {
   // While filters remain:
-  for (int current_filter = 0; current_filter < state->num_filters; current_filter++) {
+  for (int current_filter = 0; current_filter < state->num_filters;
+       current_filter++) {
     // Allocate data for one filter struct
     PacketFilter *filter;
     if (allocate(sizeof(PacketFilter), 1, (void **)&filter) != 0) {
@@ -92,8 +92,7 @@ int ReceiveAndVerifyFilters(SystemState *state) {
     ReceiveBytes(filter->content, filter->size);
     if (filter->type == FILTER_TYPE_INCLUDE) {
       state->stats->num_positive_filters++;
-    }
-    else {
+    } else {
       state->stats->num_negative_filters++;
     }
   }
@@ -116,16 +115,18 @@ int ReceiveAndProcessFile(SystemState *state) {
   if (state->stats->num_packets > DCAP_FILE_MAX_PACKETS) {
     FailAndTerminate("too many packets");
   }
-  ReceiveBytes(&state->stats->num_option_headers, sizeof(state->stats->num_option_headers));
+  ReceiveBytes(&state->stats->num_option_headers,
+               sizeof(state->stats->num_option_headers));
   if (state->stats->num_option_headers > OPTION_HEADERS_MAX_NUM) {
     FailAndTerminate("too many option headers");
   }
   // Read optional headers
-  OptionHeader *option=NULL;
-  for (int num=0; num < state->stats->num_option_headers; num++) {
+  OptionHeader *option = NULL;
+  for (int num = 0; num < state->stats->num_option_headers; num++) {
     if (option == NULL) {
       // Allocate first option header
-      if (allocate(sizeof(OptionHeader), 1, (void **)&state->stats->option_headers) != 0) {
+      if (allocate(sizeof(OptionHeader), 1,
+                   (void **)&state->stats->option_headers) != 0) {
         FailAndTerminate("error allocating first option header");
       }
       option = state->stats->option_headers;
@@ -139,7 +140,7 @@ int ReceiveAndProcessFile(SystemState *state) {
     bzero((void *)option, sizeof(OptionHeader));
     ReceiveBytes(&option->type, sizeof(option->type));
     ReceiveBytes(&option->length, sizeof(option->length));
-    // Allow 1 extra byte to ensure null termination 
+    // Allow 1 extra byte to ensure null termination
     if (allocate(option->length + 1, 1, (void **)&option->value)) {
       FailAndTerminate("failed to allocate option header value");
     }
@@ -148,7 +149,7 @@ int ReceiveAndProcessFile(SystemState *state) {
   }
 
   // Receive and process all packets
-  for (int num=0; num < state->stats->num_packets; num++) {
+  for (int num = 0; num < state->stats->num_packets; num++) {
     // Get meta data
     Packet packet;
     // Receive timestamp and size
@@ -194,5 +195,3 @@ int ReceiveAndProcessStream(SystemState *state) {
   }
   return 0;
 }
-
-

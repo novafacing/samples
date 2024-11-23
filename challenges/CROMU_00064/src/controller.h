@@ -27,19 +27,18 @@ THE SOFTWARE.
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-extern "C"
-{
-	#include <libcgc.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <prng.h>
+extern "C" {
+#include <libcgc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <prng.h>
 }
-#include "cutil_list.h" // custom linked list
-#include "cutil_string.h"
 #include "common.h"
-#include "sensor.h"
 #include "comms.h"
+#include "cutil_list.h"  // custom linked list
+#include "cutil_string.h"
+#include "sensor.h"
 
 #define BAD_SENSOR 6
 
@@ -51,115 +50,107 @@ extern "C"
 
 #define AMBIENT_TEMP 75
 
-class ControllerProgram
-{
-private:
-	int32_t m_step_type;
-	int32_t m_sensor_id;
-	int32_t m_set_temp;
-	int32_t m_duration;
+class ControllerProgram {
+ private:
+  int32_t m_step_type;
+  int32_t m_sensor_id;
+  int32_t m_set_temp;
+  int32_t m_duration;
 
-public:
-	int32_t getStepType() { return m_step_type; }
-	int32_t getSensorId() { return m_sensor_id; }
-	int32_t getSetTemp() { return m_set_temp; }
-	int32_t getDuration() { return m_duration; }
+ public:
+  int32_t getStepType() { return m_step_type; }
+  int32_t getSensorId() { return m_sensor_id; }
+  int32_t getSetTemp() { return m_set_temp; }
+  int32_t getDuration() { return m_duration; }
 
-	void setStepType( int32_t val ) { m_step_type = val; }
-	void setSensorId( int32_t val ) { m_sensor_id = val; }
-	void setSetTemp( int32_t val ) { m_set_temp = val; }
-	void setDuration( int32_t val ) { m_duration = val; }
+  void setStepType(int32_t val) { m_step_type = val; }
+  void setSensorId(int32_t val) { m_sensor_id = val; }
+  void setSetTemp(int32_t val) { m_set_temp = val; }
+  void setDuration(int32_t val) { m_duration = val; }
 };
 
-class Controller
-{
-private:
-	// Sensor list vars
-	CUtil::DLL_LIST( Sensor, m_sensorLink ) m_sensor_list; // use this doubly linked list
-	
-	uint16_t m_current_sensor_count;
+class Controller {
+ private:
+  // Sensor list vars
+  CUtil::DLL_LIST(Sensor,
+                  m_sensorLink) m_sensor_list;  // use this doubly linked list
 
-	// Controller vars
-	
-	int32_t m_currentProgramStep;
-	bool m_powerOn;
-	bool m_heaterOn;
-	double m_currentTemp;
-	int32_t m_version;
-	int32_t m_set_temp;
-	bool m_smokeSensorPresent;
+  uint16_t m_current_sensor_count;
 
-	Sensor m_smokeSensor;
+  // Controller vars
 
-	OutgoingMessage msg_out;
-	IncomingMessage msg_in;
+  int32_t m_currentProgramStep;
+  bool m_powerOn;
+  bool m_heaterOn;
+  double m_currentTemp;
+  int32_t m_version;
+  int32_t m_set_temp;
+  bool m_smokeSensorPresent;
 
+  Sensor m_smokeSensor;
 
-public:
-	Controller();
-	~Controller();
+  OutgoingMessage msg_out;
+  IncomingMessage msg_in;
 
+ public:
+  Controller();
+  ~Controller();
 
+  OutgoingMessage* GetMsgOut() { return &msg_out; }
+  IncomingMessage* GetMsgIn() { return &msg_in; }
 
-	OutgoingMessage* GetMsgOut() { return &msg_out; }
-	IncomingMessage* GetMsgIn() { return &msg_in; }
+  // Programs
+  ControllerProgram m_controllerProgram[10];
+  ControllerProgram m_controllerProgramBackup[10];
 
-	// Programs
-	ControllerProgram m_controllerProgram[10];
-	ControllerProgram m_controllerProgramBackup[10];
+  void RevertProgram();
+  void BackupProgram();
+  void ClearBackupProgram();
+  void ClearProgram();
+  void PrintPrograms();  // test only
 
-	void RevertProgram();
-	void BackupProgram();
-	void ClearBackupProgram();
-	void ClearProgram();
-	void PrintPrograms(); // test only
+  // GET / SET
+  double getCurrentTemp() { return m_currentTemp; }
+  void setCurrentTemp(double val) { m_currentTemp = val; }
 
-	// GET / SET
-	double getCurrentTemp() { return m_currentTemp; }
-	void setCurrentTemp( double val ) { m_currentTemp = val; }
+  int32_t getCurrentProgramStep() { return m_currentProgramStep; }
+  void setCurrentProgramStep(int32_t val) { m_currentProgramStep = val; }
 
-	int32_t getCurrentProgramStep() { return m_currentProgramStep; }
-	void setCurrentProgramStep( int32_t val ) { m_currentProgramStep = val; }
-	
-	bool getPowerOn() { return m_powerOn; }
-	void setPowerOn( bool val );
-	
-	bool getHeaterOn() { return m_heaterOn; }
-	void setHeaterOn( bool val ) { m_heaterOn = val; }
+  bool getPowerOn() { return m_powerOn; }
+  void setPowerOn(bool val);
 
-	int32_t getSetTemp() { return m_set_temp; }
-	bool setSetTemp( int32_t val );
+  bool getHeaterOn() { return m_heaterOn; }
+  void setHeaterOn(bool val) { m_heaterOn = val; }
 
+  int32_t getSetTemp() { return m_set_temp; }
+  bool setSetTemp(int32_t val);
 
-	// Sensors
-	bool AddSensor( Sensor* );
-	bool IsSensorInList ( uint16_t id );
-	bool RemoveSensor( uint16_t sensor_id );
-	uint16_t GetSensorCount();
-	bool SetSensor( uint16_t sensor_type, bool val );
+  // Sensors
+  bool AddSensor(Sensor*);
+  bool IsSensorInList(uint16_t id);
+  bool RemoveSensor(uint16_t sensor_id);
+  uint16_t GetSensorCount();
+  bool SetSensor(uint16_t sensor_type, bool val);
 
-	void PrintSensorList();
+  void PrintSensorList();
 
-	uint16_t GetVersion() { return m_version; }
+  uint16_t GetVersion() { return m_version; }
 
-	// firmware
-	//  get?
-	//  validate
-	bool ValidateFirmware();
+  // firmware
+  //  get?
+  //  validate
+  bool ValidateFirmware();
 
+  // Smoke sensor
+  bool IsSmokeSensorEnabled() { return m_smokeSensor.GetEnabled(); }
+  void EnableSmokeSensor() { m_smokeSensor.SetEnabled(true); }
+  void DisableSmokeSensor() { m_smokeSensor.SetEnabled(false); }
 
-	// Smoke sensor
-	bool IsSmokeSensorEnabled() { return m_smokeSensor.GetEnabled(); }
-	void EnableSmokeSensor() { m_smokeSensor.SetEnabled( true ); }
-	void DisableSmokeSensor() { m_smokeSensor.SetEnabled( false ); }
-
-	//
-	// Send a response back with the following code
-	//
-	void SendBasicResponse( CUtil::String code );
-	void SendExtendedResponse( uint16_t code, CUtil::String desc );
+  //
+  // Send a response back with the following code
+  //
+  void SendBasicResponse(CUtil::String code);
+  void SendExtendedResponse(uint16_t code, CUtil::String desc);
 };
-
-
 
 #endif

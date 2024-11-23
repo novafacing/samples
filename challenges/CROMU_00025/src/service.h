@@ -26,17 +26,18 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "rpti_image_data.h"
-#include "fpti_image_data.h"
+
 #include "fpai_image_data.h"
-#include "tpai_image_data.h"
+#include "fpti_image_data.h"
+#include "rpti_image_data.h"
 #include "tbir_image_data.h"
+#include "tpai_image_data.h"
 
 typedef struct image_meta {
-	char name[16];
-	int len;
-	char *data;
-	struct image_meta *next;
+  char name[16];
+  int len;
+  char *data;
+  struct image_meta *next;
 } image_meta, *pimage_meta;
 
 #endif

@@ -18,50 +18,50 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-#include "libc.h"
-#include "malloc.h"
+#include "deck.h"
 
 #include "card.h"
-#include "deck.h"
+#include "libc.h"
+#include "malloc.h"
 
 static Deck *deck = NULL;
 
 int replace_deck(unsigned int count, unsigned char *values) {
-	if (NULL != deck) {
-		free(deck);
-	}
-	if (0 == count) {
-		return -1;
-	}
+  if (NULL != deck) {
+    free(deck);
+  }
+  if (0 == count) {
+    return -1;
+  }
 
-	deck = malloc(sizeof(Deck) + count * sizeof(Card));
-	MALLOC_OK(deck);
+  deck = malloc(sizeof(Deck) + count * sizeof(Card));
+  MALLOC_OK(deck);
 
-	deck->count = count;
-	for (int i = 0; i < count; i++) {
-		if (FALSE == is_valid_value(values[i])) {
-			DBG("invaild card %H\n", values[i]);
-			return -1;
-		}
-		deck->cards[i].value = values[i];
-	}
+  deck->count = count;
+  for (int i = 0; i < count; i++) {
+    if (FALSE == is_valid_value(values[i])) {
+      DBG("invaild card %H\n", values[i]);
+      return -1;
+    }
+    deck->cards[i].value = values[i];
+  }
 
-	return SUCCESS;
+  return SUCCESS;
 }
 
 Card *get_next_card() {
-	Card *c = NULL;
-	if ((NULL != deck) && (0 < deck->count)) {
-		c = &deck->cards[--deck->count];
-	}
-	return c;
+  Card *c = NULL;
+  if ((NULL != deck) && (0 < deck->count)) {
+    c = &deck->cards[--deck->count];
+  }
+  return c;
 }
 
 unsigned int get_deck_size() {
-	if (NULL == deck) {
-		return 0;
-	}
-	return deck->count;
+  if (NULL == deck) {
+    return 0;
+  }
+  return deck->count;
 }

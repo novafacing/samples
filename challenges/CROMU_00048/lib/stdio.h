@@ -29,12 +29,12 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdarg.h>
 
-int cromu_putchar( int c );
+int cromu_putchar(int c);
 
-int cromu_printf( const char *format, ... );
-int cromu_vprintf( const char *format, va_list args );
-int cromu_sprintf( char *buf, const char *format, ... );
-int cromu_vsprintf( char *buf, const char *format, va_list args );
-int cromu_puts( const char *s );
+int cromu_printf(const char *format, ...);
+int cromu_vprintf(const char *format, va_list args);
+int cromu_sprintf(char *buf, const char *format, ...);
+int cromu_vsprintf(char *buf, const char *format, va_list args);
+int cromu_puts(const char *s);
 
-#endif // __STDIO_H__
+#endif  // __STDIO_H__

@@ -18,18 +18,18 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "memcpy.h"
 
 unsigned int memcpy(void *dst, const void *src, unsigned int cnt) {
-	unsigned char *p_dst = (unsigned char *)dst;
-	unsigned char *p_src = (unsigned char *)src;
+  unsigned char *p_dst = (unsigned char *)dst;
+  unsigned char *p_src = (unsigned char *)src;
 
-	if (0 == cnt) {
-		return 0;
-	}
-	for (unsigned int i = 0; i < cnt; i++) {
-		p_dst[i] = p_src[i];
-	}
-	return cnt;
+  if (0 == cnt) {
+    return 0;
+  }
+  for (unsigned int i = 0; i < cnt; i++) {
+    p_dst[i] = p_src[i];
+  }
+  return cnt;
 }

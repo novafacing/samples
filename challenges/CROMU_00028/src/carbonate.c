@@ -25,10 +25,11 @@ THE SOFTWARE.
 */
 
 #include "carbonate.h"
+
+#include "handler.h"
 #include "messages.h"
 #include "protocol.h"
 #include "scramble.h"
-#include "handler.h"
 
 void scramble();
 void cool_set_stuff();
@@ -41,12 +42,12 @@ int main(void) {
   scramble();
 
 #ifdef PATCHED
-    while (1) {
-      safe_set_stuff();
-    }
+  while (1) {
+    safe_set_stuff();
+  }
 #else
   if (scramble_okay()) {
-    while(1) {
+    while (1) {
       cool_set_stuff();
     }
   } else {
@@ -65,15 +66,14 @@ void scramble() {
     handle_scramble(NULL, scramble_data);
     free_frame(scramble_data);
   }
-
 }
 
 void cool_set_stuff() {
   with_set(^(set_t set) {
-      while(1) {
-        protocol_frame* frame = receive_frame();
+    while (1) {
+      protocol_frame* frame = receive_frame();
 
-        switch(frame->type) {
+      switch (frame->type) {
         case CHECK_REQ_ID:
           handle_check(set, frame);
           break;
@@ -86,22 +86,22 @@ void cool_set_stuff() {
         case CLEAR_REQ_ID:
           free_frame(frame);
           send_empty_frame(CLEAR_RESP_ID);
-          return; // leaves with_set block, clearing set
+          return;  // leaves with_set block, clearing set
         default:
           _terminate(-1);
-        }
-
-        free_frame(frame);
       }
-    });
+
+      free_frame(frame);
+    }
+  });
 }
 
 void safe_set_stuff() {
   with_set(^(set_t set) {
-      while(1) {
-        protocol_frame* frame = receive_frame();
+    while (1) {
+      protocol_frame* frame = receive_frame();
 
-        switch(frame->type) {
+      switch (frame->type) {
         case CHECK_REQ_ID:
           handle_check_safe(set, frame);
           break;
@@ -114,12 +114,12 @@ void safe_set_stuff() {
         case CLEAR_REQ_ID:
           free_frame(frame);
           send_empty_frame(CLEAR_RESP_ID);
-          return; // leaves with_set block, clearing set
+          return;  // leaves with_set block, clearing set
         default:
           _terminate(-1);
-        }
-
-        free_frame(frame);
       }
-    });
+
+      free_frame(frame);
+    }
+  });
 }

@@ -24,10 +24,10 @@
 #ifndef READUNTIL_H
 #define READUNTIL_H
 
-#include <wrapper.h>
 #include <libcgc.h>
+#include <wrapper.h>
 
-int read_until(int fd, char *buf, size_t len, char delim);
+int read_until(int fd, char* buf, size_t len, char delim);
 const char* readall_until(int fd, char delim);
 
 #endif

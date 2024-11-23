@@ -27,24 +27,23 @@ THE SOFTWARE.
 #define MSLS_HANDSHAKE_H
 
 #define COOKIE_BASE1 MAGIC_PAGE
-#define COOKIE_BASE2 (MAGIC_PAGE + 128*4)
+#define COOKIE_BASE2 (MAGIC_PAGE + 128 * 4)
 #define SERVER_SECRET1 (MAGIC_PAGE + 512)
-#define SERVER_SECRET2 (MAGIC_PAGE + 512 + 128*4)
+#define SERVER_SECRET2 (MAGIC_PAGE + 512 + 128 * 4)
 #define PUBLIC_KEY_BASE1 (MAGIC_PAGE + 1024)
-#define PUBLIC_KEY_BASE2 (MAGIC_PAGE + 1024 + 128*4)
+#define PUBLIC_KEY_BASE2 (MAGIC_PAGE + 1024 + 128 * 4)
 #define RANDOM_BASE (MAGIC_PAGE + 2048)
 #define RANDOM_END (MAGIC_PAGE + 4096)
 
 #define MSLS_HS_CLIENT_HELLO 0x51
 #define MSLS_HS_HELLO_VERIFY 0x52
 #define MSLS_HS_SERVER_HELLO 0x53
-#define MSLS_HS_CERTIFICATE  0x54
-#define MSLS_HS_SERVER_KEYX  0x55
-#define MSLS_HS_CLIENTKEYX   0x56
-#define MSLS_HS_SERVER_DONE  0x57
-#define MSLS_HS_CLIENT_DONE  0x58
-#define MSLS_HS_FINISH       0x59
-
+#define MSLS_HS_CERTIFICATE 0x54
+#define MSLS_HS_SERVER_KEYX 0x55
+#define MSLS_HS_CLIENTKEYX 0x56
+#define MSLS_HS_SERVER_DONE 0x57
+#define MSLS_HS_CLIENT_DONE 0x58
+#define MSLS_HS_FINISH 0x59
 
 #pragma pack(push, 1)
 typedef struct MSLSClientHello_s {
@@ -55,7 +54,7 @@ typedef struct MSLSClientHello_s {
   uint16_t cipher_suites[MAX_CIPHER_SUITES];
 } MSLS_CLIENT_HELLO_MSG;
 
-#define PUBLIC_KEY_LEN  128
+#define PUBLIC_KEY_LEN 128
 
 typedef struct MSLSHelloVerify_s {
   uint16_t server_version;
@@ -90,7 +89,6 @@ typedef struct MSLSFinished_s {
 } MSLS_FINISHED_MSG;
 
 #pragma pack(pop)
-
 
 void destroy_context(CLIENT_CONTEXT *context);
 void msls_destroy_connection(SERVER_STATE *state, uint32_t client_id);

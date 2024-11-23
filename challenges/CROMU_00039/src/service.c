@@ -24,30 +24,31 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "vars.h"
+
 #include "packet.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "vars.h"
 
 int main(void) {
-	unsigned char pkt[256];
+  unsigned char pkt[256];
 
-	// init the VARS
-	if (!InitVARS()) {
-		puts("InitVARS failure");
-		_terminate(-1);
-	}
+  // init the VARS
+  if (!InitVARS()) {
+    puts("InitVARS failure");
+    _terminate(-1);
+  }
 
-	// packet handler loop
-	while (1) {
-		if (ReceivePacket(pkt) == 0) {
-			break;
-		}
-		HandlePacket(pkt);
-	}
+  // packet handler loop
+  while (1) {
+    if (ReceivePacket(pkt) == 0) {
+      break;
+    }
+    HandlePacket(pkt);
+  }
 
-	// destroy the VARS
-	DestroyVARS();
+  // destroy the VARS
+  DestroyVARS();
 
-	return(0);
+  return (0);
 }

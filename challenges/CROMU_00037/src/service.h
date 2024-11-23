@@ -30,8 +30,8 @@ THE SOFTWARE.
 #define MAX_MESSAGES (255)
 
 typedef struct _users {
-	char name[MAX_USER_NAME_LEN+1];
-	char messages[MAX_MESSAGES][MAX_MESSAGE_LEN];
-	unsigned char msg_read[MAX_MESSAGES];
-	unsigned int top_message;
+  char name[MAX_USER_NAME_LEN + 1];
+  char messages[MAX_MESSAGES][MAX_MESSAGE_LEN];
+  unsigned char msg_read[MAX_MESSAGES];
+  unsigned int top_message;
 } users_t;

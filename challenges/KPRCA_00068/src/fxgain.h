@@ -24,12 +24,12 @@
 #include "audiotrack.h"
 #include "gain.h"
 
-class FxGain
-{
-public:
-    FxGain(Gain gain);
-    void apply(AudioTrack &) const;
-private:
-    void apply(AudioStream &) const;
-    Gain gain;
+class FxGain {
+ public:
+  FxGain(Gain gain);
+  void apply(AudioTrack &) const;
+
+ private:
+  void apply(AudioStream &) const;
+  Gain gain;
 };

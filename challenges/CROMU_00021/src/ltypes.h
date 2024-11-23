@@ -27,11 +27,11 @@ THE SOFTWARE.
 #ifndef _LTYPES_H
 #define _LTYPES_H
 
-typedef struct _ltype{
-	char *name;
-	char *type;
-	void *value;
-	int len;
+typedef struct _ltype {
+  char *name;
+  char *type;
+  void *value;
+  int len;
 } ltype;
 
 ltype *lint(char *name, char *val);

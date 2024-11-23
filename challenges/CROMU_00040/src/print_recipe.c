@@ -25,124 +25,105 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
 void print_recipe(Recipe_Type *book) {
+  char **temp;
+  Ingredient_Type *ingredient;
 
-char **temp;
-Ingredient_Type *ingredient;
-
-	printf("\n");
+  printf("\n");
 
 #ifdef PATCHED
-	if ( book == NULL ) {
-		return;
-	}
+  if (book == NULL) {
+    return;
+  }
 
-	if ( book->Title == NULL ) {
-		return;
-	}
+  if (book->Title == NULL) {
+    return;
+  }
 #endif
 
-	printf("\t\t@s\n\n", book->Title);
+  printf("\t\t@s\n\n", book->Title);
 
-	ingredient = book->Ingredient_List;
+  ingredient = book->Ingredient_List;
 
-	printf("Ingredients\n");
-	printf("-----------\n");
+  printf("Ingredients\n");
+  printf("-----------\n");
 
-	while (ingredient) {
+  while (ingredient) {
+    if (ingredient->measurement[0])
+      printf("@s @s\n", ingredient->measurement, ingredient->item);
+    else
+      printf("@s\n", ingredient->item);
 
-		if (ingredient->measurement[0])
-			printf("@s @s\n", ingredient->measurement, ingredient->item);
-		else
-			printf("@s\n", ingredient->item);
+    ingredient = ingredient->next;
+  }
 
-		ingredient=ingredient->next;
-	}
+  printf("\n");
+  printf("Instructions\n");
+  printf("------------\n");
 
-	printf("\n");
-	printf("Instructions\n");
-	printf("------------\n");
+  temp = book->Instructions;
 
-	temp = book->Instructions;
-
-
-	if (temp) {
-
-		while(temp[0]) {
-
-			printf("@s\n", temp[0]);
-			++temp;
-		}
-	}
-	printf("\n\n");
-
+  if (temp) {
+    while (temp[0]) {
+      printf("@s\n", temp[0]);
+      ++temp;
+    }
+  }
+  printf("\n\n");
 }
-
 
 void print_all_tagged(Recipe_Type *book) {
+  char **temp;
+  Ingredient_Type *ingredient;
 
-char **temp;
-Ingredient_Type *ingredient;
+  printf("\n");
 
-	printf("\n");
+  while (book) {
+    if (book->Tagged != 1) {
+      book = book->next;
+      continue;
+    }
 
-	while(book) {
+    printf("\t\t@s\n\n", book->Title);
 
+    ingredient = book->Ingredient_List;
 
-		if (book->Tagged != 1 ) {
+    printf("Ingredients\n");
+    printf("-----------\n");
 
-			book = book->next;
-			continue;
+    while (ingredient) {
+      if (ingredient->measurement[0])
+        printf("@s @s\n", ingredient->measurement, ingredient->item);
+      else
+        printf("@s\n", ingredient->item);
 
-		}
-		
-		printf("\t\t@s\n\n", book->Title);
+      ingredient = ingredient->next;
+    }
 
-		ingredient = book->Ingredient_List;
+    printf("\n");
+    printf("Instructions\n");
+    printf("------------\n");
 
-		printf("Ingredients\n");
-		printf("-----------\n");
-
-		while (ingredient) {
-
-			if (ingredient->measurement[0])
-				printf("@s @s\n", ingredient->measurement, ingredient->item);
-			else
-				printf("@s\n", ingredient->item);
-
-			ingredient=ingredient->next;
-		}
-
-		printf("\n");
-		printf("Instructions\n");
-		printf("------------\n");
-
-		temp = book->Instructions;
+    temp = book->Instructions;
 
 #ifdef PATCHED
 
-		if (temp==0) {
-
-			printf("\n\n");
-			continue;
-		}
+    if (temp == 0) {
+      printf("\n\n");
+      continue;
+    }
 #endif
 
-		while(temp[0]) {
+    while (temp[0]) {
+      printf("@s\n", temp[0]);
+      ++temp;
+    }
+    printf("\n\n");
 
-			printf("@s\n", temp[0]);
-			++temp;
-		}
-		printf("\n\n");
-
-		book = book->next;
-
-	}
-
-
-
+    book = book->next;
+  }
 }
-

@@ -23,8 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,106 +37,93 @@ extern "C"
 #define NULL (0)
 #endif
 
-CCLF::CCLF( )
-	: m_pSections( NULL ), m_sectionCount( 0 )
-{
+CCLF::CCLF() : m_pSections(NULL), m_sectionCount(0) {}
 
+CCLF::~CCLF() {
+  if (m_pSections) delete[] m_pSections;
+
+  m_pSections = NULL;
+  m_sectionCount = 0;
 }
 
-CCLF::~CCLF( )
-{
-	if ( m_pSections )
-		delete [] m_pSections;
+bool CCLF::LoadFile(uint8_t *pFileData, uint32_t fileSize) {
+  if (!pFileData) return (false);
 
-	m_pSections = NULL;
-	m_sectionCount = 0;
-}
+  if (fileSize > MAX_LOADER_FILE_SIZE) return (false);
 
-bool CCLF::LoadFile( uint8_t *pFileData, uint32_t fileSize )
-{
-	if ( !pFileData )
-		return (false);
+  if (fileSize == 0) return (false);
 
-	if ( fileSize > MAX_LOADER_FILE_SIZE )
-		return (false);
+  if (fileSize < 8) return (false);
 
-	if ( fileSize == 0 )
-		return (false);
+  uint32_t fileHeader = *((uint32_t *)pFileData);
 
-	if ( fileSize < 8 )
-		return (false);
+  if (fileHeader != CLF_HEADER_MAGIC) return (false);
 
-	uint32_t fileHeader = *((uint32_t*)pFileData);
+  uint32_t fileHeaderSize = *((uint32_t *)(pFileData + 4));
 
-	if ( fileHeader != CLF_HEADER_MAGIC )
-		return (false);
+  if (fileSize != fileHeaderSize) return (false);
 
-	uint32_t fileHeaderSize = *((uint32_t*)(pFileData+4));
+  if (fileSize < 12) return (false);
 
-	if ( fileSize != fileHeaderSize )
-		return (false);
+  // Read number of sections
+  uint16_t sectionCount = *((uint16_t *)(pFileData + 8));
+  uint16_t entryAddress = *((uint16_t *)(pFileData + 10));
 
-	if ( fileSize < 12 )
-		return (false);
+  // Check section count
+  if (sectionCount > CLF_MAX_SECTION_COUNT) return (false);
 
-	// Read number of sections
-	uint16_t sectionCount = *((uint16_t*)(pFileData+8));
-	uint16_t entryAddress = *((uint16_t*)(pFileData+10));
+  if ((fileSize - 12) < (sizeof(tSectionFileHeader) * sectionCount))
+    return (false);
 
-	// Check section count
-	if ( sectionCount > CLF_MAX_SECTION_COUNT )
-		return (false);
+  uint8_t i;
+  for (i = 0; i < sectionCount; i++) {
+    tSectionFileHeader *pSectionHeader =
+        (tSectionFileHeader *)((pFileData + 12) +
+                               (sizeof(tSectionFileHeader) * i));
 
-	if ( (fileSize-12) < (sizeof(tSectionFileHeader) * sectionCount) )
-		return (false);
+    if (pSectionHeader->sectionType != SECTION_TYPE_EXECUTE &&
+        pSectionHeader->sectionType != SECTION_TYPE_DATA &&
+        pSectionHeader->sectionType != SECTION_TYPE_COMMENT)
+      return (false);  // Invalid section type
 
+    // Check file size
+    if (pSectionHeader->sectionSize + pSectionHeader->fileOffset > fileSize)
+      return (false);
 
-	uint8_t i;
-	for ( i = 0; i < sectionCount; i++ )
-	{
-		tSectionFileHeader *pSectionHeader = (tSectionFileHeader *)((pFileData+12)+(sizeof(tSectionFileHeader)*i));
-	
-		if ( pSectionHeader->sectionType != SECTION_TYPE_EXECUTE && pSectionHeader->sectionType != SECTION_TYPE_DATA && pSectionHeader->sectionType != SECTION_TYPE_COMMENT )
-			return (false);	// Invalid section type
+    // Check address
+    uint32_t sectionAddress = pSectionHeader->sectionAddress;
+    sectionAddress += (uint32_t)pSectionHeader->sectionSize;
 
-		// Check file size
-		if ( pSectionHeader->sectionSize+pSectionHeader->fileOffset > fileSize )
-			return (false);
+    if (sectionAddress > 0x10000) return (false);
 
-		// Check address
-		uint32_t sectionAddress = pSectionHeader->sectionAddress;
-		sectionAddress += (uint32_t)pSectionHeader->sectionSize;	
+    // OK good section
+  }
 
-		if ( sectionAddress > 0x10000 )
-			return (false);
+  // Section good!!!
+  // Begin loading sections
+  m_entryAddress = entryAddress;
+  m_sectionCount = sectionCount;
 
-		// OK good section 
-	}
+  if (m_pSections) delete[] m_pSections;
 
-	// Section good!!!
-	// Begin loading sections
-	m_entryAddress = entryAddress;
-	m_sectionCount = sectionCount;
+  m_pSections = new tSectionData[m_sectionCount];
 
-	if ( m_pSections )
-		delete [] m_pSections;
+  for (i = 0; i < sectionCount; i++) {
+    tSectionFileHeader *pSectionHeader =
+        (tSectionFileHeader *)((pFileData + 12) +
+                               (sizeof(tSectionFileHeader) * i));
 
-	m_pSections = new tSectionData[m_sectionCount];
+    m_pSections[i].sectionType = pSectionHeader->sectionType;
+    m_pSections[i].sectionSize = pSectionHeader->sectionSize;
+    m_pSections[i].sectionAddress = pSectionHeader->sectionAddress;
 
-	for ( i = 0; i < sectionCount; i++ )
-	{
-		tSectionFileHeader *pSectionHeader = (tSectionFileHeader *)((pFileData+12)+(sizeof(tSectionFileHeader)*i));
+    // Now load file data
+    m_pSections[i].pSectionData = new uint8_t[pSectionHeader->sectionSize];
 
-		m_pSections[i].sectionType = pSectionHeader->sectionType;
-		m_pSections[i].sectionSize = pSectionHeader->sectionSize;
-		m_pSections[i].sectionAddress = pSectionHeader->sectionAddress;
+    // Copy in data
+    memcpy(m_pSections[i].pSectionData, pFileData + pSectionHeader->fileOffset,
+           pSectionHeader->sectionSize);
+  }
 
-		// Now load file data
-		m_pSections[i].pSectionData = new uint8_t[pSectionHeader->sectionSize];
-
-		// Copy in data
-		memcpy( m_pSections[i].pSectionData, pFileData+pSectionHeader->fileOffset, pSectionHeader->sectionSize );		
-	}
-
-	return (true);
+  return (true);
 }

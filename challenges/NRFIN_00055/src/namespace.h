@@ -25,24 +25,20 @@
 
 #include <libcgc.h>
 
-enum variable_type {
-    VAR_EMPTY,
-    VAR_INTEGER,
-    VAR_POINTER
-};
+enum variable_type { VAR_EMPTY, VAR_INTEGER, VAR_POINTER };
 
 struct variable {
-    char name[4];
-    enum variable_type type;
-    union {
-        int i;
-        void *p;
-    } val;
+  char name[4];
+  enum variable_type type;
+  union {
+    int i;
+    void *p;
+  } val;
 };
 
 struct namespace {
-    size_t size;
-    struct variable *variables;
+  size_t size;
+  struct variable *variables;
 };
 
 /**
@@ -79,7 +75,6 @@ struct variable *lookup_variable(struct namespace *ns, const char *name);
  * @return A pointer to the variable, or NULL on failure
  */
 struct variable *insert_variable(struct namespace *ns, const char *name,
-        enum variable_type type);
+                                 enum variable_type type);
 
 #endif /* NAMESPACE_H_ */
-

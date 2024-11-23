@@ -25,17 +25,17 @@
 #define RESPONSE_H
 
 #include "message.h"
-#include "user.h"
 #include "msg_queue.h"
 #include "packet.h"
+#include "user.h"
 
 #define MAX_USERNAME_LEN 64
 #define MAX_PASSWORD_LEN 64
 
-#define STATUS_OK     0
-#define STATUS_BAD    400
+#define STATUS_OK 0
+#define STATUS_BAD 400
 #define STATUS_DENIED 403
-#define STATUS_FAIL   404
+#define STATUS_FAIL 404
 #define STATUS_EXISTS 409
 
 typedef struct response {

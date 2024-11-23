@@ -29,24 +29,24 @@
 #define MAX_TIME 5
 
 typedef struct {
-    short year;
-    char month;
-    char day;
+  short year;
+  char month;
+  char day;
 } date_t;
 
 typedef struct {
-    char hour;
-    char minute;
+  char hour;
+  char minute;
 } time_t;
 
 typedef struct {
-    date_t date;
-    time_t time;
+  date_t date;
+  time_t time;
 } datetime_t;
 
 typedef struct {
-    datetime_t start;
-    datetime_t end;
+  datetime_t start;
+  datetime_t end;
 } duration_t;
 
 bool set_date(date_t *date, char month, char day, short year);

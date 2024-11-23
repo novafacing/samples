@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef POSTAGE_H
 #define POSTAGE_H 1
@@ -26,10 +26,9 @@
 #define STAMP_SIZE 3
 
 // struct for a stamp
-typedef struct __attribute__((packed))  {
-	char serial[STAMP_SIZE];
+typedef struct __attribute__((packed)) {
+  char serial[STAMP_SIZE];
 } stamp_t;
-
 
 /**
  * Initialize the stamp roll.

@@ -18,22 +18,19 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "streq.h"
 
 #include "libc.h"
-#include "streq.h"
 #include "strlen.h"
- 
+
 int streq(const char *str1, const char *str2, const char term) {
+  if (strlen(str1, term) != strlen(str2, term)) return -1;
 
-    if (strlen(str1, term) != strlen(str2, term))
-        return -1;
+  while (*str1 != term) {
+    if (*str1++ != *str2++) return -1;
+  }
 
-    while(*str1 != term) {
-        if (*str1++ != *str2++)
-            return -1;
-    }
-
-    return 0;
+  return 0;
 }
-

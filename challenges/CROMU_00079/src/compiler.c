@@ -25,10 +25,11 @@ THE SOFTWARE.
 */
 
 #include "compiler.h"
+
 #include "malloc.h"
+#include "stack.h"
 #include "stdlib.h"
 #include "string.h"
-#include "stack.h"
 
 typedef struct compiler_state_str {
   lexer_list* remaining;
@@ -53,11 +54,8 @@ compiler* compile(lexer_list* lexemes) {
   compiler_state initial;
   initial.remaining = lexemes;
   initial.current_position = 0;
-  initial.clr.find_list =
-    initial.last_op =
-    calloc(sizeof(operation));
+  initial.clr.find_list = initial.last_op = calloc(sizeof(operation));
   initial.error_lexeme = initial.clr.error_lexeme = NULL;
-  
 
   compiler_state after_preamble = compile_preamble(initial);
   if (after_preamble.error_lexeme) {
@@ -81,7 +79,7 @@ compiler* compile(lexer_list* lexemes) {
 
   compiler* out = calloc(sizeof(compiler));
   memcpy(out, &after_conclusion.clr, sizeof(compiler));
-  
+
   return out;
 }
 
@@ -90,18 +88,16 @@ compiler_state compile_expression(compiler_state in) {
   stack_elem* mul_stack = stack_create();
 
   compiler_state out = in;
-  
+
   uint8 expect_operand = 1;
 
   lexeme* current_lexeme = out.remaining->content;
   lexeme_flavor current_flavor = current_lexeme->flavor;
-  
+
   while (1) {
-      
     if (expect_operand && (F_INTEGER_LITERAL == current_flavor)) {
       out.last_op->type = OP_PUSH_SINT32;
-      out.last_op->sint32_value =
-        strtol(current_lexeme->bytes, NULL, 10);
+      out.last_op->sint32_value = strtol(current_lexeme->bytes, NULL, 10);
 
       out.last_op->next = calloc(sizeof(operation));
       out.last_op = out.last_op->next;
@@ -113,8 +109,7 @@ compiler_state compile_expression(compiler_state in) {
       }
 
       expect_operand = 0;
-    }
-    else if (expect_operand && (F_CHARACTER_LITERAL == current_flavor)) {
+    } else if (expect_operand && (F_CHARACTER_LITERAL == current_flavor)) {
       out.last_op->type = OP_PUSH_CHARACTER_LITERAL;
       out.last_op->character_literal_length = current_lexeme->bytes_len;
       out.last_op->character_literal_value = current_lexeme->bytes;
@@ -127,62 +122,57 @@ compiler_state compile_expression(compiler_state in) {
         out.last_op->next = calloc(sizeof(operation));
         out.last_op = out.last_op->next;
       }
-    }
-    else if (expect_operand && (F_IDENTIFIER == current_flavor)) {
+    } else if (expect_operand && (F_IDENTIFIER == current_flavor)) {
       out = compile_function(out);
-    }
-    else if (expect_operand) {
+    } else if (expect_operand) {
       out.error_lexeme = current_lexeme;
       return out;
     }
     // not expecting operand
     else if ((F_PLUS == current_flavor) || (F_MINUS == current_flavor)) {
       operation_type op_type =
-        (current_flavor == F_PLUS) ? OP_ADD : OP_SUBTRACT;
+          (current_flavor == F_PLUS) ? OP_ADD : OP_SUBTRACT;
 
       if (!stack_empty(add_stack)) {
         out.last_op->type = stack_pop_operation_type(add_stack);
         out.last_op->next = calloc(sizeof(operation));
         out.last_op = out.last_op->next;
       }
-      
+
       stack_push_operation_type(add_stack, op_type);
       expect_operand = 1;
-    }
-    else if ((F_ASTERISK == current_flavor) || (F_SOLIDUS == current_flavor)) {
+    } else if ((F_ASTERISK == current_flavor) ||
+               (F_SOLIDUS == current_flavor)) {
       operation_type op_type =
-        (current_flavor == F_ASTERISK) ? OP_MULTIPLY : OP_DIVIDE;
-      
+          (current_flavor == F_ASTERISK) ? OP_MULTIPLY : OP_DIVIDE;
+
       stack_push_operation_type(mul_stack, op_type);
       expect_operand = 1;
-    }
-    else {
+    } else {
       out.error_lexeme = current_lexeme;
       return out;
     }
 
     lexer_list* next = out.remaining->next;
-    
+
     current_lexeme = next->content;
     current_flavor = current_lexeme->flavor;
 
     out.remaining = next;
     out.current_position++;
 
-    
-    if ((current_flavor == F_FROM) ||
-        (current_flavor == F_COMMA) ||
+    if ((current_flavor == F_FROM) || (current_flavor == F_COMMA) ||
         (current_flavor == F_CLOSE_PAREN)) {
       break;
     }
   }
-  
+
   while (!stack_empty(add_stack)) {
     out.last_op->type = stack_pop_operation_type(add_stack);
     out.last_op->next = calloc(sizeof(operation));
     out.last_op = out.last_op->next;
   }
-  
+
   return out;
 }
 
@@ -210,7 +200,7 @@ compiler_state compile_function(compiler_state in) {
 
   out.last_op->next = calloc(sizeof(operation));
   out.last_op = out.last_op->next;
-  
+
   return out;
 }
 
@@ -223,7 +213,7 @@ compiler_state compile_preamble(compiler_state in) {
   }
 
   out.remaining = out.remaining->next;
-  
+
   return out;
 }
 
@@ -270,15 +260,15 @@ operation* clr_chase(operation* op, uint16 count) {
   return clr_chase(op->next, count - 1);
 }
 
-void assert_operation(operation_type expected_type,
-                      sint32 expected_value,
+void assert_operation(operation_type expected_type, sint32 expected_value,
                       operation* actual_operation) {
   if (expected_type != actual_operation->type) _terminate(-1);
   if (OP_PUSH_SINT32 != actual_operation->type) return;
   if (expected_value != actual_operation->sint32_value) _terminate(-1);
 }
 
-#define assert_op(type, value, count) assert_operation(type, value, clr_chase(clr->find_list, count));
+#define assert_op(type, value, count) \
+  assert_operation(type, value, clr_chase(clr->find_list, count));
 
 void compiler_test() {
   compiler* clr = compile_str("FIND 2 2 FROM error");

@@ -24,13 +24,13 @@
 #ifndef AC_H
 #define AC_H
 
-#include <wrapper.h>
 #include <libcgc.h>
 #include <mutex.h>
 #include <string.h>
+#include <wrapper.h>
 
-#define MAX_AC_LIST   100
-#define MAX_AC_LEN    32
+#define MAX_AC_LIST 100
+#define MAX_AC_LEN 32
 
 typedef struct autocorrect {
   char typo[MAX_AC_LEN];

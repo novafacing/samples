@@ -25,228 +25,172 @@ THE SOFTWARE.
 */
 #include <cutil_string.h>
 
-extern "C"
-{
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <ctype.h>
+extern "C" {
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 }
 
 using namespace CUtil;
 
+String::String() {
+  m_pData = new char[1];
+  m_pData[0] = '\0';
 
-String::String( )
-{
-	m_pData = new char[1];
-	m_pData[0] = '\0';
-
-	m_length = 0;
+  m_length = 0;
 }
 
-String::String( const String &str )
-	: m_pData( NULL ), m_length( 0 )
-{
-	SetInternal( str );
+String::String(const String &str) : m_pData(NULL), m_length(0) {
+  SetInternal(str);
 }
 
-String::String( const char *pszStr )
-	: m_pData( NULL ), m_length( 0 )
-{
-	SetInternal( pszStr );
+String::String(const char *pszStr) : m_pData(NULL), m_length(0) {
+  SetInternal(pszStr);
 }
 
-String::~String( )
-{
-	if ( m_pData )
-		delete [] m_pData;
+String::~String() {
+  if (m_pData) delete[] m_pData;
 
-	m_length = 0;
+  m_length = 0;
 }
-	
+
 // Operators
-bool String::operator==( const String &rhs ) const
-{
-	if ( m_length != rhs.m_length )
-		return (false);
+bool String::operator==(const String &rhs) const {
+  if (m_length != rhs.m_length) return (false);
 
-	return memcmp( m_pData, rhs.m_pData, m_length ) == 0;
+  return memcmp(m_pData, rhs.m_pData, m_length) == 0;
 }
 
-bool String::operator!=( const String &rhs ) const
-{
-	return !(*this == rhs);
+bool String::operator!=(const String &rhs) const { return !(*this == rhs); }
+
+void String::operator=(const String &rhs) { SetInternal(rhs); }
+
+void String::operator=(const char *rhs) { SetInternal(rhs); }
+
+const String &String::operator+(const String &rhs) const {
+  return String(*this) += rhs;
 }
 
-void String::operator=( const String &rhs )
-{
-	SetInternal( rhs );
+String &String::operator+=(const String &rhs) {
+  // Make a new string of this string + rhs
+  size_t new_stringlen = m_length + rhs.m_length;
+
+  char *pNewData = new char[new_stringlen + 1];
+
+  memcpy(pNewData, m_pData, m_length);
+  memcpy(pNewData + m_length, rhs.m_pData, rhs.m_length);
+
+  // Keep a null terminator at the end for easy return of c_str
+  pNewData[m_length + rhs.m_length] = '\0';
+
+  if (m_pData) delete[] m_pData;
+
+  m_pData = pNewData;
+  m_length = new_stringlen;
+
+  return *this;
 }
 
-void String::operator=( const char *rhs )
-{
-	SetInternal( rhs );
-}
-
-const String& String::operator+( const String &rhs ) const
-{
-	return String(*this) += rhs;
-}
-
-String& String::operator+=( const String &rhs )
-{
-	// Make a new string of this string + rhs
-	size_t new_stringlen = m_length + rhs.m_length;
-
-	char *pNewData = new char[new_stringlen+1];
-
-	memcpy( pNewData, m_pData, m_length );
-	memcpy( pNewData+m_length, rhs.m_pData, rhs.m_length );
-
-	// Keep a null terminator at the end for easy return of c_str
-	pNewData[m_length+rhs.m_length] = '\0';
-
-	if ( m_pData )
-		delete [] m_pData;
-
-	m_pData = pNewData;
-	m_length = new_stringlen;
-
-	return *this;
-}
-		
 // Conversion
-const char* String::c_str( void ) const
-{
-	return (m_pData);
+const char *String::c_str(void) const { return (m_pData); }
+
+String String::Upper(void) const {
+  String sUpper = *this;
+
+  for (size_t i = 0; i < m_length; i++) {
+    if (islower(sUpper.m_pData[i]))
+      sUpper.m_pData[i] = toupper(sUpper.m_pData[i]);
+  }
+
+  return (sUpper);
 }
 
-String String::Upper( void ) const
-{
-	String sUpper = *this;
+String String::Lower(void) const {
+  String sLower = *this;
 
-	for ( size_t i = 0; i < m_length; i++ )
-	{
-		if ( islower( sUpper.m_pData[i] ) )
-			sUpper.m_pData[i] = toupper( sUpper.m_pData[i] );
-	}
+  for (size_t i = 0; i < m_length; i++) {
+    if (isupper(sLower.m_pData[i]))
+      sLower.m_pData[i] = tolower(sLower.m_pData[i]);
+  }
 
-	return (sUpper);
+  return (sLower);
 }
 
-String String::Lower( void ) const
-{
-	String sLower = *this;
+char String::operator[](const size_t &loc) const {
+  if (IsEmpty()) return '\0';
 
-	for ( size_t i = 0; i < m_length; i++ )
-	{
-		if ( isupper( sLower.m_pData[i] ) )
-			sLower.m_pData[i] = tolower( sLower.m_pData[i] );
-	}
+  if (loc >= m_length) return '\0';
 
-	return (sLower);
+  return m_pData[loc];
 }
 
-char String::operator[]( const size_t &loc ) const
-{
-	if ( IsEmpty() )
-		return '\0';
+String String::Trim(size_t length) const { return (SubString(0, length)); }
 
-	if ( loc >= m_length )
-		return '\0';
+String String::SubString(size_t startPos, size_t endPos) const {
+  if (endPos > m_length) endPos = m_length;
 
-	return m_pData[loc];
+  if (startPos >= m_length || startPos >= endPos) return String("");
+
+  size_t new_length = endPos - startPos;
+  char *pszNewStr = new char[new_length + 1];
+
+  size_t destPos = 0;
+  for (size_t srcPos = startPos; srcPos < endPos; srcPos++)
+    pszNewStr[destPos++] = m_pData[srcPos];
+
+  pszNewStr[destPos] = '\0';
+
+  return String(pszNewStr);
 }
 
-String String::Trim( size_t length ) const
-{
-	return (SubString( 0, length ));
+String String::TrimSpaces(void) const {
+  size_t pos = 0;
+  for (; pos < m_length; pos++) {
+    if (m_pData[pos] != ' ') break;
+  }
+
+  return (SubString(pos, npos));
 }
 
-String String::SubString( size_t startPos, size_t endPos ) const
-{
-	if ( endPos > m_length )
-		endPos = m_length;
-
-	if ( startPos >= m_length || startPos >= endPos )
-	       return String("");
-
-	size_t new_length = endPos - startPos;
-	char *pszNewStr = new char[new_length+1];
-
-	size_t destPos = 0;
-	for ( size_t srcPos = startPos; srcPos < endPos; srcPos++ )
-		pszNewStr[destPos++] = m_pData[srcPos];
-
-	pszNewStr[destPos] = '\0';
-	
-	return String(pszNewStr);	
+bool String::ToInt(uint32_t &value) {
+  if (!IsEmpty()) {
+    value = atoi(m_pData);
+    return (true);
+  } else
+    return (false);
 }
 
-String String::TrimSpaces( void ) const
-{
-	size_t pos = 0;
-	for ( ; pos < m_length; pos++ )
-	{
-		if ( m_pData[pos] != ' ' )
-			break;
-	}
+size_t String::GetLength(void) const { return (m_length); }
 
-	return (SubString( pos, npos ));
+bool String::IsEmpty(void) const { return (m_length == 0); }
+
+void String::SetInternal(const char *pszStr) {
+  if (m_pData) delete[] m_pData;
+
+  if (pszStr == NULL) {
+    m_pData = new char[1];
+    m_pData[0] = '\0';
+
+    m_length = 0;
+    return;
+  }
+
+  m_length = strlen(pszStr);
+
+  m_pData = new char[m_length + 1];
+
+  memcpy(m_pData, pszStr, m_length);
+  m_pData[m_length] = '\0';
 }
 
-bool String::ToInt( uint32_t &value )
-{
-	if ( !IsEmpty() )
-	{
-		value = atoi( m_pData );
-		return (true);
-	}
-	else
-		return (false);
-}
+void String::SetInternal(const String &str) {
+  if (m_pData) delete[] m_pData;
 
-size_t String::GetLength( void ) const
-{
-	return (m_length);
-}
+  m_length = str.m_length;
 
-bool String::IsEmpty( void ) const
-{
-	return (m_length == 0);
-}
+  m_pData = new char[m_length + 1];
 
-void String::SetInternal( const char *pszStr )
-{
-	if ( m_pData )
-		delete [] m_pData;
-
-	if ( pszStr == NULL )
-	{
-		m_pData = new char[1];
-		m_pData[0] = '\0';
-
-		m_length = 0;
-		return;
-	}
-
-	m_length = strlen( pszStr );
-
-	m_pData = new char[m_length+1];
-
-	memcpy( m_pData, pszStr, m_length );
-	m_pData[m_length] = '\0';
-}
-
-void String::SetInternal( const String& str )
-{
-	if ( m_pData )
-		delete [] m_pData;
-
-	m_length = str.m_length;
-
-	m_pData = new char[m_length+1];
-
-	memcpy( m_pData, str.m_pData, m_length );
-	m_pData[m_length] = '\0';
+  memcpy(m_pData, str.m_pData, m_length);
+  m_pData[m_length] = '\0';
 }

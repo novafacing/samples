@@ -22,43 +22,34 @@
  */
 #include "stdio_private.h"
 
-int fflush(FILE *stream)
-{
-    if (stream->idx == INVALID_IDX)
-        return 0;
+int fflush(FILE *stream) {
+  if (stream->idx == INVALID_IDX) return 0;
 
-    if (stream->rw == F_READ)
-    {
-        /* drop the contents of the read buffer */
-        stream->idx = stream->length = 0;
-        return 0;
-    }
-    else
-    {
-        int ret = 0;
+  if (stream->rw == F_READ) {
+    /* drop the contents of the read buffer */
+    stream->idx = stream->length = 0;
+    return 0;
+  } else {
+    int ret = 0;
 
-        /* flush to fd */
-        if (transmit_all(stream->fd, stream->buffer + stream->idx, stream->length - stream->idx) != 0)
-            ret = -1;
+    /* flush to fd */
+    if (transmit_all(stream->fd, stream->buffer + stream->idx,
+                     stream->length - stream->idx) != 0)
+      ret = -1;
 
-        stream->idx = stream->length = 0;
-        return ret;
-    }
+    stream->idx = stream->length = 0;
+    return ret;
+  }
 }
 
-void fbuffered(FILE *stream, int enabled)
-{
-    if (stream->idx != INVALID_IDX)
-        fflush(stream);
+void fbuffered(FILE *stream, int enabled) {
+  if (stream->idx != INVALID_IDX) fflush(stream);
 
-    if (enabled)
-    {
-        stream->idx = 0;
-        stream->length = 0;
-    }
-    else
-    {
-        stream->idx = -1;
-        stream->length = 0;
-    }
+  if (enabled) {
+    stream->idx = 0;
+    stream->length = 0;
+  } else {
+    stream->idx = -1;
+    stream->length = 0;
+  }
 }

@@ -18,14 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "service.h"
 
 #ifndef MEMBERS_H
 #define MEMBERS_H
 
-void do_edgar(htreq* req);
+void do_edgar(htreq *req);
 void do_will(htreq *req);
 void do_eliz(htreq *req);
 void do_john(htreq *req);

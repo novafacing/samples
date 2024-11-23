@@ -18,32 +18,31 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <errno.h>
+ */
 #include "send_bytes.h"
+
+#include <errno.h>
+#include <libcgc.h>
 
 // An unholy alliance of Paul's CQE function and Nick's CFE function.
 int send_bytes(int fd, const char *buf, unsigned int size) {
+  int ret = SUCCESS;
+  size_t bytes_left = size;
+  size_t tx_bytes_local = 0;
 
-   int ret = SUCCESS;
-   size_t bytes_left = size;
-   size_t tx_bytes_local = 0;
+  while (bytes_left) {
+    tx_bytes_local = 0;
 
-   while (bytes_left) {
-
-      tx_bytes_local = 0;
-
-      if (SUCCESS != (ret = transmit(fd, buf, bytes_left, &tx_bytes_local))) {
+    if (SUCCESS != (ret = transmit(fd, buf, bytes_left, &tx_bytes_local))) {
 #ifdef DEBUG
-         fprintf(stderr, "[E] transmit () call within transmit_all() failed\n");
+      fprintf(stderr, "[E] transmit () call within transmit_all() failed\n");
 #endif
-         goto bail;
-      }
+      goto bail;
+    }
 
-      bytes_left -= tx_bytes_local;
-   }
+    bytes_left -= tx_bytes_local;
+  }
 
 bail:
-   return ret;
+  return ret;
 }

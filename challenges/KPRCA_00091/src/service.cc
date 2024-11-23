@@ -21,48 +21,47 @@
  *
  */
 
-#include <cstdlib.h>
 #include <cstdio.h>
+#include <cstdlib.h>
 #include <cstring.h>
+
 #include "engine.h"
 #include "interface.h"
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
-{
-    char *secret_page = (char *)secret_page_i;
-    (void) secret_page;
+extern "C" int __attribute__((fastcall)) main(int secret_page_i,
+                                              char *unused[]) {
+  char *secret_page = (char *)secret_page_i;
+  (void)secret_page;
 
-    unsigned char ruleset[128 + 9];
-    unsigned char *data = NULL;
-    unsigned int cksum = 0;
-    unsigned int len;
-    Engine eng;
-    Interface intf(eng);
+  unsigned char ruleset[128 + 9];
+  unsigned char *data = NULL;
+  unsigned int cksum = 0;
+  unsigned int len;
+  Engine eng;
+  Interface intf(eng);
 
-    *(unsigned int *)&ruleset[0] = 0;
-    *(unsigned char *)&ruleset[4] = 0;
-    *(unsigned int *)&ruleset[5] = 128;
-    memcpy(&ruleset[9], secret_page, 128);
+  *(unsigned int *)&ruleset[0] = 0;
+  *(unsigned char *)&ruleset[4] = 0;
+  *(unsigned int *)&ruleset[5] = 128;
+  memcpy(&ruleset[9], secret_page, 128);
 
-    for (unsigned int i = 4; i < sizeof(ruleset); i++)
-        cksum -= ruleset[i];
-    *(unsigned int *)&ruleset[0] = cksum - 0x12345678;
+  for (unsigned int i = 4; i < sizeof(ruleset); i++) cksum -= ruleset[i];
+  *(unsigned int *)&ruleset[0] = cksum - 0x12345678;
 
-    if (!eng.update_rules(ruleset, sizeof(ruleset)))
-    {
-        fprintf(stderr, "failed to add secret rule\n");
-        return 0;
-    }
+  if (!eng.update_rules(ruleset, sizeof(ruleset))) {
+    fprintf(stderr, "failed to add secret rule\n");
+    return 0;
+  }
 
-    do {
-        if (fread(&len, 4, stdin) != 4) break;
-        if (len > 0x40000000) break;
-
-        free(data);
-        data = (unsigned char *)malloc(len);
-        if (data == NULL || fread(data, len, stdin) != len) break;
-    } while (intf.process(data, len));
+  do {
+    if (fread(&len, 4, stdin) != 4) break;
+    if (len > 0x40000000) break;
 
     free(data);
-    return 0;
+    data = (unsigned char *)malloc(len);
+    if (data == NULL || fread(data, len, stdin) != len) break;
+  } while (intf.process(data, len));
+
+  free(data);
+  return 0;
 }

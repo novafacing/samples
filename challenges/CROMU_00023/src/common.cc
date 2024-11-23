@@ -25,47 +25,40 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-#define LINE_BUF_MAX        (512)
+#define LINE_BUF_MAX (512)
 
-void ReadLine( String &sLine )
-{
-    char lineBuffer[LINE_BUF_MAX+1];
+void ReadLine(String &sLine) {
+  char lineBuffer[LINE_BUF_MAX + 1];
 
-    getline( lineBuffer, LINE_BUF_MAX );
+  getline(lineBuffer, LINE_BUF_MAX);
 
-    sLine.SetString( lineBuffer );
+  sLine.SetString(lineBuffer);
 }
 
-size_t recv_bytes( uint8_t *pDest, size_t count )
-{
-    size_t pos = 0;
-    size_t rx_count = 0;
+size_t recv_bytes(uint8_t *pDest, size_t count) {
+  size_t pos = 0;
+  size_t rx_count = 0;
 
-    while ( pos < count )
-    {
-        if ( receive( STDIN, (pDest+pos), 1, &rx_count ) != 0 )
-            goto end;
+  while (pos < count) {
+    if (receive(STDIN, (pDest + pos), 1, &rx_count) != 0) goto end;
 
-        if ( rx_count != 1 )
-            goto end;
+    if (rx_count != 1) goto end;
 
-        pos++;
-    }
+    pos++;
+  }
 
 end:
-    return (pos);
+  return (pos);
 }
 
-void ReadUint32( uint32_t &value )
-{
-    int retvalue;
-    size_t rx_count = 1;
+void ReadUint32(uint32_t &value) {
+  int retvalue;
+  size_t rx_count = 1;
 
-    if ( recv_bytes( (uint8_t*)&value, sizeof(value) ) != sizeof(value) )
-        _terminate( -1 );
+  if (recv_bytes((uint8_t *)&value, sizeof(value)) != sizeof(value))
+    _terminate(-1);
 }
 
-uint32_t StringToInt( const String& sInStr )
-{
-    return atoi( sInStr.StripSpaces().c_str() );
+uint32_t StringToInt(const String &sInStr) {
+  return atoi(sInStr.StripSpaces().c_str());
 }

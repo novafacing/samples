@@ -25,27 +25,24 @@
 
 #include <stdlib.h>
 
-#define DEF_LIST(name, data_type)                               \
-  typedef struct name##_list {                                  \
-    data_type value;                                            \
-    struct name##_list *prev;                                   \
-    struct name##_list *next;                                   \
-  } name##_list;                                                \
+#define DEF_LIST(name, data_type) \
+  typedef struct name##_list {    \
+    data_type value;              \
+    struct name##_list *prev;     \
+    struct name##_list *next;     \
+  } name##_list;
 
-#define DEF_LIST_APPEND(name, data_type)                        \
-  int name##_list_append(name##_list *list, data_type value) {  \
-    if (list == NULL)                                           \
-      return -1;                                                \
-    name##_list *n = malloc(sizeof(name##_list));               \
-    if (n == NULL)                                              \
-      exit(1);                                                  \
-    while (list->next != NULL)                                  \
-      list = list->next;                                        \
-    list->next = n;                                             \
-    n->next = NULL;                                             \
-    n->prev = list;                                             \
-    n->value = value;                                           \
-    return 0;                                                   \
+#define DEF_LIST_APPEND(name, data_type)                       \
+  int name##_list_append(name##_list *list, data_type value) { \
+    if (list == NULL) return -1;                               \
+    name##_list *n = malloc(sizeof(name##_list));              \
+    if (n == NULL) exit(1);                                    \
+    while (list->next != NULL) list = list->next;              \
+    list->next = n;                                            \
+    n->next = NULL;                                            \
+    n->prev = list;                                            \
+    n->value = value;                                          \
+    return 0;                                                  \
   }
 
 #endif /* __LIST_H_ */

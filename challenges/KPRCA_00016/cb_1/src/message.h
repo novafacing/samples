@@ -28,8 +28,8 @@
 
 #define MAX_TEXT_LEN 512
 
-#define TYPE_NORMAL     0
-#define TYPE_PROTECTED  1
+#define TYPE_NORMAL 0
+#define TYPE_PROTECTED 1
 
 typedef struct message {
   unsigned short type;
@@ -39,7 +39,7 @@ typedef struct message {
   char *text;
 } message_t;
 
-message_t* parse_message(char *, user_t *, user_t *, unsigned len);
+message_t *parse_message(char *, user_t *, user_t *, unsigned len);
 void free_message(message_t *);
 
 #endif

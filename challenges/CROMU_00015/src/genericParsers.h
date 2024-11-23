@@ -29,13 +29,13 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
+
 #include "service.h"
 
-char *extractName( pstring str );
+char *extractName(pstring str);
 
-int extractPopulation( pstring str );
+int extractPopulation(pstring str);
 
-pBorder extractBorder( pstring str );
-
+pBorder extractBorder(pstring str);
 
 #endif

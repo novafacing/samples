@@ -18,34 +18,32 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef LIBDUPE_H
 #define LIBDUPE_H
 
-#define MAX_DUPE_SIZE 3*1024*1024
-
+#define MAX_DUPE_SIZE 3 * 1024 * 1024
 
 typedef struct dupefile {
-    uint32_t version;
-    uint32_t captype;
-    int caplen;
-    int framelen;
-    uint32_t idx;
-    uint32_t heaptype;
-    uint8_t data[0];
+  uint32_t version;
+  uint32_t captype;
+  int caplen;
+  int framelen;
+  uint32_t idx;
+  uint32_t heaptype;
+  uint8_t data[0];
 } dupefile_t;
 
 typedef struct dupepkt_hdr {
-    uint32_t timestamp;
-    int size;
+  uint32_t timestamp;
+  int size;
 } dupepkt_hdr_t;
 
 typedef struct dupepkt {
-    dupefile_t *parent;
-    dupepkt_hdr_t hdr;
-    uint8_t payload[0];
+  dupefile_t *parent;
+  dupepkt_hdr_t hdr;
+  uint8_t payload[0];
 } dupepkt_t;
 
 /**

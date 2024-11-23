@@ -21,7 +21,7 @@
  *
  */
 
-void protect(unsigned int*key, unsigned int*data);
-void protect_msg(unsigned int*key, char *buf, size_t buf_len);
-void unprotect(unsigned int*key, unsigned int*data);
-void unprotect_msg(unsigned int*key, char *buf, size_t buf_len);
+void protect(unsigned int *key, unsigned int *data);
+void protect_msg(unsigned int *key, char *buf, size_t buf_len);
+void unprotect(unsigned int *key, unsigned int *data);
+void unprotect_msg(unsigned int *key, char *buf, size_t buf_len);

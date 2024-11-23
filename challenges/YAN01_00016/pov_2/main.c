@@ -1,38 +1,28 @@
 #include <libpov.h>
 
-uint32_t hexStrToUint32(const unsigned char* str)
-{
+uint32_t hexStrToUint32(const unsigned char* str) {
   int i = 0;
   uint32_t ret = 0;
   uint32_t temp = 0;
- 
-  for (i = 0; str[i] != '\0'; i++)
-  {
+
+  for (i = 0; str[i] != '\0'; i++) {
     ret = ret << 4;
-    if ( (str[i] >= '0') && (str[i] <= '9') ) 
-    {
+    if ((str[i] >= '0') && (str[i] <= '9')) {
       temp = str[i] - '0';
-    }
-    else if ( (str[i] >= 'A') && (str[i] <= 'F') )
-    {
+    } else if ((str[i] >= 'A') && (str[i] <= 'F')) {
       temp = str[i] - 'A' + 10;
-    }
-    else if ( (str[i] >= 'a') && (str[i] <= 'f') )
-    {
+    } else if ((str[i] >= 'a') && (str[i] <= 'f')) {
       temp = str[i] - 'a' + 10;
-    }
-    else
-    {
+    } else {
       return (0);
     }
     ret = ret | (temp & 0xF);
-  } 
+  }
 
   return (ret);
 }
 
-uint32_t flipEndian(uint32_t t)
-{
+uint32_t flipEndian(uint32_t t) {
   uint32_t ret = 0;
 
   ret |= t & 0xFF;
@@ -46,8 +36,7 @@ uint32_t flipEndian(uint32_t t)
   return (ret);
 }
 
-int main(void)
-{
+int main(void) {
   char* s = "E 1 4347B000 1004\n";
   char* p = "P 1\n";
   unsigned char buf[128];
@@ -65,4 +54,3 @@ int main(void)
   type2_submit((unsigned char*)(&temp), 4);
   return (0);
 }
-

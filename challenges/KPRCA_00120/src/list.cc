@@ -21,43 +21,36 @@
  *
  */
 #include "list.h"
+
 #include <cstring.h>
 
-List::List(void)
-{
+List::List(void) {
   cap = MAX_WORKERS;
   size = 0;
 }
 
-bool List::Append(Support* s)
-{
-  if (size == cap)
-    return false;
+bool List::Append(Support* s) {
+  if (size == cap) return false;
 
   data[size++] = s;
   return true;
 }
 
-Support* List::Get(uint32_t idx)
-{
-  if (idx >= size)
-  {
+Support* List::Get(uint32_t idx) {
+  if (idx >= size) {
     return nullptr;
   }
 
   return data[idx];
 }
 
-Support* List::Remove(uint32_t idx)
-{
-  if (idx >= size)
-  {
+Support* List::Remove(uint32_t idx) {
+  if (idx >= size) {
     return nullptr;
   }
 
-  Support *support = data[idx];
-  if (idx < size - 1)
-  {
+  Support* support = data[idx];
+  if (idx < size - 1) {
     memmove(&(data[idx]), &(data[idx + 1]), (size - 1 - idx) * sizeof(idx));
   }
 
@@ -66,8 +59,4 @@ Support* List::Remove(uint32_t idx)
   return support;
 }
 
-uint32_t List::Length()
-{
-    return size;
-}
-
+uint32_t List::Length() { return size; }

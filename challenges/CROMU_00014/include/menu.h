@@ -27,17 +27,13 @@ THE SOFTWARE.
 #ifndef MENU_H
 #define MENU_H
 
-
 typedef struct {
-
-	char *prompt;
-	char *command;
-	int (* Action)();
+  char *prompt;
+  char *command;
+  int (*Action)();
 } menu_item;
-
 
 int process_menu(menu_item *, int);
 int find_char(char c, char *string);
-
 
 #endif

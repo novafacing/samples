@@ -33,56 +33,53 @@ THE SOFTWARE.
 class Date;
 class Time;
 
-class Date
-{
-public:
-    Date() : m_day( 1 ), m_month( 1 ), m_year( 1900 ) { };
-    ~Date() { };
+class Date {
+ public:
+  Date() : m_day(1), m_month(1), m_year(1900) {};
+  ~Date() {};
 
-    void SetDate( uint8_t day, uint8_t month, uint16_t year )
-    {
-        m_day = day;
-        m_month = month;
-        m_year = year;
-    }
+  void SetDate(uint8_t day, uint8_t month, uint16_t year) {
+    m_day = day;
+    m_month = month;
+    m_year = year;
+  }
 
-    bool SetDate( const char* pszInStr );
-    bool SetDate( const String& instr );
-    void FromUnixTimeval( uint32_t timeval );
+  bool SetDate(const char* pszInStr);
+  bool SetDate(const String& instr);
+  void FromUnixTimeval(uint32_t timeval);
 
-    String GetString( void ) const;
+  String GetString(void) const;
 
-private:
-    uint8_t     m_day;
-    uint8_t     m_month;
-    uint16_t    m_year;
+ private:
+  uint8_t m_day;
+  uint8_t m_month;
+  uint16_t m_year;
 };
 
-class Time
-{
-public:
-    Time() : m_hour( 0 ), m_minute( 0 ), m_second( 0 ) { };
-    Time( uint8_t hour, uint8_t minute, uint8_t second ) : m_hour( hour ), m_minute( minute ), m_second( second ) { };
-    ~Time() { };
+class Time {
+ public:
+  Time() : m_hour(0), m_minute(0), m_second(0) {};
+  Time(uint8_t hour, uint8_t minute, uint8_t second)
+      : m_hour(hour), m_minute(minute), m_second(second) {};
+  ~Time() {};
 
-    void SetTime( uint8_t hour, uint8_t minute, uint8_t second )
-    {
-        m_hour = hour;
-        m_minute = minute;
-        m_second = second;
-    }
+  void SetTime(uint8_t hour, uint8_t minute, uint8_t second) {
+    m_hour = hour;
+    m_minute = minute;
+    m_second = second;
+  }
 
-    bool SetTime( const char *pszInStr );
-    bool SetTime( const String& inStr );
+  bool SetTime(const char* pszInStr);
+  bool SetTime(const String& inStr);
 
-    void FromUnixTimeval( uint32_t timeval );
+  void FromUnixTimeval(uint32_t timeval);
 
-    String GetString( void ) const;
+  String GetString(void) const;
 
-private:
-    uint8_t     m_hour;
-    uint8_t     m_minute;
-    uint8_t     m_second;
+ private:
+  uint8_t m_hour;
+  uint8_t m_minute;
+  uint8_t m_second;
 };
 
-#endif // __DATETIME_H__
+#endif  // __DATETIME_H__

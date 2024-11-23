@@ -28,20 +28,19 @@ THE SOFTWARE.
 
 #include "gps.h"
 
-class CGeofencePoint
-{
-public:
-	CGeofencePoint( );
-	CGeofencePoint( CGPSCoordinates &coords, uint32_t distance );
-	~CGeofencePoint( );
+class CGeofencePoint {
+ public:
+  CGeofencePoint();
+  CGeofencePoint(CGPSCoordinates &coords, uint32_t distance);
+  ~CGeofencePoint();
 
-	void SetDistance( uint32_t distance ) { m_distance = distance; };
-	uint32_t GetDistance( void ) const { return m_distance; };
-	CGPSCoordinates &GetCoords( void ) { return m_coords; };
-	
-private:
-	CGPSCoordinates m_coords;
-	uint32_t m_distance;
+  void SetDistance(uint32_t distance) { m_distance = distance; };
+  uint32_t GetDistance(void) const { return m_distance; };
+  CGPSCoordinates &GetCoords(void) { return m_coords; };
+
+ private:
+  CGPSCoordinates m_coords;
+  uint32_t m_distance;
 };
 
-#endif // __GEOFENCE_H__
+#endif  // __GEOFENCE_H__

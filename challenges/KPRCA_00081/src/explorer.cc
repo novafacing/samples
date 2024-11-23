@@ -21,70 +21,55 @@
  *
  */
 
+#include "explorer.h"
+
 #include <cstdio.h>
 #include <cstring.h>
 
-#include "explorer.h"
-
-CExplorer::CExplorer(const char *name) : m_exp(1000), m_level(1), m_skills(), m_avail(true), m_hired(false)
-{
-    char *tmp = strndup(name, k_maxNameLength);
-    strcpy(m_name, tmp);
+CExplorer::CExplorer(const char *name)
+    : m_exp(1000), m_level(1), m_skills(), m_avail(true), m_hired(false) {
+  char *tmp = strndup(name, k_maxNameLength);
+  strcpy(m_name, tmp);
 }
 
-int CExplorer::GetNextExp()
-{
-    int i, exp = k_baseExp;
-    double mult = 1.0;
-    for (i = 0; i < m_level; i++)
-        mult *= k_nextExpMultiplier;
-    exp = static_cast<int>(exp * mult);
-    return (exp - m_exp);
+int CExplorer::GetNextExp() {
+  int i, exp = k_baseExp;
+  double mult = 1.0;
+  for (i = 0; i < m_level; i++) mult *= k_nextExpMultiplier;
+  exp = static_cast<int>(exp * mult);
+  return (exp - m_exp);
 }
 
-bool CExplorer::GainExp(int exp)
-{
-    if (m_level == k_maxLevel)
-        return false;
-    int oldLevel = m_level;
-    while (m_level < k_maxLevel)
-    {
-        int nextExp = GetNextExp();
-        if (exp >= nextExp)
-        {
-            m_level++;
-            exp -= nextExp;
-            m_exp += nextExp;
-        }
-        else
-            break;
+bool CExplorer::GainExp(int exp) {
+  if (m_level == k_maxLevel) return false;
+  int oldLevel = m_level;
+  while (m_level < k_maxLevel) {
+    int nextExp = GetNextExp();
+    if (exp >= nextExp) {
+      m_level++;
+      exp -= nextExp;
+      m_exp += nextExp;
+    } else
+      break;
+  }
+  m_exp += exp;
+  return oldLevel < m_level;
+}
+
+void CExplorer::ReplaceSkill(CSkill *skill, int idx) {
+  if (idx != 0 && idx != 1) return;
+  m_skills[idx] = skill;
+}
+
+CRequirement::Type CExplorer::GetCounters() {
+  int i;
+  CRequirement::Type type = CRequirement::Type::NOTHING;
+  for (i = 0; i < 2; i++) {
+    if (m_skills[i]) {
+      type |= m_skills[i]->GetCounter();
     }
-    m_exp += exp;
-    return oldLevel < m_level;
+  }
+  return type;
 }
 
-void CExplorer::ReplaceSkill(CSkill* skill, int idx)
-{
-    if (idx != 0 && idx != 1)
-        return;
-    m_skills[idx] = skill;
-}
-
-CRequirement::Type CExplorer::GetCounters()
-{
-    int i;
-    CRequirement::Type type = CRequirement::Type::NOTHING;
-    for (i = 0; i < 2; i++)
-    {
-        if (m_skills[i])
-        {
-            type |= m_skills[i]->GetCounter();
-        }
-    }
-    return type;
-}
-
-void CExplorer::ChangeName(const char *name)
-{
-    strcpy(m_name, name);
-}
+void CExplorer::ChangeName(const char *name) { strcpy(m_name, name); }

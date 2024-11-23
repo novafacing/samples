@@ -23,95 +23,72 @@
 #pragma once
 
 #include <cstring.h>
+
 #include "map.h"
 #include "unique_ptr.h"
 
 // simple wrapper around a null-terminated string
-class CString
-{
-public:
-    CString() : ptr(nullptr) {}
-    CString(const char *str) : ptr(str) {}
-    CString(const CString& other)
-    {
-        if (other._ptr)
-        {
-            ptr = other.ptr;
-            ensure();
-        }
-        else
-        {
-            _ptr.reset(nullptr);
-            ptr = other.ptr;
-        }
+class CString {
+ public:
+  CString() : ptr(nullptr) {}
+  CString(const char* str) : ptr(str) {}
+  CString(const CString& other) {
+    if (other._ptr) {
+      ptr = other.ptr;
+      ensure();
+    } else {
+      _ptr.reset(nullptr);
+      ptr = other.ptr;
     }
-    CString(CString&& other)
-    {
-        _ptr.reset(other._ptr.release());
-        ptr = other.ptr;
-        other.ptr = nullptr;
-    }
+  }
+  CString(CString&& other) {
+    _ptr.reset(other._ptr.release());
+    ptr = other.ptr;
+    other.ptr = nullptr;
+  }
 
-    CString& operator=(const CString& other)
-    {
-        if (other._ptr)
-        {
-            ptr = other.ptr;
-            ensure();
-        }
-        else
-        {
-            _ptr.reset(nullptr);
-            ptr = other.ptr;
-        }
-        return *this;
+  CString& operator=(const CString& other) {
+    if (other._ptr) {
+      ptr = other.ptr;
+      ensure();
+    } else {
+      _ptr.reset(nullptr);
+      ptr = other.ptr;
     }
-    CString& operator=(CString&& other)
-    {
-        _ptr.reset(other._ptr.release());
-        ptr = other.ptr;
-        other.ptr = nullptr;
-        return *this;
-    }
+    return *this;
+  }
+  CString& operator=(CString&& other) {
+    _ptr.reset(other._ptr.release());
+    ptr = other.ptr;
+    other.ptr = nullptr;
+    return *this;
+  }
 
-    bool operator==(const CString& other) const
-    {
-        return strcmp(ptr, other.ptr) == 0;
-    }
+  bool operator==(const CString& other) const {
+    return strcmp(ptr, other.ptr) == 0;
+  }
 
-    CString& ensure()
-    {
-        if (!_ptr)
-        {
-            size_t len = length() + 1;
-            _ptr.reset(new char [len]);
-            memcpy(_ptr.get(), ptr, len);
-            ptr = _ptr.get();
-        }
-        return *this;
+  CString& ensure() {
+    if (!_ptr) {
+      size_t len = length() + 1;
+      _ptr.reset(new char[len]);
+      memcpy(_ptr.get(), ptr, len);
+      ptr = _ptr.get();
     }
+    return *this;
+  }
 
-    const char *c_str() const
-    {
-        return ptr;
-    }
+  const char* c_str() const { return ptr; }
 
-    size_t hash() const;
-    size_t length() const
-    {
-        return strlen(ptr);
-    }
-private:
-    const char *ptr;
-    unique_ptr<char[]> _ptr;
+  size_t hash() const;
+  size_t length() const { return strlen(ptr); }
+
+ private:
+  const char* ptr;
+  unique_ptr<char[]> _ptr;
 };
 
 template <>
-struct hash<CString>
-{
-    size_t operator() (const CString& t)
-    {
-        return t.hash();
-    }
+struct hash<CString> {
+  size_t operator()(const CString& t) { return t.hash(); }
 };
-

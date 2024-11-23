@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "types.h"
+
+#include <libcgc.h>
 
 #define c(NAME, SIZE) chk(SIZE, sizeof(NAME))
 

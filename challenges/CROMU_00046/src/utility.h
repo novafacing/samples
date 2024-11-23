@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "libc.h"
 
 unsigned int getBet(gamestate *state);
-void hugsrand(gamestate* state, unsigned int seed);
+void hugsrand(gamestate *state, unsigned int seed);
 unsigned int hugsnextrand(gamestate *state);
 void handleOutcome(gamestate *state, char outcome, unsigned int wagered);
 

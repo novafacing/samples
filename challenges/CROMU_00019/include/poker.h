@@ -30,17 +30,17 @@ THE SOFTWARE.
 #include "casino.h"
 
 static const int poker_value[SIZE_OF_DECK + 1] = {
-    0, // Placeholder for non-card
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2D - 10D
-    11, 12, 13, 14,                 // JD - AD
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2S - 10S
-    11, 12, 13, 14,                 // JS - AS
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2H - 10H
-    11, 12, 13, 14,                 // JH - AH
-    2, 3, 4, 5, 6, 7, 8, 9, 10,  	// 2C - 10C
-    11, 12, 13, 14,                 // JC - AC
+    0,                               // Placeholder for non-card
+    2,  3,  4,  5,  6, 7, 8, 9, 10,  // 2D - 10D
+    11, 12, 13, 14,                  // JD - AD
+    2,  3,  4,  5,  6, 7, 8, 9, 10,  // 2S - 10S
+    11, 12, 13, 14,                  // JS - AS
+    2,  3,  4,  5,  6, 7, 8, 9, 10,  // 2H - 10H
+    11, 12, 13, 14,                  // JH - AH
+    2,  3,  4,  5,  6, 7, 8, 9, 10,  // 2C - 10C
+    11, 12, 13, 14,                  // JC - AC
 };
 
 void poker(player_info *player);
 
-#endif // POKER_H
+#endif  // POKER_H

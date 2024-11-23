@@ -23,31 +23,27 @@
 #include "stdlib.h"
 #include "string.h"
 
-char * strsep(char **stringp, const char *delim)
-{
-    unsigned int i;
-    char *buf = *stringp;
+char *strsep(char **stringp, const char *delim) {
+  unsigned int i;
+  char *buf = *stringp;
 
-    /* return NULL if already empty */
-    if (buf == NULL)
-        return NULL;
+  /* return NULL if already empty */
+  if (buf == NULL) return NULL;
 
-    /* find a deliminator */
-    for (i = 0; buf[i] != 0; i++)
-    {
-        if (strchr(delim, buf[i]) != NULL)
-            break;
-    }
+  /* find a deliminator */
+  for (i = 0; buf[i] != 0; i++) {
+    if (strchr(delim, buf[i]) != NULL) break;
+  }
 
-    /* set stringp to point to after the deliminator, or NULL if empty */
-    if (buf[i] == 0)
-        *stringp = NULL;
-    else
-        *stringp = &buf[i + 1];
+  /* set stringp to point to after the deliminator, or NULL if empty */
+  if (buf[i] == 0)
+    *stringp = NULL;
+  else
+    *stringp = &buf[i + 1];
 
-    /* replace the deliminator with a NULL byte */
-    buf[i] = 0;
+  /* replace the deliminator with a NULL byte */
+  buf[i] = 0;
 
-    /* return truncated buffer */
-    return buf;
+  /* return truncated buffer */
+  return buf;
 }

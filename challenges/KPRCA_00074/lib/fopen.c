@@ -21,18 +21,17 @@
  *
  */
 #include <stdlib.h>
+
 #include "stdio_private.h"
 
-FILE * fopen(int fd, int mode)
-{
-    FILE *fp;
-    fp = malloc(sizeof(FILE));
-    if (fp == NULL)
-        return NULL;
-    fp->fd = fd;
-    fp->rw = mode ? F_WRITE : F_READ;
-    fp->idx = 0;
-    fp->length = 0;
-    fp->xlat_map = fp->xlat_map_inv = NULL;
-    return fp;
+FILE *fopen(int fd, int mode) {
+  FILE *fp;
+  fp = malloc(sizeof(FILE));
+  if (fp == NULL) return NULL;
+  fp->fd = fd;
+  fp->rw = mode ? F_WRITE : F_READ;
+  fp->idx = 0;
+  fp->length = 0;
+  fp->xlat_map = fp->xlat_map_inv = NULL;
+  return fp;
 }

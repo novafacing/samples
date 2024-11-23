@@ -26,12 +26,13 @@
 #include <libcgc.h>
 
 struct bitset {
-    size_t size;
-    unsigned char data[0];
+  size_t size;
+  unsigned char data[0];
 };
 
 /**
- * Initialize a empty bitset. Struct must be large enough to contain size + size bits.
+ * Initialize a empty bitset. Struct must be large enough to contain size + size
+ * bits.
  *
  * @param bitset The bitset to initialize
  * @param size The size of the bitset
@@ -82,4 +83,3 @@ int bitset_get_bit(struct bitset *bitset, unsigned int bit);
 int bitset_find_first(struct bitset *bitset, int set);
 
 #endif /* BITSET_H_ */
-

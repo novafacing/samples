@@ -23,34 +23,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "libc.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
-#include "malloc.h"
-#include "linkedlist.h"
 #include "service.h"
+
+#include <libcgc.h>
+
+#include "libc.h"
+#include "linkedlist.h"
+#include "malloc.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 linkedList *serverList;
 int adminPortOffset;
 
-int GetNextAdminPort()
-{
+int GetNextAdminPort() {
   adminPortOffset = (adminPortOffset + 4) % 4096;
   return adminPortOffset;
 }
 
-serverInfo *CreateServer(int length)
-{
+serverInfo *CreateServer(int length) {
   serverInfo *pServer = calloc(sizeof(serverInfo));
   pServer->name = GenerateRandomString(length);
   pServer->instances = NewList(LIST_INSTANCE);
   return pServer;
 }
 
-instanceInfo *CreateInstance(int length)
-{
+instanceInfo *CreateInstance(int length) {
   instanceInfo *pInstance = calloc(sizeof(instanceInfo));
   pInstance->name = GenerateRandomString(length);
   pInstance->port = GenerateRandomNumber(0, 65535);
@@ -58,24 +57,19 @@ instanceInfo *CreateInstance(int length)
   return pInstance;
 }
 
-void AddInstanceToServer(serverInfo *pServer, instanceInfo *pInstance)
-{
+void AddInstanceToServer(serverInfo *pServer, instanceInfo *pInstance) {
   AddToList(pServer->instances, pInstance, LIST_INSTANCE);
   pInstance->server = pServer;
 }
 
-serverInfo *FindServer(char *name)
-{
+serverInfo *FindServer(char *name) {
   link *listItem = serverList->root;
-  while (listItem != NULL) 
-  {
+  while (listItem != NULL) {
     serverInfo *server = listItem->object;
-    if (server == NULL) 
-    {
+    if (server == NULL) {
       continue;
     }
-    if (strcmp(server->name, name) == 0)
-    {
+    if (strcmp(server->name, name) == 0) {
       return server;
     }
     listItem = listItem->next;
@@ -83,26 +77,20 @@ serverInfo *FindServer(char *name)
   return NULL;
 }
 
-instanceInfo *FindInstance(char *name)
-{
+instanceInfo *FindInstance(char *name) {
   link *listItem = serverList->root;
-  while (listItem != NULL) 
-  {
+  while (listItem != NULL) {
     serverInfo *server = listItem->object;
-    if (server == NULL) 
-    {
+    if (server == NULL) {
       continue;
     }
     link *listItem2 = server->instances->root;
-    while (listItem2 != NULL) 
-    {
+    while (listItem2 != NULL) {
       instanceInfo *instance = listItem2->object;
-      if (instance == NULL)
-      {
+      if (instance == NULL) {
         continue;
       }
-      if (strcmp(instance->name, name) == 0)
-      {
+      if (strcmp(instance->name, name) == 0) {
         return instance;
       }
       listItem2 = listItem2->next;
@@ -112,32 +100,28 @@ instanceInfo *FindInstance(char *name)
   return NULL;
 }
 
-void InitializeSimulation() 
-{
+void InitializeSimulation() {
   adminPortOffset = 0;
   serverList = NewList(LIST_SERVER);
   // Create Servers
-  int numServers = GenerateRandomNumber(10,32);
+  int numServers = GenerateRandomNumber(10, 32);
   int nameLength = GenerateRandomNumber(34, 64);
-  for (int i=0; i<numServers; i++) 
-  {
+  for (int i = 0; i < numServers; i++) {
     serverInfo *server = CreateServer(nameLength - i);
     AddToList(serverList, server, LIST_SERVER);
     // Create and link instances to servers
     int numInstances = GenerateRandomNumber(1, 15);
     int instanceLength = GenerateRandomNumber(32, 64);
-    for(int j=0; j<numInstances; j++) 
-    {
+    for (int j = 0; j < numInstances; j++) {
       instanceInfo *instance = CreateInstance(instanceLength - j);
       AddInstanceToServer(server, instance);
     }
   }
 }
 
-void QueryOne(query *pCurrentQuery, response *pCurrentResponse) 
-{
+void QueryOne(query *pCurrentQuery, response *pCurrentResponse) {
   char name[64];
-  for (int i=0; i< 64; i++) {
+  for (int i = 0; i < 64; i++) {
     name[i] = i;
   }
   printf("Query One\n");
@@ -148,8 +132,7 @@ void QueryOne(query *pCurrentQuery, response *pCurrentResponse)
   strcpy(name, (char *)pCurrentQuery->data);
 #endif
   instanceInfo *instance = FindInstance(name);
-  if (instance == NULL) 
-  {
+  if (instance == NULL) {
     printf("Not found\n");
     return;
   }
@@ -167,65 +150,51 @@ void QueryOne(query *pCurrentQuery, response *pCurrentResponse)
   return;
 }
 
-int main(void) 
-{
+int main(void) {
   char inputBuffer[1024];
-  
+
   InitializeRandomness();
   InitializeSimulation();
 
-
-  while (1) 
-  {
-
+  while (1) {
     int bytesReceived = ReceiveUntil(inputBuffer, sizeof(inputBuffer), '\n');
-    if (bytesReceived < 0) 
-    {
+    if (bytesReceived < 0) {
       break;
     }
-    if (bytesReceived == 0) 
-    {
+    if (bytesReceived == 0) {
       continue;
     }
     query *pCurrentQuery = ParseQuery(inputBuffer);
     response *pCurrentResponse = GenerateBlankResponse();
-    switch (pCurrentQuery->type)
-    {
-      case QUERY_ALL:
-      {
+    switch (pCurrentQuery->type) {
+      case QUERY_ALL: {
         printf("Query All\n");
         // List all servers in network
         link *listItem = serverList->root;
-        while (listItem != NULL) 
-        {
+        while (listItem != NULL) {
           serverInfo *server = listItem->object;
-          if (server == NULL) 
-          {
+          if (server == NULL) {
             continue;
           }
           AddToResponse(pCurrentResponse, "server:");
           AddToResponse(pCurrentResponse, server->name);
           AddToResponse(pCurrentResponse, ":");
           listItem = listItem->next;
-        } 
+        }
         break;
       }
-      case QUERY_SERVER:
-      {
+      case QUERY_SERVER: {
         printf("Query Server\n");
         // List all instances on a server
         char *name = (char *)pCurrentQuery->data;
         serverInfo *server = FindServer(name);
-        if (server == NULL) 
-        {
+        if (server == NULL) {
           continue;
         }
         link *listItem = server->instances->root;
-        while (listItem != NULL) 
-        {
+        while (listItem != NULL) {
           instanceInfo *instance = listItem->object;
-          if (instance == NULL) 
-          {
+          if (instance == NULL) {
             continue;
           }
           AddToResponse(pCurrentResponse, "instance:");
@@ -235,40 +204,36 @@ int main(void)
         }
         break;
       }
-      case QUERY_ONE:
-      {
+      case QUERY_ONE: {
         QueryOne(pCurrentQuery, pCurrentResponse);
         break;
       }
-      case QUERY_ADMIN:
-      {
+      case QUERY_ADMIN: {
         // Send admin info for one instance
         printf("Query Admin\n");
         int version = pCurrentQuery->data[0];
-        if (version != 1)
-        {
+        if (version != 1) {
           printf("Invalid Query\n");
           _terminate(0);
         }
         char instanceName[64];
         strncpy(instanceName, (char *)&pCurrentQuery->data[1], 64);
         instanceInfo *instance = FindInstance(instanceName);
-        if (instance == NULL) 
-        {
+        if (instance == NULL) {
           printf("Instance Not Found\n");
           _terminate(0);
         }
         AddToResponse(pCurrentResponse, "admin:");
         char number[12];
         memset(number, 0, sizeof(number));
-        uint16_t adminPort = *(uint16_t *)((uint8_t *)FLAG_PAGE + instance->adminPortOffset);
+        uint16_t adminPort =
+            *(uint16_t *)((uint8_t *)FLAG_PAGE + instance->adminPortOffset);
         sprintf(number, "$x", (int)adminPort);
         AddToResponse(pCurrentResponse, number);
         AddToResponse(pCurrentResponse, ":");
         break;
       }
-      default:
-      {
+      default: {
         // Invalid Query
         printf("Invalid Query\n");
         _terminate(0);

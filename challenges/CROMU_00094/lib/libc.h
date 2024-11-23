@@ -28,10 +28,9 @@ THE SOFTWARE.
 
 #define FLAG_PAGE 0x4347c000
 
-
 void InitializeRandomness();
 
-char *GenerateRandomString(int length); 
+char *GenerateRandomString(int length);
 
 // Returns random number between min and max inclusive
 unsigned int GenerateRandomNumber(int min, int max);

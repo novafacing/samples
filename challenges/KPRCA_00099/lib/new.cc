@@ -23,28 +23,18 @@
 #include <cstdlib.h>
 #include <cstring.h>
 
-void *operator new(unsigned int length)
-{
-    void *ptr = malloc(length);
-    if (ptr == NULL)
-        _terminate(1);
-    return ptr;
+void *operator new(unsigned int length) {
+  void *ptr = malloc(length);
+  if (ptr == NULL) _terminate(1);
+  return ptr;
 }
 
-void *operator new[](unsigned int length)
-{
-    void *ptr = malloc(length);
-    if (ptr == NULL)
-        _terminate(1);
-    return ptr;
+void *operator new[](unsigned int length) {
+  void *ptr = malloc(length);
+  if (ptr == NULL) _terminate(1);
+  return ptr;
 }
 
-void operator delete(void *ptr)
-{
-    free(ptr);
-}
+void operator delete(void *ptr) { free(ptr); }
 
-void operator delete[](void *ptr)
-{
-    free(ptr);
-}
+void operator delete[](void *ptr) { free(ptr); }

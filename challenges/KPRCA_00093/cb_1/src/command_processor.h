@@ -23,15 +23,15 @@
 #ifndef COMMAND_PROCESSOR_H_
 #define COMMAND_PROCESSOR_H_
 
-#include "brc_response.h"
-#include "brc_command.h"
 #include "brc_chat.h"
+#include "brc_command.h"
+#include "brc_response.h"
 
 namespace CommandProcessor {
 
 BrcResponse *ServiceCommand(BrcCommand *brc_cmd);
 BrcResponse *ServiceChat(BrcChat *brc_chat);
 
-}
+}  // namespace CommandProcessor
 
 #endif /* COMMAND_PROCESSOR_H_ */

@@ -25,23 +25,21 @@
 
 #define MAX_LENGTH 40
 
-enum {TYPE_B = 100, TYPE_C = 101};
+enum { TYPE_B = 100, TYPE_C = 101 };
 
-typedef struct
-{
-    unsigned char code_b;
-    unsigned char code_c[3];
-    unsigned char binary_rep[14];
-    unsigned int weight;
+typedef struct {
+  unsigned char code_b;
+  unsigned char code_c[3];
+  unsigned char binary_rep[14];
+  unsigned int weight;
 } barcode_128_lut_t;
 
-typedef struct barcode_128
-{
-    int length;
-    int encoding_type;
-    char *raw_str;
-    barcode_128_lut_t **encoded_data;
-    int checksum;
+typedef struct barcode_128 {
+  int length;
+  int encoding_type;
+  char *raw_str;
+  barcode_128_lut_t **encoded_data;
+  int checksum;
 } barcode_128_t;
 
 barcode_128_t *create_barcode_from_str(char *barcode_str);

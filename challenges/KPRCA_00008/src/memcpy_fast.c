@@ -28,21 +28,17 @@
 typedef unsigned int intptr_t;
 typedef unsigned int uint128_t __attribute__((__vector_size__(16)));
 
-void *memcpy_fast(void *dst, void *src, size_t length)
-{
-    if ((length % 16) || ((intptr_t)dst % 16) || ((intptr_t)src % 16))
-        return memcpy(dst, src, length);
+void *memcpy_fast(void *dst, void *src, size_t length) {
+  if ((length % 16) || ((intptr_t)dst % 16) || ((intptr_t)src % 16))
+    return memcpy(dst, src, length);
 
 #if PATCHED
-    if (length == 0)
-        return dst;
+  if (length == 0) return dst;
 #endif
 
-    size_t i = 0;
-    do
-    {
-        ((uint128_t*)dst)[i] = ((uint128_t*)src)[i];
-    }
-    while (++i < (length / 16));
-    return dst;
+  size_t i = 0;
+  do {
+    ((uint128_t *)dst)[i] = ((uint128_t *)src)[i];
+  } while (++i < (length / 16));
+  return dst;
 }

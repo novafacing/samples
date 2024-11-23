@@ -25,17 +25,14 @@ THE SOFTWARE.
 */
 
 #include <stdlib.h>
+
 #include "service.h"
 
 void print_main_menu(void) {
-
-
-	printf("\n");
-	printf("1 - Enter a Recipe\n");
-	printf("2 - Find a Recipe\n");
-	printf("3 - Print Tagged Recipes\n");
-	printf("4 - Print Shopping List\n");
-	printf("5 - Exit\n");
-
-
+  printf("\n");
+  printf("1 - Enter a Recipe\n");
+  printf("2 - Find a Recipe\n");
+  printf("3 - Print Tagged Recipes\n");
+  printf("4 - Print Shopping List\n");
+  printf("5 - Exit\n");
 }

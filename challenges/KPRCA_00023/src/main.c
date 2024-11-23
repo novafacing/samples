@@ -22,7 +22,6 @@
  */
 
 #include <libcgc.h>
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,8 +31,7 @@
 
 extern form_t af86;
 
-int main(void)
-{
+int main(void) {
   char line_buf[LINE_SIZE];
   int with_title = 1;
   int ret;
@@ -45,8 +43,7 @@ int main(void)
     print_prompt(&af86, with_title, done);
     with_title = 0;
     memset(line_buf, 0, LINE_SIZE);
-    if (read_line(line_buf) < 0)
-      break;
+    if (read_line(line_buf) < 0) break;
 
     ret = handle_line(&af86, line_buf);
     if (ret < 0)

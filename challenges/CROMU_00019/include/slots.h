@@ -31,4 +31,4 @@ THE SOFTWARE.
 
 void slots(player_info *player);
 
-#endif // SLOTS_H
+#endif  // SLOTS_H

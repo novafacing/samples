@@ -26,41 +26,40 @@ THE SOFTWARE.
 #ifndef __NOR_FLASH_H__
 #define __NOR_FLASH_H__
 
-#define MAX_BLOCK_SIZE	(512)
-#define MAX_BLOCKS_PER_SECTOR	(16)
-#define MAX_SECTOR_COUNT	(256)
+#define MAX_BLOCK_SIZE (512)
+#define MAX_BLOCKS_PER_SECTOR (16)
+#define MAX_SECTOR_COUNT (256)
 
-#define FLASH_SUCCESS	(0)
-#define FLASH_INVALID_BLOCK	(-1)
-#define FLASH_INVALID_SECTOR	(-2)
-#define FLASH_NO_MEMORY		(-3)
-#define FLASH_INVALID_ADDRESS	(-4)
+#define FLASH_SUCCESS (0)
+#define FLASH_INVALID_BLOCK (-1)
+#define FLASH_INVALID_SECTOR (-2)
+#define FLASH_NO_MEMORY (-3)
+#define FLASH_INVALID_ADDRESS (-4)
 
 // Class to simulate the behavior of NOR Flash
-class CNORFlash
-{
-public:
-	CNORFlash( );
-	~CNORFlash( );
+class CNORFlash {
+ public:
+  CNORFlash();
+  ~CNORFlash();
 
-	void Init( uint32_t blockSize, uint32_t blocksPerSector, uint32_t sectorCount );
+  void Init(uint32_t blockSize, uint32_t blocksPerSector, uint32_t sectorCount);
 
-	int32_t WriteData( uint32_t address, uint8_t *pData, uint32_t dataLen );
-	int32_t ReadData( uint32_t address, uint8_t *pData, uint32_t dataLen );	
+  int32_t WriteData(uint32_t address, uint8_t *pData, uint32_t dataLen);
+  int32_t ReadData(uint32_t address, uint8_t *pData, uint32_t dataLen);
 
-	int32_t DeviceErase( void );
-	int32_t SectorErase( uint32_t sectorNum );
-	int32_t BlockErase( uint32_t blockNum );
+  int32_t DeviceErase(void);
+  int32_t SectorErase(uint32_t sectorNum);
+  int32_t BlockErase(uint32_t blockNum);
 
-	uint32_t GetBlockSize( void ) const { return m_blockSize; };
-	uint32_t GetBlocksPerSector( void ) const { return m_blocksPerSector; };
-	uint32_t GetSectorCount( void ) const { return m_sectorCount; };
+  uint32_t GetBlockSize(void) const { return m_blockSize; };
+  uint32_t GetBlocksPerSector(void) const { return m_blocksPerSector; };
+  uint32_t GetSectorCount(void) const { return m_sectorCount; };
 
-private:
-	uint8_t *m_pFlashMemory;
-	uint32_t m_blockSize;
-	uint32_t m_blocksPerSector;
-	uint32_t m_sectorCount;
+ private:
+  uint8_t *m_pFlashMemory;
+  uint32_t m_blockSize;
+  uint32_t m_blocksPerSector;
+  uint32_t m_sectorCount;
 };
 
-#endif // __NOR_FLASH_H__
+#endif  // __NOR_FLASH_H__

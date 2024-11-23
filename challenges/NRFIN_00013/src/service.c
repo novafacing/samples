@@ -18,40 +18,40 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "operation.h"
-#include "math_fun.h"
+ */
 #include "service.h"
 
+#include <libcgc.h>
+
+#include "libc.h"
+#include "math_fun.h"
+#include "operation.h"
+
 int main(void) {
+  uint8_t command[1];
+  int ret = 0;
 
-    uint8_t command[1];
-    int ret = 0;
+  while (1) {
+    if ((ret = do_nonce()) == 0) {
+      RECV(command, sizeof(uint8_t));
 
-    while (1) {
-        if ((ret = do_nonce()) == 0) {
-            
-            RECV(command, sizeof(uint8_t));
-
-            switch (command[0]) {
-                case 0: // create
-                    ret = do_create();
-                    break;
-                case 1: // eval
-                    ret = do_eval();
-                    break;
-                default:
-                    // bad command input
-                    ret = -150;
-            }
-        } 
-
-        if (ret < 0) {
-            SENDSI(ret);
-            return ret;
-        }
+      switch (command[0]) {
+        case 0:  // create
+          ret = do_create();
+          break;
+        case 1:  // eval
+          ret = do_eval();
+          break;
+        default:
+          // bad command input
+          ret = -150;
+      }
     }
-    return ret;
+
+    if (ret < 0) {
+      SENDSI(ret);
+      return ret;
+    }
+  }
+  return ret;
 }

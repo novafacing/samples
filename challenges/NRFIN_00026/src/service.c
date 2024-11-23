@@ -18,42 +18,41 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include <libcgc.h>
+
+#include "cablegrind.h"
 #include "libc.h"
 #include "libdupe.h"
-#include "cablegrind.h"
 
 int main(void) {
-    uint32_t filesize;
-    uint8_t *data;
-    dupefile_t *f;
+  uint32_t filesize;
+  uint8_t *data;
+  dupefile_t *f;
 
-    __stack_cookie_init();
+  __stack_cookie_init();
 
-    RECV(sizeof(uint32_t),(char *)&filesize);
+  RECV(sizeof(uint32_t), (char *)&filesize);
 
-    if (filesize > MAX_DUPE_SIZE)
-        return 1;
+  if (filesize > MAX_DUPE_SIZE) return 1;
 
-    data = malloc(filesize);
+  data = malloc(filesize);
 
-    if (!data)
-        return 2;
+  if (!data) return 2;
 
-    RECV(filesize,(char *)data);
+  RECV(filesize, (char *)data);
 
-    f = dupe_open(data);
+  f = dupe_open(data);
 
-    if (!f || f->caplen != filesize-sizeof(dupefile_t)) {
-        LOG("Bad file.")
-        return 3;
-    }
+  if (!f || f->caplen != filesize - sizeof(dupefile_t)) {
+    LOG("Bad file.")
+    return 3;
+  }
 
-    process_dupe(f);
+  process_dupe(f);
 
-    dupe_close(f);
+  dupe_close(f);
 
-    return 0;
+  return 0;
 }

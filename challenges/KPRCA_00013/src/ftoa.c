@@ -27,57 +27,48 @@
 #include "convert.h"
 
 char *ftoa(double value, char *str, size_t size) {
-    if (size <= 1)
-        return NULL;
+  if (size <= 1) return NULL;
 
-    if (isinf(value) || isnan(value))
-        return NULL;
+  if (isinf(value) || isnan(value)) return NULL;
 
-    size_t i = 0;
-    int negative = 0;
+  size_t i = 0;
+  int negative = 0;
 
-    if (value < 0) {
-        negative = 1;
-        str[i++] = '-';
-        value *= -1;
+  if (value < 0) {
+    negative = 1;
+    str[i++] = '-';
+    value *= -1;
+  }
+
+  if (i == size) return NULL;
+
+  // apply rounding
+  double rem = remainder(value, 0.001) * pow(10, 4);
+  if (rem > 5 || (rem < 0 && rem > -5))
+    if (!negative)
+      value += 0.0005;
+    else if (negative)
+      value += 0.0005;
+  int magnitude = value == 0 ? 0 : log10(value);
+  if (magnitude < 0) magnitude = 0;
+  for (; magnitude > -4; magnitude--) {
+    if (i == size) break;
+
+    if (magnitude == -1) {
+      str[i++] = '.';
+      if (i == size) break;
     }
 
-    if (i == size)
-        return NULL;
+    double e = pow(10, magnitude);
+    int digit = value / e;
+    value -= digit * e;
+    str[i++] = digit + '0';
+  }
 
-    // apply rounding
-    double rem = remainder(value, 0.001) * pow(10, 4);
-    if (rem > 5 || (rem < 0 && rem > -5))
-        if (!negative)
-            value += 0.0005;
-    else
-        if (negative)
-            value += 0.0005;
-    int magnitude = value == 0 ? 0 : log10(value);
-    if (magnitude < 0)
-        magnitude = 0;
-    for (; magnitude > -4; magnitude--)
-    {
-        if (i == size)
-            break;
+  if (i == size)
+    return NULL;
+  else
+    str[i] = '\0';
 
-        if (magnitude == -1)
-        {
-            str[i++] = '.';
-            if (i == size)
-                break;
-        }
-
-        double e = pow(10, magnitude);
-        int digit = value / e;
-        value -= digit * e;
-        str[i++] = digit + '0';
-    }
-
-    if (i == size)
-        return NULL;
-    else
-        str[i] = '\0';
-
-    return str;
+  return str;
 }

@@ -18,11 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 #include <libcgc.h>
-
 
 /**
  * Is the char a digit.
@@ -36,7 +35,7 @@ unsigned char is_digit(const unsigned char ch);
 /**
  * Is the char a hex digit.
  *
- * hex digits: '0' - '9', 'a' - 'f', 'A' - 'F', 
+ * hex digits: '0' - '9', 'a' - 'f', 'A' - 'F',
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
@@ -97,7 +96,6 @@ unsigned char is_non_printable(const unsigned char ch);
  */
 unsigned char is_printable(const unsigned char ch);
 
-
 /**
  * Convert c to an uppercase alphabet character if possible.
  *
@@ -154,7 +152,7 @@ char *itohex(char *hex, int val, char term);
  * @param term String termination char
  * @return 0, -1 on error
  */
-int utostr(char* str, unsigned int n, unsigned int i, const char term);
+int utostr(char *str, unsigned int n, unsigned int i, const char term);
 
 /**
  * Convert an int to an ASCII string.

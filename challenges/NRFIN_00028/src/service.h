@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
@@ -32,17 +31,17 @@
 #define MAX_NUM_SEGS 10
 
 typedef struct seg {
-    size_t size;
-    char name[16];
-    char desc[112];
-    uint8_t code[4096];
+  size_t size;
+  char name[16];
+  char desc[112];
+  uint8_t code[4096];
 } seg_t;
 
 typedef struct segnode segnode_t;
 struct segnode {
-    segnode_t *next;
-    seg_t *s;
-    int (*f)();
+  segnode_t *next;
+  seg_t *s;
+  int (*f)();
 };
 
 /**

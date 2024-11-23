@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include <malloc.h>
 #include "stack.h"
+
+#include <malloc.h>
 
 stack_elem* stack_create() {
   stack_elem* top = calloc(sizeof(stack_elem));
@@ -37,7 +38,7 @@ stack_elem* stack_create() {
 
 void stack_free(stack_elem* stk) {
   if (NULL == stk) return;
-  
+
   stack_elem* next = stk->next;
   free(stk);
 
@@ -187,7 +188,7 @@ void stack_test() {
 
   assert_uint64_equal(12345, stack_pop_uint64(first));
   refute_uint64_equal(0, stack_empty(first));
-  
+
   stack_push_uint64(first, 444);
   assert_uint64_equal(0, stack_empty(first));
 

@@ -20,110 +20,91 @@
  * THE SOFTWARE.
  *
  */
-#include <cmath.h>
-#include <cstring.h>
 #include "audiostream.h"
 
-AudioStream::AudioStream(unsigned int length_) : length(length_), size(length_)
-{
-    samples = new int32_t[size];
+#include <cmath.h>
+#include <cstring.h>
+
+AudioStream::AudioStream(unsigned int length_)
+    : length(length_), size(length_) {
+  samples = new int32_t[size];
 }
 
-AudioStream::~AudioStream()
-{
-    delete samples;
+AudioStream::~AudioStream() { delete samples; }
+
+AudioStream *AudioStream::fromSilence(unsigned int samples) {
+  AudioStream *stream = new AudioStream(samples);
+  for (unsigned int i = 0; i < stream->length; i++) stream->samples[i] = 0;
+  return stream;
 }
 
-AudioStream *AudioStream::fromSilence(unsigned int samples)
-{
-    AudioStream *stream = new AudioStream(samples);
-    for (unsigned int i = 0; i < stream->length; i++)
-        stream->samples[i] = 0;
-    return stream;
+AudioStream *AudioStream::fromSineWave(unsigned int samples, unsigned int hz) {
+  AudioStream *stream = new AudioStream(samples);
+  for (unsigned int i = 0; i < stream->length; i++) {
+    double tmp = INT32_MAX / 2 * sin(PI * 2 * hz / SAMPLE_RATE * i);
+
+    stream->samples[i] = tmp;
+  }
+  return stream;
 }
 
-AudioStream *AudioStream::fromSineWave(unsigned int samples, unsigned int hz)
-{
-    AudioStream *stream = new AudioStream(samples);
-    for (unsigned int i = 0; i < stream->length; i++)
-    {
-        double tmp = INT32_MAX/2 * sin(PI * 2 * hz / SAMPLE_RATE * i);
+AudioStream *AudioStream::fromSquareWave(unsigned int samples,
+                                         unsigned int hz) {
+  AudioStream *stream = new AudioStream(samples);
+  double rate = 2.0 * SAMPLE_RATE / hz;
+  for (unsigned int i = 0; i < stream->length; i++) {
+    int tmp = i / rate;
 
-        stream->samples[i] = tmp;
-    }
-    return stream;
+    stream->samples[i] = tmp % 2 ? INT32_MAX / 2 : -(INT32_MAX / 2);
+  }
+  return stream;
 }
 
-AudioStream *AudioStream::fromSquareWave(unsigned int samples, unsigned int hz)
-{
-    AudioStream *stream = new AudioStream(samples);
-    double rate = 2.0 * SAMPLE_RATE / hz;
-    for (unsigned int i = 0; i < stream->length; i++)
-    {
-        int tmp = i / rate;
+void AudioStream::enlarge(unsigned int length) {
+  if (length <= this->length) return;
 
-        stream->samples[i] = tmp % 2 ? INT32_MAX/2 : -(INT32_MAX/2);
-    }
-    return stream;
-}
-
-void AudioStream::enlarge(unsigned int length)
-{
-    if (length <= this->length)
-        return;
-
-    if (size < length)
-    {
-        int32_t *newsamples;
-        while (size < length)
-        {
-            if (size < 32*1024)
-                size *= 2;
-            else
-                size += 32*1024;
-        }
-
-        newsamples = new int32_t[size];
-        memcpy(newsamples, samples, this->length * sizeof(int32_t));
-        delete[] samples;
-        samples = newsamples;
+  if (size < length) {
+    int32_t *newsamples;
+    while (size < length) {
+      if (size < 32 * 1024)
+        size *= 2;
+      else
+        size += 32 * 1024;
     }
 
-    memset(&samples[this->length], 0, sizeof(int32_t) * (length - this->length));
+    newsamples = new int32_t[size];
+    memcpy(newsamples, samples, this->length * sizeof(int32_t));
+    delete[] samples;
+    samples = newsamples;
+  }
+
+  memset(&samples[this->length], 0, sizeof(int32_t) * (length - this->length));
+  this->length = length;
+}
+
+void AudioStream::setLength(unsigned int length) {
+  if (this->length <= length) {
+    enlarge(length);
+  } else {
     this->length = length;
+  }
 }
 
-void AudioStream::setLength(unsigned int length)
-{
-    if (this->length <= length)
-    {
-        enlarge(length);
-    }
+void AudioStream::addSilence(unsigned int length) {
+  enlarge(this->length + length);
+}
+
+void AudioStream::mix(const AudioStream &src, Gain gain) {
+  if (getLength() < src.getLength()) return;
+
+  for (unsigned int i = 0; i < src.getLength(); i++) {
+    long long x = samples[i];
+    x += gain.adjustSample(src.samples[i]);
+    if (x >= INT32_MAX)
+      samples[i] = INT32_MAX;
+    else if (x <= INT32_MIN)
+      samples[i] = INT32_MIN;
     else
-    {
-        this->length = length;
-    }
-}
-
-void AudioStream::addSilence(unsigned int length)
-{
-    enlarge(this->length + length);
-}
-
-void AudioStream::mix(const AudioStream &src, Gain gain)
-{
-    if (getLength() < src.getLength())
-        return;
-
-    for (unsigned int i = 0; i < src.getLength(); i++)
-    {
-        long long x = samples[i];
-        x += gain.adjustSample(src.samples[i]);
-        if (x >= INT32_MAX)
-            samples[i] = INT32_MAX;
-        else if (x <= INT32_MIN)
-            samples[i] = INT32_MIN;
-        else
-            samples[i] = x;
-    }
+      samples[i] = x;
+  }
 }

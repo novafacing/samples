@@ -25,15 +25,13 @@
 #define LLIST_H
 
 extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
+#include <stdlib.h>
+#include <string.h>
 };
 
 template <typename T>
-class List
-{
-  struct Element
-  {
+class List {
+  struct Element {
     T obj;
     Element *next;
     Element(T o, Element *n = 0) : obj(o), next(n) {}
@@ -41,24 +39,22 @@ class List
   Element *head;
   unsigned int len;
 
-  public:
-    List(Element *h = 0) : head(h), len(0) {}
-    ~List();
+ public:
+  List(Element *h = 0) : head(h), len(0) {}
+  ~List();
 
-    void add(T o);
-    void remove(T o);
-    Element* find(T o);
-    T get(int idx);
-    unsigned int length() { return len; }
-    void debug();
+  void add(T o);
+  void remove(T o);
+  Element *find(T o);
+  T get(int idx);
+  unsigned int length() { return len; }
+  void debug();
 };
 
 template <typename T>
-List<T>::~List()
-{
+List<T>::~List() {
   Element *tmp;
-  while (head)
-  {
+  while (head) {
     tmp = head;
     head = tmp->next;
     delete tmp;
@@ -66,13 +62,11 @@ List<T>::~List()
 }
 
 template <typename T>
-void List<T>::add(T o)
-{
+void List<T>::add(T o) {
   Element *item = new Element(o, 0);
   if (!head)
     head = item;
-  else
-  {
+  else {
     Element *tmp = head;
     while (tmp && tmp->next) tmp = tmp->next;
     tmp->next = item;
@@ -81,19 +75,14 @@ void List<T>::add(T o)
 }
 
 template <typename T>
-void List<T>::remove(T o)
-{
+void List<T>::remove(T o) {
   Element *item = find(o), *tmp;
-  if (!item)
-    return;
-  if (item == head)
-  {
+  if (!item) return;
+  if (item == head) {
     tmp = head->next;
     delete head;
     head = tmp;
-  }
-  else
-  {
+  } else {
     tmp = head;
     while (tmp && tmp->next != item) tmp = tmp->next;
     tmp->next = item->next;
@@ -103,36 +92,29 @@ void List<T>::remove(T o)
 }
 
 template <typename T>
-typename List<T>::Element* List<T>::find(T o)
-{
-  if (!head)
-    return 0;
+typename List<T>::Element *List<T>::find(T o) {
+  if (!head) return 0;
   Element *tmp = head;
   while (tmp && tmp->obj != o) tmp = tmp->next;
   return tmp;
 }
 
 template <typename T>
-T List<T>::get(int idx)
-{
-  if (!head || idx >= len)
-    return 0;
+T List<T>::get(int idx) {
+  if (!head || idx >= len) return 0;
   Element *tmp = head;
   while (idx--) tmp = tmp->next;
   return tmp->obj;
 }
 
 template <typename T>
-void List<T>::debug()
-{
-  if (!head)
-  {
+void List<T>::debug() {
+  if (!head) {
     printf("Empty list!\n");
     return;
   }
   Element *tmp = head;
-  while (tmp)
-  {
+  while (tmp) {
     printf("[%d (%08x)] ", tmp->obj, tmp->obj);
     tmp = tmp->next;
   }

@@ -18,31 +18,37 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef OPERATION_H
 #define OPERATION_H
 #include "libc.h"
 
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(-10);}
+#define RECV(v, s)                   \
+  if (s != recv_all((char *)v, s)) { \
+    _terminate(-10);                 \
+  }
 #define SENDSI(v) send((char *)&v, sizeof(int32_t));
 #define SENDUI(v) send((char *)&v, sizeof(uint32_t));
 #define SENDD(v) send((char *)&v, sizeof(double));
 #define SENDLL(v) send((char *)&v, sizeof(long long));
-#define ALLOC(sz,ptr) if(SUCCESS != allocate(sz, 0, (void **)ptr)) {_terminate(ERRNO_ALLOC);}
+#define ALLOC(sz, ptr)                            \
+  if (SUCCESS != allocate(sz, 0, (void **)ptr)) { \
+    _terminate(ERRNO_ALLOC);                      \
+  }
 
 #define MAX_LIST_LEN 1000
- 
+
 typedef struct int32_data {
-	int32_t val;
+  int32_t val;
 } int32_data_t;
 
 typedef struct dbl64_data {
-	double val;
+  double val;
 } dbl64_data_t;
 
-int int32_node_compare(node_t * nd1, node_t * nd2);
-int dbl64_node_compare(node_t * nd1, node_t * nd2);
+int int32_node_compare(node_t *nd1, node_t *nd2);
+int dbl64_node_compare(node_t *nd1, node_t *nd2);
 int do_create();
 int do_eval();
 int do_nonce();

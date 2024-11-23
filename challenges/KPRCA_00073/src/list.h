@@ -26,8 +26,7 @@
 #include <stdio.h>
 
 typedef struct list list;
-struct list
-{
+struct list {
   list* Next;
   void* Value;
 };
@@ -38,6 +37,6 @@ void UniqAppendToList(list* List, void* Value);
 void FreeList(list* List);
 list* UniqExtendList(list* L1, list* L2);
 size_t LenList(list* List);
-int CheckForCycle(list *List);
+int CheckForCycle(list* List);
 
 #endif /* __LIST_H__ */

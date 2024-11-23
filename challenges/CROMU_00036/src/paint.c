@@ -23,12 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "canvas.h"
 #include "paint.h"
 
+#include <libcgc.h>
+
+#include "canvas.h"
+#include "stdint.h"
+#include "stdlib.h"
 
 // Get the RGB color at a particular location in the canvas
 RGB_Color *GetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer) {
@@ -45,10 +46,9 @@ int GetColorIndex(Canvas *c, uint16_t y, uint16_t x, uint8_t layer) {
 
 // Set the color index at a particular location in the canvas
 void SetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer, uint8_t color) {
-
   uint8_t *current_layer = c->layers[layer];
 
-  if ( current_layer == NULL ) {
+  if (current_layer == NULL) {
     return;
   }
 
@@ -56,24 +56,30 @@ void SetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer, uint8_t color) {
   if (y >= c->y_size || x >= c->x_size) {
     return;
   }
-#endif 
+#endif
 
   current_layer[y * c->x_size + x] = color;
 }
 
-void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Triangle *triangle) {
-  if (triangle->x0 >= c->x_size || triangle->x1 >= c->x_size || triangle->x2 >= c->x_size) {
+void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                   VGF_Triangle *triangle) {
+  if (triangle->x0 >= c->x_size || triangle->x1 >= c->x_size ||
+      triangle->x2 >= c->x_size) {
     return;
   }
-  if (triangle->y0 >= c->y_size || triangle->y1 >= c->y_size || triangle->y2 >= c->y_size) {
+  if (triangle->y0 >= c->y_size || triangle->y1 >= c->y_size ||
+      triangle->y2 >= c->y_size) {
     return;
   }
 
   if (fill == 0) {
     // Draw outline
-    ConnectPoints(c, layer, color, triangle->x0, triangle->y0, triangle->x1, triangle->y1);
-    ConnectPoints(c, layer, color, triangle->x2, triangle->y2, triangle->x0, triangle->y0);
-    ConnectPoints(c, layer, color, triangle->x1, triangle->y1, triangle->x2, triangle->y2);
+    ConnectPoints(c, layer, color, triangle->x0, triangle->y0, triangle->x1,
+                  triangle->y1);
+    ConnectPoints(c, layer, color, triangle->x2, triangle->y2, triangle->x0,
+                  triangle->y0);
+    ConnectPoints(c, layer, color, triangle->x1, triangle->y1, triangle->x2,
+                  triangle->y2);
   } else {
     // Fill triangle
     // Sort points top to bottom
@@ -98,8 +104,7 @@ void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Tr
         y1 = y0;
         x0 = &triangle->x2;
         y0 = &triangle->y2;
-      }
-      else {
+      } else {
         x1 = &triangle->x2;
         y1 = &triangle->y2;
       }
@@ -119,7 +124,7 @@ void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Tr
       x_low = *x1;
     } else if (*x1 > x_high) {
       x_high = *x1;
-    } 
+    }
     if (*x2 < x_low) {
       x_low = *x2;
     } else if (*x2 > x_high) {
@@ -133,7 +138,7 @@ void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Tr
       }
       return;
     }
-   
+
     if (*y1 == *y2) {
       last_y = *y1;
     } else {
@@ -199,11 +204,11 @@ void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Tr
       }
       y++;
     }
-  } 
+  }
 }
 
-
-void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Rectangle *rectangle) {
+void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                    VGF_Rectangle *rectangle) {
   if ((rectangle->x_start >= c->x_size) || (rectangle->y_start >= c->y_size)) {
     return;
   }
@@ -218,21 +223,31 @@ void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_R
     return;
   }
 
-  ConnectPoints(c, layer, color, rectangle->x_start, rectangle->y_start, rectangle->x_start, rectangle->y_start + rectangle->y_len);
-  ConnectPoints(c, layer, color, rectangle->x_start, rectangle->y_start + rectangle->y_len, rectangle->x_start + rectangle->x_len, rectangle->y_start + rectangle->y_len);
-  ConnectPoints(c, layer, color, rectangle->x_start + rectangle->x_len, rectangle->y_start, rectangle->x_start + rectangle->x_len, rectangle->y_start + rectangle->y_len);
-  ConnectPoints(c, layer, color, rectangle->x_start, rectangle->y_start, rectangle->x_start + rectangle->x_len, rectangle->y_start );
+  ConnectPoints(c, layer, color, rectangle->x_start, rectangle->y_start,
+                rectangle->x_start, rectangle->y_start + rectangle->y_len);
+  ConnectPoints(c, layer, color, rectangle->x_start,
+                rectangle->y_start + rectangle->y_len,
+                rectangle->x_start + rectangle->x_len,
+                rectangle->y_start + rectangle->y_len);
+  ConnectPoints(c, layer, color, rectangle->x_start + rectangle->x_len,
+                rectangle->y_start, rectangle->x_start + rectangle->x_len,
+                rectangle->y_start + rectangle->y_len);
+  ConnectPoints(c, layer, color, rectangle->x_start, rectangle->y_start,
+                rectangle->x_start + rectangle->x_len, rectangle->y_start);
 
   // Fill if necessary
   if ((fill == 1) && (rectangle->x_len > 1)) {
     for (uint16_t y_position = 1; y_position < rectangle->y_len; y_position++) {
-      ConnectPoints(c, layer, color, rectangle->x_start + 1, rectangle->y_start + y_position, rectangle->x_start + rectangle->x_len - 1, rectangle->y_start + y_position);
+      ConnectPoints(c, layer, color, rectangle->x_start + 1,
+                    rectangle->y_start + y_position,
+                    rectangle->x_start + rectangle->x_len - 1,
+                    rectangle->y_start + y_position);
     }
   }
-
 }
 
-void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Square *square) {
+void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                 VGF_Square *square) {
   if ((square->x_start >= c->x_size) || (square->y_start >= c->y_size)) {
     return;
   }
@@ -247,22 +262,29 @@ void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Squa
     return;
   }
 
-  ConnectPoints(c, layer, color, square->x_start, square->y_start, square->x_start, square->y_start + square->x_len);
-  ConnectPoints(c, layer, color, square->x_start, square->y_start + square->x_len, square->x_start + square->x_len, square->y_start + square->x_len);
-  ConnectPoints(c, layer, color, square->x_start + square->x_len, square->y_start, square->x_start + square->x_len, square->y_start + square->x_len);
-  ConnectPoints(c, layer, color, square->x_start, square->y_start, square->x_start + square->x_len, square->y_start );
+  ConnectPoints(c, layer, color, square->x_start, square->y_start,
+                square->x_start, square->y_start + square->x_len);
+  ConnectPoints(
+      c, layer, color, square->x_start, square->y_start + square->x_len,
+      square->x_start + square->x_len, square->y_start + square->x_len);
+  ConnectPoints(c, layer, color, square->x_start + square->x_len,
+                square->y_start, square->x_start + square->x_len,
+                square->y_start + square->x_len);
+  ConnectPoints(c, layer, color, square->x_start, square->y_start,
+                square->x_start + square->x_len, square->y_start);
 
   // Fill if necessary
   if ((fill == 1) && (square->x_len > 1)) {
     for (uint16_t y_position = 1; y_position < square->x_len; y_position++) {
-      ConnectPoints(c, layer, color, square->x_start + 1, square->y_start + y_position, square->x_start + square->x_len - 1, square->y_start + y_position);
+      ConnectPoints(
+          c, layer, color, square->x_start + 1, square->y_start + y_position,
+          square->x_start + square->x_len - 1, square->y_start + y_position);
     }
   }
-
 }
 
-void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end) {
-
+void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start,
+                   uint16_t y_start, uint16_t x_end, uint16_t y_end) {
   int width, height, dots, x_dir, y_dir;
   if (x_end > x_start) {
     width = x_end - x_start;
@@ -295,18 +317,19 @@ void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start, ui
     x_inc += width;
     y_inc += height;
     if (x_inc > dots) {
-      x+=x_dir;
+      x += x_dir;
       x_inc -= dots;
     }
-    if (y_inc > dots)  {
-      y+=y_dir;
+    if (y_inc > dots) {
+      y += y_dir;
       y_inc -= dots;
     }
     count++;
   }
 }
 
-void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Line *line) {
+void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+               VGF_Line *line) {
   if ((line->x_start >= c->x_size) || (line->x_start > line->x_end)) {
     return;
   }
@@ -316,20 +339,21 @@ void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Line *
   if ((line->y_end >= c->y_size) || (line->x_end >= c->x_size)) {
     return;
   }
-  ConnectPoints(c, layer, color, line->x_start, line->y_start, line->x_end, line->y_end);
+  ConnectPoints(c, layer, color, line->x_start, line->y_start, line->x_end,
+                line->y_end);
 }
 
-void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Circle *circle) {
-
+void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                 VGF_Circle *circle) {
   if ((circle->x_start >= c->x_size) || (circle->y_start >= c->y_size)) {
     return;
   }
   if ((circle->x_start + circle->radius >= c->x_size) ||
-    (circle->y_start + circle->radius >= c->y_size)) {
+      (circle->y_start + circle->radius >= c->y_size)) {
     return;
   }
-   if ((circle->x_start - circle->radius < 0) ||
-    (circle->y_start - circle->radius < 0)) {
+  if ((circle->x_start - circle->radius < 0) ||
+      (circle->y_start - circle->radius < 0)) {
     return;
   }
   int x, y, x_pos, y_pos;
@@ -366,28 +390,31 @@ void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Circ
       SetColor(c, y_pos + y, x_pos - x, layer, color);
       SetColor(c, y_pos - y, x_pos + x, layer, color);
       SetColor(c, y_pos - y, x_pos - x, layer, color);
-      
+
       SetColor(c, y_pos + x, x_pos + y, layer, color);
       SetColor(c, y_pos + x, x_pos - y, layer, color);
       SetColor(c, y_pos - x, x_pos + y, layer, color);
       SetColor(c, y_pos - x, x_pos - y, layer, color);
     } else {
       // Fill circle
-      if (y > 0) { 
-        ConnectPoints(c, layer, color, x_pos + x, y_pos - y, x_pos + x, y_pos + y - 1);
-        ConnectPoints(c, layer, color, x_pos - x, y_pos - y, x_pos - x, y_pos + y - 1);
-      } 
+      if (y > 0) {
+        ConnectPoints(c, layer, color, x_pos + x, y_pos - y, x_pos + x,
+                      y_pos + y - 1);
+        ConnectPoints(c, layer, color, x_pos - x, y_pos - y, x_pos - x,
+                      y_pos + y - 1);
+      }
       if (x > 0) {
-        ConnectPoints(c, layer, color, x_pos + y, y_pos - x, x_pos + y, y_pos + x - 1);
-        ConnectPoints(c, layer, color, x_pos - y, y_pos - x, x_pos - y, y_pos + x - 1);
+        ConnectPoints(c, layer, color, x_pos + y, y_pos - x, x_pos + y,
+                      y_pos + x - 1);
+        ConnectPoints(c, layer, color, x_pos - y, y_pos - x, x_pos - y,
+                      y_pos + x - 1);
       }
     }
   }
 }
 
-
-void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Spray *spray) {
-
+void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill,
+                VGF_Spray *spray) {
   if ((spray->x_start >= c->x_size) || (spray->y_start >= c->y_size)) {
     return;
   }
@@ -420,7 +447,7 @@ void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Spray
   while ((x_pos > spray->x_start - width) && (x_pos >= 0)) {
     SetColor(c, y_pos, x_pos, layer, color);
     x_pos -= step;
-  }  
+  }
 
   x_pos = spray->x_start;
 
@@ -440,6 +467,4 @@ void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Spray
   SetColor(c, spray->y_start, spray->x_start - width, layer, color);
   SetColor(c, spray->y_start + width, spray->x_start, layer, color);
   SetColor(c, spray->y_start - width, spray->x_start, layer, color);
-
 }
-

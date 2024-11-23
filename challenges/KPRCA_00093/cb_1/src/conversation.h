@@ -25,26 +25,27 @@
 
 #include "array_wrapper.h"
 #include "channel.h"
-#include "user.h"
 #include "chat.h"
+#include "user.h"
 
 class Channel;
 class User;
 class Chat;
 
 class Conversation {
-  public:
-    Conversation(Channel *channel);
-    Conversation(User *user);
-    ~Conversation();
+ public:
+  Conversation(Channel *channel);
+  Conversation(User *user);
+  ~Conversation();
 
-    void AddChat(Chat chat);
-    void ReadMessages();
-    void ClearChatMessages();
-  private:
-    ArrayWrapper<Chat> messages_;
-    Channel *channel_;
-    User *sender_;
+  void AddChat(Chat chat);
+  void ReadMessages();
+  void ClearChatMessages();
+
+ private:
+  ArrayWrapper<Chat> messages_;
+  Channel *channel_;
+  User *sender_;
 };
 
 #endif /* CONVERSATION_H_ */

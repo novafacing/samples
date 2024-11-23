@@ -27,140 +27,129 @@
 
 template <typename T>
 class ArrayWrapper {
-  public:
-    ArrayWrapper(size_t max_size);
-    ArrayWrapper(T *array, size_t max_size);
-    ArrayWrapper(T *array, size_t max_size, size_t length);
-    bool IsEmpty() const;
-    bool IsFull() const;
-    const T &Get(size_t idx) const;
-    bool Set(size_t idx, const T &item);
-    void Pop();
-    void Remove(size_t idx, void (*delete_fn)(T*));
-    bool Append(const T &item);
-    void ForceAppend(const T &item, void (*delete_fn)(T*));
-    void DeleteArray(void (*delete_fn)(T*));
+ public:
+  ArrayWrapper(size_t max_size);
+  ArrayWrapper(T *array, size_t max_size);
+  ArrayWrapper(T *array, size_t max_size, size_t length);
+  bool IsEmpty() const;
+  bool IsFull() const;
+  const T &Get(size_t idx) const;
+  bool Set(size_t idx, const T &item);
+  void Pop();
+  void Remove(size_t idx, void (*delete_fn)(T *));
+  bool Append(const T &item);
+  void ForceAppend(const T &item, void (*delete_fn)(T *));
+  void DeleteArray(void (*delete_fn)(T *));
 
-    const size_t length() const;
-    T *data();
+  const size_t length() const;
+  T *data();
 
-  private:
-    size_t size_;
-    size_t length_;
-    T *data_;
+ private:
+  size_t size_;
+  size_t length_;
+  T *data_;
 };
-
 
 template <typename T>
 ArrayWrapper<T>::ArrayWrapper(size_t max_size) {
-    size_ = max_size;
-    length_ = 0;
-    data_ = new T[max_size];
+  size_ = max_size;
+  length_ = 0;
+  data_ = new T[max_size];
 }
 
 template <typename T>
 ArrayWrapper<T>::ArrayWrapper(T *array, size_t max_size) {
-    size_ = max_size;
-    length_ = 0;
-    data_ = array;
+  size_ = max_size;
+  length_ = 0;
+  data_ = array;
 }
 
 template <typename T>
 ArrayWrapper<T>::ArrayWrapper(T *array, size_t max_size, size_t length) {
-    size_ = max_size;
-    length_ = length;
-    data_ = array;
+  size_ = max_size;
+  length_ = length;
+  data_ = array;
 }
 
 template <typename T>
 bool ArrayWrapper<T>::IsEmpty() const {
-    return (length_ == 0);
+  return (length_ == 0);
 }
 
 template <typename T>
 bool ArrayWrapper<T>::IsFull() const {
-    return (length_ == size_);
+  return (length_ == size_);
 }
 
 template <typename T>
 const T &ArrayWrapper<T>::Get(size_t idx) const {
-    if (idx >= length_)
-        return data_[0];
+  if (idx >= length_) return data_[0];
 
-    return data_[idx];
+  return data_[idx];
 }
 
 template <typename T>
 bool ArrayWrapper<T>::Set(size_t idx, const T &item) {
-    if (idx >= length_)
-        return false;
+  if (idx >= length_) return false;
 
-    data_[idx] = item;
-    return true;
+  data_[idx] = item;
+  return true;
 }
-
 
 template <typename T>
 bool ArrayWrapper<T>::Append(const T &item) {
-    if (length_ >= size_)
-        return false;
+  if (length_ >= size_) return false;
 
-    data_[length_++] = item;
-    return true;
+  data_[length_++] = item;
+  return true;
 }
 
 template <typename T>
 void ArrayWrapper<T>::Pop() {
-    if (length_)
-        --length_;
+  if (length_) --length_;
 }
 
 template <typename T>
-void ArrayWrapper<T>::Remove(size_t idx, void (*delete_fn)(T*)) {
-    if (idx > length_ || !length_)
-        return;
+void ArrayWrapper<T>::Remove(size_t idx, void (*delete_fn)(T *)) {
+  if (idx > length_ || !length_) return;
 
-    if (delete_fn)
-        delete_fn(&data_[idx]);
-    if (length_ > 1 && idx < length_ - 1) {
-        memmove(&data_[idx], &data_[idx+1], (--length_ - idx) * sizeof(T));
-    }
-    else {
-        --length_;
-    }
+  if (delete_fn) delete_fn(&data_[idx]);
+  if (length_ > 1 && idx < length_ - 1) {
+    memmove(&data_[idx], &data_[idx + 1], (--length_ - idx) * sizeof(T));
+  } else {
+    --length_;
+  }
 }
 
 template <typename T>
-void ArrayWrapper<T>::ForceAppend(const T &item, void (*delete_fn)(T*)) {
-    if (length_ >= size_ && length_ > 1) {
-        if (delete_fn)
-            delete_fn(&data_[0]);
-        memmove(&data_[0], &data_[1], --length_ * sizeof(T));
-    }
+void ArrayWrapper<T>::ForceAppend(const T &item, void (*delete_fn)(T *)) {
+  if (length_ >= size_ && length_ > 1) {
+    if (delete_fn) delete_fn(&data_[0]);
+    memmove(&data_[0], &data_[1], --length_ * sizeof(T));
+  }
 
-    data_[length_++] = item;
+  data_[length_++] = item;
 }
 
 template <typename T>
-void ArrayWrapper<T>::DeleteArray(void (*delete_fn)(T*)) {
-    size_ = 0;
-    length_ = 0;
-    if (delete_fn) {
-        for (int i = 0; i < length_; i++)
-            delete_fn(&data_[i]);
-    }
+void ArrayWrapper<T>::DeleteArray(void (*delete_fn)(T *)) {
+  size_ = 0;
+  length_ = 0;
+  if (delete_fn) {
+    for (int i = 0; i < length_; i++) delete_fn(&data_[i]);
+  }
 
-    delete[] data_;
+  delete[] data_;
 }
 
 template <typename T>
 const size_t ArrayWrapper<T>::length() const {
-    return length_;
+  return length_;
 }
 
 template <typename T>
 T *ArrayWrapper<T>::data() {
-    return data_;
+  return data_;
 }
 
 #endif /* ARRAY_WRAPPER_H_ */

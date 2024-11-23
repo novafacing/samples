@@ -22,14 +22,12 @@
  */
 #include <string.h>
 
-void *memcpy(void *dst, const void *src, size_t n)
-{
-    unsigned char *udst = dst;
-    const unsigned char *usrc = src;
-    size_t i;
+void *memcpy(void *dst, const void *src, size_t n) {
+  unsigned char *udst = dst;
+  const unsigned char *usrc = src;
+  size_t i;
 
-    for (i = 0; i < n; i++)
-        udst[i] = usrc[i];
+  for (i = 0; i < n; i++) udst[i] = usrc[i];
 
-    return dst;
+  return dst;
 }

@@ -25,68 +25,77 @@
 #define CgFs_H_
 
 #include <cstdio.h>
+
 #include "bhdr.h"
-#include "fs_info_sector.h"
 #include "cluster.h"
 #include "directory_tree.h"
+#include "fs_info_sector.h"
 
-class CgFsImg
-{
-  public:
-    CgFsImg();
-    ~CgFsImg();
+class CgFsImg {
+ public:
+  CgFsImg();
+  ~CgFsImg();
 
-    unsigned int cgfst_id();
-    unsigned int end_of_cluster_marker();
+  unsigned int cgfst_id();
+  unsigned int end_of_cluster_marker();
 
-    bool IsMounted();
-    bool Mount(FILE *img);
-    bool Unmount();
+  bool IsMounted();
+  bool Mount(FILE *img);
+  bool Unmount();
 
-    Array<cluster_data> GetFileClusters(const char *path);
-    Array<cluster_data> GetFileClusters(unsigned int start_cluster);
-    void ListFiles(const char *path, bool recursive);
+  Array<cluster_data> GetFileClusters(const char *path);
+  Array<cluster_data> GetFileClusters(unsigned int start_cluster);
+  void ListFiles(const char *path, bool recursive);
 
-    fs_file *FindFile(const char *filepath);
-    bool AddFile(const char *path, const char *filename, char *data, unsigned int file_size);
-    bool AddDirectory(const char *path, const char *dirname);
-    bool DeleteFile(const char *path);
-    bool DeleteDirectory(const char *path);
+  fs_file *FindFile(const char *filepath);
+  bool AddFile(const char *path, const char *filename, char *data,
+               unsigned int file_size);
+  bool AddDirectory(const char *path, const char *dirname);
+  bool DeleteFile(const char *path);
+  bool DeleteDirectory(const char *path);
 
-    bool PreviewFile(const char *path, char **pdata, unsigned int *num_bytes);
-    bool ReadFromFile(const char *path, unsigned int offset, unsigned int num_bytes_to_read, char **pdata, unsigned int *num_bytes_read);
-    bool WriteToFile(const char *path, unsigned int offset, unsigned int num_bytes_to_write, char *data, unsigned int *num_bytes_written);
-    bool UpdateFileSize(const char *path, unsigned int new_size);
+  bool PreviewFile(const char *path, char **pdata, unsigned int *num_bytes);
+  bool ReadFromFile(const char *path, unsigned int offset,
+                    unsigned int num_bytes_to_read, char **pdata,
+                    unsigned int *num_bytes_read);
+  bool WriteToFile(const char *path, unsigned int offset,
+                   unsigned int num_bytes_to_write, char *data,
+                   unsigned int *num_bytes_written);
+  bool UpdateFileSize(const char *path, unsigned int new_size);
 
-    void DebugMetadata();
-  private:
-    bool is_mounted_;
-    bhdr hdr_;
-    fs_info_sector info_sector_;
+  void DebugMetadata();
 
-    unsigned int *cluster_map_;
-    unsigned int num_clusters_;
+ private:
+  bool is_mounted_;
+  bhdr hdr_;
+  fs_info_sector info_sector_;
 
-    unsigned char *cluster_region_;
-    unsigned int cluster_size_;
-    unsigned char *raw_data_;
-    unsigned int raw_data_size_;
-    DirectoryTree root_directory_;
+  unsigned int *cluster_map_;
+  unsigned int num_clusters_;
 
-    unsigned int FindUnusedCluster();
-    void ClearCluster(unsigned int cluster_idx);
-    unsigned int AddCluster(unsigned int start_cluster);
-    bool PopCluster(unsigned int start_cluster, unsigned int *popped_cluster);
-    bool ClearAllClusters(unsigned int start_cluster);
+  unsigned char *cluster_region_;
+  unsigned int cluster_size_;
+  unsigned char *raw_data_;
+  unsigned int raw_data_size_;
+  DirectoryTree root_directory_;
 
-    bool FileExists(const char *dirpath, const char *filename);
-    void DeleteDirectoryHelper(DirectoryTree *dirnode, bool is_root);
-    bool FileReadWrite(const char *path, unsigned int offset, unsigned int num_bytes_to_rw, char *data, unsigned int *num_bytes, unsigned int operation);
+  unsigned int FindUnusedCluster();
+  void ClearCluster(unsigned int cluster_idx);
+  unsigned int AddCluster(unsigned int start_cluster);
+  bool PopCluster(unsigned int start_cluster, unsigned int *popped_cluster);
+  bool ClearAllClusters(unsigned int start_cluster);
 
-    void AddMetadataEntry(fs_file *new_entry, unsigned int directory_cluster_idx);
-    void ParseDirectoryTree(DirectoryTree *directory);
-    void ParseDirectoryTree(DirectoryTree *directory, unsigned int directory_cluster_idx);
-    void RebuildTree();
+  bool FileExists(const char *dirpath, const char *filename);
+  void DeleteDirectoryHelper(DirectoryTree *dirnode, bool is_root);
+  bool FileReadWrite(const char *path, unsigned int offset,
+                     unsigned int num_bytes_to_rw, char *data,
+                     unsigned int *num_bytes, unsigned int operation);
+
+  void AddMetadataEntry(fs_file *new_entry, unsigned int directory_cluster_idx);
+  void ParseDirectoryTree(DirectoryTree *directory);
+  void ParseDirectoryTree(DirectoryTree *directory,
+                          unsigned int directory_cluster_idx);
+  void RebuildTree();
 };
 
 #endif

@@ -18,16 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #include <libcgc.h>
 
 // borrowed from CABLEGRIND and mod'd to add usec param
 void sleep(int secs, int usecs) {
-    struct timeval tv;
-    tv.tv_sec = secs;
-    tv.tv_usec = usecs;
-    fdwait(0, NULL, NULL, &tv, NULL);
+  struct timeval tv;
+  tv.tv_sec = secs;
+  tv.tv_usec = usecs;
+  fdwait(0, NULL, NULL, &tv, NULL);
 }
-

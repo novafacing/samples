@@ -20,14 +20,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "stdlib.h"
-
 #include "ai.h"
 
-void
-seed_ai(struct ai_state *state)
-{
-    // TODO: Implement an AI ;)
-    state->seed = *(unsigned int *)FLAG_PAGE;
-}
+#include "stdlib.h"
 
+void seed_ai(struct ai_state *state) {
+  // TODO: Implement an AI ;)
+  state->seed = *(unsigned int *)FLAG_PAGE;
+}

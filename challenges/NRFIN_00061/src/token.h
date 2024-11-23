@@ -18,10 +18,10 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define FLAG_PAGE 0x4347C000
 
-#define TOKEN_AUTH_TYPE  "Token"
+#define TOKEN_AUTH_TYPE "Token"
 
 #define TOKEN_CMD "newTokens"
 #define REFRESH_CMD "refreshToken"
@@ -39,13 +39,13 @@
 #define RESPONSE_TOKEN_REVOKED "Token Revoked"
 
 typedef struct {
-	unsigned int expiration;
-	char* use;
-	unsigned int value;
-	void* next;
+  unsigned int expiration;
+  char* use;
+  unsigned int value;
+  void* next;
 } Token;
 
-Token *tokenStore;
+Token* tokenStore;
 
 Token* parseToken(char* body);
 int validateToken(Token* token, unsigned int* expiration_date);

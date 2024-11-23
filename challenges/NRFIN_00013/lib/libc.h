@@ -19,7 +19,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /*
 This libc consists of functions that are all available for release
@@ -39,32 +39,32 @@ typedef unsigned char uint8_t;
 #define ERRNO_ALLOC 5
 
 typedef struct node {
-	void * data;
-	struct node *next;
-	struct node *prev;
+  void *data;
+  struct node *next;
+  struct node *prev;
 } node_t;
 
 // function to compare nodes
-typedef int(*node_compare_f)(node_t *, node_t *);
+typedef int (*node_compare_f)(node_t *, node_t *);
 
 // doubly-linked list
 typedef struct list {
-	node_t *head;
-	node_t *tail;
-	uint32_t count;
+  node_t *head;
+  node_t *tail;
+  uint32_t count;
 } list_t;
 
 // List related
-list_t * list_create_dup();
+list_t *list_create_dup();
 int list_append(list_t *lst, node_t *nd);
 int list_insert_sort(list_t *lst, node_t *nd, node_compare_f node_compare_impl);
 
 // Node related
-node_t * node_create(void * data);
-node_t * get_list_head(list_t * lst);
-node_t * get_list_tail(list_t * lst);
-node_t * get_first_node(list_t * lst);
-node_t * get_last_node(list_t * lst);
+node_t *node_create(void *data);
+node_t *get_list_head(list_t *lst);
+node_t *get_list_tail(list_t *lst);
+node_t *get_first_node(list_t *lst);
+node_t *get_last_node(list_t *lst);
 
 int rand(char *buf, size_t sz);
 
@@ -78,6 +78,5 @@ unsigned int read_all(int fd, char *buf, unsigned int size);
 
 // stdlib
 void *memset(void *dst, int c, unsigned int n);
-
 
 #endif

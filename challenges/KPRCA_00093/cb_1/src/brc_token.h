@@ -28,6 +28,6 @@ namespace TokenGenerator {
 const char *GetToken();
 const unsigned short GetTokenLength();
 
-}
+}  // namespace TokenGenerator
 
 #endif /* BRC_TOKEN_H_ */

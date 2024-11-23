@@ -24,41 +24,42 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
-#include "common.h"
+
 #include "L2.h"
+#include "common.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 int main(void) {
-	unsigned char Frame[MAX_FRAME_LEN];
-        fd_set readfds;
-	int fd;
+  unsigned char Frame[MAX_FRAME_LEN];
+  fd_set readfds;
+  int fd;
 
-	L2_InitCAM();
-	L2_PopulateCAM(0x0001, FD_ROUTER, 1);
-	L2_PopulateCAM(0x0002, FD_ROUTER, 2);
+  L2_InitCAM();
+  L2_PopulateCAM(0x0001, FD_ROUTER, 1);
+  L2_PopulateCAM(0x0002, FD_ROUTER, 2);
 
-	while (1) {
-		FD_ZERO(&readfds);
-		FD_SET(FD_CRS, &readfds);
-		FD_SET(FD_ROUTER, &readfds);
-		FD_SET(FD_CB3, &readfds);
-		if (fdwait(FD_CB3+1, &readfds, NULL, NULL, NULL) != 0) {
-			continue;
-		}
-		if (FD_ISSET(FD_CRS, &readfds)) {
-			fd = FD_CRS;
-		} else if (FD_ISSET(FD_ROUTER, &readfds)) {
-			fd = FD_ROUTER;
-		} else if (FD_ISSET(FD_CB3, &readfds)) {
-			fd = FD_CB3;
-		} else {
-			continue;
-		}
-		if (L2_RxFrame(fd, Frame)) {
-			L2_ForwardFrame(Frame);
-		}
-	}
+  while (1) {
+    FD_ZERO(&readfds);
+    FD_SET(FD_CRS, &readfds);
+    FD_SET(FD_ROUTER, &readfds);
+    FD_SET(FD_CB3, &readfds);
+    if (fdwait(FD_CB3 + 1, &readfds, NULL, NULL, NULL) != 0) {
+      continue;
+    }
+    if (FD_ISSET(FD_CRS, &readfds)) {
+      fd = FD_CRS;
+    } else if (FD_ISSET(FD_ROUTER, &readfds)) {
+      fd = FD_ROUTER;
+    } else if (FD_ISSET(FD_CB3, &readfds)) {
+      fd = FD_CB3;
+    } else {
+      continue;
+    }
+    if (L2_RxFrame(fd, Frame)) {
+      L2_ForwardFrame(Frame);
+    }
+  }
 
-	return(0);
+  return (0);
 }

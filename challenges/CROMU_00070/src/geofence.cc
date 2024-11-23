@@ -23,8 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -32,20 +31,9 @@ extern "C"
 
 #include "geofence.h"
 
-CGeofencePoint::CGeofencePoint( )
-	: m_coords( 0, 0, 0, 0, 0, 0 ), m_distance( 0 )
-{
+CGeofencePoint::CGeofencePoint() : m_coords(0, 0, 0, 0, 0, 0), m_distance(0) {}
 
-}
+CGeofencePoint::CGeofencePoint(CGPSCoordinates &coords, uint32_t distance)
+    : m_coords(coords), m_distance(distance) {}
 
-CGeofencePoint::CGeofencePoint( CGPSCoordinates &coords, uint32_t distance )
-	: m_coords( coords ), m_distance( distance )
-{
-
-}
-
-CGeofencePoint::~CGeofencePoint( )
-{
-
-}
-	
+CGeofencePoint::~CGeofencePoint() {}

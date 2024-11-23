@@ -25,444 +25,352 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
-#include "stdio.h"
-#include "string.h"
+
 #include "commands.h"
 #include "malloc.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
+int create_pbi(productDefType *database, newPBIMessageType *message) {
+  backlogItemType *newPBI;
+  backlogItemType *PBIPtr;
 
-int create_pbi( productDefType *database, newPBIMessageType *message ) {
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-backlogItemType *newPBI;
-backlogItemType *PBIPtr;
+  if (database == 0) {
+    return (-1);
+  }
 
+  newPBI = (backlogItemType *)calloc(sizeof(backlogItemType));
 
-	while(database != 0 && database->ID != message->productID )
-		database = database->next;
+  if (newPBI == 0) _terminate(-1);
 
-	if (database == 0) {
+  newPBI->ID = message->pbItemID;
+  newPBI->status = 0;
+  newPBI->story_points = message->user_story_points;
+  newPBI->next = 0;
 
-		return(-1);
-	}
+  newPBI->description = calloc(strlen(&message->title) + 1);
 
+  if (newPBI->description == 0) _terminate(-1);
 
-	newPBI = (backlogItemType *)calloc(sizeof(backlogItemType));
+  strcpy(newPBI->description, &message->title);
 
-	if (newPBI == 0) 
-		_terminate(-1);
+  if (database->productBacklog == 0) {
+    database->productBacklog = newPBI;
+    return 0;
+  }
 
+  PBIPtr = database->productBacklog;
 
-	newPBI->ID = message->pbItemID;
-	newPBI->status = 0;
-	newPBI->story_points = message->user_story_points;
-	newPBI->next = 0;
+  while (PBIPtr->next != 0) PBIPtr = PBIPtr->next;
 
-	newPBI->description = calloc(strlen(&message->title)+1);
+  PBIPtr->next = newPBI;
 
-	if (newPBI->description == 0)
-		_terminate(-1);
-
-
-	strcpy(newPBI->description, &message->title);
-
-
-	if (database->productBacklog == 0) {
-
-		database->productBacklog = newPBI;
-		return 0;
-	}
-
-	PBIPtr = database->productBacklog;
-
-	while (PBIPtr->next != 0)
-		PBIPtr = PBIPtr->next;
-
-	PBIPtr->next = newPBI;
-
-
-	return 0;
+  return 0;
 }
 
+int delete_pbi(productDefType *database, deletePBIMessageType *message) {
+  backlogItemType *prevPBI;
+  backlogItemType *PBIPtr;
 
-int delete_pbi( productDefType *database, deletePBIMessageType *message ) {
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-backlogItemType *prevPBI;
-backlogItemType *PBIPtr;
+  if (database == 0) {
+    return (-1);
+  }
 
+  // now find the PBI entry
 
-	while(database != 0 && database->ID != message->productID )
-		database = database->next;
+  PBIPtr = database->productBacklog;
 
-	if (database == 0) {
+  if (PBIPtr->ID == message->pbItemID) {
+    database->productBacklog = PBIPtr->next;
 
-		return(-1);
-	}
+  } else {
+    prevPBI = PBIPtr;
 
-	// now find the PBI entry
+    while (PBIPtr != 0 && PBIPtr->ID != message->pbItemID) {
+      prevPBI = PBIPtr;
+      PBIPtr = PBIPtr->next;
+    }
 
-	PBIPtr = database->productBacklog;
+    if (PBIPtr == 0) {
+      return -1;
+    }
 
-	if (PBIPtr->ID == message->pbItemID) {
+    prevPBI->next = PBIPtr->next;
+  }
 
-		database->productBacklog = PBIPtr->next;
+  if (PBIPtr->description != 0) free(PBIPtr->description);
 
-	}
-	else {
-		prevPBI = PBIPtr;
+  free(PBIPtr);
 
-		while (PBIPtr != 0 && PBIPtr->ID != message->pbItemID) {
-			prevPBI = PBIPtr;
-			PBIPtr = PBIPtr->next;
-		}
-
-		if (PBIPtr == 0) {
-
-			return -1;
-
-		}
-
-		prevPBI->next = PBIPtr->next;
-	}
-
-	if (PBIPtr->description != 0) 
-		free(PBIPtr->description);
-
-	free(PBIPtr);
-
-	return 0;
-
+  return 0;
 }
 
+int move_pbi_to_sprint(productDefType *database, movePBIMessageType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *PBIPtr;
+  backlogItemType *prevPtr;
+  backlogItemType *sprintBIPtr;
 
+  // first find the product ID in the database
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-int move_pbi_to_sprint( productDefType *database, movePBIMessageType *message ) {
+  if (database == 0) {
+    return (-1);
+  }
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
-backlogItemType *prevPtr;
-backlogItemType *sprintBIPtr;
+  // now find the target Sprint ID to ensure it exists
+  sprintPtr = database->sprintList;
 
+  while (sprintPtr != 0 && sprintPtr->ID != message->sprintID)
+    sprintPtr = sprintPtr->next;
 
-	// first find the product ID in the database
-	while( database != 0 && database->ID != message->productID )
-		database = database->next;
+  if (sprintPtr == 0) {
+    return (-1);
+  }
 
-	if (database == 0) {
+  // now find the PBI entry
 
-		return(-1);
-	}
+  PBIPtr = database->productBacklog;
 
+  if (PBIPtr->ID == message->pbItemID) {
+    database->productBacklog = PBIPtr->next;
 
-	// now find the target Sprint ID to ensure it exists
-	sprintPtr = database->sprintList;
+  } else {
+    prevPtr = PBIPtr;
 
-	while(sprintPtr != 0 && sprintPtr->ID != message->sprintID)
-		sprintPtr = sprintPtr->next;
+    while (PBIPtr != 0 && PBIPtr->ID != message->pbItemID) {
+      prevPtr = PBIPtr;
+      PBIPtr = PBIPtr->next;
+    }
 
-	if (sprintPtr == 0) {
+    if (PBIPtr == 0) {
+      return -1;
+    }
 
-		return(-1);
+    prevPtr->next = PBIPtr->next;
+  }
 
-	}
+  if (sprintPtr->sprintBacklogList == 0) {
+    sprintPtr->sprintBacklogList = PBIPtr;
+    PBIPtr->next = 0;
+    return 0;
+  }
 
-	// now find the PBI entry
+  sprintBIPtr = sprintPtr->sprintBacklogList;
 
-	PBIPtr = database->productBacklog;
+  while (sprintBIPtr->next != 0) sprintBIPtr = sprintBIPtr->next;
 
-	if (PBIPtr->ID == message->pbItemID) {
+  sprintBIPtr->next = PBIPtr;
 
-		database->productBacklog = PBIPtr->next;
+  PBIPtr->next = 0;
 
-	}
-	else {
-		prevPtr = PBIPtr;
+  // update the total number of points assigned to this sprint
+  sprintPtr->total_points += PBIPtr->story_points;
 
-		while (PBIPtr != 0 && PBIPtr->ID != message->pbItemID) {
-			prevPtr = PBIPtr;
-			PBIPtr = PBIPtr->next;
-		}
-
-		if (PBIPtr == 0) {
-
-			return -1;
-
-		}
-
-		prevPtr->next = PBIPtr->next;
-	}
-
-
-	if (sprintPtr->sprintBacklogList == 0) {
-
-		sprintPtr->sprintBacklogList = PBIPtr;
-		PBIPtr->next = 0;
-		return 0;
-	}
-
-	sprintBIPtr = sprintPtr->sprintBacklogList;
-
-	while(sprintBIPtr->next != 0)
-		sprintBIPtr = sprintBIPtr->next;
-
-	sprintBIPtr->next = PBIPtr;
-
-	PBIPtr->next = 0;
-
-	// update the total number of points assigned to this sprint
-	sprintPtr->total_points += PBIPtr->story_points;
-
-	return 0;
-
+  return 0;
 }
 
+int update_sbi_status(productDefType *database, updateSBIMessageType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *SBIPtr;
+  backlogItemType *sprintBIPtr;
 
+  // first find the product ID in the database
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-int update_sbi_status( productDefType *database, updateSBIMessageType *message ) {
+  if (database == 0) {
+    return (-1);
+  }
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+  // now find the target Sprint ID to ensure it exists
+  sprintPtr = database->sprintList;
 
+  while (sprintPtr != 0 && sprintPtr->ID != message->sprintID)
+    sprintPtr = sprintPtr->next;
 
-	// first find the product ID in the database
-	while( database != 0 && database->ID != message->productID )
-		database = database->next;
+  if (sprintPtr == 0) {
+    return (-1);
+  }
 
-	if (database == 0) {
+  // now find the PBI entry
 
-		return(-1);
-	}
+  SBIPtr = sprintPtr->sprintBacklogList;
 
+  while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
+    SBIPtr = SBIPtr->next;
+  }
 
-	// now find the target Sprint ID to ensure it exists
-	sprintPtr = database->sprintList;
+  if (SBIPtr == 0) {
+    return -1;
+  }
 
-	while(sprintPtr != 0 && sprintPtr->ID != message->sprintID)
-		sprintPtr = sprintPtr->next;
+  SBIPtr->status = message->status;
 
-	if (sprintPtr == 0) {
-
-		return(-1);
-
-	}
-
-	// now find the PBI entry
-
-	SBIPtr = sprintPtr->sprintBacklogList;
-
-	while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
-		
-		SBIPtr = SBIPtr->next;
-	}
-
-	if (SBIPtr == 0) {
-
-		return -1;
-
-	}
-
-	SBIPtr->status = message->status;
-
-	return 0;
-
+  return 0;
 }
 
+int update_sbi_points(productDefType *database, updateSBIMessageType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *SBIPtr;
+  backlogItemType *sprintBIPtr;
 
+  // first find the product ID in the database
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-int update_sbi_points( productDefType *database, updateSBIMessageType *message ) {
+  if (database == 0) {
+    return (-1);
+  }
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+  // now find the target Sprint ID to ensure it exists
+  sprintPtr = database->sprintList;
 
+  while (sprintPtr != 0 && sprintPtr->ID != message->sprintID)
+    sprintPtr = sprintPtr->next;
 
-	// first find the product ID in the database
-	while( database != 0 && database->ID != message->productID )
-		database = database->next;
+  if (sprintPtr == 0) {
+    return (-1);
+  }
 
-	if (database == 0) {
+  // now find the PBI entry
 
-		return(-1);
-	}
+  SBIPtr = sprintPtr->sprintBacklogList;
 
+  while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
+    SBIPtr = SBIPtr->next;
+  }
 
-	// now find the target Sprint ID to ensure it exists
-	sprintPtr = database->sprintList;
+  if (SBIPtr == 0) {
+    return -1;
+  }
 
-	while(sprintPtr != 0 && sprintPtr->ID != message->sprintID)
-		sprintPtr = sprintPtr->next;
+  // update the total story points with the change
+  sprintPtr->total_points -= SBIPtr->story_points;
+  sprintPtr->total_points += message->status;
 
-	if (sprintPtr == 0) {
+  SBIPtr->story_points = message->status;
 
-		return(-1);
-
-	}
-
-	// now find the PBI entry
-
-	SBIPtr = sprintPtr->sprintBacklogList;
-
-	while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
-		
-		SBIPtr = SBIPtr->next;
-	}
-
-	if (SBIPtr == 0) {
-
-		return -1;
-
-	}
-
-	// update the total story points with the change
-	sprintPtr->total_points -= SBIPtr->story_points;
-	sprintPtr->total_points += message->status;
-
-	SBIPtr->story_points = message->status;
-
-	return 0;
-
+  return 0;
 }
 
+int update_sbi_description(productDefType *database,
+                           updateSBIDescMessageType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *SBIPtr;
+  backlogItemType *sprintBIPtr;
 
-int update_sbi_description( productDefType *database, updateSBIDescMessageType *message ) {
+  // first find the product ID in the database
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+  if (database == 0) {
+    return (-1);
+  }
 
+  // now find the target Sprint ID to ensure it exists
+  sprintPtr = database->sprintList;
 
-	// first find the product ID in the database
-	while( database != 0 && database->ID != message->productID )
-		database = database->next;
+  while (sprintPtr != 0 && sprintPtr->ID != message->sprintID)
+    sprintPtr = sprintPtr->next;
 
-	if (database == 0) {
+  if (sprintPtr == 0) {
+    return (-1);
+  }
 
-		return(-1);
-	}
+  // now find the BI entry
 
+  SBIPtr = sprintPtr->sprintBacklogList;
 
-	// now find the target Sprint ID to ensure it exists
-	sprintPtr = database->sprintList;
+  while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
+    SBIPtr = SBIPtr->next;
+  }
 
-	while(sprintPtr != 0 && sprintPtr->ID != message->sprintID)
-		sprintPtr = sprintPtr->next;
-
-	if (sprintPtr == 0) {
-
-		return(-1);
-
-	}
-
-	// now find the BI entry
-
-	SBIPtr = sprintPtr->sprintBacklogList;
-
-	while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
-		
-		SBIPtr = SBIPtr->next;
-	}
-
-	if (SBIPtr == 0) {
-
-		return -1;
-
-	}
+  if (SBIPtr == 0) {
+    return -1;
+  }
 
 #ifdef PATCHED_1
 
-	free(SBIPtr->description);
+  free(SBIPtr->description);
 
-	SBIPtr->description = malloc(strlen(&message->desc)+1);
+  SBIPtr->description = malloc(strlen(&message->desc) + 1);
 
-	if (SBIPtr->description == 0)
-		_terminate(-1);
+  if (SBIPtr->description == 0) _terminate(-1);
 
 #endif
 
-	strcpy(SBIPtr->description, &message->desc);
+  strcpy(SBIPtr->description, &message->desc);
 
-	return 0;
-
+  return 0;
 }
 
+int move_sbi_to_pbl(productDefType *database, moveToPBIMessageType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *PBIPtr;
+  backlogItemType *prevPtr;
+  backlogItemType *SBIPtr;
 
-int move_sbi_to_pbl( productDefType *database, moveToPBIMessageType *message ) {
+  // first find the product ID in the database
+  while (database != 0 && database->ID != message->productID)
+    database = database->next;
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
-backlogItemType *prevPtr;
-backlogItemType *SBIPtr;
+  if (database == 0) {
+    return (-1);
+  }
 
-	// first find the product ID in the database
-	while( database != 0 && database->ID != message->productID )
-		database = database->next;
+  sprintPtr = database->sprintList;
+  PBIPtr = database->productBacklog;
 
-	if (database == 0) {
+  // now find the target Sprint ID to ensure it exists
+  while (sprintPtr != 0 && sprintPtr->ID != message->sprintID)
+    sprintPtr = sprintPtr->next;
 
-		return(-1);
-	}
+  if (sprintPtr == 0) {
+    return (-1);
+  }
 
+  // now find the BI entry
 
-	sprintPtr = database->sprintList;
-	PBIPtr = database->productBacklog;
+  SBIPtr = sprintPtr->sprintBacklogList;
+  prevPtr = SBIPtr;
 
-	// now find the target Sprint ID to ensure it exists
-	while(sprintPtr != 0 && sprintPtr->ID != message->sprintID)
-		sprintPtr = sprintPtr->next;
+  while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
+    prevPtr = SBIPtr;
+    SBIPtr = SBIPtr->next;
+  }
 
-	if (sprintPtr == 0) {
+  if (SBIPtr == 0) {
+    return -1;
+  }
 
-		return(-1);
+  if (SBIPtr == sprintPtr->sprintBacklogList) {
+    sprintPtr->sprintBacklogList = sprintPtr->sprintBacklogList->next;
+  } else {
+    prevPtr->next = SBIPtr->next;
+  }
 
-	}
+  SBIPtr->next = 0;
 
-	// now find the BI entry
+  if (PBIPtr == 0) {
+    database->productBacklog = SBIPtr;
+  } else {
+    while (PBIPtr->next != 0) PBIPtr = PBIPtr->next;
 
-	SBIPtr = sprintPtr->sprintBacklogList;
-	prevPtr = SBIPtr;
+    PBIPtr->next = SBIPtr;
+  }
 
-	while (SBIPtr != 0 && SBIPtr->ID != message->pbItemID) {
-		
-		prevPtr = SBIPtr;
-		SBIPtr = SBIPtr->next;
-	}
+  // update the sprint's total points
+  sprintPtr->total_points -= SBIPtr->story_points;
 
-	if (SBIPtr == 0) {
-
-		return -1;
-
-	}
-
-	if (SBIPtr == sprintPtr->sprintBacklogList) {
-
-		sprintPtr->sprintBacklogList = sprintPtr->sprintBacklogList->next;
-	}
-	else {
-
-		prevPtr->next = SBIPtr->next;
-	}
-
-	SBIPtr->next = 0;
-
-	if (PBIPtr == 0) {
-
-		database->productBacklog = SBIPtr;
-	}
-	else {
-
-		while(PBIPtr->next != 0)	
-			PBIPtr = PBIPtr->next;	
-
-		PBIPtr->next = SBIPtr;
-	}
-
-	// update the sprint's total points 
-	sprintPtr->total_points -= SBIPtr->story_points;
-
-	return 0;
-
+  return 0;
 }
-
-

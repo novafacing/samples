@@ -23,8 +23,7 @@
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
 typedef struct queue queue;
-struct queue
-{
+struct queue {
   size_t Capacity;
   size_t Size;
   ssize_t KnownHead;

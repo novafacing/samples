@@ -20,17 +20,14 @@
  * THE SOFTWARE.
  *
  */
-#include <stdlib.h>
-
 #include "safe.h"
 
-void* xcalloc(size_t count, size_t size)
-{
+#include <stdlib.h>
 
+void* xcalloc(size_t count, size_t size) {
   dbg("Allocating %d", count * size);
   void* ret = calloc(count, size);
-  if (!ret)
-  {
+  if (!ret) {
     die("Allocation failed");
   }
 

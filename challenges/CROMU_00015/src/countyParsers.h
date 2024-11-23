@@ -29,20 +29,20 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "string.h"
-#include "service.h"
-#include "helper.h"
-#include "genericParsers.h"
-#include "cityParsers.h"
 
-int countyMenu( pCounty co );
-void initCounty( pCounty co );
-void freeCounty( pCounty co );
-void printCountyInfo( pCounty co);
-pCounty countyTopLevel( pstring str);
-double extractArea( pstring str );
-double extractDensity( pstring str );
-char *extractSeat( pstring str );
+#include "cityParsers.h"
+#include "genericParsers.h"
+#include "helper.h"
+#include "service.h"
+#include "string.h"
+
+int countyMenu(pCounty co);
+void initCounty(pCounty co);
+void freeCounty(pCounty co);
+void printCountyInfo(pCounty co);
+pCounty countyTopLevel(pstring str);
+double extractArea(pstring str);
+double extractDensity(pstring str);
+char *extractSeat(pstring str);
 
 #endif
-

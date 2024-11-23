@@ -27,40 +27,40 @@ THE SOFTWARE.
 #ifndef service_h
 #define service_h
 typedef struct DiveEntry_s {
-	char SiteName[64];
-	char DiveDate[32];
-	char DiveTime[32];
-	char DiveLocation[32];
-	long int MaxDepth;
-	long int AvgDepth;
-	long int DiveDuration;
-	long int O2;
-	long int PressureIn;
-	long int PressureOut;
-	int Dive_BinCount;
+  char SiteName[64];
+  char DiveDate[32];
+  char DiveTime[32];
+  char DiveLocation[32];
+  long int MaxDepth;
+  long int AvgDepth;
+  long int DiveDuration;
+  long int O2;
+  long int PressureIn;
+  long int PressureOut;
+  int Dive_BinCount;
 } sDiveEntry, *pDiveEntry;
 
 typedef struct DiveEntryListNode_s {
-	struct DiveEntryListNode_s *prev;
-	pDiveEntry DiveEntry;
-	struct DiveEntryListNode_s *next;
+  struct DiveEntryListNode_s *prev;
+  pDiveEntry DiveEntry;
+  struct DiveEntryListNode_s *next;
 } sDiveEntryListNode, *pDiveEntryListNode;
 
 typedef struct DiverInfo_s {
-	char FName[32];
-	char LName[32];
-	char Street[64];
-	char City[32];
-	char State[32];
-	char Zip[32];
-	char Phone[32];
-	char PADINum[32];
-	char PADIDate[32];
-	pDiveEntryListNode DiveEntryList;
-	int DiveEntryCount;
+  char FName[32];
+  char LName[32];
+  char Street[64];
+  char City[32];
+  char State[32];
+  char Zip[32];
+  char Phone[32];
+  char PADINum[32];
+  char PADIDate[32];
+  pDiveEntryListNode DiveEntryList;
+  int DiveEntryCount;
 } sDiverInfo, *pDiverInfo;
 
-pDiveEntry AddDive( pDiverInfo );
-pDiveEntryListNode DeleteDive( pDiverInfo, pDiveEntryListNode );
-void destroy_data( pDiverInfo );
+pDiveEntry AddDive(pDiverInfo);
+pDiveEntryListNode DeleteDive(pDiverInfo, pDiveEntryListNode);
+void destroy_data(pDiverInfo);
 #endif

@@ -21,54 +21,44 @@
  *
  */
 #include <string.h>
+
 #include "stdio_private.h"
 
-ssize_t fwrite(const void *ptr, size_t size, FILE *stream)
-{
-    const char *buf = ptr;
-    size_t idx = 0, tx;
+ssize_t fwrite(const void *ptr, size_t size, FILE *stream) {
+  const char *buf = ptr;
+  size_t idx = 0, tx;
 
-    if (stream->idx == INVALID_IDX)
-    {
-unbuffered:
-        if (stream->xlat_map == NULL)
-        {
-            if (transmit_all(stream->fd, ptr, size) != 0)
-                return -1;
-        }
-        else
-        {
-            if (transmit_xlat(stream->fd, stream->xlat_map, ptr, size) != 0)
-                return -1;
-        }
-        return size;
+  if (stream->idx == INVALID_IDX) {
+  unbuffered:
+    if (stream->xlat_map == NULL) {
+      if (transmit_all(stream->fd, ptr, size) != 0) return -1;
+    } else {
+      if (transmit_xlat(stream->fd, stream->xlat_map, ptr, size) != 0)
+        return -1;
     }
-    else
-    {
-        if (size >= sizeof(stream->buffer))
-        {
-            fflush(stream);
-            goto unbuffered;
-        }
-
-        if (stream->length + size >= sizeof(stream->buffer))
-        {
-            tx = sizeof(stream->buffer) - stream->length;
-            memcpy(stream->buffer + stream->length, buf, tx);
-            stream->length += tx;
-            idx += tx;
-
-            fflush(stream);
-        }
-
-        if (idx < size)
-        {
-            tx = size - idx;
-            memcpy(stream->buffer + stream->length, buf + idx, tx);
-            stream->length += tx;
-            idx += tx;
-        }
-
-        return idx;
+    return size;
+  } else {
+    if (size >= sizeof(stream->buffer)) {
+      fflush(stream);
+      goto unbuffered;
     }
+
+    if (stream->length + size >= sizeof(stream->buffer)) {
+      tx = sizeof(stream->buffer) - stream->length;
+      memcpy(stream->buffer + stream->length, buf, tx);
+      stream->length += tx;
+      idx += tx;
+
+      fflush(stream);
+    }
+
+    if (idx < size) {
+      tx = size - idx;
+      memcpy(stream->buffer + stream->length, buf + idx, tx);
+      stream->length += tx;
+      idx += tx;
+    }
+
+    return idx;
+  }
 }

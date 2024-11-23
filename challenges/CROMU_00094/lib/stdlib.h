@@ -27,21 +27,22 @@ THE SOFTWARE.
 #define __STDLIB_H__
 
 #include <libcgc.h>
+
 #include "stdint.h"
 
-#define RAND_MAX	2147483647
+#define RAND_MAX 2147483647
 
 void srand(void);
-uint32_t rand( void );
+uint32_t rand(void);
 uint32_t random_in_range(uint32_t min, uint32_t max);
 
-int atoi( const char *pStr );
-double atof( char *pStr );
- 
-char *strcpy( char *pDest, const char *pSource );
-char *strncpy( char *pDest, const char *pSource, size_t maxlen );
-void *memcpy( void *pDest, const void *pSrc, size_t nbytes );
+int atoi(const char *pStr);
+double atof(char *pStr);
 
-long int strtol( const char *str, char **endptr, int base );
+char *strcpy(char *pDest, const char *pSource);
+char *strncpy(char *pDest, const char *pSource, size_t maxlen);
+void *memcpy(void *pDest, const void *pSrc, size_t nbytes);
 
-#endif // STDLIB_H__
+long int strtol(const char *str, char **endptr, int base);
+
+#endif  // STDLIB_H__

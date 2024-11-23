@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __DATETIME_HELPER_H__
 #define __DATETIME_HELPER_H__
 
-bool IsLeapYear( uint16_t year );
-uint8_t DaysInMonth( uint8_t month, uint16_t year );
+bool IsLeapYear(uint16_t year);
+uint8_t DaysInMonth(uint8_t month, uint16_t year);
 
-#endif // __DATETIME_HELPER_H__
+#endif  // __DATETIME_HELPER_H__

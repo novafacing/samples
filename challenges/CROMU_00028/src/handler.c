@@ -24,10 +24,11 @@ THE SOFTWARE.
 
 */
 
-#include "carbonate.h"
-#include "scramble.h"
 #include "handler.h"
+
+#include "carbonate.h"
 #include "messages.h"
+#include "scramble.h"
 #include "set.h"
 
 HANDLER(scramble) {

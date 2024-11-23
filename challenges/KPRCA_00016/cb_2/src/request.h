@@ -24,9 +24,9 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include "user.h"
 #include "message.h"
 #include "packet.h"
+#include "user.h"
 
 typedef struct register_req {
   char username[MAX_USERNAME_LEN];

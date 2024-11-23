@@ -34,8 +34,7 @@ typedef unsigned char bool;
 #define UNIT_CARDINALITY 256
 
 typedef struct trie trie;
-struct trie
-{
+struct trie {
   trie* Parent;
   trie* Children[UNIT_CARDINALITY];
   trie_unit Data;

@@ -24,16 +24,16 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
+#include "malloc.h"
+#include "msls.h"
+#include "msls_handshake.h"
+#include "sls.h"
 #include "stdint.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "malloc.h"
-#include "sls.h"
-#include "msls.h"
-#include "msls_handshake.h"
 
-void msls_handle_heartbeat(SLS_MESSAGE *msg)
-{
+void msls_handle_heartbeat(SLS_MESSAGE *msg) {
   debug_print("Handling Heartbeat\n");
   SLS_MESSAGE *response = calloc(sizeof(SLS_MESSAGE));
   SLS_HEARTBEAT_MESSAGE *hb_response = calloc(sizeof(SLS_HEARTBEAT_MESSAGE));
@@ -41,27 +41,28 @@ void msls_handle_heartbeat(SLS_MESSAGE *msg)
   response->version = SLS_VERSION;
   response->connection_id = msg->connection_id;
   hb_response->type = MSLS_HEARTBEAT_RESPONSE;
-  const SLS_HEARTBEAT_MESSAGE *hb_request = (SLS_HEARTBEAT_MESSAGE *)msg->message;
-  const uint8_t *request_payload = (uint8_t *)msg->message + SLS_HEARTBEAT_HEADER_LEN;
+  const SLS_HEARTBEAT_MESSAGE *hb_request =
+      (SLS_HEARTBEAT_MESSAGE *)msg->message;
+  const uint8_t *request_payload =
+      (uint8_t *)msg->message + SLS_HEARTBEAT_HEADER_LEN;
   hb_response->payload_length = hb_request->payload_length;
 #ifdef PATCHED_1
-  if (hb_response->payload_length > msg->msg_length - SLS_HEARTBEAT_HEADER_LEN)
-  {
+  if (hb_response->payload_length >
+      msg->msg_length - SLS_HEARTBEAT_HEADER_LEN) {
     hb_response->payload_length = msg->msg_length - SLS_HEARTBEAT_HEADER_LEN;
   }
-  if (hb_response->payload_length > 64)
-  {
+  if (hb_response->payload_length > 64) {
     hb_response->payload_length = 64;
   }
-#endif 
-  if (hb_response->payload_length > 0)
-  {
+#endif
+  if (hb_response->payload_length > 0) {
     hb_response->payload = calloc(hb_response->payload_length);
-    debug_print("Reading heartbeats from $x to $x\n", request_payload, request_payload + hb_response->payload_length );
+    debug_print("Reading heartbeats from $x to $x\n", request_payload,
+                request_payload + hb_response->payload_length);
     memcpy(hb_response->payload, request_payload, hb_response->payload_length);
   }
-  
-  response->msg_length =  hb_response->payload_length + SLS_HEARTBEAT_HEADER_LEN;
+
+  response->msg_length = hb_response->payload_length + SLS_HEARTBEAT_HEADER_LEN;
   response->message = (uint8_t *)hb_response;
   response->length = response->msg_length + SLS_HEADER_LENGTH;
   debug_print("Sending HB response. Length: $d\n", hb_response->payload_length);
@@ -69,47 +70,45 @@ void msls_handle_heartbeat(SLS_MESSAGE *msg)
   msls_destroy_msg(response);
 }
 
-void msls_handle_changespec(SERVER_STATE *state, CLIENT_CONTEXT *connection, SLS_MESSAGE *msg)
-{
+void msls_handle_changespec(SERVER_STATE *state, CLIENT_CONTEXT *connection,
+                            SLS_MESSAGE *msg) {
   SLS_CHANGESPEC_MESSAGE *cs_msg = (SLS_CHANGESPEC_MESSAGE *)msg->message;
-  if (cs_msg == NULL)
-  {
+  if (cs_msg == NULL) {
     return;
   }
-  if (connection == NULL)
-  {
+  if (connection == NULL) {
     return;
   }
   connection->cipher_suite = cs_msg->new_cipher_suite;
   msls_send_server_hello(connection);
 }
 
-void msls_handle_error(SERVER_STATE *state, SLS_MESSAGE *msg)
-{
-  CLIENT_CONTEXT *connection = state->functions->lookup_context(state, msg->connection_id);
+void msls_handle_error(SERVER_STATE *state, SLS_MESSAGE *msg) {
+  CLIENT_CONTEXT *connection =
+      state->functions->lookup_context(state, msg->connection_id);
   SLS_ERROR_MESSAGE *er_msg = (SLS_ERROR_MESSAGE *)msg->message;
-  if (er_msg == NULL)
-  {
+  if (er_msg == NULL) {
     return;
   }
-  switch (er_msg->severity)
-  {
+  switch (er_msg->severity) {
     case MSLS_SEVERITY_WARNING:
       debug_print("Received Client Warning $x\n", er_msg->error_code);
       break;
     case MSLS_SEVERITY_CRITICAL:
-      if (connection)
-      {
-        debug_print("Received Critical Error $x. Shutting down connection.\n", er_msg->error_code);
+      if (connection) {
+        debug_print("Received Critical Error $x. Shutting down connection.\n",
+                    er_msg->error_code);
         connection->is_connected = 0;
       }
       break;
     case MSLS_SEVERITY_FATAL:
-      debug_print("Received Fatal Error $x. Shutting down server\n", er_msg->error_code);
+      debug_print("Received Fatal Error $x. Shutting down server\n",
+                  er_msg->error_code);
       state->should_exit = 1;
       break;
     default:
-      debug_print("Unknown Error Code $x $x\n", er_msg->error_code, er_msg->severity);
+      debug_print("Unknown Error Code $x $x\n", er_msg->error_code,
+                  er_msg->severity);
       break;
   }
 }

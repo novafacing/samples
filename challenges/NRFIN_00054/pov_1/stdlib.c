@@ -20,23 +20,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <libcgc.h>
-
 #include "stdlib.h"
+
+#include <libcgc.h>
 
 static unsigned long long rand_seed = 0xdeadbeefull;
 
-void
-srand(unsigned int seed)
-{
-    rand_seed = seed;
-}
+void srand(unsigned int seed) { rand_seed = seed; }
 
-unsigned int
-rand(void)
-{
-    // Constants from Knuth
-    rand_seed = 6364136223846793005 * rand_seed + 1442695040888963407;
-    return (unsigned int)(rand_seed >> 32);
+unsigned int rand(void) {
+  // Constants from Knuth
+  rand_seed = 6364136223846793005 * rand_seed + 1442695040888963407;
+  return (unsigned int)(rand_seed >> 32);
 }
-

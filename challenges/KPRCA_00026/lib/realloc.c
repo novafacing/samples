@@ -23,17 +23,16 @@
  *
  */
 
-#include "wrapper.h"
-#include "libcgc.h"
 #include <malloc.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
-void *realloc(void *ptr, size_t size)
-{
-  if (ptr == NULL)
-    return malloc(size);
+#include "libcgc.h"
+#include "wrapper.h"
+
+void *realloc(void *ptr, size_t size) {
+  if (ptr == NULL) return malloc(size);
 
   if (size == 0) {
     free(ptr);
@@ -41,12 +40,10 @@ void *realloc(void *ptr, size_t size)
   }
 
   struct blk_t *blk = (struct blk_t *)((intptr_t)ptr - HEADER_PADDING);
-  if (size >= blk->size / 2 && size < blk->size - HEADER_PADDING)
-      return ptr;
+  if (size >= blk->size / 2 && size < blk->size - HEADER_PADDING) return ptr;
 
   void *new = malloc(size);
-  if (new == NULL)
-    return NULL;
+  if (new == NULL) return NULL;
 
   if (size < blk->size - HEADER_PADDING)
     memcpy(new, ptr, size);

@@ -24,18 +24,18 @@
 #define FILAMENTS_H_
 #ifdef FILAMENTS
 
-#include <wrapper.h>
 #include <libcgc.h>
+#include <wrapper.h>
 
-typedef void (*start_func_t) (void *userdata);
+typedef void (*start_func_t)(void *userdata);
 
 typedef struct fib {
-    struct fib *next;
-    unsigned int id;
-    void *stack;
-    jmp_buf env;
-    start_func_t start_func;
-    void *userdata;
+  struct fib *next;
+  unsigned int id;
+  void *stack;
+  jmp_buf env;
+  start_func_t start_func;
+  void *userdata;
 } fib_t;
 
 void filaments_init();

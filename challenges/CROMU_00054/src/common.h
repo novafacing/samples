@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <cutil_string.h>
 
-CUtil::String ReadLine( void );
+CUtil::String ReadLine(void);
 
-bool HexCharToInt( char c, uint8_t &outValue );
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen );
+bool HexCharToInt(char c, uint8_t &outValue);
+void PrintHexBytes(uint8_t *pData, uint32_t dataLen);
 
-#endif // __COMMON_H__
+#endif  // __COMMON_H__

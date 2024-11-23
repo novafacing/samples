@@ -24,48 +24,48 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "queue.h"
-#include "transmit.h"
-#include "receive.h"
+
 #include "input.h"
+#include "queue.h"
+#include "receive.h"
+#include "stdlib.h"
+#include "transmit.h"
 
 extern double wall_clock;
 extern double max_wall_clock;
 
 int main(void) {
+  puts("Welcome to the network queuing simulator");
 
-	puts("Welcome to the network queuing simulator");
+  if (InitInterface()) {
+    puts("Unable to init interface\n");
+    _terminate(-1);
+  }
 
-	if (InitInterface()) {
-		puts("Unable to init interface\n");
-		_terminate(-1);
-	}
+  if (InitReceive()) {
+    puts("Unable to init packet generator\n");
+    _terminate(-1);
+  }
 
-	if (InitReceive()) {
-		puts("Unable to init packet generator\n");
-		_terminate(-1);
-	}
+  if (InitQueues()) {
+    puts("Failed to initialize queues\n");
+    _terminate(-1);
+  }
 
-	if (InitQueues()) {
-		puts("Failed to initialize queues\n");
-		_terminate(-1);
-	}
+  while (1) {
+    RX();
+    TX();
+    // increment wall_clock time since we don't have
+    // any packets to TX or RX
+    wall_clock += 0.00001;
+    if (wall_clock > max_wall_clock) {
+      break;
+    }
+  }
 
-	while (1)  {
-		RX();
-		TX();
-		// increment wall_clock time since we don't have
-		// any packets to TX or RX
-		wall_clock += 0.00001;
-		if (wall_clock > max_wall_clock) {
-			break;
-		}
-	}
+  PrintStats();
 
-	PrintStats();
+  DestroyQueues();
 
-	DestroyQueues();
-
-	_terminate(0);
+  _terminate(0);
 }

@@ -22,7 +22,4 @@
  */
 #include "malloc_private.h"
 
-void free(void *ptr)
-{
-    return malloc_free(&g_heap, ptr);
-}
+void free(void *ptr) { return malloc_free(&g_heap, ptr); }

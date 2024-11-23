@@ -21,45 +21,40 @@
  *
  */
 
+#include "message.h"
+
 #include <stdlib.h>
 #include <string.h>
-#include "message.h"
+
 #include "coffee.h"
 
-message_t* parse_message(char *data, user_t *from, user_t *to, unsigned int len)
-{
+message_t *parse_message(char *data, user_t *from, user_t *to,
+                         unsigned int len) {
   size_t header_sz = sizeof(message_t) - sizeof(char *);
   message_t *msg = NULL;
-  msg = (message_t *) malloc(sizeof(message_t));
-  if (msg == NULL)
-    goto fail;
+  msg = (message_t *)malloc(sizeof(message_t));
+  if (msg == NULL) goto fail;
 
 #ifdef PATCHED
   msg->text = NULL;
 #endif
-  if (header_sz > len)
-    goto fail;
+  if (header_sz > len) goto fail;
 
-  msg->type = *((unsigned short *) &data[0]);
+  msg->type = *((unsigned short *)&data[0]);
   msg->to_id = to->user_id;
-  msg->from_id = *((unsigned short *) &data[4]);
-  msg->text_len = *((unsigned short *) &data[6]);
+  msg->from_id = *((unsigned short *)&data[4]);
+  msg->text_len = *((unsigned short *)&data[6]);
 
-  if (msg->from_id != from->user_id)
-    goto fail;
+  if (msg->from_id != from->user_id) goto fail;
 
-  if (msg->text_len <= 0 || msg->text_len > MAX_TEXT_LEN)
-    goto fail;
+  if (msg->text_len <= 0 || msg->text_len > MAX_TEXT_LEN) goto fail;
 
-  if (len - header_sz < msg->text_len)
-    goto fail;
+  if (len - header_sz < msg->text_len) goto fail;
 
-  if (msg->type == TYPE_PROTECTED)
-  {
+  if (msg->type == TYPE_PROTECTED) {
     unsigned int key[4];
     char *unprotected = malloc(MAX_TEXT_LEN + 1);
-    if (unprotected == NULL)
-      goto fail;
+    if (unprotected == NULL) goto fail;
     memset(unprotected, 0, MAX_TEXT_LEN + 1);
     strncpy(unprotected, &data[8], MAX_TEXT_LEN);
     key[0] = from->auth_code;
@@ -73,17 +68,13 @@ message_t* parse_message(char *data, user_t *from, user_t *to, unsigned int len)
     key[3] = to->auth_code;
     protect_msg(key, unprotected, MAX_TEXT_LEN);
     msg->text = malloc(MAX_TEXT_LEN);
-    if (msg->text == NULL)
-      goto fail;
+    if (msg->text == NULL) goto fail;
     memcpy(msg->text, unprotected, MAX_TEXT_LEN);
     msg->text_len = MAX_TEXT_LEN;
-  }
-  else
-  {
+  } else {
     msg->type = TYPE_NORMAL;
     msg->text = malloc(msg->text_len + 1);
-    if (msg->text == NULL)
-      goto fail;
+    if (msg->text == NULL) goto fail;
     strncpy(msg->text, &data[8], msg->text_len);
   }
   return msg;
@@ -93,12 +84,9 @@ fail:
   return NULL;
 }
 
-void free_message(message_t *msg)
-{
-  if (msg)
-  {
-    if (msg->text)
-      free(msg->text);
+void free_message(message_t *msg) {
+  if (msg) {
+    if (msg->text) free(msg->text);
     free(msg);
   }
 }

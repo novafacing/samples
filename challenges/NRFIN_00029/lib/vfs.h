@@ -35,23 +35,23 @@
 #define MAX_FILE_NAME_LENGTH 16
 
 struct directory {
-    utf8char name[MAX_FILE_NAME_LENGTH];
-    struct directory *parent;
-    struct list subdirectories;
-    struct list files;
-    struct list_node list;
+  utf8char name[MAX_FILE_NAME_LENGTH];
+  struct directory *parent;
+  struct list subdirectories;
+  struct list files;
+  struct list_node list;
 };
 
 struct file {
-    utf8char name[MAX_FILE_NAME_LENGTH];
-    struct directory *parent;
-    size_t size;
-    unsigned char *contents;
-    struct list_node list;
+  utf8char name[MAX_FILE_NAME_LENGTH];
+  struct directory *parent;
+  size_t size;
+  unsigned char *contents;
+  struct list_node list;
 };
 
 struct vfs {
-    struct directory *root;
+  struct directory *root;
 };
 
 int vfs_init(struct vfs *vfs);
@@ -61,9 +61,11 @@ struct directory *lookup_dir(const struct vfs *vfs, const utf8char *path);
 struct file *lookup_file(const struct vfs *vfs, const utf8char *path);
 
 struct directory *create_dir(struct vfs *vfs, const utf8char *path);
-struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir, const utf8char *name);
+struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir,
+                                    const utf8char *name);
 struct file *create_file(struct vfs *vfs, const utf8char *path);
-struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const utf8char *name);
+struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir,
+                                const utf8char *name);
 
 void delete_file(struct vfs *vfs, struct file *file);
 
@@ -72,4 +74,3 @@ void dump_vfs(const struct vfs *vfs);
 #endif
 
 #endif /* VFS_H_ */
-

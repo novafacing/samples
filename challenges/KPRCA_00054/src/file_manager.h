@@ -25,8 +25,8 @@
 #define FILE_MANAGER_H
 
 extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
+#include <stdlib.h>
+#include <string.h>
 };
 
 #include "file.h"
@@ -34,33 +34,32 @@ extern "C" {
 #define MAX_NUM_FILES 512
 #define MAX_NUM_OPENED_FILES 20
 
-class FileManager
-{
-  protected:
-    unsigned int numFiles;
-    unsigned int numOpenedFiles;
-    File *rootDir;
-    File* openedFiles[MAX_NUM_OPENED_FILES];
-    File *cwd;
-    
-    void DeleteDirectoryHelper(File* dir);
+class FileManager {
+ protected:
+  unsigned int numFiles;
+  unsigned int numOpenedFiles;
+  File* rootDir;
+  File* openedFiles[MAX_NUM_OPENED_FILES];
+  File* cwd;
 
-  public:
-    FileManager();
-    ~FileManager();
+  void DeleteDirectoryHelper(File* dir);
 
-    File* GetFile(const char* name);
-    void PrintFile(const char* name);
-    int CreateFile(const char* name);
-    int CreateDirectory(const char* name);
-    int OpenFile(const char* name);
-    int CloseFile(unsigned int fileno);
-    int CloseAll();
-    int ReadFile(unsigned int fileno, size_t pos, size_t len, char** outBuf);
-    int ModifyFile(unsigned int fileno, size_t pos, char* inBuf, size_t len);
-    int DeleteFile(const char* name);
-    int DeleteDirectory(const char* name);
-    int ChangeDirectory(const char* name);
+ public:
+  FileManager();
+  ~FileManager();
+
+  File* GetFile(const char* name);
+  void PrintFile(const char* name);
+  int CreateFile(const char* name);
+  int CreateDirectory(const char* name);
+  int OpenFile(const char* name);
+  int CloseFile(unsigned int fileno);
+  int CloseAll();
+  int ReadFile(unsigned int fileno, size_t pos, size_t len, char** outBuf);
+  int ModifyFile(unsigned int fileno, size_t pos, char* inBuf, size_t len);
+  int DeleteFile(const char* name);
+  int DeleteDirectory(const char* name);
+  int ChangeDirectory(const char* name);
 };
 
 #endif

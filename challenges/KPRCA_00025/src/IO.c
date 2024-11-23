@@ -20,52 +20,45 @@
  * THE SOFTWARE.
  *
  */
-#include <stdlib.h>
-#include <stdarg.h>
-
 #include "IO.h"
+
+#include <stdarg.h>
+#include <stdlib.h>
 
 DefineClass(IO, Object)
 
-DefineFunction(IO, void, $init)
-{
-    this->input_fd = STDIN;
-    this->output_fd = STDOUT;
+    DefineFunction(IO, void, $init) {
+  this->input_fd = STDIN;
+  this->output_fd = STDOUT;
 }
 
-DefineFunction(IO, void, format, const char *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    vfdprintf(this->output_fd, fmt, ap);
-    va_end(ap);
+DefineFunction(IO, void, format, const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfdprintf(this->output_fd, fmt, ap);
+  va_end(ap);
 }
 
-DefineFunction(IO, void, wait_for, char c)
-{
-    char in;
+DefineFunction(IO, void, wait_for, char c) {
+  char in;
 
-    do {
-        size_t bytes;
-        if (receive(this->input_fd, &in, 1, &bytes) != 0 || bytes != 1)
-            break;
-    } while (in != c);
-}
-
-DefineFunction(IO, void, wait_for_input)
-{
-    fd_set rfds;
-    FD_ZERO(&rfds);
-    FD_SET(this->input_fd, &rfds);
-
-    // wait indefinitely for user input
-    fdwait(this->input_fd + 1, &rfds, NULL, NULL, NULL);
-}
-
-DefineFunction(IO, size_t, receive, void *buf, size_t count)
-{
+  do {
     size_t bytes;
-    if (receive(this->input_fd, buf, count, &bytes) != 0)
-        bytes = 0;
-    return bytes;
+    if (receive(this->input_fd, &in, 1, &bytes) != 0 || bytes != 1) break;
+  } while (in != c);
+}
+
+DefineFunction(IO, void, wait_for_input) {
+  fd_set rfds;
+  FD_ZERO(&rfds);
+  FD_SET(this->input_fd, &rfds);
+
+  // wait indefinitely for user input
+  fdwait(this->input_fd + 1, &rfds, NULL, NULL, NULL);
+}
+
+DefineFunction(IO, size_t, receive, void *buf, size_t count) {
+  size_t bytes;
+  if (receive(this->input_fd, buf, count, &bytes) != 0) bytes = 0;
+  return bytes;
 }

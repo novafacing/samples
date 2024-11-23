@@ -22,13 +22,11 @@
  */
 #include "ccstring.h"
 
-size_t CString::hash() const
-{
-    unsigned int h = 0x4347c000;
-    size_t len = length();
-    for (unsigned int i = 0; i < len; i++)
-    {
-        h ^= (h * 17) + ptr[i];
-    }
-    return h;
+size_t CString::hash() const {
+  unsigned int h = 0x4347c000;
+  size_t len = length();
+  for (unsigned int i = 0; i < len; i++) {
+    h ^= (h * 17) + ptr[i];
+  }
+  return h;
 }

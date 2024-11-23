@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define GUARANTEED_DELIVERY "guaranteed"
 #define FRESH_DELIVERY "latest"
 #define INCREMENTAL_DELIVERY "next"
@@ -27,32 +27,35 @@
 #define PRIORITY_LOW_DELIVERY "low"
 
 typedef struct {
-	unsigned int id;
-	char* sender;
-	char* body;
-	char* priority;
-	void* next;
+  unsigned int id;
+  char* sender;
+  char* body;
+  char* priority;
+  void* next;
 } Message;
 
 typedef struct {
-	char* name;
-	char* deliveryType;
-	unsigned int index;
-	void* next;
+  char* name;
+  char* deliveryType;
+  unsigned int index;
+  void* next;
 } Subscription;
 
 typedef struct {
-	char* name;
-	unsigned int head;
-	unsigned int tail;
-	Message* queue;
-	Subscription* subscriptions;
-	void* next;
+  char* name;
+  unsigned int head;
+  unsigned int tail;
+  Message* queue;
+  Subscription* subscriptions;
+  void* next;
 } Channel;
 
-void addSubscriptions(Channel** channelListPtr, Subscription** userSubscriptionsPtr, char* userName, char* channelName);
+void addSubscriptions(Channel** channelListPtr,
+                      Subscription** userSubscriptionsPtr, char* userName,
+                      char* channelName);
 int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType);
-Subscription* getSubscription(Subscription* subscriptions, char* subscriptionName);
+Subscription* getSubscription(Subscription* subscriptions,
+                              char* subscriptionName);
 Subscription* newSubscription(char* name, unsigned index, char* deliveryType);
 Channel* getChannel(Channel* channelList, char* channelName);
 Message* getLastMessage(Message* queue);

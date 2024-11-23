@@ -25,160 +25,130 @@ THE SOFTWARE.
 */
 #include <libcgc.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
-#define INT_BUF_MAX         (32)
+#define INT_BUF_MAX (32)
 
-int putc( int c )
-{
-    size_t tx_count;
+int putc(int c) {
+  size_t tx_count;
 
-    if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
-        _terminate(2);
+  if (transmit(STDOUT, &c, 1, &tx_count) != 0) _terminate(2);
 
-    return c;
+  return c;
 }
 
-int vprintf( const char *fmt, va_list arg )
-{
-    int i = 0;
+int vprintf(const char *fmt, va_list arg) {
+  int i = 0;
 
-    if ( fmt == NULL )
-        return -1;
+  if (fmt == NULL) return -1;
 
-    for ( ; ; )
-    {
-        if ( *fmt == '\0' )
-            break;
+  for (;;) {
+    if (*fmt == '\0') break;
 
-        if ( *fmt == '$' )
-        {
-            fmt++;
+    if (*fmt == '$') {
+      fmt++;
 
-            switch ( *fmt )
-            {
-            case '$':
-                putc( '$' );
-                break;
+      switch (*fmt) {
+        case '$':
+          putc('$');
+          break;
 
-            case 's':
-                {
-                    char *str1 = va_arg( arg, char * );
+        case 's': {
+          char *str1 = va_arg(arg, char *);
 
-                    while ( *str1 )
-                    {
-                        putc( *str1 );
-                        i++;
-
-                        str1++;
-                        if ( str1 == '\0' )
-                            break;
-                    }
-                }
-                break;
-
-            case 'd':
-                {
-                    char temp[INT_BUF_MAX];
-                    int char_count;
-                    int int_arg = va_arg( arg, int );
-
-                    char_count = 0;
-                    if ( int_arg < 0 )
-                    {
-                        int_arg = -int_arg;
-                        putc( '-' );
-                        i++;
-                    }
-                    else if ( int_arg == 0 )
-                    {
-                        char_count = 1;
-                        temp[0] = '0';
-                    }
-
-                    while ( int_arg != 0 )
-                    {
-                        temp[char_count++] = (int_arg % 10) + '0';
-                        int_arg /= 10;
-
-                        if ( char_count >= INT_BUF_MAX )
-                            break;
-                    }
-
-                    while ( char_count-- > 0 )
-                    {
-                        putc( temp[char_count] );
-                        i++;
-                    }
-                }
-                break;
-
-            case 'x':
-            case 'X':
-                {
-                    char temp[INT_BUF_MAX];
-                    int char_count;
-                    unsigned int int_arg = va_arg( arg, unsigned int );
-
-                    char_count = 0;
-                    while ( int_arg != 0 )
-                    {
-                        unsigned int val = (int_arg & 0xF);
-                        int_arg = int_arg >> 4;
-
-                        if ( val >= 10 )
-                        {
-                            if ( *fmt == 'x' )
-                                temp[char_count++] = (val - 10) + 'a';
-                            else
-                                temp[char_count++] = (val - 10) + 'A';
-                        }
-                        else
-                            temp[char_count++] = val + '0';
-
-                        if ( char_count >= INT_BUF_MAX )
-                            break;
-                    }
-
-                    while ( char_count-- > 0 )
-                    {
-                        putc( temp[char_count] );
-                        i++;
-                    }
-                }
-                break;
-
-            case '\0':
-                return -1;
-
-            default:
-                // Unknown
-                return -1;
-            }
-
-            fmt++;
-        }
-        else
-        {
-            putc( *fmt );
-            fmt++;
-
+          while (*str1) {
+            putc(*str1);
             i++;
-        }
-    }
 
-    return (i);
+            str1++;
+            if (str1 == '\0') break;
+          }
+        } break;
+
+        case 'd': {
+          char temp[INT_BUF_MAX];
+          int char_count;
+          int int_arg = va_arg(arg, int);
+
+          char_count = 0;
+          if (int_arg < 0) {
+            int_arg = -int_arg;
+            putc('-');
+            i++;
+          } else if (int_arg == 0) {
+            char_count = 1;
+            temp[0] = '0';
+          }
+
+          while (int_arg != 0) {
+            temp[char_count++] = (int_arg % 10) + '0';
+            int_arg /= 10;
+
+            if (char_count >= INT_BUF_MAX) break;
+          }
+
+          while (char_count-- > 0) {
+            putc(temp[char_count]);
+            i++;
+          }
+        } break;
+
+        case 'x':
+        case 'X': {
+          char temp[INT_BUF_MAX];
+          int char_count;
+          unsigned int int_arg = va_arg(arg, unsigned int);
+
+          char_count = 0;
+          while (int_arg != 0) {
+            unsigned int val = (int_arg & 0xF);
+            int_arg = int_arg >> 4;
+
+            if (val >= 10) {
+              if (*fmt == 'x')
+                temp[char_count++] = (val - 10) + 'a';
+              else
+                temp[char_count++] = (val - 10) + 'A';
+            } else
+              temp[char_count++] = val + '0';
+
+            if (char_count >= INT_BUF_MAX) break;
+          }
+
+          while (char_count-- > 0) {
+            putc(temp[char_count]);
+            i++;
+          }
+        } break;
+
+        case '\0':
+          return -1;
+
+        default:
+          // Unknown
+          return -1;
+      }
+
+      fmt++;
+    } else {
+      putc(*fmt);
+      fmt++;
+
+      i++;
+    }
+  }
+
+  return (i);
 }
 
-int printf( const char *fmt, ... )
-{
-    va_list arg;
-    int done;
+int printf(const char *fmt, ...) {
+  va_list arg;
+  int done;
 
-    va_start( arg, fmt );
-    done = vprintf( fmt, arg );
-    va_end( arg );
+  va_start(arg, fmt);
+  done = vprintf(fmt, arg);
+  va_end(arg);
 
-    return done;
+  return done;
 }

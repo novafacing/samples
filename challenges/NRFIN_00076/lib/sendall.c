@@ -18,29 +18,28 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "sendall.h"
+
 #include <stdint.h>
- 
+
 int sendall(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
-    int ret;
+  size_t sent = 0;
+  size_t sent_now = 0;
+  int ret;
 
-    if (!buf)
-        return ERRNO_SEND;
+  if (!buf) return ERRNO_SEND;
 
-    if (!size)
-        return ERRNO_SEND;
+  if (!size) return ERRNO_SEND;
 
-    while (sent < size) {
-        ret = transmit(fd, buf + sent, size - sent, &sent_now);
-        if (ret != 0) {
-            return ERRNO_SEND;
-        }
-        sent += sent_now;
+  while (sent < size) {
+    ret = transmit(fd, buf + sent, size - sent, &sent_now);
+    if (ret != 0) {
+      return ERRNO_SEND;
     }
+    sent += sent_now;
+  }
 
-    return SUCCESS;
+  return SUCCESS;
 }

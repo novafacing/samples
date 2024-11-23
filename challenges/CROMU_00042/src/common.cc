@@ -25,24 +25,20 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-#define LINE_BUF_MAX        (512)
+#define LINE_BUF_MAX (512)
 
-size_t recv_bytes( uint8_t *pDest, size_t count )
-{
-    size_t pos = 0;
-    size_t rx_count = 0;
+size_t recv_bytes(uint8_t *pDest, size_t count) {
+  size_t pos = 0;
+  size_t rx_count = 0;
 
-    while ( pos < count )
-    {
-        if ( receive( STDIN, (pDest+pos), 1, &rx_count ) != 0 )
-            goto end;
+  while (pos < count) {
+    if (receive(STDIN, (pDest + pos), 1, &rx_count) != 0) goto end;
 
-        if ( rx_count != 1 )
-            goto end;
+    if (rx_count != 1) goto end;
 
-        pos++;
-    }
+    pos++;
+  }
 
 end:
-    return (pos);
+  return (pos);
 }

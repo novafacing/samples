@@ -23,526 +23,450 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
-#include <stdlib.h>
+extern "C" {
 #include <stdio.h>
+#include <stdlib.h>
 }
 
 #include "ecm.h"
 
-CECM::CECM( CLANBus *pLANBus, uint64_t equipmentID )
-	: CSimulationComponent( pLANBus ), m_equipmentID( equipmentID )
-{
-	m_bRunning = false;
-	m_bLastRunningState = false;
-	
-	m_engineRPM = 0;
-	m_engineEGT = 0;
-	m_engineIAT = 75;
-	m_engineTemp = 75;
-	m_engineTorque = 0;
-	m_engineThrottlePos = 0;	// 10%
-	m_engineO2_1 = 0;	// 0%
-	m_engineO2_2 = 0;	// 0%
+CECM::CECM(CLANBus *pLANBus, uint64_t equipmentID)
+    : CSimulationComponent(pLANBus), m_equipmentID(equipmentID) {
+  m_bRunning = false;
+  m_bLastRunningState = false;
+
+  m_engineRPM = 0;
+  m_engineEGT = 0;
+  m_engineIAT = 75;
+  m_engineTemp = 75;
+  m_engineTorque = 0;
+  m_engineThrottlePos = 0;  // 10%
+  m_engineO2_1 = 0;         // 0%
+  m_engineO2_2 = 0;         // 0%
 }
 
-CECM::~CECM()
-{
+CECM::~CECM() {}
 
+void CECM::Run(void) {
+  uint8_t destList[] = {ECM_LANBUS_ID, 0xFF};
+
+  CLANMessage *pMsg = m_pLANBus->RecvMessage(destList, sizeof(destList));
+
+  for (; pMsg;
+       pMsg = m_pLANBus->RecvMessage(destList, sizeof(destList), pMsg)) {
+    if (pMsg->GetDestID() == ECM_LANBUS_ID)
+      ProcessMessage(pMsg);
+    else if (pMsg->GetDestID() == 0xFF)
+      ProcessBroadcastMessage(pMsg);
+  }
+
+  // Run engine routines
+  EngineTick();
 }
 
-void CECM::Run( void )
-{
-	uint8_t destList[] = { ECM_LANBUS_ID, 0xFF };
-
-	CLANMessage *pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList) );
-
-	for ( ; pMsg; pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList), pMsg ) )
-	{
-
-		if ( pMsg->GetDestID() == ECM_LANBUS_ID )
-			ProcessMessage( pMsg );
-		else if ( pMsg->GetDestID() == 0xFF )
-			ProcessBroadcastMessage( pMsg );
-	}
-
-	// Run engine routines
-	EngineTick();
+void CECM::ProcessBroadcastMessage(CLANMessage *pMessage) {
+  // ECM does not handle any broadcast messages
+  return;
 }
 
-void CECM::ProcessBroadcastMessage( CLANMessage *pMessage )
-{
-	// ECM does not handle any broadcast messages
-	return;
+void CECM::ProcessMessage(CLANMessage *pMessage) {
+  uint8_t *pData = pMessage->GetMessageData();
+  uint16_t dataLen = pMessage->GetMessageLen();
+
+  uint8_t srcID = pMessage->GetSourceID();
+  uint8_t destID = pMessage->GetDestID();
+
+  // Handle ECM messages
+  if (dataLen == 0) return;
+
+  // Process messages
+  CResponse oResponse;
+
+  do {
+    if (dataLen < 3) {
+      // Send failure response
+      uint8_t failureResponse[4];
+      failureResponse[0] = FAILURE_RESPONSE_TYPE;
+      *((uint16_t *)(failureResponse + 1)) = 1;
+      failureResponse[3] = FAILURE_INVALID_DATA;
+
+      oResponse.AddResponse(failureResponse, 4);
+      break;
+    }
+
+    uint8_t messageTypeID = pData[0];
+    uint16_t messageLength = *((uint16_t *)(pData + 1));
+
+    if (dataLen < (messageLength + 3)) {
+      // Send failure response
+      uint8_t failureResponse[4];
+      failureResponse[0] = FAILURE_RESPONSE_TYPE;
+      *((uint16_t *)(failureResponse + 1)) = 1;
+      failureResponse[3] = FAILURE_INVALID_DATA;
+
+      oResponse.AddResponse(failureResponse, 4);
+      break;
+    }
+
+    // Handle a TLV message
+    HandleTLVMessage(messageTypeID, messageLength, pData + 3, &oResponse);
+
+    // Continue to next TLV field
+    dataLen -= (messageLength + 3);
+    pData += (messageLength + 3);
+  } while (dataLen > 0);
+
+  // Get response
+  uint16_t responseLength = oResponse.GetResponseLength();
+
+  if (responseLength > 0) {
+    uint8_t *pResponseData = new uint8_t[responseLength];
+
+    if (oResponse.GetResponseData(pResponseData, responseLength))
+      m_pLANBus->SendMessage(destID, srcID, pResponseData, responseLength);
+
+    delete[] pResponseData;
+  }
 }
 
-void CECM::ProcessMessage( CLANMessage *pMessage )
-{
-	uint8_t *pData = pMessage->GetMessageData();
-	uint16_t dataLen = pMessage->GetMessageLen();
+void CECM::HandleTLVMessage(uint8_t typeID, uint16_t length, uint8_t *pData,
+                            CResponse *pResponse) {
+  if (pResponse == NULL) return;
 
-	uint8_t srcID = pMessage->GetSourceID();
-	uint8_t destID = pMessage->GetDestID();
+  if (pData == NULL) return;
 
-	// Handle ECM messages
-	if ( dataLen == 0 )
-		return;
+  if (length == 0) return;
 
-	// Process messages
-	CResponse oResponse;
-	
-	do
-	{
-		if ( dataLen < 3 )
-		{
-			// Send failure response
-			uint8_t failureResponse[4];
-			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
-			failureResponse[3] = FAILURE_INVALID_DATA;
+  // Begin parsing message
+  switch (typeID) {
+    case READ_DATA_TYPE:
+      HandleReadDataMessage(pData, length, pResponse);
+      break;
 
-			oResponse.AddResponse( failureResponse, 4 );
-			break;
-		}
+    case SET_DATA_TYPE:
+      HandleSetDataMessage(pData, length, pResponse);
+      break;
 
-		uint8_t messageTypeID = pData[0];
-		uint16_t messageLength = *((uint16_t *)(pData+1));
+    case ACTION_DATA_TYPE:
+      HandleActionMessage(pData, length, pResponse);
+      break;
 
-		if ( dataLen < (messageLength+3) )
-		{
-			// Send failure response
-			uint8_t failureResponse[4];
-			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
-			failureResponse[3] = FAILURE_INVALID_DATA;
+    case CHECK_EQUIPMENT_TYPE:
+      if (length < 8) {
+        // Fail
+        uint8_t setResponse[4];
+        setResponse[0] = CHECK_RESPONSE_TYPE;
+        *((uint16_t *)(setResponse + 1)) = 1;
+        setResponse[3] = CHECK_RESPONSE_INVALID_LENGTH;
 
-			oResponse.AddResponse( failureResponse, 4 );
-			break;
-		}
+        pResponse->AddResponse(setResponse, 4);
+      } else {
+        uint64_t checkID = *((uint64_t *)(pData));
 
-		// Handle a TLV message
-		HandleTLVMessage( messageTypeID, messageLength, pData+3, &oResponse );
+        uint8_t checkResponse[4];
+        checkResponse[0] = CHECK_RESPONSE_TYPE;
+        *((uint16_t *)(checkResponse + 1)) = 1;
+        if (checkID == m_equipmentID)
+          checkResponse[3] = 1;
+        else
+          checkResponse[3] = 0;
 
-		// Continue to next TLV field
-		dataLen -= (messageLength+3);
-		pData += (messageLength+3);	
-	}
-	while ( dataLen > 0 );
+        pResponse->AddResponse(checkResponse, 4);
+      }
+      break;
 
-	// Get response
-	uint16_t responseLength = oResponse.GetResponseLength();
-
-	if ( responseLength > 0 )
-	{
-		uint8_t *pResponseData = new uint8_t[responseLength];
-
-		if ( oResponse.GetResponseData( pResponseData, responseLength ) )
-			m_pLANBus->SendMessage( destID, srcID, pResponseData, responseLength );
-
-		delete [] pResponseData;
-	}
+    default:
+      // Unknown...
+      return;
+  }
 }
 
-void CECM::HandleTLVMessage( uint8_t typeID, uint16_t length, uint8_t *pData, CResponse *pResponse )
-{
-	if ( pResponse == NULL )
-		return;
+void CECM::HandleReadDataMessage(uint8_t *pData, uint16_t length,
+                                 CResponse *pResponse) {
+  if (length < 1) return;
 
-	if ( pData == NULL )
-		return;
+  uint8_t fieldID = pData[0];
 
-	if ( length == 0 )
-		return;
+  switch (fieldID) {
+    case READ_EGT_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_EGT;
+      *((uint16_t *)(readResponse + 4)) = m_engineEGT;
 
-	// Begin parsing message
-	switch( typeID )
-	{
-	case READ_DATA_TYPE:
-		HandleReadDataMessage( pData, length, pResponse );
-		break;
+      pResponse->AddResponse(readResponse, 6);
+    } break;
 
-	case SET_DATA_TYPE:
-		HandleSetDataMessage( pData, length, pResponse );
-		break;
+    case READ_RPM_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_RPM;
+      *((uint16_t *)(readResponse + 4)) = m_engineRPM;
 
-	case ACTION_DATA_TYPE:
-		HandleActionMessage( pData, length, pResponse );
-		break;
+      pResponse->AddResponse(readResponse, 6);
+    } break;
 
-	case CHECK_EQUIPMENT_TYPE:
-		if ( length < 8 )
-		{
-			// Fail
-			uint8_t setResponse[4];
-			setResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 1;	
-			setResponse[3] = CHECK_RESPONSE_INVALID_LENGTH;
+    case READ_IAT_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_IAT;
+      *((uint16_t *)(readResponse + 4)) = m_engineIAT;
 
-			pResponse->AddResponse( setResponse, 4 );
-		}
-		else
-		{
-			uint64_t checkID = *((uint64_t*)(pData));
+      pResponse->AddResponse(readResponse, 6);
+    } break;
 
-			uint8_t checkResponse[4];
-			checkResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(checkResponse+1)) = 1;	
-			if ( checkID == m_equipmentID )
-				checkResponse[3] = 1;	
-			else
-				checkResponse[3] = 0;
+    case READ_O2_COMMAND: {
+      if (length < 2) {
+        // Send failure response
+        uint8_t failureResponse[4];
+        failureResponse[0] = FAILURE_RESPONSE_TYPE;
+        *((uint16_t *)(failureResponse + 1)) = 1;
+        failureResponse[3] = FAILURE_INVALID_DATA;
 
-			pResponse->AddResponse( checkResponse, 4 );
-		}
-		break;
+        pResponse->AddResponse(failureResponse, 4);
+      } else {
+        uint8_t readResponse[7];
+        readResponse[0] = READ_RESPONSE_TYPE;
+        *((uint16_t *)(readResponse + 1)) = 4;
+        readResponse[3] = READ_RESPONSE_O2;
+        readResponse[4] = pData[1];
 
-	default:
-		// Unknown...
-		return;
-	}
+        if (pData[1] == 0)
+          *((uint16_t *)(readResponse + 5)) = m_engineO2_1;
+        else
+          *((uint16_t *)(readResponse + 5)) = m_engineO2_2;
+
+        pResponse->AddResponse(readResponse, 7);
+      }
+    } break;
+
+    case READ_TEMP_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_TEMP;
+      *((uint16_t *)(readResponse + 4)) = m_engineTemp;
+
+      pResponse->AddResponse(readResponse, 6);
+    } break;
+
+    case READ_TORQUE_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_TORQUE;
+      *((uint16_t *)(readResponse + 4)) = m_engineTorque;
+
+      pResponse->AddResponse(readResponse, 6);
+    } break;
+
+    case READ_THROTTLEPOS_COMMAND: {
+      uint8_t readResponse[6];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 3;
+      readResponse[3] = READ_RESPONSE_THROTTLEPOS;
+      *((uint16_t *)(readResponse + 4)) = m_engineThrottlePos;
+
+      pResponse->AddResponse(readResponse, 6);
+    } break;
+
+    default: {
+      uint8_t readResponse[5];
+      readResponse[0] = READ_RESPONSE_TYPE;
+      *((uint16_t *)(readResponse + 1)) = 2;
+      readResponse[3] = READ_RESPONSE_INVALID_FIELD;
+      readResponse[4] = fieldID;
+
+      pResponse->AddResponse(readResponse, 5);
+    } break;
+  }
 }
 
-void CECM::HandleReadDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length < 1 )
-		return;
+void CECM::HandleSetDataMessage(uint8_t *pData, uint16_t length,
+                                CResponse *pResponse) {
+  if (length < 3) {
+    uint8_t setResponse[4];
+    setResponse[0] = SET_RESPONSE_TYPE;
+    *((uint16_t *)(setResponse + 1)) = 1;
+    setResponse[3] = SET_RESPONSE_INVALID_LENGTH;
 
-	uint8_t fieldID = pData[0];
+    pResponse->AddResponse(setResponse, 4);
+    return;
+  }
 
-	switch( fieldID )
-	{
-	case READ_EGT_COMMAND:
-		{
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_EGT;
-			*((uint16_t*)(readResponse+4)) = m_engineEGT;
+  uint8_t fieldID = pData[0];
+  uint16_t setValue = *((uint16_t *)(pData + 1));
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
+  switch (fieldID) {
+    case SET_THROTTLEPOS_COMMAND: {
+      if (!m_bRunning) {
+        uint8_t setResponse[4];
+        setResponse[0] = SET_RESPONSE_TYPE;
+        *((uint16_t *)(setResponse + 1)) = 1;
+        setResponse[3] = SET_RESPONSE_ENGINE_OFF;
 
-	case READ_RPM_COMMAND:
-		{
+        pResponse->AddResponse(setResponse, 4);
 
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_RPM;
-			*((uint16_t*)(readResponse+4)) = m_engineRPM;
+        break;
+      }
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
-	
-	case READ_IAT_COMMAND:
-		{
+      if (setValue > 100) setValue = 100;
 
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_IAT;
-			*((uint16_t*)(readResponse+4)) = m_engineIAT;
+      if (setValue < 10) setValue = 10;
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
+      // Set throttle position
+      m_engineThrottlePos = setValue;
 
-	case READ_O2_COMMAND:
-		{
-			if ( length < 2 )
-			{
-				// Send failure response
-				uint8_t failureResponse[4];
-				failureResponse[0] = FAILURE_RESPONSE_TYPE;
-				*((uint16_t*)(failureResponse+1)) = 1;	
-				failureResponse[3] = FAILURE_INVALID_DATA;
+      uint8_t setResponse[6];
+      setResponse[0] = SET_RESPONSE_TYPE;
+      *((uint16_t *)(setResponse + 1)) = 3;
+      setResponse[3] = SET_THROTTLEPOS_COMMAND;
+      *((uint16_t *)(setResponse + 4)) = setValue;
 
-				pResponse->AddResponse( failureResponse, 4 );
-			}
-			else
-			{
-				uint8_t readResponse[7];
-				readResponse[0] = READ_RESPONSE_TYPE;
-				*((uint16_t*)(readResponse+1)) = 4;	
-				readResponse[3] = READ_RESPONSE_O2;
-				readResponse[4] = pData[1];
+      pResponse->AddResponse(setResponse, 6);
+    } break;
 
-				if ( pData[1] == 0 )
-					*((uint16_t*)(readResponse+5)) = m_engineO2_1;
-				else
-					*((uint16_t*)(readResponse+5)) = m_engineO2_2;
+    case SET_TORQUE_COMMAND: {
+      if (!m_bRunning) {
+        uint8_t setResponse[4];
+        setResponse[0] = SET_RESPONSE_TYPE;
+        *((uint16_t *)(setResponse + 1)) = 1;
+        setResponse[3] = SET_RESPONSE_ENGINE_OFF;
 
-				pResponse->AddResponse( readResponse, 7 );
-			}
-		}
-		break;
+        pResponse->AddResponse(setResponse, 4);
 
-	case READ_TEMP_COMMAND:
-		{
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_TEMP;
-			*((uint16_t*)(readResponse+4)) = m_engineTemp;
+        break;
+      }
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
+      if (setValue > ENGINE_MAX_TORQUE) setValue = ENGINE_MAX_TORQUE;
 
-	case READ_TORQUE_COMMAND:
-		{
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_TORQUE;
-			*((uint16_t*)(readResponse+4)) = m_engineTorque;
+      // Ask engine for this much torque
+      CommandTorque(setValue);
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
+      // Response with the current torque value of the engine!
+      uint8_t setResponse[6];
+      setResponse[0] = SET_RESPONSE_TYPE;
+      *((uint16_t *)(setResponse + 1)) = 3;
+      setResponse[3] = SET_TORQUE_COMMAND;
+      *((uint16_t *)(setResponse + 4)) = m_engineTorque;
 
-	case READ_THROTTLEPOS_COMMAND:
-		{
-			uint8_t readResponse[6];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
-			readResponse[3] = READ_RESPONSE_THROTTLEPOS;
-			*((uint16_t*)(readResponse+4)) = m_engineThrottlePos;
+      pResponse->AddResponse(setResponse, 6);
+    } break;
 
-			pResponse->AddResponse( readResponse, 6 );
-		}
-		break;
+    default: {
+      uint8_t setResponse[5];
+      setResponse[0] = SET_RESPONSE_TYPE;
+      *((uint16_t *)(setResponse + 1)) = 2;
+      setResponse[3] = SET_RESPONSE_INVALID_FIELD;
+      setResponse[4] = fieldID;
 
-	default:
-		{
-			uint8_t readResponse[5];
-			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 2;	
-			readResponse[3] = READ_RESPONSE_INVALID_FIELD;
-			readResponse[4] = fieldID;
-
-			pResponse->AddResponse( readResponse, 5 );
-		}
-		break;
-
-	}
+      pResponse->AddResponse(setResponse, 5);
+    } break;
+  }
 }
 
-void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length < 3 )
-	{
-		uint8_t setResponse[4];
-		setResponse[0] = SET_RESPONSE_TYPE;
-		*((uint16_t*)(setResponse+1)) = 1;	
-		setResponse[3] = SET_RESPONSE_INVALID_LENGTH;
+void CECM::HandleActionMessage(uint8_t *pData, uint16_t length,
+                               CResponse *pResponse) {
+  if (length < 1) return;
 
-		pResponse->AddResponse( setResponse, 4 );
-		return;
-	}
+  uint8_t fieldID = pData[0];
 
-	uint8_t fieldID = pData[0];
-	uint16_t setValue = *((uint16_t*)(pData+1));
+  switch (fieldID) {
+    case START_ENGINE_COMMAND: {
+      if (!m_bRunning) StartEngine(pResponse);
 
-	switch( fieldID )
-	{
-	case SET_THROTTLEPOS_COMMAND:
-		{
-			if ( !m_bRunning )
-			{
-				uint8_t setResponse[4];
-				setResponse[0] = SET_RESPONSE_TYPE;
-				*((uint16_t*)(setResponse+1)) = 1;	
-				setResponse[3] = SET_RESPONSE_ENGINE_OFF;
+      uint8_t actionResponse[4];
+      actionResponse[0] = ACTION_RESPONSE_TYPE;
+      *((uint16_t *)(actionResponse + 1)) = 1;
+      actionResponse[3] = ACTION_ENGINE_ON;
 
-				pResponse->AddResponse( setResponse, 4 );
+      pResponse->AddResponse(actionResponse, 4);
+    }
 
-				break;
-			}
+    break;
 
-			if ( setValue > 100 )
-				setValue = 100;
+    case STOP_ENGINE_COMMAND: {
+      if (m_bRunning) StopEngine(pResponse);
 
-			if ( setValue < 10 )
-				setValue = 10;
+      uint8_t actionResponse[4];
+      actionResponse[0] = ACTION_RESPONSE_TYPE;
+      *((uint16_t *)(actionResponse + 1)) = 1;
+      actionResponse[3] = ACTION_ENGINE_OFF;
 
-			// Set throttle position
-			m_engineThrottlePos = setValue;
-
-			uint8_t setResponse[6];
-			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 3;	
-			setResponse[3] = SET_THROTTLEPOS_COMMAND;
-			*((uint16_t*)(setResponse+4)) = setValue;
-
-			pResponse->AddResponse( setResponse, 6 );
-		}
-		break;
-	
-	case SET_TORQUE_COMMAND:
-		{
-			if ( !m_bRunning )
-			{
-				uint8_t setResponse[4];
-				setResponse[0] = SET_RESPONSE_TYPE;
-				*((uint16_t*)(setResponse+1)) = 1;	
-				setResponse[3] = SET_RESPONSE_ENGINE_OFF;
-
-				pResponse->AddResponse( setResponse, 4 );
-
-				break;
-			}
-
-			if ( setValue > ENGINE_MAX_TORQUE )
-				setValue = ENGINE_MAX_TORQUE;
-
-			// Ask engine for this much torque
-			CommandTorque( setValue );
-
-			// Response with the current torque value of the engine!
-			uint8_t setResponse[6];
-			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 3;	
-			setResponse[3] = SET_TORQUE_COMMAND;
-			*((uint16_t*)(setResponse+4)) = m_engineTorque;
-
-			pResponse->AddResponse( setResponse, 6 );
-		}
-		break;
-
-	default:
-		{
-			uint8_t setResponse[5];
-			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 2;	
-			setResponse[3] = SET_RESPONSE_INVALID_FIELD;
-			setResponse[4] = fieldID;
-
-			pResponse->AddResponse( setResponse, 5 );
-		}
-		break;
-	}
+      pResponse->AddResponse(actionResponse, 4);
+    } break;
+  }
 }
 
-void CECM::HandleActionMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
-{
-	if ( length < 1 )
-		return;
+void CECM::StartEngine(CResponse *pResponse) {
+  if (m_bRunning) return;
 
-	uint8_t fieldID = pData[0];
+  m_bRunning = true;
 
-	switch( fieldID )
-	{
-	case START_ENGINE_COMMAND:
-		{	
-			if ( !m_bRunning )
-				StartEngine( pResponse );
-		
-			uint8_t actionResponse[4];
-			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 1;	
-			actionResponse[3] = ACTION_ENGINE_ON;
-
-			pResponse->AddResponse( actionResponse, 4 );
-		}
-
-		break;
-
-	case STOP_ENGINE_COMMAND:
-		{
-			if ( m_bRunning )
-				StopEngine( pResponse );
-
-			uint8_t actionResponse[4];
-			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 1;	
-			actionResponse[3] = ACTION_ENGINE_OFF;
-
-			pResponse->AddResponse( actionResponse, 4 );
-		}
-		break;
-	}
+  m_engineRPM = 700;
+  m_engineEGT = 90;
+  m_engineIAT = 75;
+  m_engineTemp = 90;
+  m_engineTorque = 0;
+  m_engineThrottlePos = 10;  // 10%
+  m_engineO2_1 = 17;         // 17%
+  m_engineO2_2 = 17;         // 17%
 }
 
-void CECM::StartEngine( CResponse *pResponse )
-{
-	if ( m_bRunning )
-		return;
+void CECM::StopEngine(CResponse *pResponse) {
+  if (!m_bRunning) return;
 
-	m_bRunning = true;
+  m_bRunning = false;
 
-	m_engineRPM = 700;
-	m_engineEGT = 90;
-	m_engineIAT = 75;
-	m_engineTemp = 90;
-	m_engineTorque = 0;
-	m_engineThrottlePos = 10;	// 10%
-	m_engineO2_1 = 17;	// 17%
-	m_engineO2_2 = 17;	// 17%
+  m_engineRPM = 0;
+  m_engineEGT = 0;
+  m_engineIAT = 75;
+  m_engineTemp = 75;
+  m_engineTorque = 0;
+  m_engineThrottlePos = 0;  // 10%
+  m_engineO2_1 = 0;         // 0%
+  m_engineO2_2 = 0;         // 0%
 }
 
-void CECM::StopEngine( CResponse *pResponse )
-{
-	if ( !m_bRunning )
-		return;
+void CECM::CommandTorque(uint16_t newTorque) {
+  uint16_t deltaTorque;
+  bool bTorqueDecrease = false;
 
-	m_bRunning = false;
+  if (newTorque < m_engineTorque) {
+    deltaTorque = m_engineTorque - newTorque;
+    bTorqueDecrease = true;
+  } else {
+    deltaTorque = newTorque - m_engineTorque;
+  }
 
-	m_engineRPM = 0;
-	m_engineEGT = 0;
-	m_engineIAT = 75;
-	m_engineTemp = 75;
-	m_engineTorque = 0;
-	m_engineThrottlePos = 0;	// 10%
-	m_engineO2_1 = 0;	// 0%
-	m_engineO2_2 = 0;	// 0%
+  if (bTorqueDecrease)
+    m_engineRPM -= (deltaTorque * 10);
+  else
+    m_engineRPM += (deltaTorque * 10);
+
+  m_engineTorque = newTorque;
 }
 
-void CECM::CommandTorque( uint16_t newTorque )
-{
-	uint16_t deltaTorque;
-	bool bTorqueDecrease = false;
+void CECM::EngineTick(void) {
+  // Check engine state
+  if (m_bLastRunningState != m_bRunning) {
+    uint8_t ecmBroadcastMessage[5];
 
-	if ( newTorque < m_engineTorque )
-	{
-		deltaTorque = m_engineTorque - newTorque;
-		bTorqueDecrease = true;
-	}
-	else
-	{
-		deltaTorque = newTorque - m_engineTorque;
-	}
+    ecmBroadcastMessage[0] = ENGINE_STATE_CHANGE;
+    *((uint16_t *)(ecmBroadcastMessage + 1)) = 1;
 
-	if ( bTorqueDecrease )
-		m_engineRPM -= (deltaTorque * 10);
-	else
-		m_engineRPM += (deltaTorque * 10);
+    if (m_bRunning)
+      ecmBroadcastMessage[3] = 1;
+    else
+      ecmBroadcastMessage[3] = 0;
 
-	m_engineTorque = newTorque;
-}
+    // Inform everyone the engine is on
+    m_pLANBus->SendMessage(ECM_LANBUS_ID, 0xFF, ecmBroadcastMessage, 4);
+  }
 
-void CECM::EngineTick( void )
-{
-	// Check engine state
-	if ( m_bLastRunningState != m_bRunning )
-	{	
-		uint8_t ecmBroadcastMessage[5];
-
-		ecmBroadcastMessage[0] = ENGINE_STATE_CHANGE;
-		*((uint16_t*)(ecmBroadcastMessage+1)) = 1;
-
-		if ( m_bRunning )
-			ecmBroadcastMessage[3] = 1;
-		else
-			ecmBroadcastMessage[3] = 0;
-
-		// Inform everyone the engine is on
-		m_pLANBus->SendMessage( ECM_LANBUS_ID, 0xFF, ecmBroadcastMessage, 4 );
-	}
-
-	// Record last state
-	m_bLastRunningState = m_bRunning;
+  // Record last state
+  m_bLastRunningState = m_bRunning;
 }

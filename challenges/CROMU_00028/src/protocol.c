@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "protocol.h"
+
+#include <libcgc.h>
 
 void receive_eventually(int fd, void* destination, size_t expected);
 void send_eventually(int fd, void* payload, size_t expected);
@@ -64,33 +65,24 @@ protocol_frame* receive_frame() {
   size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
   size_t actual_received = 0;
 
-  receive_eventually(STDIN,
-                     &candidate,
+  receive_eventually(STDIN, &candidate,
                      sizeof(candidate.type) + sizeof(candidate.length));
 
   protocol_frame* payload = allocate_frame(candidate);
 
   if (payload->length == 0) return payload;
 
-  receive_eventually(STDIN,
-                     payload->value,
-                     payload->length);
-
+  receive_eventually(STDIN, payload->value, payload->length);
 
   return payload;
 }
 
 void send_frame(protocol_frame* payload) {
   size_t sent_bytes;
-  send_eventually(STDOUT,
-                      (void*)(payload),
-                      sizeof(payload->type) + sizeof(payload->length));
+  send_eventually(STDOUT, (void*)(payload),
+                  sizeof(payload->type) + sizeof(payload->length));
 
-
-  send_eventually(STDOUT,
-                      (void*)(payload->value),
-                      payload->length);
-
+  send_eventually(STDOUT, (void*)(payload->value), payload->length);
 }
 
 void send_empty_frame(uint8 type) {
@@ -122,11 +114,11 @@ void send_eventually(int fd, void* payload, size_t expected) {
   size_t actual = 0;
   void* buf = payload;
 
-  while (actual < expected){
+  while (actual < expected) {
     int errcode = 0;
     size_t count = 0;
     errcode = transmit(fd, buf, expected - actual, &count);
-    
+
     if (errcode) _terminate(-1);
 
     actual += count;
@@ -144,7 +136,7 @@ void receive_eventually(int fd, void* destination, size_t expected) {
     errcode = receive(fd, buf, expected - actual, &count);
 
     if (errcode) _terminate(-1);
-    if (count == 0) _terminate(-1); // eof
+    if (count == 0) _terminate(-1);  // eof
 
     actual += count;
     buf += count;

@@ -25,224 +25,189 @@ THE SOFTWARE.
 
 */
 
-
+#include "input.h"
 #include "service.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "input.h"
 
 int add_player(playerInfoType *playerList) {
+  int i;
+  char buffer[MAX_NAME_LEN];
+  int method;
 
-int i;
-char buffer[MAX_NAME_LEN];
-int method;
+  i = 0;
 
-	i = 0;
+  while (playerList[i].player_name[0] != 0 && i < MAX_PLAYERS) ++i;
 
-	while (playerList[i].player_name[0] != 0 && i < MAX_PLAYERS) 
-		++i;
+  if (i == MAX_PLAYERS) {
+    printf("Too many players\n");
+    return -1;
+  }
 
-	if (i == MAX_PLAYERS) {
+  printf("Enter player name\n");
+  if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-		printf("Too many players\n");
-		return -1;
-	}
+  strcpy(playerList[i].player_name, buffer);
 
-	printf("Enter player name\n");
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-		return -1;
+  playerList[i].funds = 500;
+  playerList[i].computerPlayer = 0;
+  playerList[i].wins = 0;
+  playerList[i].losses = 0;
+  playerList[i].useHints = 0;
 
-	strcpy(playerList[i].player_name, buffer);
+  printf("Computer player? (y/n)\n");
 
-	playerList[i].funds = 500;
-	playerList[i].computerPlayer = 0;
-	playerList[i].wins = 0;
-	playerList[i].losses = 0;
-	playerList[i].useHints = 0;
+  if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-	printf("Computer player? (y/n)\n");
+  if (buffer[0] == 'y' || buffer[0] == 'Y') {
+    playerList[i].computerPlayer = 1;
 
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-		return -1;
+    printf("Method 1-4:\n");
 
-	if (buffer[0] == 'y' || buffer[0] == 'Y') {
+    if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-		playerList[i].computerPlayer = 1;
+    method = atoi(buffer);
 
-		printf("Method 1-4:\n");
+    playerList[i].computerMethod = method;
 
-		if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-			return -1;
+    switch (method) {
+      case 1:
 
-		method = atoi(buffer);
+        playerList[i].whackJackAlgorithm = matchDealer;
+        break;
 
-		playerList[i].computerMethod = method;
+      case 2:
 
-		switch (method) {
+        playerList[i].whackJackAlgorithm = basicAlgo;
+        break;
 
+      case 3:
 
-			case 1:
+        playerList[i].whackJackAlgorithm = simpleAlgo;
+        break;
 
-				playerList[i].whackJackAlgorithm = matchDealer;
-				break;
+      case 4:
 
-			case 2:
+        playerList[i].whackJackAlgorithm = neverBustAlgo;
+        break;
 
-				playerList[i].whackJackAlgorithm = basicAlgo;
-				break;			
+      case 5:
 
-			case 3:
+        playerList[i].whackJackAlgorithm = superDuperAlgo;
+        break;
+    }
 
-				playerList[i].whackJackAlgorithm = simpleAlgo;
-				break;
+  } else {
+    printf("Would you like to enable hints?\n");
 
-			case 4:
+    if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-				playerList[i].whackJackAlgorithm = neverBustAlgo;
-				break;
+    if (buffer[0] == 'y' || buffer[0] == 'Y') {
+      playerList[i].useHints = 1;
 
-			case 5:
+      printf("Method 1-4:\n");
 
-				playerList[i].whackJackAlgorithm = superDuperAlgo;
-				break;			
-		}
+      if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-	}
-	else {
+      method = atoi(buffer);
 
-		printf("Would you like to enable hints?\n");
+      playerList[i].hintsMethod = method;
 
+      switch (method) {
+        case 1:
 
-		if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-		return -1;
+          playerList[i].whackJackAlgorithm = matchDealer;
+          break;
 
-		if (buffer[0] == 'y' || buffer[0] == 'Y') {
+        case 2:
 
-			playerList[i].useHints = 1;
+          playerList[i].whackJackAlgorithm = basicAlgo;
+          break;
 
-			printf("Method 1-4:\n");
+        case 3:
 
-			if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-				return -1;
+          playerList[i].whackJackAlgorithm = simpleAlgo;
+          break;
 
-			method = atoi(buffer);
+        case 4:
 
-			playerList[i].hintsMethod = method;
+          playerList[i].whackJackAlgorithm = neverBustAlgo;
+          break;
+      }
+    }
+  }
 
-			switch (method) {
+  return 0;
 
-
-				case 1:
-
-					playerList[i].whackJackAlgorithm = matchDealer;
-					break;
-
-				case 2:
-
-					playerList[i].whackJackAlgorithm = basicAlgo;
-					break;			
-
-				case 3:
-
-					playerList[i].whackJackAlgorithm = simpleAlgo;
-					break;
-
-				case 4:
-
-					playerList[i].whackJackAlgorithm = neverBustAlgo;
-					break;			
-			}
-		}
-	}
-
-	return 0;
-
-} // add_player
-
+}  // add_player
 
 int show_players(playerInfoType *playerList) {
+  int i;
 
-int i;
+  i = 0;
 
+  while (i < MAX_PLAYERS) {
+    if (playerList[i].player_name[0] != 0) {
+      printf("Player name: $s\n", playerList[i].player_name);
+      printf("       Wins: $d\n", playerList[i].wins);
+      printf("     Losses: $d\n", playerList[i].losses);
+      printf("      Funds: $d\n", playerList[i].funds);
+    }
 
-	i = 0;
+    ++i;
+  }
 
-	while (i < MAX_PLAYERS) {
+  return 0;
 
-		if (playerList[i].player_name[0] != 0 ) {
-
-			printf("Player name: $s\n", playerList[i].player_name);
-			printf("       Wins: $d\n", playerList[i].wins);
-			printf("     Losses: $d\n", playerList[i].losses);
-			printf("      Funds: $d\n", playerList[i].funds);
-		}
-
-		++i;
-	}
-
-	return 0;
-
-} // show_players
+}  // show_players
 
 int delete_player(playerInfoType *playerList) {
+  int i;
+  int x;
+  int delete_num;
 
-int i;
-int x;
-int delete_num;
+  char buffer[20];
 
-char buffer[20];
+  i = 0;
+  x = 1;
 
-		i = 0;
-		x = 1;
+  while (i < MAX_PLAYERS) {
+    if (playerList[i].player_name[0] != 0) {
+      printf("$d) $s\n", x, playerList[i].player_name);
+      x++;
+    }
 
-	while (i < MAX_PLAYERS) {
+    ++i;
+  }
 
-		if (playerList[i].player_name[0] != 0 ) {
+  if (x == 1) {
+    printf("No players\n");
+    return -1;
+  }
 
-			printf("$d) $s\n", x, playerList[i].player_name);
-			x++;
-		}
+  printf("Player to delete (1-$d):\n", x - 1);
 
-		++i;
-	}
+  if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-	if (x == 1) {
+  delete_num = atoi(buffer);
 
-		printf("No players\n");
-		return -1;
-	}
+  if (delete_num >= x) return -1;
 
-	printf("Player to delete (1-$d):\n", x-1);
+  x = 0;
 
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-		return -1;
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] != 0) {
+      x++;
 
-	delete_num = atoi(buffer);
+      if (x == delete_num) {
+        playerList[i].player_name[0] = 0;
+        playerList[i].wins = 0;
+        playerList[i].losses = 0;
+        playerList[i].funds = 500;
 
-
-	if ( delete_num >= x)
-		return -1;
-
-	x = 0;
-
-	for (i=0; i < MAX_PLAYERS; ++i) {
-
-		if (playerList[i].player_name[0] != 0 ) {
-			x++;
-
-			if (x==delete_num) {
-				playerList[i].player_name[0] = 0;
-				playerList[i].wins = 0;
-				playerList[i].losses = 0;
-				playerList[i].funds = 500;
-
-				break;
-			}
-		}
-
-	}
-	return 0;
-
+        break;
+      }
+    }
+  }
+  return 0;
 }
-
-

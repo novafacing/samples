@@ -18,19 +18,17 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "strlen.h"
 
-
-
 // return number of chars in str, not counting the '\0'
 unsigned int strlen(const char *str) {
-    unsigned int count = 0;
-    while(*str != '\0') {
-        count++;
-        str++;
-    }
+  unsigned int count = 0;
+  while (*str != '\0') {
+    count++;
+    str++;
+  }
 
-    return count;
+  return count;
 }

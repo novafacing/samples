@@ -27,44 +27,34 @@ extern "C" {
 };
 
 Picture::Picture(void *_header, void *data, char *_filename)
-: File(sizeof(PictureHeader), ((PictureHeader *)_header)->data_size, _filename)
-{
-    memcpy(&header, _header, sizeof(PictureHeader));
-    raw_header = (void *)&header;
-    raw_data = new char[get_data_size() + 1];
-    memcpy(raw_data, data, get_data_size());
-    raw_data[get_data_size()] = '\0';
+    : File(sizeof(PictureHeader), ((PictureHeader *)_header)->data_size,
+           _filename) {
+  memcpy(&header, _header, sizeof(PictureHeader));
+  raw_header = (void *)&header;
+  raw_data = new char[get_data_size() + 1];
+  memcpy(raw_data, data, get_data_size());
+  raw_data[get_data_size()] = '\0';
 }
 
-Picture::~Picture()
-{
-    if (raw_data)
-        delete[] raw_data;
-    clear_data_size();
+Picture::~Picture() {
+  if (raw_data) delete[] raw_data;
+  clear_data_size();
 }
 
-unsigned int Picture::get_magic()
-{
-    return header.magic;
+unsigned int Picture::get_magic() { return header.magic; }
+
+size_t Picture::find_header_size() { return sizeof(PictureHeader); }
+
+size_t Picture::find_data_size(void *header) {
+  return ((PictureHeader *)header)->data_size;
 }
 
-size_t Picture::find_header_size()
-{
-    return sizeof(PictureHeader);
-}
-
-size_t Picture::find_data_size(void *header)
-{
-    return ((PictureHeader *)header)->data_size;
-}
-
-void Picture::print_picture()
-{
-    for (size_t i = 0; i < get_data_size(); i++) {
-        if (isprint(raw_data[i]) || raw_data[i]=='\n' || raw_data[i]=='\t')
-            printf("%c", raw_data[i]);
-        else
-            printf(" ");
-    }
-    printf("\n");
+void Picture::print_picture() {
+  for (size_t i = 0; i < get_data_size(); i++) {
+    if (isprint(raw_data[i]) || raw_data[i] == '\n' || raw_data[i] == '\t')
+      printf("%c", raw_data[i]);
+    else
+      printf(" ");
+  }
+  printf("\n");
 }

@@ -27,44 +27,39 @@ THE SOFTWARE.
 #ifndef SERVICE_H
 #define SERVICE_H
 
-
 typedef struct __attribute__((__packed__)) IFD_Array {
-
-	unsigned short Tag;
-	unsigned short Type;
-	unsigned Count;
-	unsigned Value;
+  unsigned short Tag;
+  unsigned short Type;
+  unsigned Count;
+  unsigned Value;
 
 } IFD_Array_Type;
 
-typedef struct __attribute__((__packed__))IFD {
-
-	unsigned short Count;
-	IFD_Array_Type Entry[];
+typedef struct __attribute__((__packed__)) IFD {
+  unsigned short Count;
+  IFD_Array_Type Entry[];
 
 } IFD_Type;
 
 typedef struct TIFF_Hdr {
+  unsigned short Byte_Order;
+  unsigned short Fixed;
+  unsigned Offset_to_IFD;
 
-	unsigned short Byte_Order;
-	unsigned short Fixed;
-	unsigned Offset_to_IFD;
-
-}  TIFF_Hdr_Type;
-
+} TIFF_Hdr_Type;
 
 void print_tag_text(unsigned short);
 void print_xif_tag_text(unsigned short);
 void print_gps_tag_text(unsigned short);
-void process_xif_ifd(IFD_Type *, TIFF_Hdr_Type *, unsigned short, unsigned char *);
-void process_gps_ifd(IFD_Type *, TIFF_Hdr_Type *, unsigned short, unsigned char *);
+void process_xif_ifd(IFD_Type *, TIFF_Hdr_Type *, unsigned short,
+                     unsigned char *);
+void process_gps_ifd(IFD_Type *, TIFF_Hdr_Type *, unsigned short,
+                     unsigned char *);
 void print_type(unsigned short);
-
 
 unsigned short motorola_swap_short(unsigned short);
 unsigned motorola_swap_word(unsigned);
 unsigned short intel_swap_short(unsigned short);
 unsigned intel_swap_word(unsigned);
-
 
 #endif

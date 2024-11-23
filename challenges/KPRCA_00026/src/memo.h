@@ -24,19 +24,15 @@
 #ifndef MEMO_H
 #define MEMO_H
 
-#include <wrapper.h>
 #include <libcgc.h>
 #include <string.h>
+#include <wrapper.h>
 
-#define MAX_MEMO_SUBJECT  32
-#define MAX_MEMO_BODY     4096
-#define MAX_MEMO_ID       500
+#define MAX_MEMO_SUBJECT 32
+#define MAX_MEMO_BODY 4096
+#define MAX_MEMO_ID 500
 
-enum mop_t {
-  MOP_VIEW = 0,
-  MOP_UPDATE = 1,
-  MOP_DELETE = 2
-};
+enum mop_t { MOP_VIEW = 0, MOP_UPDATE = 1, MOP_DELETE = 2 };
 
 enum mresult_t {
   MRES_OK = 0,
@@ -61,7 +57,7 @@ typedef struct date {
 } date_t;
 
 typedef struct memo memo_t;
-typedef enum mresult_t (*memo_fn) (memo_t *);
+typedef enum mresult_t (*memo_fn)(memo_t *);
 
 struct memo {
   int id;
@@ -72,7 +68,7 @@ struct memo {
   memo_fn mfuns[3];
 };
 
-memo_t* new_memo(memo_fn view_fn, memo_fn update_fn, memo_fn delete_fn);
+memo_t *new_memo(memo_fn view_fn, memo_fn update_fn, memo_fn delete_fn);
 enum mresult_t default_view_memo(memo_t *memo);
 enum mresult_t default_update_memo(memo_t *memo);
 enum mresult_t default_delete_memo(memo_t *memo);

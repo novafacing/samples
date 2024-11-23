@@ -20,72 +20,59 @@
  * THE SOFTWARE.
  *
  */
+#include "strio.h"
+
 #include <stdlib.h>
 #include <string.h>
-#include "strio.h"
 
 #define MAX_LENGTH (0x10000000)
 
-static int enlarge(strio_t *s, int min)
-{
-    char *buf;
-    int new_length = s->length;
+static int enlarge(strio_t *s, int min) {
+  char *buf;
+  int new_length = s->length;
 
-    if (new_length >= min)
-        return 1;
+  if (new_length >= min) return 1;
 
-    if (min >= MAX_LENGTH)
-        return 0;
+  if (min >= MAX_LENGTH) return 0;
 
-    while (new_length < min)
-        new_length *= 2;
+  while (new_length < min) new_length *= 2;
 
-    buf = realloc(s->buf, new_length);
-    if (buf == NULL)
-        return 0;
+  buf = realloc(s->buf, new_length);
+  if (buf == NULL) return 0;
 
-    s->buf = buf;
-    s->length = new_length;
-    return 1;
+  s->buf = buf;
+  s->length = new_length;
+  return 1;
 }
 
-int strio_init(strio_t *s)
-{
-    s->length = 32;
-    s->buf = malloc(s->length);
-    s->pos = 0;
+int strio_init(strio_t *s) {
+  s->length = 32;
+  s->buf = malloc(s->length);
+  s->pos = 0;
 
-    if (s->buf == NULL)
-        return 0;
+  if (s->buf == NULL) return 0;
 
-    return 1;
+  return 1;
 }
 
-void strio_free(strio_t *s)
-{
-    free(s->buf);
-    memset(s, 0, sizeof(strio_t));
+void strio_free(strio_t *s) {
+  free(s->buf);
+  memset(s, 0, sizeof(strio_t));
 }
 
-int strio_append_char(strio_t *s, char c)
-{
-    if (s->pos == s->length)
-    {
-        if (!enlarge(s, s->length + 1))
-            return 0;
-    }
+int strio_append_char(strio_t *s, char c) {
+  if (s->pos == s->length) {
+    if (!enlarge(s, s->length + 1)) return 0;
+  }
 
-    s->buf[s->pos++] = c;
-    return 1;
+  s->buf[s->pos++] = c;
+  return 1;
 }
 
-char *strio_dup(strio_t *s)
-{
-    if (s->pos == s->length)
-    {
-        if (!enlarge(s, s->length + 1))
-            return 0;
-    }
-    s->buf[s->pos] = 0;
-    return strdup(s->buf);
+char *strio_dup(strio_t *s) {
+  if (s->pos == s->length) {
+    if (!enlarge(s, s->length + 1)) return 0;
+  }
+  s->buf[s->pos] = 0;
+  return strdup(s->buf);
 }

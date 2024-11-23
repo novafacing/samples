@@ -25,92 +25,75 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
+
 #include "filesystem.h"
-#include "stdio.h"
-#include "string.h"
 #include "input.h"
 #include "malloc.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
+int sendStickPost(unsigned int postID) {
+  fileHandleType fh;
+  int retcode;
+  unsigned char posterName[REALNAME_LEN + 1];
+  unsigned char thePost[MAXPOST_LEN + 1];
+  unsigned int count;
+  int i;
 
-int sendStickPost( unsigned int postID ) {
+  if (postID > 15) {
+    return -1;
+  }
 
-fileHandleType fh;
-int retcode;
-unsigned char posterName[REALNAME_LEN+1];
-unsigned char thePost[MAXPOST_LEN+1];
-unsigned int count;
-int i;
+  // this is a memory mapped file to the magic page of data
+  fh = openFile("sticky.posts", ROOT_ID);
 
-	if ( postID > 15 ) {
+  if (fh < 0) {
+    printf("unable to open sticky posts\n");
+    return -1;
+  }
 
-		return -1;
+  // each post is 160 bytes in size, jump to the offset of the post we want
+  fileReadPosition(fh, postID * 160);
 
-	}
+  if (readFile(fh, (void *)posterName, REALNAME_LEN, 0, &count, ROOT_ID) != 0) {
+    printf("error reading sticky post\n");
+    return -1;
+  }
 
-	// this is a memory mapped file to the magic page of data
-	fh = openFile( "sticky.posts", ROOT_ID );
+  if (count != REALNAME_LEN) {
+    printf("Error reading data for sticky post\n");
+    return -1;
+  }
 
-	if ( fh < 0 ) {
+  posterName[REALNAME_LEN] = 0;
 
-		printf("unable to open sticky posts\n");
-		return -1;
+  if (readFile(fh, (void *)thePost, MAXPOST_LEN, 0, &count, ROOT_ID) != 0) {
+    printf("error reading sticky post\n");
+    return -1;
+  }
 
-	}
+  if (count != MAXPOST_LEN) {
+    printf("Error reading data for sticky post\n");
+    return -1;
+  }
 
-	// each post is 160 bytes in size, jump to the offset of the post we want
-	fileReadPosition( fh, postID * 160 );
+  thePost[MAXPOST_LEN] = 0;
 
-	if (readFile( fh, (void *)posterName, REALNAME_LEN, 0, &count, ROOT_ID ) != 0) {
+  for (i = 0; i < REALNAME_LEN; ++i) posterName[i] = (posterName[i] % 26) + 'A';
 
-		printf("error reading sticky post\n");
-		return -1;
+  for (i = 0; i < MAXPOST_LEN; ++i) thePost[i] = (thePost[i] % 26) + 'A';
 
-	}
+  count = REALNAME_LEN;
+  sendResponse((void *)&count, sizeof(int));
+  sendResponse(posterName, count);
 
-	if (count != REALNAME_LEN) {
+  count = MAXPOST_LEN;
+  sendResponse((void *)&count, sizeof(int));
+  sendResponse(thePost, count);
 
-		printf("Error reading data for sticky post\n");
-		return -1;
+  closeFile(fh);
 
-	}
-
-	posterName[REALNAME_LEN] = 0;
-
-	if ( readFile( fh, (void *)thePost, MAXPOST_LEN, 0, &count, ROOT_ID ) != 0 ) {
-
-		printf("error reading sticky post\n");
-		return -1;
-
-	}
-
-	if (count != MAXPOST_LEN) {
-
-		printf("Error reading data for sticky post\n");
-		return -1;
-
-	}
-
-	thePost[MAXPOST_LEN] = 0;
-
-	for (i=0; i < REALNAME_LEN; ++ i)
-		posterName[i] = (posterName[i] % 26) + 'A';
-
-	for (i=0; i < MAXPOST_LEN; ++ i)
-		thePost[i] = (thePost[i] % 26) + 'A';	
-
-	count = REALNAME_LEN;
-	sendResponse( (void *)&count, sizeof(int) );
-	sendResponse( posterName, count );
-
-	count = MAXPOST_LEN;
-	sendResponse( (void *)&count, sizeof(int) );
-	sendResponse( thePost, count );
-
-	closeFile( fh );
-
-	return 0;
-	
+  return 0;
 }
-

@@ -1,8 +1,8 @@
 #ifndef IO_H_
 #define IO_H_
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 void read_bytes(void *buf, size_t count);
 uint8_t read_byte();

@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #include <stdint.h>
 #ifndef ACTIONS_H
@@ -27,27 +26,26 @@
 
 #define MAX_NAME_SIZE 127
 
-
 typedef struct video {
-    struct video *next;
-    struct video *prev;
-    char name[MAX_NAME_SIZE+1];
-    uint8_t *encbuf;
-    uint32_t elen;
-    uint8_t *decbuf;
-    uint32_t dlen: 24; //gotta save space :)
-    uint32_t key : 8;
-    uint32_t csum;
-    bool can_delete;
+  struct video *next;
+  struct video *prev;
+  char name[MAX_NAME_SIZE + 1];
+  uint8_t *encbuf;
+  uint32_t elen;
+  uint8_t *decbuf;
+  uint32_t dlen : 24;  // gotta save space :)
+  uint32_t key : 8;
+  uint32_t csum;
+  bool can_delete;
 } video;
 
 video *vhead;
 
 static video *get_video_by_name(char *);
-void list(char*);
-void play(char*);
-void add(char*);
-void remove(char*);
-void quit(char*);
+void list(char *);
+void play(char *);
+void add(char *);
+void remove(char *);
+void quit(char *);
 
 #endif

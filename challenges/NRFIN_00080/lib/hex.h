@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef HEX_H
 #define HEX_H 1
@@ -32,7 +32,6 @@
  */
 int is_hex_digit(int8_t digit);
 
-
 /**
  * Convert an ASCII hex digit to an int.
  *
@@ -40,6 +39,5 @@ int is_hex_digit(int8_t digit);
  * @return 0 - 15 if valid hex_digit, -1 on error.
  */
 char ascii_hex_to_bin(int8_t hex_digit);
-
 
 #endif

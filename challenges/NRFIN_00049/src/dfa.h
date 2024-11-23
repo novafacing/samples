@@ -32,23 +32,23 @@
 typedef __attribute__((regparm(1))) void (*onmatch_handler)(void *);
 
 struct state {
-    onmatch_handler onmatch;
-    void *data;
+  onmatch_handler onmatch;
+  void *data;
 #ifdef PATCHED_1
-    unsigned char transitions[256];
+  unsigned char transitions[256];
 #else
-    char transitions[256];
+  char transitions[256];
 #endif
 };
 
 struct dfa {
-    int ready;
-    struct state *current;
-    struct state states[MAX_NUM_STATES];
-    struct {
-        struct bitset bitset;
-        unsigned char bits[(MAX_NUM_STATES + 1) / 8];
-    } accept;
+  int ready;
+  struct state *current;
+  struct state states[MAX_NUM_STATES];
+  struct {
+    struct bitset bitset;
+    unsigned char bits[(MAX_NUM_STATES + 1) / 8];
+  } accept;
 };
 
 /**
@@ -83,7 +83,8 @@ void dfa_update_onmatch(struct dfa *dfa, onmatch_handler onmatch, void *data);
  * @return 1 if parsing is done, EXIT_SUCCESS on success, EXIT_FAILURE on
  *      failure
  */
-int dfa_parse_desc(struct dfa *dfa, char *line, onmatch_handler onmatch, void *data);
+int dfa_parse_desc(struct dfa *dfa, char *line, onmatch_handler onmatch,
+                   void *data);
 
 /**
  * Parse an input to see if it matches the language accepted by a DFA.
@@ -105,4 +106,3 @@ int dfa_process_input(struct dfa *dfa, char c);
 int dfa_give_example(struct dfa *dfa, char *str, size_t len);
 
 #endif /* DFA_H_ */
-

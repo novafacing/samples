@@ -26,14 +26,14 @@
 
 #include <stdint.h>
 
-typedef uint32_t (*hash_t) (const char *, size_t);
+typedef uint32_t (*hash_t)(const char *, size_t);
 typedef struct bloomy {
   uint8_t *bits;
   size_t size;
   hash_t hashes[3];
 } bloomy_t;
 
-bloomy_t* bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3);
+bloomy_t *bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3);
 void bloomy_free(bloomy_t *bloomy);
 int bloomy_check(bloomy_t *bloomy, const char *buf);
 void bloomy_add(bloomy_t *bloomy, const char *buf);

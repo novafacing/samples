@@ -24,8 +24,8 @@ THE SOFTWARE.
 #ifndef __PARSE_CVF__
 #define __PARSE_CVF__
 #include <libcgc.h>
-#include <stdlib.h>
 #include <malloc.h>
+#include <stdlib.h>
 
 #include "bitstream.h"
 
@@ -33,80 +33,84 @@ THE SOFTWARE.
  * Structure to store the rendering of a single frame
  **/
 typedef struct frame {
-	/// Height of the frame to be rendered
-	unsigned int height;
+  /// Height of the frame to be rendered
+  unsigned int height;
 
-	/// Width of the frame to be rendered
-	unsigned int width;
+  /// Width of the frame to be rendered
+  unsigned int width;
 
-	/// Pointer a character array of the rendered image. The length is equal to height*width
-	char *image;
+  /// Pointer a character array of the rendered image. The length is equal to
+  /// height*width
+  char *image;
 } frame, *pframe;
 
 /**
- * Structure to store a single pixel dictionary. The length of the array is equal to the "charCount" field
+ * Structure to store a single pixel dictionary. The length of the array is
+ *equal to the "charCount" field
  **/
 typedef struct pixelDict {
-	/// Number of characters available in the pixel array
-	unsigned int charCount;
+  /// Number of characters available in the pixel array
+  unsigned int charCount;
 
-	/// Pointer to the array to be used with this dictionary.
-	char *pixelArray;
+  /// Pointer to the array to be used with this dictionary.
+  char *pixelArray;
 } pixelDict, *ppixelDict;
 
 /**
  * Main structure to store a single CVF video
  **/
 typedef struct cvf {
-	/// Height of the video in characters
-	unsigned int height;
+  /// Height of the video in characters
+  unsigned int height;
 
-	/// Width of the video in characters.
-	unsigned int width;
+  /// Width of the video in characters.
+  unsigned int width;
 
-	/// Number of video frames.
-	unsigned int frameCount;
+  /// Number of video frames.
+  unsigned int frameCount;
 
-	/// Buffer to store the optional name field
-	char name[256];
+  /// Buffer to store the optional name field
+  char name[256];
 
-	/// Buffer to store the optional description field
-	char desc[256];
+  /// Buffer to store the optional description field
+  char desc[256];
 
-	/// Array of pixel dictionary structures used to render frames using a custom dictionary
-	pixelDict pds[8];
+  /// Array of pixel dictionary structures used to render frames using a custom
+  /// dictionary
+  pixelDict pds[8];
 
-	/// Count of frames rendered
-	unsigned int rCount;
+  /// Count of frames rendered
+  unsigned int rCount;
 
-	/// Pointer to an array of rendered framed pointers. The length is determined by "frameCount"
-	pframe *renderedFrames;
+  /// Pointer to an array of rendered framed pointers. The length is determined
+  /// by "frameCount"
+  pframe *renderedFrames;
 } cvf, *pcvf;
 
 /// Calculates the number of bits needed for a given size.
-unsigned int bitsNeeded( unsigned int length );
+unsigned int bitsNeeded(unsigned int length);
 
-int parseCVFFrame( pBitStream pbs, pcvf pNewImage );
-void displayCVFFrame( pcvf pNewImage );
+int parseCVFFrame(pBitStream pbs, pcvf pNewImage);
+void displayCVFFrame(pcvf pNewImage);
 
-int parseCVFPixelDict( pBitStream pbs, pcvf pNewImage, int index );
+int parseCVFPixelDict(pBitStream pbs, pcvf pNewImage, int index);
 
 /// Parses the description section
-int parseCVFDescription( pBitStream pbs, pcvf pNewImage );
+int parseCVFDescription(pBitStream pbs, pcvf pNewImage);
 
 /// Parses the name section.
-int parseCVFName( pBitStream pbs, pcvf pNewImage );
+int parseCVFName(pBitStream pbs, pcvf pNewImage);
 
 /// Parses the header section
-int parseCVFHeader( pBitStream pbs, pcvf pNewImage );
+int parseCVFHeader(pBitStream pbs, pcvf pNewImage);
 
 /// renders the image
-void renderCVF( pBitStream pbs );
+void renderCVF(pBitStream pbs);
 
 /// Initializes a new cvf structure
-pcvf initCVF( void );
+pcvf initCVF(void);
 
 /// Frees the video structure
-void freeCVF( pcvf cvf );
+void freeCVF(pcvf cvf);
 
 #endif

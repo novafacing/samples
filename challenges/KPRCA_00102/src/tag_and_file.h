@@ -24,13 +24,12 @@
 #ifndef TAG_AND_FILE_H_
 #define TAG_AND_FILE_H_
 
-#include "mgc_tag.h"
 #include "mgc_file.h"
+#include "mgc_tag.h"
 
-struct tag_and_file
-{
-    MgcFile *file;
-    mgc_tag tag;
+struct tag_and_file {
+  MgcFile *file;
+  mgc_tag tag;
 };
 
 #endif

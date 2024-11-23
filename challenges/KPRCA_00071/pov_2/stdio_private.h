@@ -8,11 +8,11 @@
 #define F_WRITE 2
 
 struct FILE {
-    int fd;
-    int rw;
-    int idx;
-    int length;
-    char buffer[1024];
+  int fd;
+  int rw;
+  int idx;
+  int length;
+  char buffer[1024];
 };
 
 #endif

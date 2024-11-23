@@ -23,11 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#ifndef SLS_H 
+#ifndef SLS_H
 #define SLS_H
-
-
-
 
 typedef struct SLSMessage_s {
   uint16_t length;
@@ -39,7 +36,7 @@ typedef struct SLSMessage_s {
   uint8_t *message;
 } SLS_MESSAGE;
 
-#define SLS_HEADER_LENGTH (2+2+1+4+4+2)
+#define SLS_HEADER_LENGTH (2 + 2 + 1 + 4 + 4 + 2)
 
 typedef struct ClientContext_s {
   uint32_t connection_id;
@@ -67,8 +64,6 @@ typedef struct ServerState_s {
   uint32_t *cookie_base;
 } SERVER_STATE;
 
-
-
 typedef struct SLSFunctions_s {
   SLS_MESSAGE *(*receive_msg)(SERVER_STATE *);
   int (*send_msg)(SLS_MESSAGE *);
@@ -79,7 +74,7 @@ typedef struct SLSFunctions_s {
   void (*handle_heartbeat)(SLS_MESSAGE *);
   void (*destroy_message)(SLS_MESSAGE *);
   void (*handle_handshake)(SERVER_STATE *, SLS_MESSAGE *);
-  CLIENT_CONTEXT *(*get_connection)(SERVER_STATE *,uint32_t);
+  CLIENT_CONTEXT *(*get_connection)(SERVER_STATE *, uint32_t);
   void (*set_cookie)(SERVER_STATE *);
   CLIENT_CONTEXT *(*lookup_context)(SERVER_STATE *, uint32_t);
   void (*handle_application)(SERVER_STATE *, CLIENT_CONTEXT *, SLS_MESSAGE *);
@@ -91,7 +86,7 @@ typedef struct SLSFunctions_s {
 #pragma pack(push, 1)
 typedef struct SLSError_s {
   uint16_t error_code;
-  uint8_t  severity;
+  uint8_t severity;
 } SLS_ERROR_MESSAGE;
 
 typedef struct SLSHandshake_s {
@@ -101,7 +96,7 @@ typedef struct SLSHandshake_s {
   uint16_t msg_length;
   uint8_t *message;
 } SLS_HANDSHAKE_MESSAGE;
-#define SLS_HANDSHAKE_HEADER_LEN (2+4+4+2)
+#define SLS_HANDSHAKE_HEADER_LEN (2 + 4 + 4 + 2)
 
 typedef struct SLSHeartbeat_s {
   uint8_t type;
@@ -126,10 +121,10 @@ typedef struct SLSApplication_s {
 #define SLS_VERSION 0xff01
 
 #define SLS_TYPE_CHANGESPEC 0x01
-#define SLS_TYPE_ERROR      0x02
-#define SLS_TYPE_HANDSHAKE  0x03
+#define SLS_TYPE_ERROR 0x02
+#define SLS_TYPE_HANDSHAKE 0x03
 #define SLS_TYPE_APPLICATION 0x04
-#define SLS_TYPE_HEARTBEAT  0x05
-#define SLS_TYPE_SHUTDOWN   0x06
+#define SLS_TYPE_HEARTBEAT 0x05
+#define SLS_TYPE_SHUTDOWN 0x06
 
 #endif

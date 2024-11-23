@@ -23,16 +23,15 @@
  *
  */
 
-#include "libcgc.h"
 #include <malloc.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
-void *realloc(void *ptr, size_t size)
-{
-  if (ptr == NULL)
-    return malloc(size);
+#include "libcgc.h"
+
+void *realloc(void *ptr, size_t size) {
+  if (ptr == NULL) return malloc(size);
 
   if (size == 0) {
     free(ptr);
@@ -44,8 +43,7 @@ void *realloc(void *ptr, size_t size)
   }
 
   void *new = malloc(size);
-  if (new == NULL)
-    return NULL;
+  if (new == NULL) return NULL;
 
   struct blk_t *blk = (struct blk_t *)((intptr_t)ptr - HEADER_PADDING);
 

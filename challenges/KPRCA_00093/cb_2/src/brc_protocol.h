@@ -26,26 +26,25 @@
 #include <stdio.h>
 
 class BrcProtocol {
-  public:
-    BrcProtocol(unsigned short recv_length);
-    BrcProtocol(char *data, unsigned short data_length);
-    virtual ~BrcProtocol();
+ public:
+  BrcProtocol(unsigned short recv_length);
+  BrcProtocol(char *data, unsigned short data_length);
+  virtual ~BrcProtocol();
 
-    virtual bool Recv(FILE *fd_in);
-    virtual bool Send(FILE *fd_out) const;
-    virtual const unsigned int protocol_id() const = 0;
+  virtual bool Recv(FILE *fd_in);
+  virtual bool Send(FILE *fd_out) const;
+  virtual const unsigned int protocol_id() const = 0;
 
-    const unsigned int token_length() const;
-    const unsigned int data_length() const;
-    const char *token() const;
-    const char *data() const;
-    void DebugPrintProtocol() const;
-  protected:
-    void set_token();
-    unsigned short length_; //does not include checksum
-    char *raw_data_;
+  const unsigned int token_length() const;
+  const unsigned int data_length() const;
+  const char *token() const;
+  const char *data() const;
+  void DebugPrintProtocol() const;
+
+ protected:
+  void set_token();
+  unsigned short length_;  // does not include checksum
+  char *raw_data_;
 };
 
-
 #endif /* BRC_PROTOCOL_H_ */
-

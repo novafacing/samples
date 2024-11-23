@@ -23,32 +23,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "malloc.h"
-#include "stdlib.h"
 #include "libc.h"
 
+#include <libcgc.h>
 
-void InitializeRandomness()
-{
-  srand();
-}
+#include "malloc.h"
+#include "stdlib.h"
 
-char *GenerateRandomString(int length) 
-{
-  if (length <= 0) 
-  {
+void InitializeRandomness() { srand(); }
+
+char *GenerateRandomString(int length) {
+  if (length <= 0) {
     return NULL;
   }
   char *string = calloc(length + 1);
-  for (int i=0; i < length; i++) 
-  {
+  for (int i = 0; i < length; i++) {
     string[i] = random_in_range(0x41, 0x7a);
   }
   return string;
 }
 
-unsigned int GenerateRandomNumber(int min, int max) 
-{
+unsigned int GenerateRandomNumber(int min, int max) {
   return random_in_range(min, max);
 }

@@ -20,16 +20,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "vector.h"
-
 #include "ray.h"
 
-struct ray
-make_ray(struct vector origin, struct vector direction)
-{
-    struct ray ret;
-    ret.origin = origin;
-    ret.direction = vector_norm(direction);
-    return ret;
-}
+#include "vector.h"
 
+struct ray make_ray(struct vector origin, struct vector direction) {
+  struct ray ret;
+  ret.origin = origin;
+  ret.direction = vector_norm(direction);
+  return ret;
+}

@@ -33,36 +33,34 @@ THE SOFTWARE.
 #define MAX_OP_COUNT 64
 
 // keep track of the last and next correct answers
-typedef struct 
-{
-	int next_correct_answer; // used to compare the user's next answer
-	int last_correct_answer; // TODO how use this?
-	char *next_correct_equation; // used to compare the user's next equation
+typedef struct {
+  int next_correct_answer;      // used to compare the user's next answer
+  int last_correct_answer;      // TODO how use this?
+  char *next_correct_equation;  // used to compare the user's next equation
 } Game_Info;
 
-typedef struct
-{
-	// Total Won/Lost
-	int num_won_total;
-	int num_lost_total;
-	// Solved Equations total
-	int num_won_solved_equation;
-	int num_lost_solved_equation;
-	// Solved Equations with words
-	int num_won_words; // equations won that had a spelled out number in it
-	int num_lost_words; // equations won that had a spelled out number in it
-	// Created Equations results
-	int num_won_created_equations;
-	int num_lost_created_equations;
-	// perimeter correct
-	int num_won_perimeter;
-	int num_lost_perimeter;
-	// volume correct
-	int num_won_volume;
-	int num_lost_volume;
-	// area correct
-	int num_won_area;
-	int num_lost_area;
+typedef struct {
+  // Total Won/Lost
+  int num_won_total;
+  int num_lost_total;
+  // Solved Equations total
+  int num_won_solved_equation;
+  int num_lost_solved_equation;
+  // Solved Equations with words
+  int num_won_words;   // equations won that had a spelled out number in it
+  int num_lost_words;  // equations won that had a spelled out number in it
+  // Created Equations results
+  int num_won_created_equations;
+  int num_lost_created_equations;
+  // perimeter correct
+  int num_won_perimeter;
+  int num_lost_perimeter;
+  // volume correct
+  int num_won_volume;
+  int num_lost_volume;
+  // area correct
+  int num_won_area;
+  int num_lost_area;
 } Statistics;
 
 extern Statistics game_stats;

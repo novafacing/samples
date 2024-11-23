@@ -23,121 +23,124 @@
 #pragma once
 
 #include <cstdio.h>
+
 #include "vector.h"
 
-namespace std
-{
-    typedef unsigned int size_t;
+namespace std {
+typedef unsigned int size_t;
 };
 
 class Node;
 
-enum class TokenType
-{
-    Ignore,
-    Optional,
-    Repeat,
-    Or,
-    And,
+enum class TokenType {
+  Ignore,
+  Optional,
+  Repeat,
+  Or,
+  And,
 
-    Indent,
-    Identifier,
-    Number,
-    String,
-    Discard,
-    Var,
-    Assign,
-    Operator,
-    Declare,
-    DeclareAssign,
-    Call,
-    Stmt,
-    Expr,
-    Block,
-    While,
-    If,
-    Elif,
-    Else,
-    BinOp,
-    Proc,
-    Break,
-    Return
+  Indent,
+  Identifier,
+  Number,
+  String,
+  Discard,
+  Var,
+  Assign,
+  Operator,
+  Declare,
+  DeclareAssign,
+  Call,
+  Stmt,
+  Expr,
+  Block,
+  While,
+  If,
+  Elif,
+  Else,
+  BinOp,
+  Proc,
+  Break,
+  Return
 };
 
-class Token
-{
-public:
-    Token();
-    Token(TokenType type);
-    Token(const char *str);
-    Token(const char *str, TokenType type);
-    Token(const char *str, size_t len, TokenType type);
-    Token(const Token &child, TokenType type);
+class Token {
+ public:
+  Token();
+  Token(TokenType type);
+  Token(const char *str);
+  Token(const char *str, TokenType type);
+  Token(const char *str, size_t len, TokenType type);
+  Token(const Token &child, TokenType type);
 
-    bool parse(const char *input, size_t length, Node **pNode, size_t *pLength) const;
-    void set(const Token &child);
-    void setAfter(Token &after);
+  bool parse(const char *input, size_t length, Node **pNode,
+             size_t *pLength) const;
+  void set(const Token &child);
+  void setAfter(Token &after);
 
-    Token operator++(int ignored);
-    Token operator+(Token rhs);
-    Token operator|(Token rhs);
-    Token operator&();
-protected:
-    bool parse_(const char *input, size_t length, Node **pNode, size_t *pLength) const;
-    void after_(const char *input, size_t length, Node **pNode, size_t *pLength) const;
-protected:
-    TokenType type;
+  Token operator++(int ignored);
+  Token operator+(Token rhs);
+  Token operator|(Token rhs);
+  Token operator&();
 
-    vector<Token> children;
-    Token *indirect, *after;
-    const char *literal;
-    size_t length;
+ protected:
+  bool parse_(const char *input, size_t length, Node **pNode,
+              size_t *pLength) const;
+  void after_(const char *input, size_t length, Node **pNode,
+              size_t *pLength) const;
+
+ protected:
+  TokenType type;
+
+  vector<Token> children;
+  Token *indirect, *after;
+  const char *literal;
+  size_t length;
 };
 
-class Node
-{
-    friend class Token;
-public:
-    Node(TokenType type);
-    ~Node();
+class Node {
+  friend class Token;
 
-    static void deleteTree(Node *root);
-    void dump(unsigned int level);
-    void setLiteral(const char *start, size_t length);
+ public:
+  Node(TokenType type);
+  ~Node();
 
-    TokenType getType() { return type; }
-    Node *getChild() { return child; }
-    Node *getNext() { return next; }
-    unsigned int getLength() { return length; }
-    const char *getLiteral() { return literal; }
-protected:
-    char *literal;
-    unsigned int length;
-    TokenType type;
-    Node *child;
+  static void deleteTree(Node *root);
+  void dump(unsigned int level);
+  void setLiteral(const char *start, size_t length);
 
-    Node *next;
+  TokenType getType() { return type; }
+  Node *getChild() { return child; }
+  Node *getNext() { return next; }
+  unsigned int getLength() { return length; }
+  const char *getLiteral() { return literal; }
+
+ protected:
+  char *literal;
+  unsigned int length;
+  TokenType type;
+  Node *child;
+
+  Node *next;
 };
 
-class Parser
-{
-public:
-    Parser(const char *input);
-    ~Parser();
+class Parser {
+ public:
+  Parser(const char *input);
+  ~Parser();
 
-    bool parse();
-    Node *releaseRoot()
-    {
-        Node *result = root;
-        root = nullptr;
-        return result;
-    }
-private:
-    const char *input;
-    size_t length;
-    size_t parsedLength;
+  bool parse();
+  Node *releaseRoot() {
+    Node *result = root;
+    root = nullptr;
+    return result;
+  }
 
-    Node *root;
+ private:
+  const char *input;
+  size_t length;
+  size_t parsedLength;
+
+  Node *root;
 };
 
-Token operator "" _T(const char *, std::size_t);
+Token operator"" _T(const char *, std::size_t);

@@ -21,7 +21,6 @@
  *
  */
 #include <libcgc.h>
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,13 +30,11 @@
 
 int repl(char *expr);
 
-int main(void)
-{
+int main(void) {
   printf("Welcome to the SLUR REPL. Type an expression to evaluate it.\n");
   char *buf = malloc(MAX_EXPRESSION_LENGTH + 1);
 
-  if (buf == NULL)
-    exit(1);
+  if (buf == NULL) exit(1);
 
   for (;;) {
     memset(buf, '\0', MAX_EXPRESSION_LENGTH + 1);
@@ -49,8 +46,7 @@ int main(void)
     }
 
     // Maybe unbounded print here on hard to acheive error.
-    if (repl(buf) != 0)
-      printf("Error evaluating expression.\n");
+    if (repl(buf) != 0) printf("Error evaluating expression.\n");
 
     return 0;
   }

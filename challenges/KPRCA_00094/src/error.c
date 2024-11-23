@@ -23,8 +23,7 @@
 
 #include "error.h"
 
-const char* err_msgs[] =
-{
+const char* err_msgs[] = {
     "",
     "Internal error.",
     "Nickname is too long.",
@@ -43,29 +42,27 @@ const char* err_msgs[] =
     "Invalid value.",
 };
 
-const char* error_to_string(error_t err)
-{
-    switch (err)
-    {
-        case ERR_OK:
-        case ERR_INTERNAL:
-        case ERR_NICK_LONG:
-        case ERR_PASS_LONG:
-        case ERR_NAME_LONG:
-        case ERR_NO_SUCH_USER:
-        case ERR_NO_SUCH_CHAL:
-        case ERR_NO_SUCH_TEAM:
-        case ERR_CHAL_ALREADY_OPEN:
-        case ERR_DUPLICATE_FLAG:
-        case ERR_INVALID_FLAG:
-        case ERR_USER_EXISTS:
-        case ERR_TEAM_EXISTS:
-        case ERR_CHAL_EXISTS:
-        case ERR_WRONG_PASS:
-        case ERR_INVALID_VALUE:
-            return err_msgs[err];
-            break;
-        default:
-            return "Unknown error.";
-    }
+const char* error_to_string(error_t err) {
+  switch (err) {
+    case ERR_OK:
+    case ERR_INTERNAL:
+    case ERR_NICK_LONG:
+    case ERR_PASS_LONG:
+    case ERR_NAME_LONG:
+    case ERR_NO_SUCH_USER:
+    case ERR_NO_SUCH_CHAL:
+    case ERR_NO_SUCH_TEAM:
+    case ERR_CHAL_ALREADY_OPEN:
+    case ERR_DUPLICATE_FLAG:
+    case ERR_INVALID_FLAG:
+    case ERR_USER_EXISTS:
+    case ERR_TEAM_EXISTS:
+    case ERR_CHAL_EXISTS:
+    case ERR_WRONG_PASS:
+    case ERR_INVALID_VALUE:
+      return err_msgs[err];
+      break;
+    default:
+      return "Unknown error.";
+  }
 }

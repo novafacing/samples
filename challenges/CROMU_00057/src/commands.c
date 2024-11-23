@@ -24,138 +24,135 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 #include "commands.h"
+
+#include <libcgc.h>
+
+#include "service.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 
 #define COMMAND_PREFIX 0x12345678
 
-int receive_commands( productDefType **database ) {
+int receive_commands(productDefType **database) {
+  commandMessageType command;
+  int read_length;
+  int retval;
 
-commandMessageType command;
-int read_length;
-int retval;
+  while (1) {
+    read_length = sizeof(command.prefix) + sizeof(command.command_length) +
+                  sizeof(command.command_type);
 
-	while(1) {
+    if (receive_bytes((unsigned char *)&command, read_length) == -1)
+      _terminate(-1);
 
+    if (command.prefix != COMMAND_PREFIX) {
+      _terminate(-1);
+    }
 
-		read_length = sizeof(command.prefix) + sizeof(command.command_length) + sizeof(command.command_type);
+    // check to see if the incoming data is larger than the buffer
+    if (command.command_length > COMMAND_MAX_LEN) {
+      _terminate(-1);
+    }
 
-		if (receive_bytes((unsigned char *)&command, read_length) == -1)
-			_terminate(-1);
+    if (receive_bytes((unsigned char *)&command.command,
+                      command.command_length) == -1)
+      _terminate(-1);
 
-		if (command.prefix != COMMAND_PREFIX) {
+    switch (command.command_type) {
+      case TERMINATE:
 
-			_terminate(-1);
+        return 0;
+        break;
 
-		}
+      case CREATE_PRODUCT:
 
-		// check to see if the incoming data is larger than the buffer
-		if (command.command_length > COMMAND_MAX_LEN) {
+        retval = create_product(database, command.command);
+        break;
 
-			_terminate(-1);
-		}
+      case DELETE_PRODUCT:
 
-		if (receive_bytes((unsigned char *)&command.command, command.command_length) == -1)
-			_terminate(-1);
+        retval = delete_product(database, (messageIDType *)command.command);
+        break;
 
-		switch (command.command_type) {
+      case LIST_PRODUCTS:
 
-				case TERMINATE:
+        retval = list_product(*database, (messageIDType *)command.command);
+        break;
 
-					return 0;
-					break;
+      case CREATE_PBI:
 
-				case CREATE_PRODUCT:
+        retval = create_pbi(*database, (newPBIMessageType *)command.command);
+        break;
 
-					retval=create_product(database, command.command);
-					break;
+      case DELETE_PBI:
 
-				case DELETE_PRODUCT:
+        retval = delete_pbi(*database, (deletePBIMessageType *)command.command);
+        break;
 
-					retval=delete_product(database, (messageIDType *)command.command);
-					break;
+      case CREATE_SPRINT:
 
-				case LIST_PRODUCTS:
+        retval =
+            create_sprint(*database, (newSprintMessageType *)command.command);
+        break;
 
-					retval=list_product(*database, (messageIDType *)command.command);
-					break;
+      case DELETE_SPRINT:
 
-				case CREATE_PBI:
+        retval = delete_sprint(*database,
+                               (deleteSprintMessageType *)command.command);
+        break;
 
-					retval=create_pbi( *database, (newPBIMessageType *)command.command);
-					break;
+      case MOVE_PBI_TO_SPRINT:
 
-				case DELETE_PBI:
+        // move an item from the product backlog to a defined sprint
+        retval = move_pbi_to_sprint(*database,
+                                    (movePBIMessageType *)command.command);
+        break;
 
-					retval=delete_pbi( *database, (deletePBIMessageType *)command.command);
-					break;
+      case MOVE_SBI_TO_PBI:
 
-				case CREATE_SPRINT:
+        // move an item from the Sprint back to the product backlog
+        retval =
+            move_sbi_to_pbl(*database, (moveToPBIMessageType *)command.command);
+        break;
 
-					retval=create_sprint( *database, (newSprintMessageType *)command.command);
-					break;
+      case UPDATE_SBI_STATUS:
 
-				case DELETE_SPRINT:
+        retval = update_sbi_status(*database,
+                                   (updateSBIMessageType *)command.command);
+        break;
 
-					retval=delete_sprint( *database, (deleteSprintMessageType *)command.command);
-					break;
+      case UPDATE_SBI_POINTS:
 
-				case MOVE_PBI_TO_SPRINT:
+        retval = update_sbi_points(*database,
+                                   (updateSBIMessageType *)command.command);
+        break;
 
-					// move an item from the product backlog to a defined sprint
-					retval=move_pbi_to_sprint( *database, (movePBIMessageType *)command.command);
-					break;
+      case UPDATE_SBI_DESCR:
 
-				case MOVE_SBI_TO_PBI:
+        retval = update_sbi_description(
+            *database, (updateSBIDescMessageType *)command.command);
+        break;
 
-					// move an item from the Sprint back to the product backlog
-					retval=move_sbi_to_pbl( *database, (moveToPBIMessageType *)command.command);
-					break;
+      case LIST_ALL_PRODUCTS:
 
-				case UPDATE_SBI_STATUS:
+        retval = list_all_products(*database);
+        break;
 
-					retval=update_sbi_status( *database, (updateSBIMessageType *)command.command );
-					break;
+    }  // switch
 
-				case UPDATE_SBI_POINTS:
+  }  // while (1)
 
-					retval=update_sbi_points( *database, (updateSBIMessageType *)command.command );
-					break;
-
-				case UPDATE_SBI_DESCR:
-
-					retval=update_sbi_description( *database, (updateSBIDescMessageType *)command.command );
-					break;
-
-				case LIST_ALL_PRODUCTS:
-
-					retval = list_all_products( *database );
-					break;
-
-		} // switch
-
-	} // while (1)
-
-
-} // receive_commands
-
-
+}  // receive_commands
 
 int send_response(int response_code) {
+  commandResponseType message;
 
-commandResponseType message;
+  message.prefix = 0x87654321;
+  message.command_response = response_code;
 
-	message.prefix = 0x87654321;
-	message.command_response = response_code;
+  write(STDOUT, (void *)&message, sizeof(message));
 
-	write( STDOUT, (void *)&message, sizeof(message) );
-
-	return 0;
-	
+  return 0;
 }
-
-

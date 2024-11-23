@@ -25,32 +25,32 @@
 
 #pragma pack(push, 1)
 typedef struct {
-    unsigned char magic[2];
-    unsigned int file_size;
-    unsigned int reserved;
-    unsigned int data_offset;
+  unsigned char magic[2];
+  unsigned int file_size;
+  unsigned int reserved;
+  unsigned int data_offset;
 } bmp_header_t;
 #pragma pack(pop)
 
 typedef struct {
-    unsigned int size;
-    int width;
-    int height;
-    unsigned short planes;
-    unsigned short bits;
-    unsigned int compression;
-    unsigned int imagesize;
-    int hres;
-    int vres;
-    unsigned int num_colors;
-    unsigned int imp_colors;
+  unsigned int size;
+  int width;
+  int height;
+  unsigned short planes;
+  unsigned short bits;
+  unsigned int compression;
+  unsigned int imagesize;
+  int hres;
+  int vres;
+  unsigned int num_colors;
+  unsigned int imp_colors;
 } bmp_info_t;
 
 #pragma pack(push, 1)
 typedef struct {
-    bmp_header_t header;
-    bmp_info_t info;
-    unsigned char data[];
+  bmp_header_t header;
+  bmp_info_t info;
+  unsigned char data[];
 } barcode_bmp_t;
 #pragma pack(pop)
 

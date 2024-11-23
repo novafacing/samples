@@ -26,17 +26,16 @@ THE SOFTWARE.
 #ifndef CGCRPC_H
 #define CGCRPC_H
 
+#define CGCRPC_SUCCESS 0
+#define CGCRPC_FAILURE -1
 
-#define CGCRPC_SUCCESS          0
-#define CGCRPC_FAILURE          -1
+#define CGCRPC_ERROR_FORMAT 2
+#define CGCRPC_ERROR_COMMAND 4
+#define CGCRPC_ERROR_NOT_FOUND 8
+#define CGCRPC_ERROR_VERSION 10
 
-#define CGCRPC_ERROR_FORMAT     2
-#define CGCRPC_ERROR_COMMAND    4
-#define CGCRPC_ERROR_NOT_FOUND  8
-#define CGCRPC_ERROR_VERSION    10
-
-#define MAX_CGCRPC_CONNECTIONS  10
-#define MAX_CGCRPC_ENDPOINTS    10
+#define MAX_CGCRPC_CONNECTIONS 10
+#define MAX_CGCRPC_ENDPOINTS 10
 
 #define MAX_CGCRPC_RESPONSE_SIZE 2048
 
@@ -50,20 +49,20 @@ THE SOFTWARE.
   uint16_t command
   ...command specific options
 */
-#define CGCRPC_BIND             0xa0
+#define CGCRPC_BIND 0xa0
 /*
   uint16_t nameLength
   uint8_t name[nameLength]
   uint16_t version
 */
-#define CGCRPC_BIND_RESPONSE    0x0a
+#define CGCRPC_BIND_RESPONSE 0x0a
 /*
   uint8_t responseCode
   uint32_t  bindID
 */
-#define CGCRPC_WRITE_TO_PIPE    0xa1
+#define CGCRPC_WRITE_TO_PIPE 0xa1
 /*
-  uint32_t bindID 
+  uint32_t bindID
   uint16_t opCode
   uint16_t requestLength
   uint8_t *requestData
@@ -76,9 +75,9 @@ THE SOFTWARE.
 */
 
 typedef struct CGCRPC_Endpoint_s {
-  char      name[64];
-  uint16_t  version;
-  void      (*handler)(uint16_t, uint8_t *, uint32_t, uint8_t **, uint16_t *);
+  char name[64];
+  uint16_t version;
+  void (*handler)(uint16_t, uint8_t *, uint32_t, uint8_t **, uint16_t *);
 } CGCRPC_Endpoint;
 
 typedef struct CGCRPC_Connection_s {
@@ -89,7 +88,8 @@ typedef struct CGCRPC_Connection_s {
 extern CGCRPC_Endpoint endpoints[MAX_CGCRPC_ENDPOINTS];
 extern CGCRPC_Connection connections[MAX_CGCRPC_CONNECTIONS];
 
-uint32_t HandleCGCRPCMessage(void *data, uint32_t dataLength, void **output, uint32_t *outputLength);
+uint32_t HandleCGCRPCMessage(void *data, uint32_t dataLength, void **output,
+                             uint32_t *outputLength);
 void InitializeCGCRPC();
 
 #endif

@@ -33,36 +33,35 @@ class Conversation;
 class Channel;
 
 class User {
-  public:
-    User(const char *name, const unsigned short name_length, const char *pass,
-            const unsigned short pass_length, const bool is_admin);
-    const bool IsAdmin();
-    bool Equals(User *user) const;
-    bool CompareName(const char *name, unsigned short length) const;
-    bool VerifyPass(const char *pass, unsigned short length) const;
-    bool BlockUser(User *user);
-    bool UnblockUser(User *user);
-    static void Delete(User **puser);
-    bool AddChannelConversation(Conversation *convo);
-    bool AddUserConversation(Conversation *convo);
+ public:
+  User(const char *name, const unsigned short name_length, const char *pass,
+       const unsigned short pass_length, const bool is_admin);
+  const bool IsAdmin();
+  bool Equals(User *user) const;
+  bool CompareName(const char *name, unsigned short length) const;
+  bool VerifyPass(const char *pass, unsigned short length) const;
+  bool BlockUser(User *user);
+  bool UnblockUser(User *user);
+  static void Delete(User **puser);
+  bool AddChannelConversation(Conversation *convo);
+  bool AddUserConversation(Conversation *convo);
 
-    const char *name();
-    void set_name(const char *name, const unsigned short name_length);
-    const unsigned short name_length();
-    const char *pass();
-    void set_pass(const char *pass, const unsigned short pass_length);
-    const unsigned short pass_length();
+  const char *name();
+  void set_name(const char *name, const unsigned short name_length);
+  const unsigned short name_length();
+  const char *pass();
+  void set_pass(const char *pass, const unsigned short pass_length);
+  const unsigned short pass_length();
 
-
-  private:
-    char name_[USER_MAX_LENGTH];
-    unsigned short name_length_;
-    char pass_[USER_MAX_LENGTH];
-    unsigned short pass_length_;
-    bool is_admin_;
-    ArrayWrapper<Conversation *> joined_channels_;
-    ArrayWrapper<Conversation *> direct_msgs_;
-    ArrayWrapper<User *> blocked_users_;
+ private:
+  char name_[USER_MAX_LENGTH];
+  unsigned short name_length_;
+  char pass_[USER_MAX_LENGTH];
+  unsigned short pass_length_;
+  bool is_admin_;
+  ArrayWrapper<Conversation *> joined_channels_;
+  ArrayWrapper<Conversation *> direct_msgs_;
+  ArrayWrapper<User *> blocked_users_;
 };
 
 #undef USER_MAX_LENGTH

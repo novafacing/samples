@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef ACTUATORS_H
 #define ACTUATORS_H 1
 
@@ -38,7 +38,7 @@ void dispense_bowl(void);
 void completion_buzzer(void);
 
 /**
- * The following functions operate all of the internal actuators that 
+ * The following functions operate all of the internal actuators that
  * 	move / open / close / etc. to dispense the breakfast
  */
 
@@ -62,6 +62,5 @@ void dispense_blueberries(void);
 void dispense_berry_medley(void);
 void dispense_sugar_cube(void);
 void dispense_strawberries(void);
-
 
 #endif

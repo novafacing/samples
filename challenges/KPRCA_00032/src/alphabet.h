@@ -5,7 +5,7 @@
 #define ALPHABET_START 'A'
 
 typedef struct {
-    unsigned int freq[ALPHABET_SIZE];
+  unsigned int freq[ALPHABET_SIZE];
 } freqtab_t;
 
 void ftab_init(freqtab_t *ftab, const char *word);

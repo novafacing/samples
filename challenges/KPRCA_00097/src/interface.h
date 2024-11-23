@@ -22,49 +22,50 @@
  */
 #pragma once
 
-#include <cstdlib.h>
 #include <cstdio.h>
+#include <cstdlib.h>
+
 #include "hashmap.h"
 #include "node.h"
 #include "parser.h"
 
-enum class Error
-{
-    SUCCESS = 0,
-    INVALID_OP = 1,
-    INVALID_DESC = 2,
-    NOT_READY = 3,
-    INVALID_DATA = 4,
-    NOT_FOUND = 5
+enum class Error {
+  SUCCESS = 0,
+  INVALID_OP = 1,
+  INVALID_DESC = 2,
+  NOT_READY = 3,
+  INVALID_DATA = 4,
+  NOT_FOUND = 5
 };
 
-class Interface
-{
-private:
-    Node *get_node();
-    char *get_string();
-    unsigned char *get_string_binary(uint16_t *psize);
-    unsigned int new_descriptor(Node *node);
-    void send_error(Error error);
-    void send_descriptor(unsigned int desc);
-    void send_string(const char *str);
+class Interface {
+ private:
+  Node *get_node();
+  char *get_string();
+  unsigned char *get_string_binary(uint16_t *psize);
+  unsigned int new_descriptor(Node *node);
+  void send_error(Error error);
+  void send_descriptor(unsigned int desc);
+  void send_string(const char *str);
 
-    bool op_init_parser();
-    bool op_load_data();
-    bool op_get_attr();
-    bool op_set_attr();
-    bool op_list_attr();
-    bool op_get_tag();
-    bool op_get_ns();
-    bool op_query();
-    bool op_version_check();
-public:
-    Interface(FILE *input, FILE *output);
+  bool op_init_parser();
+  bool op_load_data();
+  bool op_get_attr();
+  bool op_set_attr();
+  bool op_list_attr();
+  bool op_get_tag();
+  bool op_get_ns();
+  bool op_query();
+  bool op_version_check();
 
-    bool process();
-private:
-    FILE *d_in, *d_out;
-    unsigned int d_next;
-    HashMap<unsigned int, Node *, UIntComparator> d_descriptors;    
-    Parser *d_parser;
+ public:
+  Interface(FILE *input, FILE *output);
+
+  bool process();
+
+ private:
+  FILE *d_in, *d_out;
+  unsigned int d_next;
+  HashMap<unsigned int, Node *, UIntComparator> d_descriptors;
+  Parser *d_parser;
 };

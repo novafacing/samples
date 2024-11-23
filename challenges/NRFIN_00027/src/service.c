@@ -21,30 +21,26 @@
  */
 
 #include <libcgc.h>
-#include "libc.h"
 
+#include "libc.h"
 #include "rpncalc.h"
 
-int
-main(void) {
-    int cmd, ret;
-    struct rpncalc_state state;
+int main(void) {
+  int cmd, ret;
+  struct rpncalc_state state;
 
-    rpncalc_init(&state);
+  rpncalc_init(&state);
 
-    while (1) {
-        if (read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
-            continue;
+  while (1) {
+    if (read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd)) continue;
 
-        if (cmd == -1)
-            break;
+    if (cmd == -1) break;
 
-        ret = perform_rpncalc_op(&state, cmd);
-        write_all(STDOUT, &ret, sizeof(ret));
-    }
+    ret = perform_rpncalc_op(&state, cmd);
+    write_all(STDOUT, &ret, sizeof(ret));
+  }
 
-    rpncalc_destroy(&state);
+  rpncalc_destroy(&state);
 
-    return 0;
+  return 0;
 }
-

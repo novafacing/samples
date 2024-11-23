@@ -18,23 +18,23 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
+
+#include "read_all.h"
 
 #include <libcgc.h>
-#include "read_all.h"
 
 // borrowed from REDPILL; modified to do full size receives
 size_t read_all(int fd, char *buf, size_t size) {
-   char *p_ch = buf;
-   size_t total = 0;
-   size_t nbytes = 0;
-   while (size) {
-      if (receive(fd, &p_ch[total], size, &nbytes) != 0 || nbytes == 0) {
-         break;
-      }
-      total += nbytes;
-      size -= nbytes;
-   }
-   return total;
+  char *p_ch = buf;
+  size_t total = 0;
+  size_t nbytes = 0;
+  while (size) {
+    if (receive(fd, &p_ch[total], size, &nbytes) != 0 || nbytes == 0) {
+      break;
+    }
+    total += nbytes;
+    size -= nbytes;
+  }
+  return total;
 }
-

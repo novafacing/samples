@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef FS_H
 #define FS_H
 #include <libcgc.h>
+
 #include "stdint.h"
 
 #define PERMS_READ (0x4)
@@ -34,18 +35,18 @@ THE SOFTWARE.
 #define MAX_FILES (16)
 #define MAX_FILE_SIZE (4096)
 typedef struct _filesystem {
-	char Filename[32];
-	char Data[MAX_FILE_SIZE];
-	char Owner[32];
-	char Group[32];
-	uint16_t Perms;
-	uint16_t Size;
+  char Filename[32];
+  char Data[MAX_FILE_SIZE];
+  char Owner[32];
+  char Group[32];
+  uint16_t Perms;
+  uint16_t Size;
 } Filesystem, *pFilesystem;
 
 typedef struct _file {
-	pFilesystem fp;
-	char *CurrPosition;
-	uint8_t mode;
+  pFilesystem fp;
+  char *CurrPosition;
+  uint8_t mode;
 } FILE, *pFILE;
 
 void InitFilesystem(void);
@@ -53,8 +54,10 @@ void ListFiles(void);
 pFILE fopen(char *Filename, char *Mode, uint8_t Suid);
 char *fgets(char *str, uint32_t size, pFILE stream);
 uint8_t fclose(pFILE stream);
-size_t fread(void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream);
-size_t fwrite(const void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream);
+size_t fread(void *restrict ptr, size_t size, size_t nitems,
+             FILE *restrict stream);
+size_t fwrite(const void *restrict ptr, size_t size, size_t nitems,
+              FILE *restrict stream);
 uint8_t Dump(char *filename);
 
 #endif

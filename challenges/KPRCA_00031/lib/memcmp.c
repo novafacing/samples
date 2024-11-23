@@ -24,13 +24,12 @@
  */
 #include <libcgc.h>
 
-int memcmp(const char *s1, const char *s2, size_t n)
-{
-    size_t i;
-    for(i = 0; i < n; i++)
-      if (*s1 != *s2)
-        return *s1 - *s2;
-      else
-        s1++, s2++;
-    return 0;
+int memcmp(const char *s1, const char *s2, size_t n) {
+  size_t i;
+  for (i = 0; i < n; i++)
+    if (*s1 != *s2)
+      return *s1 - *s2;
+    else
+      s1++, s2++;
+  return 0;
 }

@@ -18,22 +18,20 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "strncmp.h"
 
 int strncmp(const char* s1, const char* s2, size_t size) {
-	
-	for (int i = 0; i < size; i++) {
-		if(s1[i] != s2[i]) {
-			if((unsigned char)s1[i] < (unsigned char)s2[i])
-				return -1;
-			else 
-				return 1;
-		}
-		else if (s1[i] == '\0') {
-			return 0;
-		}
-	}
+  for (int i = 0; i < size; i++) {
+    if (s1[i] != s2[i]) {
+      if ((unsigned char)s1[i] < (unsigned char)s2[i])
+        return -1;
+      else
+        return 1;
+    } else if (s1[i] == '\0') {
+      return 0;
+    }
+  }
 
-	return 0;
+  return 0;
 }

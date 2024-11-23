@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef BST_H
 #define BST_H 1
@@ -28,23 +28,22 @@
 // NOTE: this is a Binary Search Tree that stores signed int value in each node.
 
 struct bst_node {
-	int key;
-	void *data;
-	struct bst_node *parent;
-	struct bst_node *left;
-	struct bst_node *right;
+  int key;
+  void *data;
+  struct bst_node *parent;
+  struct bst_node *left;
+  struct bst_node *right;
 };
 
 struct bst {
-	struct bst_node *root;
-	unsigned int count;
-	struct bst_node *iter_node;
-	unsigned char iter_asc;
+  struct bst_node *root;
+  unsigned int count;
+  struct bst_node *iter_node;
+  unsigned char iter_asc;
 };
 
 typedef struct bst_node bst_node_t;
-typedef struct bst 		bst_t;
-
+typedef struct bst bst_t;
 
 /**
  * Create a new node containing key.
@@ -162,7 +161,8 @@ bst_node_t *bst_successor(bst_node_t *node);
  *
  * @param bst 			Pointer to a Binary Search Tree
  * @param ascending 	TRUE if want to iterated ascending, else FALSE.
- * @return Pointer to node in BST containing highest/lowest key, else NULL_NODE if empty.
+ * @return Pointer to node in BST containing highest/lowest key, else NULL_NODE
+ * if empty.
  */
 bst_node_t *bst_iter_start(bst_t *bst, unsigned char ascending);
 
@@ -170,7 +170,8 @@ bst_node_t *bst_iter_start(bst_t *bst, unsigned char ascending);
  * Find next node in bst when sorted ascending or descending.
  *
  * @param bst	Pointer to a Binary Search Tree
- * @return Pointer to node in BST containing next highest/lowest key, else NULL_NODE if done.
+ * @return Pointer to node in BST containing next highest/lowest key, else
+ * NULL_NODE if done.
  */
 bst_node_t *bst_iter_next(bst_t *bst);
 
@@ -215,7 +216,6 @@ bst_node_t *bst_remove_node(bst_t *bst, bst_node_t *node);
  * @return Pointer to removed node, if key is found, else NULL_NODE.
  */
 bst_node_t *bst_remove(bst_t *bst, int key);
-
 
 /**
  * Indicate if bst has zero nodes.

@@ -18,12 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #pragma once
 
 /**
- * Receive delimiter terminated bytes from file descriptor and write into buffer.
+ * Receive delimiter terminated bytes from file descriptor and write into
+ * buffer.
  *
  * @param fd Source file descriptor
  * @param buf Destination buffer; may not be delim terminated

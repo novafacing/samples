@@ -20,113 +20,101 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "tokenizer.h"
+
 #include "conv.h"
 #include "stdlib.h"
 #include "string.h"
 
-#include "tokenizer.h"
+static int parse_variable(char *str, struct token *token) {
+  char *start = str, *end = str;
 
-static int
-parse_variable(char *str, struct token *token)
-{
-    char *start = str, *end = str;
+  if (*end == '_')
+    end++;
+  else
+    while (islower(*end)) end++;
 
-    if (*end == '_')
-        end++;
-    else
-        while (islower(*end))
-            end++;
+  if (end == NULL || end - start > 4) return EXIT_FAILURE;
 
-    if (end == NULL || end - start > 4)
-        return EXIT_FAILURE;
+  token->type = TOK_VARIABLE;
 
-    token->type = TOK_VARIABLE;
+  memset(token->val.s, '\0', 4);
+  strncpy(token->val.s, start, end - start);
 
-    memset(token->val.s, '\0', 4);
-    strncpy(token->val.s, start, end - start);
-
-    return end - start;
+  return end - start;
 }
 
-static int
-parse_constant(char *str, struct token *token)
-{
-    int ret, result;
+static int parse_constant(char *str, struct token *token) {
+  int ret, result;
 
-    if ((ret = strtoi(str, 10, &result)) < 0)
-        return ret;
+  if ((ret = strtoi(str, 10, &result)) < 0) return ret;
 
-    token->type = TOK_CONSTANT;
-    token->val.i = result;
-    return ret;
+  token->type = TOK_CONSTANT;
+  token->val.i = result;
+  return ret;
 }
 
-ssize_t
-tokenize(char *str, struct token *tokens)
-{
-    int ret;
-    char c;
-    struct token *token = tokens;
+ssize_t tokenize(char *str, struct token *tokens) {
+  int ret;
+  char c;
+  struct token *token = tokens;
 
-    while ((c = *str++)) {
-        if (c == '_' || islower(c)) {
-            if ((ret = parse_variable(str - 1, token)) < 0)
-                return ret;
+  while ((c = *str++)) {
+    if (c == '_' || islower(c)) {
+      if ((ret = parse_variable(str - 1, token)) < 0) return ret;
 
-            str += ret - 1;
-            token++;
-            continue;
-        }
-
-        if (isdigit(c)) {
-            if ((ret = parse_constant(str - 1, token)) < 0)
-                return ret;
-
-            str += ret - 1;
-            token++;
-            continue;
-        }
-
-        switch (c) {
-        case '=':
-            token->type = TOK_ASSIGNMENT;
-            break;
-        case '+':
-            token->type = TOK_ADD;
-            break;
-        case '-':
-            token->type = TOK_SUBTRACT;
-            break;
-        case '*':
-            token->type = TOK_MULTIPLY;
-            break;
-        case '/':
-            token->type = TOK_DIVIDE;
-            break;
-        case '~':
-            token->type = TOK_NEGATE;
-            break;
-        case '&':
-            token->type = TOK_ADDRESS_OF;
-            break;
-        case '$':
-            token->type = TOK_DEREFERENCE;
-            break;
-        case '(':
-            token->type = TOK_LEFT_PARENTHESIS;
-            break;
-        case ')':
-            token->type = TOK_RIGHT_PARENTHESIS;
-            break;
-        case ' ':
-            continue;
-        default:
-            return EXIT_FAILURE;
-        }
-
-        token++;
+      str += ret - 1;
+      token++;
+      continue;
     }
 
-    return token - tokens;
-}
+    if (isdigit(c)) {
+      if ((ret = parse_constant(str - 1, token)) < 0) return ret;
 
+      str += ret - 1;
+      token++;
+      continue;
+    }
+
+    switch (c) {
+      case '=':
+        token->type = TOK_ASSIGNMENT;
+        break;
+      case '+':
+        token->type = TOK_ADD;
+        break;
+      case '-':
+        token->type = TOK_SUBTRACT;
+        break;
+      case '*':
+        token->type = TOK_MULTIPLY;
+        break;
+      case '/':
+        token->type = TOK_DIVIDE;
+        break;
+      case '~':
+        token->type = TOK_NEGATE;
+        break;
+      case '&':
+        token->type = TOK_ADDRESS_OF;
+        break;
+      case '$':
+        token->type = TOK_DEREFERENCE;
+        break;
+      case '(':
+        token->type = TOK_LEFT_PARENTHESIS;
+        break;
+      case ')':
+        token->type = TOK_RIGHT_PARENTHESIS;
+        break;
+      case ' ':
+        continue;
+      default:
+        return EXIT_FAILURE;
+    }
+
+    token++;
+  }
+
+  return token - tokens;
+}

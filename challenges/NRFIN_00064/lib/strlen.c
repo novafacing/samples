@@ -18,28 +18,27 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "cbstdio.h"
 
 /*F*************************/
 
-unsigned int
-strlen(str)
+unsigned int strlen(str)
 
-const char *str;		/* null-terminated string */
+    const char *str; /* null-terminated string */
 
 /*
-* PURPOSE : Calculate the length of a null-terminated string
-*
-* RETURN : The number of characters before the first null byte
-*
-*F*/
+ * PURPOSE : Calculate the length of a null-terminated string
+ *
+ * RETURN : The number of characters before the first null byte
+ *
+ *F*/
 
 {
-	int i = 0;
-	while(str[i]) {
-		i++;
-	}
+  int i = 0;
+  while (str[i]) {
+    i++;
+  }
 
-	return i;
+  return i;
 }

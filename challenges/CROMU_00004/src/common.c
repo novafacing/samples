@@ -23,21 +23,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
 #include "common.h"
-#include "service.h"
+
+#include <libcgc.h>
+
 #include "language.h"
+#include "service.h"
+#include "stdlib.h"
 
 int FindCode(char *s) {
-    int i;
+  int i;
 
-    for (i = 0; i < 91; i++) {
-      if (strcmp(l[i].code, s) == 0) {
-        return(i);
-      }
+  for (i = 0; i < 91; i++) {
+    if (strcmp(l[i].code, s) == 0) {
+      return (i);
     }
-    return(-1);
+  }
+  return (-1);
 }
 
 void InitLang(struct language *lp, char *old_code) {
@@ -67,5 +69,4 @@ void InitLang(struct language *lp, char *old_code) {
   }
   lp->dah = &l[index];
   InitLang(&l[index], new_code);
-
 }

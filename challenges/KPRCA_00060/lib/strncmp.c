@@ -22,12 +22,9 @@
  */
 #include "ctype.h"
 #include "string.h"
-int strncmp(const char *s1, const char *s2, size_t n)
-{
+int strncmp(const char *s1, const char *s2, size_t n) {
   const char *end = s1 + n;
-  while (*s1 && *s2 && *s1 == *s2 && s1 < end)
-    s1++, s2++;
-  if (s1 == end)
-      return 0;
+  while (*s1 && *s2 && *s1 == *s2 && s1 < end) s1++, s2++;
+  if (s1 == end) return 0;
   return *s1 - *s2;
 }

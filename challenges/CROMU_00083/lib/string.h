@@ -28,10 +28,10 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-size_t strlen( const char *str );
-int strcmp( const char *, const char *);
-int strncmp( const char *s1, const char *s2, size_t len );
+size_t strlen(const char *str);
+int strcmp(const char *, const char *);
+int strncmp(const char *s1, const char *s2, size_t len);
 void bzero(void *s, size_t n);
-void *memset( void *ptr, int value, size_t num );
+void *memset(void *ptr, int value, size_t num);
 
-#endif // __STRING_H__
+#endif  // __STRING_H__

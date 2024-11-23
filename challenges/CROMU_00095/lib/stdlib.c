@@ -23,11 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <stdlib.h>
-#include <stdint.h>
-#include "stdio.h"
 #include <ctype.h>
+#include <stdint.h>
+#include <stdlib.h>
 
+#include "stdio.h"
 
 #define LONG_MIN (0x80000000L)
 #define LONG_MAX (0x7FFFFFFFL)
@@ -37,262 +37,219 @@ uint32_t randIndex;
 uint8_t a, b, c;
 uint64_t mult;
 
-void srand(void)
-{
-	memcpy((uint8_t *)&randState, (uint8_t *)0x4347c000, sizeof(randState));
-	randIndex = 0;
-	a = 12;
-	b = 25;
-	c = 27;
-	mult = *(uint64_t *)0x4347c004;
+void srand(void) {
+  memcpy((uint8_t *)&randState, (uint8_t *)0x4347c000, sizeof(randState));
+  randIndex = 0;
+  a = 12;
+  b = 25;
+  c = 27;
+  mult = *(uint64_t *)0x4347c004;
 }
 
-uint32_t rand( void )
-{	
-	uint64_t r = randState[randIndex];
-	r = r ^ (r >> a);
-	r = r ^ (r << b);
-	r = r ^ (r >> c);
-	randState[randIndex++] = r;
-	randIndex = randIndex % 512;
-	uint64_t big = (uint64_t)r * mult;
-	return ((r * mult) >> 32);
+uint32_t rand(void) {
+  uint64_t r = randState[randIndex];
+  r = r ^ (r >> a);
+  r = r ^ (r << b);
+  r = r ^ (r >> c);
+  randState[randIndex++] = r;
+  randIndex = randIndex % 512;
+  uint64_t big = (uint64_t)r * mult;
+  return ((r * mult) >> 32);
 }
 
-uint32_t random_in_range(uint32_t min, uint32_t max)
-{
-	if (min > max)
-		return 0;
-	if (min == max)
-		return min;
+uint32_t random_in_range(uint32_t min, uint32_t max) {
+  if (min > max) return 0;
+  if (min == max) return min;
 
-	uint32_t value;
-	uint32_t delta = max - min;
+  uint32_t value;
+  uint32_t delta = max - min;
 
-	uint32_t scale_divider = (0xffffffff) / delta;
-	value = rand();
-	return min + (value / scale_divider);
+  uint32_t scale_divider = (0xffffffff) / delta;
+  value = rand();
+  return min + (value / scale_divider);
 }
 
-void populate_random_string( char * s, uint32_t length )
-{
-	int i;
-	for (i=0; i < length - 1; i++)
-	{
-		s[i] = random_in_range(0x41, 0x71);
-	}
-	s[i] = '\0';
+void populate_random_string(char *s, uint32_t length) {
+  int i;
+  for (i = 0; i < length - 1; i++) {
+    s[i] = random_in_range(0x41, 0x71);
+  }
+  s[i] = '\0';
 }
 
+int atoi(const char *pStr) {
+  int value = 0;
+  int negative = 0;
 
-int atoi( const char *pStr )
-{
-	int value = 0;
-	int negative = 0;
+  while (isspace(*pStr)) pStr++;
 
-	while ( isspace( *pStr ) )
-		pStr++;
+  if (*pStr == '\0') return 0;
 
-	if ( *pStr == '\0' )
-		return 0;
+  if (*pStr == '-') {
+    negative = 1;
+    pStr++;
+  }
 
-	if ( *pStr == '-' )
-	{
-		negative = 1;
-		pStr++;
-	}
+  // Read in string
+  while (isdigit(*pStr)) value = (value * 10) + (*pStr++ - '0');
 
-	// Read in string
-	while ( isdigit( *pStr ) )
-		value = (value * 10) + (*pStr++ - '0');
-
-	if ( negative )
-		return (-value);
-	else
-		return value;	
+  if (negative)
+    return (-value);
+  else
+    return value;
 }
 
-double atof( char *pStr )
-{
-	double whole;
-	double fraction = 0.0;
-	char *pWhole = pStr;
-	char *pFraction;
-	
-	// find the decimal point
-	pFraction = pStr;
-	while ( *pFraction != '\0' ) 
-	{
-		if (*pFraction == '.')
-		{
-			*pFraction = '\0';
-			pFraction++;
-			break;
-		}
-		pFraction++;
-	}
-	
-	// convert the whole part
-	whole = atoi(pWhole);
+double atof(char *pStr) {
+  double whole;
+  double fraction = 0.0;
+  char *pWhole = pStr;
+  char *pFraction;
 
-	// convert the fractional part
-	if (*pFraction != '\0') {
-		fraction = atoi(pFraction);
-		while ( pFraction != '\0' && isdigit( *pFraction ) ) {
-			fraction /= 10.0;
-			pFraction++;
-		}
-	}
+  // find the decimal point
+  pFraction = pStr;
+  while (*pFraction != '\0') {
+    if (*pFraction == '.') {
+      *pFraction = '\0';
+      pFraction++;
+      break;
+    }
+    pFraction++;
+  }
 
-	return ( whole + fraction );
-	
-}
-	
+  // convert the whole part
+  whole = atoi(pWhole);
 
-char *strcpy( char *pDest, const char *pSrc )
-{
-	char *pDestReturn = pDest;
+  // convert the fractional part
+  if (*pFraction != '\0') {
+    fraction = atoi(pFraction);
+    while (pFraction != '\0' && isdigit(*pFraction)) {
+      fraction /= 10.0;
+      pFraction++;
+    }
+  }
 
-	while ( *pSrc != '\0' )
-		*pDest++ = *pSrc++;
-
-	*pDest = '\0'; 
-
-	return (pDestReturn);
+  return (whole + fraction);
 }
 
-char *strncpy( char *pDest, const char *pSrc, size_t maxlen )
-{
-	size_t n;
+char *strcpy(char *pDest, const char *pSrc) {
+  char *pDestReturn = pDest;
 
-	for ( n = 0; n < maxlen; n++ )
-	{
-		if ( pSrc[n] == '\0' )
-			break;
+  while (*pSrc != '\0') *pDest++ = *pSrc++;
 
-		pDest[n] = pSrc[n];
-	}
+  *pDest = '\0';
 
-	for ( ; n < maxlen; n++ )
-		pDest[n] = '\0';
-
-	return (pDest);
+  return (pDestReturn);
 }
 
-void *memcpy( void *pDest, const void *pSource, size_t nbytes )
-{
-	void *pDestReturn = pDest;
+char *strncpy(char *pDest, const char *pSrc, size_t maxlen) {
+  size_t n;
 
-	while ( nbytes >= 4 )
-	{
-		*((uint32_t*)pDest) = *((uint32_t*)pSource);
+  for (n = 0; n < maxlen; n++) {
+    if (pSrc[n] == '\0') break;
 
-		pDest += 4;
-		pSource += 4;
-		nbytes-=4;		
-	}
+    pDest[n] = pSrc[n];
+  }
 
-	while ( nbytes > 0 )
-	{
-		*((uint8_t*)pDest) = *((uint8_t*)pSource);
+  for (; n < maxlen; n++) pDest[n] = '\0';
 
-		pDest++;
-		pSource++;
-		nbytes--;
-	}
-
-	return (pDestReturn);
+  return (pDest);
 }
 
-long int strtol( const char *str, char **endptr, int base )
-{
-	long int value = 0;
-	int neg = 0;
+void *memcpy(void *pDest, const void *pSource, size_t nbytes) {
+  void *pDestReturn = pDest;
 
-	if ( str == NULL )
-		return (0);
+  while (nbytes >= 4) {
+    *((uint32_t *)pDest) = *((uint32_t *)pSource);
 
-	if ( base >= 16 )
-		base = 16;
+    pDest += 4;
+    pSource += 4;
+    nbytes -= 4;
+  }
 
-	// Skip whitespace	
-	while ( isspace( *str ) )
-		str++;
+  while (nbytes > 0) {
+    *((uint8_t *)pDest) = *((uint8_t *)pSource);
 
-	if ( *str == '-' )
-	{
-		neg = 1;
-		str++;
-	}
-	else if ( *str == '+' )
-		str++;
+    pDest++;
+    pSource++;
+    nbytes--;
+  }
 
-	if ( (base == 16 || base == 0) && *str == '0' && (*(str+1) == 'x' || *(str+1) == 'X') )
-	{
-		str+=2;
-		base = 16;
-	}
-	else if ( (base == 0 || base == 2 ) && *str == '0' && (*(str+1) == 'b' || *(str+1) == 'B') )
-	{
-		str+=2;
-		base = 2;
-	}
+  return (pDestReturn);
+}
 
-	if ( base == 0 )
-	{
-		if ( *str == '0' )
-		{
-			base = 8;
-		}
-		else
-			base = 10;
-	}
+long int strtol(const char *str, char **endptr, int base) {
+  long int value = 0;
+  int neg = 0;
 
-	unsigned long cutoff_value = 0;
-	if ( neg )
-		cutoff_value = -(unsigned long)LONG_MIN;
-	else
-		cutoff_value = (unsigned long)LONG_MAX;
-	long int cutlim_value = cutoff_value % (unsigned long)base;
-	
-	cutoff_value /= base;
+  if (str == NULL) return (0);
 
-	while ( *str != '\0' )
-	{
-		int c = *str;
+  if (base >= 16) base = 16;
 
-		if ( isdigit( c ) )
-			c -= '0';
-		else if ( isalpha(c) )
-		{
-			if ( isupper(c) )
-				c -= ('A' - 10);
-			else
-				c -= ('a' - 10);
-		}
-		else
-			break;
-	
-		if ( c >= base )
-			break;
+  // Skip whitespace
+  while (isspace(*str)) str++;
 
-		if ( value > cutoff_value || (value == cutoff_value && c > cutlim_value) )
-			break;
-		else
-		{
-			value *= base;
-			value += c;
-		}
+  if (*str == '-') {
+    neg = 1;
+    str++;
+  } else if (*str == '+')
+    str++;
 
-		str++;	
-	}
+  if ((base == 16 || base == 0) && *str == '0' &&
+      (*(str + 1) == 'x' || *(str + 1) == 'X')) {
+    str += 2;
+    base = 16;
+  } else if ((base == 0 || base == 2) && *str == '0' &&
+             (*(str + 1) == 'b' || *(str + 1) == 'B')) {
+    str += 2;
+    base = 2;
+  }
 
-	// Check if we should set endptr
-	if ( endptr )
-		*endptr = (char *)str;
+  if (base == 0) {
+    if (*str == '0') {
+      base = 8;
+    } else
+      base = 10;
+  }
 
-	if ( neg )
-		return -value;
-	else
-		return value;	
+  unsigned long cutoff_value = 0;
+  if (neg)
+    cutoff_value = -(unsigned long)LONG_MIN;
+  else
+    cutoff_value = (unsigned long)LONG_MAX;
+  long int cutlim_value = cutoff_value % (unsigned long)base;
+
+  cutoff_value /= base;
+
+  while (*str != '\0') {
+    int c = *str;
+
+    if (isdigit(c))
+      c -= '0';
+    else if (isalpha(c)) {
+      if (isupper(c))
+        c -= ('A' - 10);
+      else
+        c -= ('a' - 10);
+    } else
+      break;
+
+    if (c >= base) break;
+
+    if (value > cutoff_value || (value == cutoff_value && c > cutlim_value))
+      break;
+    else {
+      value *= base;
+      value += c;
+    }
+
+    str++;
+  }
+
+  // Check if we should set endptr
+  if (endptr) *endptr = (char *)str;
+
+  if (neg)
+    return -value;
+  else
+    return value;
 }

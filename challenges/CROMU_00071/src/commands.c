@@ -24,58 +24,49 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
-#include "service.h"
 #include "commands.h"
 
+#include <libcgc.h>
+
+#include "service.h"
+#include "stdlib.h"
 
 int execute_cmd(airportInfoType **airports, char *buffer) {
+  int value;
+  int retcode;
 
-int value;
-int retcode;
+  value = atoi(buffer);
 
+  switch (value) {
+    case 0x1:
 
-	value = atoi(buffer);
+      retcode = showAirports(*airports, buffer);
+      break;
 
+    case 0x2:
 
-	switch (value) {
+      retcode = addAirport(airports, buffer);
+      break;
 
+    case 0x3:
 
-		case 0x1:
+      retcode = deleteAirport(airports, buffer);
+      break;
 
-			retcode = showAirports(*airports, buffer);
-			break;
+    case 0xf:
 
-		case 0x2:
+      retcode = findRoutes(*airports, buffer);
+      break;
 
-			retcode = addAirport(airports, buffer);
-			break;
+    case 0xd:
 
-		case 0x3:
+      retcode = -99;
+      break;
 
-			retcode = deleteAirport(airports, buffer);
-			break;
+    default:
 
-		case 0xf:
+      retcode = COMMAND_OK;
+  }
 
-			retcode = findRoutes(*airports, buffer);
-			break;
-
-
-		case 0xd:
-
-			retcode = -99;
-			break;
-
-		default:
-
-			retcode = COMMAND_OK;
-
-	}
-
-	return retcode;
-
+  return retcode;
 }
-
-

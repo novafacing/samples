@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef ORDER_H
 #define ORDER_H 1
@@ -26,18 +26,17 @@
 #include "menu.h"
 
 typedef struct {
-	unsigned int t_id;
-	unsigned int c_id;
-	FoodTypes ftype;
-	void *item;
-	void *next;
+  unsigned int t_id;
+  unsigned int c_id;
+  FoodTypes ftype;
+  void *item;
+  void *next;
 } Order;
-
 
 /**
  * Get the first order from the list
  *
- * @param o_list 	Pointer to list of Order's 
+ * @param o_list 	Pointer to list of Order's
  * @return Pointer to first order or NULL if list is empty
  */
 Order *pop_order_from_list(Order **o_list);

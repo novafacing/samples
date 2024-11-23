@@ -21,25 +21,20 @@
  *
  */
 #include "fxpan.h"
+
 #include "gain.h"
 
-FxPan::FxPan(int32_t pan_) : pan(pan_)
-{
+FxPan::FxPan(int32_t pan_) : pan(pan_) {}
+
+void FxPan::apply(AudioTrack &track) const {
+  if (!track.getStereo()) return;
+
+  apply(*track.getChannel(0), Gain::fromPanLeft(pan));
+  apply(*track.getChannel(1), Gain::fromPanRight(pan));
 }
 
-void FxPan::apply(AudioTrack &track) const
-{
-    if (!track.getStereo())
-        return;
-
-    apply(*track.getChannel(0), Gain::fromPanLeft(pan));
-    apply(*track.getChannel(1), Gain::fromPanRight(pan));
-}
-
-void FxPan::apply(AudioStream &stream, Gain gain) const
-{
-    for (unsigned int i = 0; i < stream.getLength(); i++)
-    {
-        stream.setSample(i, gain.adjustSample(stream.getSample(i)));
-    }
+void FxPan::apply(AudioStream &stream, Gain gain) const {
+  for (unsigned int i = 0; i < stream.getLength(); i++) {
+    stream.setSample(i, gain.adjustSample(stream.getSample(i)));
+  }
 }

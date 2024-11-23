@@ -28,196 +28,195 @@ THE SOFTWARE.
 
 #define BSIZE 40
 
-int countryMenu( pCountry co )
-{
-	int choice = 0;
-	size_t length = 0;
-	char selection[BSIZE];
-	char *t = NULL;
-	pBorder pb = NULL;
+int countryMenu(pCountry co) {
+  int choice = 0;
+  size_t length = 0;
+  char selection[BSIZE];
+  char *t = NULL;
+  pBorder pb = NULL;
 
-	if ( co == NULL ) {
-		return 0;
-	}
+  if (co == NULL) {
+    return 0;
+  }
 
-	while (1) {
-		printf("\nCountry: @s\n", co->name);
-		printf("1) Display CountryInfo\n");
-		printf("2) Set Capitol\n");
-		printf("3) Set Population\n");
-		printf("4) Add Language\n");
-		printf("5) Add border\n");
-		printf("6) Add Territory\n");
-		printf("7) Select Territory\n");
-		printf("8) Delete Country and Exit Menu\n");
-		printf("9) Exit menu\n");
+  while (1) {
+    printf("\nCountry: @s\n", co->name);
+    printf("1) Display CountryInfo\n");
+    printf("2) Set Capitol\n");
+    printf("3) Set Population\n");
+    printf("4) Add Language\n");
+    printf("5) Add border\n");
+    printf("6) Add Territory\n");
+    printf("7) Select Territory\n");
+    printf("8) Delete Country and Exit Menu\n");
+    printf("9) Exit menu\n");
 
-		bzero(selection, BSIZE);
-		printf("Selection: ");
-		receive_until( selection, '\n', 3);
+    bzero(selection, BSIZE);
+    printf("Selection: ");
+    receive_until(selection, '\n', 3);
 
-		choice = atoi(selection);
+    choice = atoi(selection);
 
-		if ( choice < 1 || choice > 9 ) {
-			printf("Invalid...\n");
-			continue;
-		}
+    if (choice < 1 || choice > 9) {
+      printf("Invalid...\n");
+      continue;
+    }
 
-		if ( choice == 1 ) {
-			printCountryInfo( co );
-		} else if (choice == 2 ) {
-			printf("\n-> ");
-			bzero(selection, BSIZE);
+    if (choice == 1) {
+      printCountryInfo(co);
+    } else if (choice == 2) {
+      printf("\n-> ");
+      bzero(selection, BSIZE);
 
 #ifdef PATCHED
-			receive_until(selection, '\n', 19);
+      receive_until(selection, '\n', 19);
 #else
-			receive_until( selection, '\n', BSIZE-1);
+      receive_until(selection, '\n', BSIZE - 1);
 #endif
 
-			choice = 0;
-			while ( isalpha( selection[choice]) ) {
-				co->capitol[choice] = selection[choice];
-				choice++;
-			}
-			co->capitol[choice] = '\x00';
+      choice = 0;
+      while (isalpha(selection[choice])) {
+        co->capitol[choice] = selection[choice];
+        choice++;
+      }
+      co->capitol[choice] = '\x00';
 
-		} else if ( choice == 3 ) {
-			printf("\n-> ");
-			bzero(selection, BSIZE);
-			receive_until(selection, '\n', 19);
+    } else if (choice == 3) {
+      printf("\n-> ");
+      bzero(selection, BSIZE);
+      receive_until(selection, '\n', 19);
 
-			co->population = atoi( selection );
-		} else if ( choice == 4 ) {
-			if ( co->language_count >= COUNTRYLANGUAGEMAX ) {
-				printf("!!Max languages reached\n");
-				continue;
-			}
+      co->population = atoi(selection);
+    } else if (choice == 4) {
+      if (co->language_count >= COUNTRYLANGUAGEMAX) {
+        printf("!!Max languages reached\n");
+        continue;
+      }
 
-			printf("\n-> ");
-			bzero(selection, BSIZE );
-			receive(0, selection, 19, &length);
+      printf("\n-> ");
+      bzero(selection, BSIZE);
+      receive(0, selection, 19, &length);
 
-			if ( allocate( strlen(selection)+1, 0, (void**)&(t)) != 0 ) {
-				t = NULL;
-				continue;
-			}
+      if (allocate(strlen(selection) + 1, 0, (void **)&(t)) != 0) {
+        t = NULL;
+        continue;
+      }
 
-			bzero( t, strlen(selection)+1);
+      bzero(t, strlen(selection) + 1);
 
-			choice = 0;
-			while ( isalpha( selection[choice] ) ) {
-				t[choice] = selection[choice];
-				choice++;
-			}
-			t[choice] = '\x00';
+      choice = 0;
+      while (isalpha(selection[choice])) {
+        t[choice] = selection[choice];
+        choice++;
+      }
+      t[choice] = '\x00';
 
-			co->languages[ co->language_count ] = t;
-			co->language_count++;
-		} else if ( choice == 5 ) {
-			if ( co->border_count >= COUNTRYBORDERMAX) {
-				printf("!!Max borders reached\n");
-				continue;
-			}
+      co->languages[co->language_count] = t;
+      co->language_count++;
+    } else if (choice == 5) {
+      if (co->border_count >= COUNTRYBORDERMAX) {
+        printf("!!Max borders reached\n");
+        continue;
+      }
 
-			if ( allocate( sizeof(Border), 0, (void**)&pb) != 0 ) {
-				pb = NULL;
-				continue;
-			}
+      if (allocate(sizeof(Border), 0, (void **)&pb) != 0) {
+        pb = NULL;
+        continue;
+      }
 
-			printf("Lat Start: ");
-			bzero(selection, BSIZE );
-			receive(0, selection, 19, &length);
-			pb->latStart = atof(selection);
+      printf("Lat Start: ");
+      bzero(selection, BSIZE);
+      receive(0, selection, 19, &length);
+      pb->latStart = atof(selection);
 
-			printf("Long Start: ");
-			bzero(selection, BSIZE );
-			receive(0, selection, 19, &length);
-			pb->lngStart = atof(selection);
+      printf("Long Start: ");
+      bzero(selection, BSIZE);
+      receive(0, selection, 19, &length);
+      pb->lngStart = atof(selection);
 
-			printf("Lat End: ");
-			bzero(selection, BSIZE );
-			receive(0, selection, 19, &length);
-			pb->latEnd = atof(selection);
+      printf("Lat End: ");
+      bzero(selection, BSIZE);
+      receive(0, selection, 19, &length);
+      pb->latEnd = atof(selection);
 
-			printf("Long End: ");
-			bzero(selection, BSIZE );
-			receive(0, selection, 19, &length);
-			pb->lngEnd = atof(selection);
+      printf("Long End: ");
+      bzero(selection, BSIZE);
+      receive(0, selection, 19, &length);
+      pb->lngEnd = atof(selection);
 
-			co->borders[ co->border_count ] = pb;
-			co->border_count++;
-		} else if ( choice == 6 ) {
-			if ( co->territory_count >= COUNTRYTERRITORYMAX) {
-				printf("!!Max Territories reached\n");
-				continue;
-			}
+      co->borders[co->border_count] = pb;
+      co->border_count++;
+    } else if (choice == 6) {
+      if (co->territory_count >= COUNTRYTERRITORYMAX) {
+        printf("!!Max Territories reached\n");
+        continue;
+      }
 
-                        choice = 0;
-                        while ( choice < COUNTRYTERRITORYMAX && co->territories[choice] != NULL ) {
-                                choice++;
-                        }
+      choice = 0;
+      while (choice < COUNTRYTERRITORYMAX && co->territories[choice] != NULL) {
+        choice++;
+      }
 
-			if ( choice == COUNTRYTERRITORYMAX ) {
-				printf("!!Max Territories reached\n");
-				continue;
-			}
+      if (choice == COUNTRYTERRITORYMAX) {
+        printf("!!Max Territories reached\n");
+        continue;
+      }
 
-                        if ( allocate( sizeof(Territory), 0, (void**)(&co->territories[ choice ]) ) != 0 ) {
-                                printf("!!Failed to allocate structure\n");
-                                co->territories[ choice ] = NULL;
-                                continue;
-                        }       
-                        
-                        initTerritory( co->territories[choice] );
-                        
-			printf("\nNew Territory: ");
-			bzero(selection, BSIZE);
-                        receive_until(selection, '\n', 19);
+      if (allocate(sizeof(Territory), 0, (void **)(&co->territories[choice])) !=
+          0) {
+        printf("!!Failed to allocate structure\n");
+        co->territories[choice] = NULL;
+        continue;
+      }
 
-                        length = 0;
-                        while ( isalnum( selection[length] ) ) {
-                                co->territories[choice]->name[length] = selection[length];
-                                length++;
-                        }       
-			co->territories[choice]->name[length] = '\x00';
-			co->territory_count++;
-                        
-		} else if ( choice == 7 ) {
+      initTerritory(co->territories[choice]);
 
-			printf("\nTerritories:\n");
-			for ( choice = 0; choice < COUNTRYTERRITORYMAX; choice++ ) {
-				if ( co->territories[choice] != NULL ) {
-					printf("@d) @s\n", choice+1, co->territories[ choice ] );
-				}
-			}
+      printf("\nNew Territory: ");
+      bzero(selection, BSIZE);
+      receive_until(selection, '\n', 19);
 
-			bzero(selection, BSIZE);
-			printf("\n-> ");
-			receive(0, selection, 3, &length);
-			choice = atoi(selection);
+      length = 0;
+      while (isalnum(selection[length])) {
+        co->territories[choice]->name[length] = selection[length];
+        length++;
+      }
+      co->territories[choice]->name[length] = '\x00';
+      co->territory_count++;
 
-			if ( choice < 1 || choice > COUNTRYTERRITORYMAX || co->territories[choice-1] == NULL ) {
-				printf("Invalid choice...\n");
-				continue;
-			}
+    } else if (choice == 7) {
+      printf("\nTerritories:\n");
+      for (choice = 0; choice < COUNTRYTERRITORYMAX; choice++) {
+        if (co->territories[choice] != NULL) {
+          printf("@d) @s\n", choice + 1, co->territories[choice]);
+        }
+      }
 
-			if ( territoryMenu( co->territories[choice-1]) == 0 ) {
-				co->territories[choice-1] = NULL ;
-				co->territory_count--;
-			}
+      bzero(selection, BSIZE);
+      printf("\n-> ");
+      receive(0, selection, 3, &length);
+      choice = atoi(selection);
 
-		} else if ( choice == 8 ) {
-			freeCountry(co);
-			return 0;
-		} else if ( choice == 9 ) {
-			return 1;
-		}
-		
-	}
+      if (choice < 1 || choice > COUNTRYTERRITORYMAX ||
+          co->territories[choice - 1] == NULL) {
+        printf("Invalid choice...\n");
+        continue;
+      }
+
+      if (territoryMenu(co->territories[choice - 1]) == 0) {
+        co->territories[choice - 1] = NULL;
+        co->territory_count--;
+      }
+
+    } else if (choice == 8) {
+      freeCountry(co);
+      return 0;
+    } else if (choice == 9) {
+      return 1;
+    }
+  }
 
 end:
-	return 1;
+  return 1;
 }
 
 /**
@@ -225,61 +224,61 @@ end:
  * @param co Pointer to the country structure.
  * @return Returns nothing
  */
-void printCountryInfo( pCountry co )
-{
-	int index = 0;
-	pBorder b = NULL;
+void printCountryInfo(pCountry co) {
+  int index = 0;
+  pBorder b = NULL;
 
-	if ( co == NULL ) {
-		return;
-	}
-	
-	printf("\tCountry: ");
+  if (co == NULL) {
+    return;
+  }
 
-	if ( co->name[0] == '\x00' ) {
-		printf("Unknown\n");
-	} else {
-		printf("@s\n", co->name);
-	}
+  printf("\tCountry: ");
 
-	printf("\t\tCapitol: ");
-	if ( co->capitol[0] == '\x00' ) {
-		printf("Unknown\n");
-	} else {
-		printf("@s\n", co->capitol);
-	}
+  if (co->name[0] == '\x00') {
+    printf("Unknown\n");
+  } else {
+    printf("@s\n", co->name);
+  }
 
-	if ( co->population >= 0 ) {
-		printf("\t\tPopulation: @d\n", co->population);
-	}
+  printf("\t\tCapitol: ");
+  if (co->capitol[0] == '\x00') {
+    printf("Unknown\n");
+  } else {
+    printf("@s\n", co->capitol);
+  }
 
-	while ( index < co->language_count ) {
-		if ( co->languages[index] != NULL ) {
-			printf("\t\tLanguage: @s\n", co->languages[index]);
-		}
-		index++;
-	}
+  if (co->population >= 0) {
+    printf("\t\tPopulation: @d\n", co->population);
+  }
 
-	index = 0;
+  while (index < co->language_count) {
+    if (co->languages[index] != NULL) {
+      printf("\t\tLanguage: @s\n", co->languages[index]);
+    }
+    index++;
+  }
 
-	while ( index < co->border_count ) {
-		b = co->borders[index];
-		if ( b != NULL ) {
-			printf("\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
-		}
-		index++;
-	}
+  index = 0;
 
-	index = 0;
+  while (index < co->border_count) {
+    b = co->borders[index];
+    if (b != NULL) {
+      printf("\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd,
+             b->lngEnd);
+    }
+    index++;
+  }
 
-	while ( index < COUNTRYTERRITORYMAX ) {
-		if ( co->territories[index] != NULL ) {
-			printTerritoryInfo( co->territories[index] );
-		}
-		index++;
-	}
+  index = 0;
 
-	return;	
+  while (index < COUNTRYTERRITORYMAX) {
+    if (co->territories[index] != NULL) {
+      printTerritoryInfo(co->territories[index]);
+    }
+    index++;
+  }
+
+  return;
 }
 
 /**
@@ -287,43 +286,42 @@ void printCountryInfo( pCountry co )
  * @param co Pointer to a country structure to free
  * @return Returns nothing
  **/
-void freeCountry( pCountry co )
-{
-	int index = 0;
+void freeCountry(pCountry co) {
+  int index = 0;
 
-	if ( co == NULL ) {
-		return;
-	}
+  if (co == NULL) {
+    return;
+  }
 
-	while (index < co->border_count) {
-		if ( co->borders[index] != NULL ) {
-			deallocate( co->borders[index], sizeof( Border ) );
-			co->borders[index] = NULL;
-		}
-		index++;
-	}
+  while (index < co->border_count) {
+    if (co->borders[index] != NULL) {
+      deallocate(co->borders[index], sizeof(Border));
+      co->borders[index] = NULL;
+    }
+    index++;
+  }
 
-	index = 0;
-	while ( index < co->language_count) {
-		if ( co->languages[index] != NULL ) {
-			deallocate( co->languages[index], strlen(co->languages[index]) + 1 );
-			co->languages[index] = NULL;
-		}
-		index++;
-	}
+  index = 0;
+  while (index < co->language_count) {
+    if (co->languages[index] != NULL) {
+      deallocate(co->languages[index], strlen(co->languages[index]) + 1);
+      co->languages[index] = NULL;
+    }
+    index++;
+  }
 
-	index = 0;
-	while ( index < COUNTRYTERRITORYMAX) {
-		if ( co->territories[index] != NULL ) {
-			freeTerritory( co->territories[index] );
-			co->territories[index] = NULL;
-		}
-		index++;
-	}
+  index = 0;
+  while (index < COUNTRYTERRITORYMAX) {
+    if (co->territories[index] != NULL) {
+      freeTerritory(co->territories[index]);
+      co->territories[index] = NULL;
+    }
+    index++;
+  }
 
-	deallocate( co, sizeof(Country) );
+  deallocate(co, sizeof(Country));
 
-	return;
+  return;
 }
 
 /**
@@ -331,26 +329,25 @@ void freeCountry( pCountry co )
  * @param co Pointer to a country structure to initialize
  * @return Returns nothing
  **/
-void initCountry( pCountry co )
-{
-	int index = 0;
+void initCountry(pCountry co) {
+  int index = 0;
 
-	if ( co == NULL ) {
-		return;
-	}
+  if (co == NULL) {
+    return;
+  }
 
-	bzero( co->name, 20 );
+  bzero(co->name, 20);
 
-	co->population = -1;
-	co->language_count = 0;
+  co->population = -1;
+  co->language_count = 0;
 
-	co->border_count = 0;
+  co->border_count = 0;
 
-	bzero( co->languages, sizeof(char*) * COUNTRYLANGUAGEMAX);
-	bzero( co->borders, sizeof(pBorder) * COUNTRYBORDERMAX);
-	bzero( co->territories, sizeof(pTerritory) * COUNTRYTERRITORYMAX);
+  bzero(co->languages, sizeof(char *) * COUNTRYLANGUAGEMAX);
+  bzero(co->borders, sizeof(pBorder) * COUNTRYBORDERMAX);
+  bzero(co->territories, sizeof(pTerritory) * COUNTRYTERRITORYMAX);
 
-	return;
+  return;
 }
 
 /**
@@ -358,240 +355,241 @@ void initCountry( pCountry co )
  * @param str Pointer to a string structure
  * @return Returns a pointer to a country structure or NULL on failure
  **/
-pCountry countryTopLevel( pstring str )
-{
-	pCountry newCountry = NULL;
-	char * temp_name = NULL;
-	int lastGood = 0;
-	int startIndex = 0;
-	int endIndex = 0;
-	element el = 0;
+pCountry countryTopLevel(pstring str) {
+  pCountry newCountry = NULL;
+  char *temp_name = NULL;
+  int lastGood = 0;
+  int startIndex = 0;
+  int endIndex = 0;
+  element el = 0;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	/// Allocate a new country structure
-	if ( allocate(sizeof(Country), 0, (void**)&newCountry) != 0 ) {
-		newCountry = NULL;
-		goto end;
-	}
+  /// Allocate a new country structure
+  if (allocate(sizeof(Country), 0, (void **)&newCountry) != 0) {
+    newCountry = NULL;
+    goto end;
+  }
 
-	initCountry( newCountry );
+  initCountry(newCountry);
 
-	skipWhiteSpace(str);
+  skipWhiteSpace(str);
 
-	lastGood = getIndex( str, &lastGood );
+  lastGood = getIndex(str, &lastGood);
 
-	if ( !atChar( str, '{' ) ) {
-		goto error;
-	}
+  if (!atChar(str, '{')) {
+    goto error;
+  }
 
-	if ( skipLength( str, 1 ) < 0 ) {
-		goto error;
-	}
+  if (skipLength(str, 1) < 0) {
+    goto error;
+  }
 
-	skipWhiteSpace(str);
+  skipWhiteSpace(str);
 
-	startIndex = str->index;
+  startIndex = str->index;
 
-	endIndex = skipAlpha( str );
+  endIndex = skipAlpha(str);
 
-	if ( endIndex == -1 || startIndex == endIndex ) {
-		goto error;
-	}
-	
-	/// Confirm the opening element;		
-	temp_name = copyData( str, startIndex, endIndex );
+  if (endIndex == -1 || startIndex == endIndex) {
+    goto error;
+  }
 
-	if ( temp_name == NULL ) {
-		goto error;
-	}
+  /// Confirm the opening element;
+  temp_name = copyData(str, startIndex, endIndex);
 
-	if ( strcmp( temp_name, "Country" ) != 0 ) {
-		printf("!!Country: Invalid opening element id\n");
-		deallocate( temp_name, strlen(temp_name) + 1 );
-		goto error;
-	}
+  if (temp_name == NULL) {
+    goto error;
+  }
 
-	deallocate(temp_name, strlen(temp_name) + 1 );
+  if (strcmp(temp_name, "Country") != 0) {
+    printf("!!Country: Invalid opening element id\n");
+    deallocate(temp_name, strlen(temp_name) + 1);
+    goto error;
+  }
 
-	skipWhiteSpace(str);
+  deallocate(temp_name, strlen(temp_name) + 1);
 
-	if ( str->buffer[ str->index ] != '}' ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	incChar( str );
+  if (str->buffer[str->index] != '}') {
+    goto error;
+  }
 
-	lastGood = str->index;
+  incChar(str);
 
-	temp_name = pullNextElementName( str );
+  lastGood = str->index;
 
-	while ( temp_name != NULL ) {
-		el = elementNameToEnum( temp_name );
+  temp_name = pullNextElementName(str);
 
-		deallocate( temp_name, strlen(temp_name) + 1 );
+  while (temp_name != NULL) {
+    el = elementNameToEnum(temp_name);
 
-		switch (el) {
-			case name:
-				temp_name = extractName( str );
+    deallocate(temp_name, strlen(temp_name) + 1);
 
-				if ( temp_name == NULL ) {
-					goto error;
-				}
+    switch (el) {
+      case name:
+        temp_name = extractName(str);
 
-				bzero( newCountry->name, 20);
-				strncpy( newCountry->name, temp_name, 19 );
+        if (temp_name == NULL) {
+          goto error;
+        }
 
-				deallocate( temp_name, strlen(temp_name)+1);
-				temp_name = NULL;
-				break;
-			case capitol:
+        bzero(newCountry->name, 20);
+        strncpy(newCountry->name, temp_name, 19);
 
-				temp_name = extractCapitol( str );
+        deallocate(temp_name, strlen(temp_name) + 1);
+        temp_name = NULL;
+        break;
+      case capitol:
 
-				if ( !temp_name ) {
-					goto error;
-				}
+        temp_name = extractCapitol(str);
 
-				bzero( newCountry->capitol, 20 );
-				strncpy( newCountry->capitol, temp_name, 19 );
+        if (!temp_name) {
+          goto error;
+        }
 
-				deallocate( temp_name, strlen(temp_name)+1);
-				temp_name = NULL;
-				break;
-			case population:
-				newCountry->population = extractPopulation(str);
+        bzero(newCountry->capitol, 20);
+        strncpy(newCountry->capitol, temp_name, 19);
 
-				if (newCountry->population < 0 ) {
-					goto error;
-				}
+        deallocate(temp_name, strlen(temp_name) + 1);
+        temp_name = NULL;
+        break;
+      case population:
+        newCountry->population = extractPopulation(str);
 
-				break;
-			case language:
+        if (newCountry->population < 0) {
+          goto error;
+        }
 
-				if ( newCountry->language_count >= COUNTRYLANGUAGEMAX ) {
-					printf("!!Max country language count is @d\n", COUNTRYLANGUAGEMAX);
-					goto error;
-				}
+        break;
+      case language:
 
-				newCountry->languages[newCountry->language_count] = extractLanguage(str);
+        if (newCountry->language_count >= COUNTRYLANGUAGEMAX) {
+          printf("!!Max country language count is @d\n", COUNTRYLANGUAGEMAX);
+          goto error;
+        }
 
-				if ( newCountry->languages[ newCountry->language_count] == NULL ) {
-					goto error;
-				}
+        newCountry->languages[newCountry->language_count] =
+            extractLanguage(str);
 
-				newCountry->language_count++;
+        if (newCountry->languages[newCountry->language_count] == NULL) {
+          goto error;
+        }
 
-				break;
-			case border:
-				if ( newCountry->border_count >= COUNTRYBORDERMAX ) {
-					printf("!!Max country border count is @d\n", COUNTRYBORDERMAX);
-					goto error;
-				}
+        newCountry->language_count++;
 
-				newCountry->borders[newCountry->border_count] = extractBorder(str);
+        break;
+      case border:
+        if (newCountry->border_count >= COUNTRYBORDERMAX) {
+          printf("!!Max country border count is @d\n", COUNTRYBORDERMAX);
+          goto error;
+        }
 
-				if ( newCountry->borders[ newCountry->border_count] == NULL ) {
-					goto error;
-				}
+        newCountry->borders[newCountry->border_count] = extractBorder(str);
 
-				newCountry->border_count++;
+        if (newCountry->borders[newCountry->border_count] == NULL) {
+          goto error;
+        }
 
-				break;
-			case territory:
-				if ( newCountry->territory_count >= COUNTRYTERRITORYMAX) {
-					printf("!!Max territories is @d\n", COUNTRYTERRITORYMAX);
-					goto error;
-				}
+        newCountry->border_count++;
 
-				newCountry->territories[newCountry->territory_count] = territoryTopLevel(str);
+        break;
+      case territory:
+        if (newCountry->territory_count >= COUNTRYTERRITORYMAX) {
+          printf("!!Max territories is @d\n", COUNTRYTERRITORYMAX);
+          goto error;
+        }
 
-				if (newCountry->territories[newCountry->territory_count] == NULL ) {
-					goto error;
-				}
-	
-				newCountry->territory_count++;
+        newCountry->territories[newCountry->territory_count] =
+            territoryTopLevel(str);
 
-				break;
-			default:
-				printf("Invalid for country\n");
-				goto error;
-				break;
-		};
+        if (newCountry->territories[newCountry->territory_count] == NULL) {
+          goto error;
+        }
 
-		lastGood = str->index;
+        newCountry->territory_count++;
 
-		temp_name = pullNextElementName( str );
-	}
+        break;
+      default:
+        printf("Invalid for country\n");
+        goto error;
+        break;
+    };
 
-	skipWhiteSpace( str );
+    lastGood = str->index;
 
-	if ( !atChar( str, '{' ) ) {
-		goto error;
-	}
+    temp_name = pullNextElementName(str);
+  }
 
-	if ( skipLength( str, 1 ) < 0 ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	skipWhiteSpace( str );
+  if (!atChar(str, '{')) {
+    goto error;
+  }
 
-	if ( !atChar( str, '#' ) ) {
-		goto error;
-	}
+  if (skipLength(str, 1) < 0) {
+    goto error;
+  }
 
-	if ( skipLength( str, 1 ) < 0 ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	startIndex = str->index;
+  if (!atChar(str, '#')) {
+    goto error;
+  }
 
-	endIndex = skipAlpha( str );
+  if (skipLength(str, 1) < 0) {
+    goto error;
+  }
 
-	if ( endIndex < 0 ) {
-		goto error;
-	}
+  startIndex = str->index;
 
-	if ( startIndex == endIndex ) {
-		goto error;
-	}
+  endIndex = skipAlpha(str);
 
-	temp_name = copyData( str, startIndex, endIndex );
+  if (endIndex < 0) {
+    goto error;
+  }
 
-	if ( temp_name == NULL ) {
-		goto error;
-	}
+  if (startIndex == endIndex) {
+    goto error;
+  }
 
-	if ( strcmp( temp_name, "Country" ) != 0 ) {
-		deallocate(temp_name, strlen(temp_name) + 1 );
-		goto error;
-	}
+  temp_name = copyData(str, startIndex, endIndex);
 
-	deallocate( temp_name, strlen(temp_name) + 1 );
+  if (temp_name == NULL) {
+    goto error;
+  }
 
-	skipWhiteSpace(str);
+  if (strcmp(temp_name, "Country") != 0) {
+    deallocate(temp_name, strlen(temp_name) + 1);
+    goto error;
+  }
 
-	if ( !atChar( str, '}' ) ) {
-		goto error;
-	}
+  deallocate(temp_name, strlen(temp_name) + 1);
 
-	incChar( str );
+  skipWhiteSpace(str);
 
-	goto end;
+  if (!atChar(str, '}')) {
+    goto error;
+  }
+
+  incChar(str);
+
+  goto end;
 error:
-	if (newCountry != NULL ) {
-		freeCountry( newCountry );
-		newCountry = NULL;
-	}
+  if (newCountry != NULL) {
+    freeCountry(newCountry);
+    newCountry = NULL;
+  }
 
-	str->index = lastGood;
+  str->index = lastGood;
 
-	printf("Error at: @s\n", str->buffer + str->index);
+  printf("Error at: @s\n", str->buffer + str->index);
 
 end:
-	return newCountry;
+  return newCountry;
 }
 
 /**
@@ -599,167 +597,166 @@ end:
  * @param str Pointer to a string structure
  * @return Returns the language character string or NULL on failure
  **/
-char* extractLanguage( pstring str )
-{
-	char *temp = NULL;
-	char *language = NULL;
-	register int start = 0;
-	register int end = 0;
+char *extractLanguage(pstring str) {
+  char *temp = NULL;
+  char *language = NULL;
+  register int start = 0;
+  register int end = 0;
 
-	if (str == NULL ) {
-		return NULL;
-	}
+  if (str == NULL) {
+    return NULL;
+  }
 
-	start = skipWhiteSpace(str);
+  start = skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
-		return language;
-	}
+  if (!atChar(str, '{')) {
+    printf("!!Failed to locate opening brace\n");
+    return language;
+  }
 
-	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
-		return language;
-	}
+  /// Skip past the curly brace
+  if (skipLength(str, 1) == -1) {
+    printf("!!Failed to skip opening brace\n");
+    return language;
+  }
 
-	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+  /// Skip any additional whitespace
+  start = skipWhiteSpace(str);
 
-	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+  /// This should skip any to either whitespace or a closing '}'
+  end = skipToNonAlphaNum(str);
 
-	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
-		return language;
-	}
+  if (end == -1) {
+    printf("!!Failed to locate the end of the element id\n");
+    return language;
+  }
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+  /// Copy the element id from the string
+  temp = copyData(str, start, end);
 
-	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
-		return NULL;
-	}
+  if (temp == NULL) {
+    printf("!!Copy from @d to @d failed\n", start, end);
+    return NULL;
+  }
 
-	/// If the element id is not "Language" then this is the wrong function
-	if ( strcmp( temp, "Language") != 0 ) {
-		printf("!!Element id is not \"Language\"\n");
-		deallocate( temp, strlen(temp) + 1 );
-		temp = NULL;
-		return language;
-	}
+  /// If the element id is not "Language" then this is the wrong function
+  if (strcmp(temp, "Language") != 0) {
+    printf("!!Element id is not \"Language\"\n");
+    deallocate(temp, strlen(temp) + 1);
+    temp = NULL;
+    return language;
+  }
 
-	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+  /// The buffer is no longer needed so free it
+  deallocate(temp, strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+  /// Skip to the end of the element id
+  skipWhiteSpace(str);
 
-	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
-		return NULL;
-	}
+  /// If it is not a closing brace then this is improperly formatted.
+  if (!atChar(str, '}')) {
+    printf("!!Failed to locate initial closing brace\n");
+    return NULL;
+  }
 
-	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
-		return language;
-	}
+  /// Skip the closing brace as well as any whitespace
+  if (skipLength(str, 1) == -1) {
+    printf("!!Failed to skip initial closing brace\n");
+    return language;
+  }
 
-	start = skipWhiteSpace( str );
-	end = skipAlpha( str );
+  start = skipWhiteSpace(str);
+  end = skipAlpha(str);
 
-	if ( start == end ) {
-		printf("!!Failed to find language data\n");
-		return language;
-	}
+  if (start == end) {
+    printf("!!Failed to find language data\n");
+    return language;
+  }
 
-	/// Copy the language element data
-	language = copyData( str, start, end );
+  /// Copy the language element data
+  language = copyData(str, start, end);
 
-	if ( language == NULL ) {
-		printf("!!Failed to copy language data\n");
-		return language;
-	}
+  if (language == NULL) {
+    printf("!!Failed to copy language data\n");
+    return language;
+  }
 
-	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+  /// The rest of this code is a check to ensure proper formatting except for
+  /// the copy data
+  skipWhiteSpace(str);
 
-	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
-		goto error;
-	}
+  /// If this is not an opening curly brace then fail
+  if (!atChar(str, '{')) {
+    printf("!!Failed to locate the final opening brace\n");
+    goto error;
+  }
 
-	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
-		goto error;
-	}
-	
-	skipWhiteSpace(str);
+  /// Skip past the brace
+  if (incChar(str) == -1) {
+    printf("!!Failed to skip the final opening brace\n");
+    goto error;
+  }
 
-	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+  /// If this is not a # indicating the closing brace then fail
+  if (!atChar(str, '#')) {
+    printf("!!Failed to locate the closing mark\n");
+    goto error;
+  }
 
-	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
-		goto error;
-	}
+  /// Skip past the # but save the start
+  start = skipLength(str, 1);
 
-	end = skipToNonAlphaNum( str );
+  if (start == -1) {
+    printf("!!Failed to skip closing mark\n");
+    goto error;
+  }
 
-	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
-		goto error;
-	}
-	
-	temp = copyData( str, start, end );
+  end = skipToNonAlphaNum(str);
+
+  if (end == -1) {
+    printf("!!Failed to locate the end of the closing element id\n");
+    goto error;
+  }
+
+  temp = copyData(str, start, end);
 
 #ifdef PATCHED
-	if ( temp == NULL ) {
-		goto error;
-	}
+  if (temp == NULL) {
+    goto error;
+  }
 #endif
 
-	if ( strcmp( temp, "Language") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
-		goto error;
-	}
+  if (strcmp(temp, "Language") != 0) {
+    printf("!!Invalid closing element id: @s\n", temp);
+    deallocate(temp, strlen(temp) + 1);
+    goto error;
+  }
 
-	deallocate(temp, strlen(temp)+1);
+  deallocate(temp, strlen(temp) + 1);
 
-	skipWhiteSpace( str );
+  skipWhiteSpace(str);
 
-	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
-		goto error;
-	}
+  /// Check the final curly brace
+  if (!atChar(str, '}')) {
+    printf("!!Failed to locate final closing brace\n");
+    goto error;
+  }
 
-	/// Skip past the closing brace
-	skipLength( str, 1 );
-		
+  /// Skip past the closing brace
+  skipLength(str, 1);
 
-	goto end;
+  goto end;
 
 error:
-	if (language != NULL) {
-		deallocate( language, strlen(language) + 1 );
-		language = NULL;
-	}
+  if (language != NULL) {
+    deallocate(language, strlen(language) + 1);
+    language = NULL;
+  }
 
 end:
-	return language;
+  return language;
 }
 
 /**
@@ -767,161 +764,159 @@ end:
  * @param str Pointer to a string structure
  * @return Returns the capitol string or NULL on failure
  **/
-char* extractCapitol( pstring str )
-{
-	char *temp = NULL;
-	char *capitol = NULL;
-	int start = 0;
-	int end = 0;
+char *extractCapitol(pstring str) {
+  char *temp = NULL;
+  char *capitol = NULL;
+  int start = 0;
+  int end = 0;
 
-	if (str == NULL ) {
-		return NULL;
-	}
+  if (str == NULL) {
+    return NULL;
+  }
 
-	skipWhiteSpace(str);
+  skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
-		return capitol;
-	}
+  if (!atChar(str, '{')) {
+    printf("!!Failed to locate opening brace\n");
+    return capitol;
+  }
 
-	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
-		return NULL;
-	}
+  /// Skip past the curly brace
+  if (skipLength(str, 1) == -1) {
+    printf("!!Failed to skip opening brace\n");
+    return NULL;
+  }
 
-	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+  /// Skip any additional whitespace
+  start = skipWhiteSpace(str);
 
-	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+  /// This should skip any to either whitespace or a closing '}'
+  end = skipToNonAlphaNum(str);
 
-	if ( end == -1 ) {
-		return NULL;
-	}
+  if (end == -1) {
+    return NULL;
+  }
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+  /// Copy the element id from the string
+  temp = copyData(str, start, end);
 
-	if ( temp == NULL ) {
-		return NULL;
-	}
+  if (temp == NULL) {
+    return NULL;
+  }
 
-	/// If the element id is not "Capitol" then this is the wrong function
-	if ( strcmp( temp, "Capitol") != 0 ) {
-		deallocate( temp, (end-start) + 1 );
-		temp = NULL;
-		return temp;
-	}
+  /// If the element id is not "Capitol" then this is the wrong function
+  if (strcmp(temp, "Capitol") != 0) {
+    deallocate(temp, (end - start) + 1);
+    temp = NULL;
+    return temp;
+  }
 
-	/// The buffer is no longer needed so free it
-	deallocate(temp, (end-start) + 1);
+  /// The buffer is no longer needed so free it
+  deallocate(temp, (end - start) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+  /// Skip to the end of the element id
+  skipWhiteSpace(str);
 
-	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		return NULL;
-	}
+  /// If it is not a closing brace then this is improperly formatted.
+  if (!atChar(str, '}')) {
+    return NULL;
+  }
 
-	/// Skip the closing brace as well as any whitespace
-	if ( incChar( str ) == -1 ) {
-		return NULL;
-	}
+  /// Skip the closing brace as well as any whitespace
+  if (incChar(str) == -1) {
+    return NULL;
+  }
 
-	skipWhiteSpace( str );
-	getIndex( str, &start );
+  skipWhiteSpace(str);
+  getIndex(str, &start);
 
-	end = skipAlpha( str );
+  end = skipAlpha(str);
 
-	if ( !(start ^ end) ) {
-		return NULL;
-	}
+  if (!(start ^ end)) {
+    return NULL;
+  }
 
-	/// Copy the capitol element data
-	capitol = copyData( str, start, end );
+  /// Copy the capitol element data
+  capitol = copyData(str, start, end);
 
-	if ( capitol == NULL ) {
-		return NULL;
-	}
+  if (capitol == NULL) {
+    return NULL;
+  }
 
-	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+  /// The rest of this code is a check to ensure proper formatting except for
+  /// the copy data
+  skipWhiteSpace(str);
 
-	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
-		goto error;
-	}
+  /// If this is not an opening curly brace then fail
+  if (!atChar(str, '{')) {
+    printf("!!Failed to locate the final opening brace\n");
+    goto error;
+  }
 
-	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
-		goto error;
-	}
-	
-	skipWhiteSpace(str);
+  /// Skip past the brace
+  if (incChar(str) == -1) {
+    printf("!!Failed to skip the final opening brace\n");
+    goto error;
+  }
 
-	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+  /// If this is not a # indicating the closing brace then fail
+  if (!atChar(str, '#')) {
+    printf("!!Failed to locate the closing mark\n");
+    goto error;
+  }
 
-	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
-		goto error;
-	}
+  /// Skip past the # but save the start
+  start = skipLength(str, 1);
 
-	end = skipToNonAlphaNum( str );
+  if (start == -1) {
+    printf("!!Failed to skip closing mark\n");
+    goto error;
+  }
 
-	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
-		goto error;
-	}
-	
-	temp = copyData( str, start, end );
+  end = skipToNonAlphaNum(str);
+
+  if (end == -1) {
+    printf("!!Failed to locate the end of the closing element id\n");
+    goto error;
+  }
+
+  temp = copyData(str, start, end);
 
 #ifdef PATCHED
-	if ( temp == NULL ) {
-		goto error;
-	}
+  if (temp == NULL) {
+    goto error;
+  }
 #endif
 
-	if ( strcmp( temp, "Capitol") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
-		goto error;
-	}
+  if (strcmp(temp, "Capitol") != 0) {
+    printf("!!Invalid closing element id: @s\n", temp);
+    deallocate(temp, strlen(temp) + 1);
+    goto error;
+  }
 
-	deallocate(temp, strlen(temp)+1);
+  deallocate(temp, strlen(temp) + 1);
 
-	skipWhiteSpace( str );
+  skipWhiteSpace(str);
 
-	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
-		goto error;
-	}
+  /// Check the final curly brace
+  if (!atChar(str, '}')) {
+    printf("!!Failed to locate final closing brace\n");
+    goto error;
+  }
 
-	/// Skip past the closing brace
-	skipLength( str, 1 );
-		
+  /// Skip past the closing brace
+  skipLength(str, 1);
 
-	goto end;
+  goto end;
 
 error:
-	if (capitol != NULL) {
-		deallocate( capitol, strlen(capitol) + 1 );
-		capitol = NULL;
-	}
+  if (capitol != NULL) {
+    deallocate(capitol, strlen(capitol) + 1);
+    capitol = NULL;
+  }
 
 end:
-	return capitol;
+  return capitol;
 }
-

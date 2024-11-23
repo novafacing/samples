@@ -24,69 +24,64 @@
 
 #include <cstdlib.h>
 
-class Database
-{
-private:
-    class PrefixNode
-    {
-    public:
-        PrefixNode() : d_root(1), d_word(0), d_value(0), d_num_edges(0) {}
-        PrefixNode(bool word, unsigned char value, unsigned short num_edges) : d_root(0), d_word(word), d_value(value), d_num_edges(num_edges) {}
-        ~PrefixNode()
-        {
-            for (unsigned int i = 0; i < d_num_edges; i++)
-            {
-                d_next[i]->~PrefixNode();
-                free(d_next[i]);
-            }
-        }
+class Database {
+ private:
+  class PrefixNode {
+   public:
+    PrefixNode() : d_root(1), d_word(0), d_value(0), d_num_edges(0) {}
+    PrefixNode(bool word, unsigned char value, unsigned short num_edges)
+        : d_root(0), d_word(word), d_value(value), d_num_edges(num_edges) {}
+    ~PrefixNode() {
+      for (unsigned int i = 0; i < d_num_edges; i++) {
+        d_next[i]->~PrefixNode();
+        free(d_next[i]);
+      }
+    }
 
-        PrefixNode *get_next(unsigned char ch)
-        {
-            int i = get_next_idx(ch);
-            if (i >= 0)
-                return d_next[i];
-            if (d_root)
-                return this;
-            return NULL;
-        }
-        int get_next_idx(unsigned char ch)
-        {
-            for (unsigned int i = 0; i < d_num_edges; i++)
-                if (d_next[i]->d_value == ch)
-                    return i;
-            return -1;
-        }
+    PrefixNode *get_next(unsigned char ch) {
+      int i = get_next_idx(ch);
+      if (i >= 0) return d_next[i];
+      if (d_root) return this;
+      return NULL;
+    }
+    int get_next_idx(unsigned char ch) {
+      for (unsigned int i = 0; i < d_num_edges; i++)
+        if (d_next[i]->d_value == ch) return i;
+      return -1;
+    }
 
-        static void add(PrefixNode **root, const unsigned char *word, unsigned int len);
-        static void remove(PrefixNode **root, const unsigned char *word, unsigned int len);
-        template <typename F>
-        static void traverse_tree(PrefixNode *root, F f);
-        static unsigned int get_alloc_size(unsigned int len)
-        {
-            return sizeof(PrefixNode) + len * sizeof(PrefixNode *);
-        }
+    static void add(PrefixNode **root, const unsigned char *word,
+                    unsigned int len);
+    static void remove(PrefixNode **root, const unsigned char *word,
+                       unsigned int len);
+    template <typename F>
+    static void traverse_tree(PrefixNode *root, F f);
+    static unsigned int get_alloc_size(unsigned int len) {
+      return sizeof(PrefixNode) + len * sizeof(PrefixNode *);
+    }
 
-        unsigned char d_root : 1;
-        unsigned char d_word : 1;
-        unsigned char d_value;
-        unsigned short d_num_edges;
-        PrefixNode *d_fail;
-        PrefixNode *d_tmp;
-        PrefixNode *d_next[];
-    };
+    unsigned char d_root : 1;
+    unsigned char d_word : 1;
+    unsigned char d_value;
+    unsigned short d_num_edges;
+    PrefixNode *d_fail;
+    PrefixNode *d_tmp;
+    PrefixNode *d_next[];
+  };
 
-    void rebuild_fsm();
-public:
-    Database();
-    ~Database();
+  void rebuild_fsm();
 
-    Database(const Database &) = delete;
-    Database& operator=(const Database &) = delete;
+ public:
+  Database();
+  ~Database();
 
-    void add(const unsigned char *word, unsigned int len);
-    void remove(const unsigned char *word, unsigned int len);
-    bool query(const unsigned char *haystack, unsigned int len) const;
-private:
-    PrefixNode *d_prefix_root;
+  Database(const Database &) = delete;
+  Database &operator=(const Database &) = delete;
+
+  void add(const unsigned char *word, unsigned int len);
+  void remove(const unsigned char *word, unsigned int len);
+  bool query(const unsigned char *haystack, unsigned int len) const;
+
+ private:
+  PrefixNode *d_prefix_root;
 };

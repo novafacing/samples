@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef STRNCPY_H
 #define STRNCPY_H 1
@@ -26,7 +26,7 @@
 /**
  * Copies bytes from source string into destination string.
  *
- * NOTE: 
+ * NOTE:
  *  if size <= strlen(src), the dest will not be null terminated.
  *  if strlen(src) < size, dest is padded with '\0' bytes.
  *
@@ -35,7 +35,6 @@
  * @param size Number of bytes to copy
  * @returns VA of dest
  */
-extern char *strncpy(char* dest, const char* src, size_t size);
-
+extern char* strncpy(char* dest, const char* src, size_t size);
 
 #endif

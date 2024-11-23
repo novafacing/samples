@@ -18,14 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef DEALER_H
 #define DEALER_H 1
 
 #define PLAYER_COUNT 5
 
-#define FOR_EACH_PLAYER 	for (unsigned int pid = 1; pid <= PLAYER_COUNT; pid++) {
-
+#define FOR_EACH_PLAYER for (unsigned int pid = 1; pid <= PLAYER_COUNT; pid++) {
 ssize_t process(void);
 
 #endif

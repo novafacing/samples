@@ -23,18 +23,16 @@
 
 #include "interface.h"
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
-{
-    char *secret_page = (char *)secret_page_i;
-    (void) secret_page;
-    (void) unused;
+extern "C" int __attribute__((fastcall)) main(int secret_page_i,
+                                              char *unused[]) {
+  char *secret_page = (char *)secret_page_i;
+  (void)secret_page;
+  (void)unused;
 
-    Interface intf(stdin, stdout);
-    while (true)
-    {
-        if (!intf.process())
-            break;
-    }
+  Interface intf(stdin, stdout);
+  while (true) {
+    if (!intf.process()) break;
+  }
 
-    return 0;
+  return 0;
 }

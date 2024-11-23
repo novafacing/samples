@@ -26,62 +26,52 @@ THE SOFTWARE.
 #include "service.h"
 #include "stdlib.h"
 
+int dive_statistics(logbook_type *Info) {
+  char buf[1024];
+  int rcv_cnt;
+  int dive_count = 0;
+  int sum_max_depths = 0;
+  int max_depth_count = 0;
+  int sum_dive_lengths = 0;
+  int dive_lengths_count = 0;
+  dive_log_type *next_dive;
 
-int dive_statistics(logbook_type *Info)  {
+  printf("\n");
 
-	char buf[1024];
-	int rcv_cnt;
-	int dive_count = 0;
-	int sum_max_depths = 0;
-	int max_depth_count = 0;
-	int sum_dive_lengths = 0;
-	int dive_lengths_count = 0;
-	dive_log_type *next_dive;
+  if (Info->dives == 0) {
+    printf("No dives are logged\n");
+    return -1;
+  }
 
-	printf("\n");
+  next_dive = Info->dives;
 
-	if (Info->dives == 0) {
+  while (next_dive != 0) {
+    ++dive_count;
 
-		printf("No dives are logged\n");
-		return -1;
+    if (next_dive->max_depth > 0) {
+      sum_max_depths += next_dive->max_depth;
+      ++max_depth_count;
+    }
 
-	}
+    if (next_dive->dive_length > 0) {
+      sum_dive_lengths += next_dive->dive_length;
+      ++dive_lengths_count;
+    }
 
-	next_dive = Info->dives;
+    next_dive = next_dive->next;
+  }  // while
 
+  printf("Dives logged: @d\n", dive_count);
 
-	while (next_dive != 0) {
+  if (max_depth_count > 0)
+    printf("Average Max Depth: @d\n", sum_max_depths / max_depth_count);
+  else
+    printf("Average Max Depth: 0\n");
 
-		++dive_count;
+  if (dive_lengths_count > 0)
+    printf("Average Dive Length: @d\n", sum_dive_lengths / dive_lengths_count);
+  else
+    printf("Average Dive Length: 0\n");
 
-		if (next_dive->max_depth > 0) {
-
-			sum_max_depths+= next_dive->max_depth;
-			++max_depth_count;
-		}
-				
-		if (next_dive->dive_length > 0) {
-
-			sum_dive_lengths+= next_dive->dive_length;
-			++dive_lengths_count;
-		}
-
-		next_dive = next_dive->next;
-	} // while 
-
-	printf("Dives logged: @d\n", dive_count);
-
-	if (max_depth_count > 0) 
-		printf("Average Max Depth: @d\n", sum_max_depths/max_depth_count);
-	else
-		printf("Average Max Depth: 0\n");
-
-	if (dive_lengths_count > 0)
-		printf("Average Dive Length: @d\n", sum_dive_lengths/dive_lengths_count);
-	else
-		printf("Average Dive Length: 0\n");
-
-
-
-	return 0;
+  return 0;
 }

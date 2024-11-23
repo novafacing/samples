@@ -21,6 +21,7 @@
  *
  */
 #include <cstring.h>
+
 #include "array.h"
 #include "eval.h"
 #include "parser.h"
@@ -103,110 +104,110 @@ proc main():
 main()
 )==END==";
 
-static bool builtin_echo(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    for (unsigned int i = 0; i < args.length(); i++)
-    {
-        Var *var = args[i].get();
-        if (var == nullptr || var->getType() != VarType::String)
-        {
-            fprintf(stderr, "Error: bad type in echo\n");
-            return false;
-        }
-
-        StringVar *svar = static_cast<StringVar *>(var);
-        fwrite(svar->getBuffer(), svar->getLength(), stdout);
+static bool builtin_echo(void *arg, Evaluator &eval,
+                         const vector<unique_ptr<Var>> &args,
+                         unique_ptr<Var> &result) {
+  for (unsigned int i = 0; i < args.length(); i++) {
+    Var *var = args[i].get();
+    if (var == nullptr || var->getType() != VarType::String) {
+      fprintf(stderr, "Error: bad type in echo\n");
+      return false;
     }
 
-    result.reset(nullptr);
-    return true;
+    StringVar *svar = static_cast<StringVar *>(var);
+    fwrite(svar->getBuffer(), svar->getLength(), stdout);
+  }
+
+  result.reset(nullptr);
+  return true;
 }
 
-static bool builtin_read(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
-        return false;
-    unsigned int length = static_cast<NumberVar*>(args[0].get())->getValue();
-    unique_ptr<StringVar> svar = new StringVar();
-    svar->resize(length);
-    if (fread(svar->getBuffer(), length, stdin) != length)
-        return false;
-    result.reset(svar.release());
-    return true;
+static bool builtin_read(void *arg, Evaluator &eval,
+                         const vector<unique_ptr<Var>> &args,
+                         unique_ptr<Var> &result) {
+  if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    return false;
+  unsigned int length = static_cast<NumberVar *>(args[0].get())->getValue();
+  unique_ptr<StringVar> svar = new StringVar();
+  svar->resize(length);
+  if (fread(svar->getBuffer(), length, stdin) != length) return false;
+  result.reset(svar.release());
+  return true;
 }
 
-static bool builtin_flag(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
-        return false;
-    const unsigned int *secret_page = reinterpret_cast<const unsigned int *>(arg);
-    NumberVar *var = new NumberVar(secret_page[static_cast<NumberVar*>(args[0].get())->getValue() & 0x3ff]);
-    result.reset(var);
-    return true;
+static bool builtin_flag(void *arg, Evaluator &eval,
+                         const vector<unique_ptr<Var>> &args,
+                         unique_ptr<Var> &result) {
+  if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    return false;
+  const unsigned int *secret_page = reinterpret_cast<const unsigned int *>(arg);
+  NumberVar *var = new NumberVar(
+      secret_page[static_cast<NumberVar *>(args[0].get())->getValue() & 0x3ff]);
+  result.reset(var);
+  return true;
 }
 
-static bool builtin_chr(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
-        return false;
-    StringVar *svar = new StringVar();
-    svar->resize(1);
-    svar->getBuffer()[0] = static_cast<NumberVar*>(args[0].get())->getValue();
-    result.reset(svar);
-    return true;
+static bool builtin_chr(void *arg, Evaluator &eval,
+                        const vector<unique_ptr<Var>> &args,
+                        unique_ptr<Var> &result) {
+  if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    return false;
+  StringVar *svar = new StringVar();
+  svar->resize(1);
+  svar->getBuffer()[0] = static_cast<NumberVar *>(args[0].get())->getValue();
+  result.reset(svar);
+  return true;
 }
 
-static bool builtin_ord(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::String)
-        return false;
-    StringVar *svar = static_cast<StringVar*>(args[0].get());
-    if (svar->getLength() < 1)
-        return false;
-    result.reset(new NumberVar((unsigned char)svar->getBuffer()[0]));
-    return true;
+static bool builtin_ord(void *arg, Evaluator &eval,
+                        const vector<unique_ptr<Var>> &args,
+                        unique_ptr<Var> &result) {
+  if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::String)
+    return false;
+  StringVar *svar = static_cast<StringVar *>(args[0].get());
+  if (svar->getLength() < 1) return false;
+  result.reset(new NumberVar((unsigned char)svar->getBuffer()[0]));
+  return true;
 }
 
-static bool builtin_rand(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
-{
-    static unsigned int state = 0x4347c000;
-    static unsigned int idx = 0;
-    const unsigned short *secret_page = reinterpret_cast<const unsigned short *>(arg);
+static bool builtin_rand(void *arg, Evaluator &eval,
+                         const vector<unique_ptr<Var>> &args,
+                         unique_ptr<Var> &result) {
+  static unsigned int state = 0x4347c000;
+  static unsigned int idx = 0;
+  const unsigned short *secret_page =
+      reinterpret_cast<const unsigned short *>(arg);
 
-    state ^= secret_page[idx];
-    state ^= secret_page[idx+2];
-    idx = (idx + 4) & 0x3ff;
-    state *= 1234567;
+  state ^= secret_page[idx];
+  state ^= secret_page[idx + 2];
+  idx = (idx + 4) & 0x3ff;
+  state *= 1234567;
 
-    NumberVar *var = new NumberVar(state);
-    result.reset(var);
-    return true;
+  NumberVar *var = new NumberVar(state);
+  result.reset(var);
+  return true;
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
-{
-    char *secret_page = (char *)secret_page_i;
+extern "C" int __attribute__((fastcall)) main(int secret_page_i,
+                                              char *unused[]) {
+  char *secret_page = (char *)secret_page_i;
 
-    Parser parser(program);
-    if (parser.parse())
-    {
-        Evaluator eval(parser.releaseRoot());
-        ArrayVar::registerExternals(eval);
-        eval.addExternal("chr", builtin_chr);
-        eval.addExternal("echo", builtin_echo);
-        eval.addExternal("ord", builtin_ord);
-        eval.addExternal("flag", builtin_flag, secret_page);
-        eval.addExternal("rand", builtin_rand, secret_page);
-        eval.addExternal("read", builtin_read);
-        if (!eval.run())
-        {
-            fprintf(stderr, "Eval error\n");
-        }
+  Parser parser(program);
+  if (parser.parse()) {
+    Evaluator eval(parser.releaseRoot());
+    ArrayVar::registerExternals(eval);
+    eval.addExternal("chr", builtin_chr);
+    eval.addExternal("echo", builtin_echo);
+    eval.addExternal("ord", builtin_ord);
+    eval.addExternal("flag", builtin_flag, secret_page);
+    eval.addExternal("rand", builtin_rand, secret_page);
+    eval.addExternal("read", builtin_read);
+    if (!eval.run()) {
+      fprintf(stderr, "Eval error\n");
     }
-    else
-    {
-        fprintf(stderr, "Program error\n");
-    }
+  } else {
+    fprintf(stderr, "Program error\n");
+  }
 
-    return 0;
+  return 0;
 }

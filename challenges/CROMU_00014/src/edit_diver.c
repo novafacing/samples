@@ -24,145 +24,125 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "service.h"
 #include "stdlib.h"
 
-int edit_diver(logbook_type *Info)  {
+int edit_diver(logbook_type *Info) {
+  char buffer[1024];
+  size_t count;
 
-	char buffer[1024];
-	size_t count;
+  printf("First Name");
 
-	printf("First Name");
+  if (Info->diver.first_name[0] != 0) printf(" (@s)", Info->diver.first_name);
 
-	if (Info->diver.first_name[0]!= 0)
-		printf(" (@s)", Info->diver.first_name);
+  printf(": ");
 
-	printf(": ");
+  count = getline(buffer, sizeof(Info->diver.first_name));
 
-	count=getline(buffer, sizeof(Info->diver.first_name));
+  if (count > 0)
+    strncpy(Info->diver.first_name, buffer, sizeof(Info->diver.first_name));
 
-	if (count > 0)
-		strncpy(Info->diver.first_name, buffer, sizeof(Info->diver.first_name));
+  printf("Last Name");
 
+  if (Info->diver.last_name[0] != 0) printf(" (@s)", Info->diver.last_name);
 
-	printf("Last Name");
+  printf(": ");
 
-	if (Info->diver.last_name[0]!= 0)
-		printf(" (@s)", Info->diver.last_name);
+  count = getline(buffer, sizeof(Info->diver.last_name));
 
-	printf(": ");
+  if (count > 0)
+    strncpy(Info->diver.last_name, buffer, sizeof(Info->diver.last_name));
 
-	count=getline(buffer, sizeof(Info->diver.last_name));
+  printf("Street");
 
-	if (count > 0)
-		strncpy(Info->diver.last_name, buffer, sizeof(Info->diver.last_name));
+  if (Info->diver.street[0] != 0) printf(" (@s)", Info->diver.street);
 
+  printf(": ");
 
-	printf("Street");
+  count = getline(buffer, sizeof(Info->diver.street));
 
-	if (Info->diver.street[0]!= 0)
-		printf(" (@s)", Info->diver.street);
+  if (count > 0)
+    strncpy(Info->diver.street, buffer, sizeof(Info->diver.street));
 
-	printf(": ");
+  printf("City");
 
-	count=getline(buffer, sizeof(Info->diver.street));
+  if (Info->diver.city[0] != 0) printf(" (@s)", Info->diver.city);
 
-	if (count > 0)
-		strncpy(Info->diver.street, buffer, sizeof(Info->diver.street));
+  printf(": ");
 
-		printf("City");
+  count = getline(buffer, sizeof(Info->diver.city));
 
-	if (Info->diver.city[0]!= 0)
-		printf(" (@s)", Info->diver.city);
+  if (count > 0) strncpy(Info->diver.city, buffer, sizeof(Info->diver.city));
 
-	printf(": ");
+  printf("State");
 
-	count=getline(buffer, sizeof(Info->diver.city));
+  if (Info->diver.state[0] != 0) printf(" (@s)", Info->diver.state);
 
-	if (count > 0)
-		strncpy(Info->diver.city, buffer, sizeof(Info->diver.city));
+  printf(": ");
 
-		printf("State");
+  count = getline(buffer, sizeof(Info->diver.state));
 
-	if (Info->diver.state[0]!= 0)
-		printf(" (@s)", Info->diver.state);
+  if (count > 0) strncpy(Info->diver.state, buffer, sizeof(Info->diver.state));
 
-	printf(": ");
+  printf("Zip Code");
 
-	count=getline(buffer, sizeof(Info->diver.state));
+  if (Info->diver.zip[0] != 0) printf(" (@s)", Info->diver.zip);
 
-	if (count > 0)
-		strncpy(Info->diver.state, buffer, sizeof(Info->diver.state));
+  printf(": ");
 
-		printf("Zip Code");
+  count = getline(buffer, sizeof(Info->diver.zip));
 
-	if (Info->diver.zip[0]!= 0)
-		printf(" (@s)", Info->diver.zip);
+  if (count > 0) strncpy(Info->diver.zip, buffer, sizeof(Info->diver.zip));
 
-	printf(": ");
+  printf("Phone Number");
 
-	count=getline(buffer, sizeof(Info->diver.zip));
+  if (Info->diver.phone[0] != 0) printf(" (@s)", Info->diver.phone);
 
-	if (count > 0)
-		strncpy(Info->diver.zip, buffer, sizeof(Info->diver.zip));
+  printf(": ");
 
-	printf("Phone Number");
+  count = getline(buffer, sizeof(Info->diver.phone));
 
-	if (Info->diver.phone[0]!= 0)
-		printf(" (@s)", Info->diver.phone);
+  if (count > 0) strncpy(Info->diver.phone, buffer, sizeof(Info->diver.phone));
 
-	printf(": ");
+  printf("PADI Diver Number");
 
-	count=getline(buffer, sizeof(Info->diver.phone));
+  if (Info->diver.padi_number[0] != 0) printf(" (@s)", Info->diver.padi_number);
 
-	if (count > 0)
-		strncpy(Info->diver.phone, buffer, sizeof(Info->diver.phone));
+  printf(": ");
 
-	
-	printf("PADI Diver Number");
+  count = getline(buffer, sizeof(Info->diver.padi_number));
 
-	if (Info->diver.padi_number[0]!= 0)
-		printf(" (@s)", Info->diver.padi_number);
+  if (count > 0)
+    strncpy(Info->diver.padi_number, buffer, sizeof(Info->diver.padi_number));
 
-	printf(": ");
+  printf("PADI Cert Date");
 
-	count=getline(buffer, sizeof(Info->diver.padi_number));
+  if (Info->diver.cert_date[0] != 0) printf(" (@s)", Info->diver.cert_date);
 
-	if (count > 0)
-		strncpy(Info->diver.padi_number, buffer, sizeof(Info->diver.padi_number));
+  printf(": ");
 
-	printf("PADI Cert Date");
+  count = getline(buffer, sizeof(Info->diver.cert_date));
 
-	if (Info->diver.cert_date[0]!= 0)
-		printf(" (@s)", Info->diver.cert_date);
+  if (count > 0)
+    strncpy(Info->diver.cert_date, buffer, sizeof(Info->diver.cert_date));
 
-	printf(": ");
+  print_diver_info(Info);
 
-	count=getline(buffer, sizeof(Info->diver.cert_date));
-
-	if (count > 0)
-		strncpy(Info->diver.cert_date, buffer, sizeof(Info->diver.cert_date));
-
-
-	print_diver_info(Info);
-
-return 0;
+  return 0;
 }
 
+int print_diver_info(logbook_type *Info) {
+  printf("\n");
+  printf("     Name: @s @s\n", Info->diver.first_name, Info->diver.last_name);
+  printf("  Address: @s\n", Info->diver.street);
+  printf("     City: @s\n", Info->diver.city);
+  printf("    State: @s\n", Info->diver.state);
+  printf(" Zip Code: @s\n", Info->diver.zip);
+  printf("    Phone: @s\n", Info->diver.phone);
+  printf(" PADI Num: @s\n", Info->diver.padi_number);
+  printf("Cert Date: @s\n", Info->diver.cert_date);
+  printf("\n");
 
-int print_diver_info(logbook_type *Info)  {
-
-	printf("\n");
-	printf("     Name: @s @s\n", Info->diver.first_name, Info->diver.last_name);
-	printf("  Address: @s\n", Info->diver.street);
-	printf("     City: @s\n", Info->diver.city);
-	printf("    State: @s\n", Info->diver.state);
-	printf(" Zip Code: @s\n", Info->diver.zip);
-	printf("    Phone: @s\n", Info->diver.phone);
-	printf(" PADI Num: @s\n", Info->diver.padi_number);
-	printf("Cert Date: @s\n", Info->diver.cert_date);
-	printf("\n");
-
-	return 0;
-
+  return 0;
 }

@@ -20,52 +20,46 @@
  * THE SOFTWARE.
  *
  */
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
+
 #include "common.h"
 #include "rng.h"
 
 typedef struct {
-    uint64_t state;
+  uint64_t state;
 } lcg_priv_t;
 
-static int lcg_init(rng_t *rng)
-{
-    lcg_priv_t *priv;
-    rng->priv = priv = malloc(sizeof(lcg_priv_t));
-    if (priv == NULL)
-        return FAILURE;
+static int lcg_init(rng_t *rng) {
+  lcg_priv_t *priv;
+  rng->priv = priv = malloc(sizeof(lcg_priv_t));
+  if (priv == NULL) return FAILURE;
 
-    priv->state = 1;
-    return SUCCESS;
+  priv->state = 1;
+  return SUCCESS;
 }
 
-static uint32_t next(lcg_priv_t *priv)
-{
-    priv->state = priv->state * 6364136223846793005ULL + 1;
-    return priv->state >> 32;
+static uint32_t next(lcg_priv_t *priv) {
+  priv->state = priv->state * 6364136223846793005ULL + 1;
+  return priv->state >> 32;
 }
 
-static int lcg_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt)
-{
-    while (cnt > 0)
-    {
-        uint32_t x = next(rng->priv);
-        *out++ = x >> 24;
-        if (--cnt == 0) break;
-        *out++ = x >> 16;
-        if (--cnt == 0) break;
-        *out++ = x >> 8;
-        if (--cnt == 0) break;
-        *out++ = x;
-        if (--cnt == 0) break;
-    }
-    return SUCCESS;
+static int lcg_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt) {
+  while (cnt > 0) {
+    uint32_t x = next(rng->priv);
+    *out++ = x >> 24;
+    if (--cnt == 0) break;
+    *out++ = x >> 16;
+    if (--cnt == 0) break;
+    *out++ = x >> 8;
+    if (--cnt == 0) break;
+    *out++ = x;
+    if (--cnt == 0) break;
+  }
+  return SUCCESS;
 }
 
-const rng_def_t lcg_rng = {
-    .name = "64-bit LCG",
-    .id = RNG_LCG,
-    .init = lcg_init,
-    .get_bytes = lcg_get_bytes
-};
+const rng_def_t lcg_rng = {.name = "64-bit LCG",
+                           .id = RNG_LCG,
+                           .init = lcg_init,
+                           .get_bytes = lcg_get_bytes};

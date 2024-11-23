@@ -24,35 +24,34 @@ THE SOFTWARE.
 
 */
 
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
 #include <stdint.h>
 #include <stdlib.h>
 }
 
-#include "workerprng.h"
 #include "gps.h"
 #include "packagetracker.h"
+#include "workerprng.h"
 
-#define SKIP_ID_SIZE	(32)
-#define MAGIC_PAGE_SIZE	(4096)
+#define SKIP_ID_SIZE (32)
+#define MAGIC_PAGE_SIZE (4096)
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
-{
-	void *secret_page = (void *)secret_page_i;
+int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+  void *secret_page = (void *)secret_page_i;
 
-	// Use magic page to run random number generator
-	CPRNG oRNG( (uint32_t *)((uint8_t*)secret_page+SKIP_ID_SIZE), (MAGIC_PAGE_SIZE-SKIP_ID_SIZE) );
+  // Use magic page to run random number generator
+  CPRNG oRNG((uint32_t *)((uint8_t *)secret_page + SKIP_ID_SIZE),
+             (MAGIC_PAGE_SIZE - SKIP_ID_SIZE));
 
-	// Pass secret page for debug access for poller
-	CPackageTracker oTracker( secret_page );
+  // Pass secret page for debug access for poller
+  CPackageTracker oTracker(secret_page);
 
-	// Seed the simulation with RNG data
-	oTracker.SeedSimulation( &oRNG );
+  // Seed the simulation with RNG data
+  oTracker.SeedSimulation(&oRNG);
 
-	// Run GPS Tracker
-	oTracker.Run();
+  // Run GPS Tracker
+  oTracker.Run();
 
-	return 0;
+  return 0;
 }

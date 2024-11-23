@@ -18,32 +18,31 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <errno.h>
+ */
 #include "recv_bytes.h"
 
+#include <errno.h>
+#include <libcgc.h>
+
 int recv_bytes(int fd, char *buf, unsigned int size) {
+  if ((NULL == buf) || (0 == size)) {
+    return ERRNO_RECV;
+  }
 
-	if ((NULL == buf) || (0 == size)) {
-		return ERRNO_RECV;
-	}
+  size_t bytes_read_iter = 0;
+  unsigned int bytes_read_total = 0;
 
-	size_t bytes_read_iter = 0;
-	unsigned int bytes_read_total = 0;
+  for (unsigned int i = 0; i < size; i++) {
+    if (0 != (receive(fd, &buf[i], 1, &bytes_read_iter))) {
+      return ERRNO_RECV;
+    }
 
-	for (unsigned int i = 0; i < size; i++) {
-        if (0 != (receive(fd, &buf[i], 1, &bytes_read_iter))) {
-        	return ERRNO_RECV;
-        }
+    if (0 == bytes_read_iter) {
+      break;
+    }
 
-        if (0 == bytes_read_iter) {
-        	break;
-        }
+    bytes_read_total++;
+  }
 
-        bytes_read_total++;
-
-	}
-
-	return bytes_read_total;
+  return bytes_read_total;
 }

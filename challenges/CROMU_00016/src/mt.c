@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "stdlib.h"
 
 unsigned int mt_state[624];
@@ -31,43 +32,45 @@ int idx = 0;
 
 // seed the PRNG
 void init_mt(unsigned int seed) {
-	int i;
+  int i;
 
-	mt_state[0] = seed & 0xffffffffUL;
-	for (i = 1; i < 624; i++) {
-		mt_state[i] = (0x6c078965 * (mt_state[i-1] ^ (mt_state[i-1] >> 30)) + i);
-	}
+  mt_state[0] = seed & 0xffffffffUL;
+  for (i = 1; i < 624; i++) {
+    mt_state[i] =
+        (0x6c078965 * (mt_state[i - 1] ^ (mt_state[i - 1] >> 30)) + i);
+  }
 }
 
-// generate the state array (automatically called the first time rand_mt is called)
+// generate the state array (automatically called the first time rand_mt is
+// called)
 void gen_mt_state(void) {
-	int i;
-	unsigned int t;
+  int i;
+  unsigned int t;
 
-	for (i = 0; i < 624; i++) {
-		t = (mt_state[i] & 0x80000000) + (mt_state[(i+1) % 624] & 0x7fffffff);
-		mt_state[i] = mt_state[(i+397) % 624] ^ (t >> 1);
-		if (t % 2 != 0) {
-			mt_state[i] = mt_state[i] ^ 0x9908b0df;
-		}
-	}
+  for (i = 0; i < 624; i++) {
+    t = (mt_state[i] & 0x80000000) + (mt_state[(i + 1) % 624] & 0x7fffffff);
+    mt_state[i] = mt_state[(i + 397) % 624] ^ (t >> 1);
+    if (t % 2 != 0) {
+      mt_state[i] = mt_state[i] ^ 0x9908b0df;
+    }
+  }
 }
 
 // generate a random unsigned int
 unsigned int rand_mt(void) {
-	unsigned int ret;
+  unsigned int ret;
 
-	if (idx == 0) {
-		gen_mt_state();
-	}
+  if (idx == 0) {
+    gen_mt_state();
+  }
 
-	ret = mt_state[idx];
-	ret = ret ^ (ret >> 11);
-	ret = ret ^ ((ret << 7) & 0x9d2c5680);
-	ret = ret ^ ((ret << 15) & 0xefc60000);
-	ret = ret ^ (ret >> 18);
+  ret = mt_state[idx];
+  ret = ret ^ (ret >> 11);
+  ret = ret ^ ((ret << 7) & 0x9d2c5680);
+  ret = ret ^ ((ret << 15) & 0xefc60000);
+  ret = ret ^ (ret >> 18);
 
-	idx = (idx + 1) % 624;
+  idx = (idx + 1) % 624;
 
-	return(ret);
+  return (ret);
 }

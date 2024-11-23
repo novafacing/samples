@@ -28,16 +28,16 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-#define IO_ERROR_TERMINATE      (-1)
+#define IO_ERROR_TERMINATE (-1)
 
-void setup_io( int readFD, int writeFD );
+void setup_io(int readFD, int writeFD);
 
-uint8_t read_u8( void );
-uint16_t read_u16( void );
-uint32_t read_u32( void );
+uint8_t read_u8(void);
+uint16_t read_u16(void);
+uint32_t read_u32(void);
 
-void write_u8( uint8_t val );
-void write_u16( uint16_t val );
-void write_u32( uint32_t val );
+void write_u8(uint8_t val);
+void write_u16(uint16_t val);
+void write_u32(uint32_t val);
 
-#endif // __IO_H__
+#endif  // __IO_H__

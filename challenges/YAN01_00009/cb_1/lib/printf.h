@@ -10,5 +10,5 @@ size_t printf(const char* fstr, ...);
 size_t fflush(int fd);
 
 size_t snprintf(char* str, size_t len, const char* fstr, ...);
- 
-#endif//PRINTF_H
+
+#endif  // PRINTF_H

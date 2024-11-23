@@ -24,101 +24,92 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
+
+#include <libcgc.h>
+
 #include "commands.h"
 #include "printf.h"
-
+#include "stdlib.h"
 
 airportInfoType *airports;
 
 int main(void) {
+  char command[150];
+  int retval;
+  unsigned int databaseCheck;
 
-char command[150];
-int retval;
-unsigned int databaseCheck;
+  // compare the consistency of the database (magic page)
+  databaseCheck = check_db();
 
+  printf("Database checksum: @d\n", databaseCheck);
 
-	// compare the consistency of the database (magic page)
-	databaseCheck = check_db();
+  // load data from the magic page
+  if (loadDB(&airports) == -1) _terminate(-1);
 
-	printf("Database checksum: @d\n", databaseCheck);
+  while (1) {
+    getline(command, sizeof(command));
 
-	// load data from the magic page
-	if (loadDB(&airports) == -1)
-		_terminate(-1);
+    retval = execute_cmd(&airports, command);
 
+    switch (retval) {
+      case COMMAND_OK:
 
-	while(1) {
+        printf("OK\n");
+        break;
 
-		getline(command, sizeof(command));
+      case BAD_COMMAND:
 
-		retval = execute_cmd(&airports, command);
+        printf("BAD COMMAND FORMAT\n");
+        break;
 
+      case DUPLICATE_CODE:
 
-		switch (retval) {
+        printf("AIRPORT CODE EXISTS\n");
+        break;
 
-			case COMMAND_OK:
+      case UNKN_CODE:
 
-				printf("OK\n");
-				break;
+        printf("UNKNOWN AIRPORT\n");
+        break;
 
-			case BAD_COMMAND:
+      case DATABASE_EMPTY:
 
-				printf("BAD COMMAND FORMAT\n");
-				break;
+        printf("EMPTY DB\n");
+        break;
 
-			case DUPLICATE_CODE:
+      case COMMAND_TERMINATED:
 
-				printf("AIRPORT CODE EXISTS\n");
-				break;
+        printf("COMMAND TERMINATED\n");
+        break;
 
-			case UNKN_CODE:
+      case NO_RESULTS:
 
-				printf("UNKNOWN AIRPORT\n");
-				break;
+        printf("NO RESULTS\n");
+        break;
 
-			case DATABASE_EMPTY:
+      case UNRECOVERABLE_ERROR:
 
-				printf("EMPTY DB\n");
-				break;
+        printf("TERMINATING\n");
+        _terminate(-1);
+        break;
 
-			case COMMAND_TERMINATED:
+        // quit command
+      case -99:
 
-				printf("COMMAND TERMINATED\n");
-				break;
+        printf("OK\n");
+        break;
 
-			case NO_RESULTS:
+      default:
 
-				printf("NO RESULTS\n");
-				break;
+        printf("UNSPECIFIED ERROR\n");
 
-			case UNRECOVERABLE_ERROR:
+    }  // switch
 
-				printf("TERMINATING\n");
-				_terminate(-1);
-				break;
+    if (retval == -99) break;
 
-				// quit command
-			case -99:
+  }  // while
 
-				printf("OK\n");
-				break;
+  _terminate(0);
 
-			default:
-
-				printf("UNSPECIFIED ERROR\n");
-
-
-		} // switch
-
-		if (retval == -99)
-			break;
-
-	} // while
-
-    _terminate(0);
-
-}  // main  
-
+}  // main

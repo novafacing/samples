@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef GOFISH_H
 #define GOFISH_H 1
@@ -28,13 +27,13 @@
 #include "player.h"
 
 struct game_state {
-	uint8_t whos_turn;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
-	uint8_t unk3; // push size to mult of 4 bytes
-	struct deck *pool;
-	struct player *p_remote;
-	struct player *p_bot;
+  uint8_t whos_turn;
+  uint8_t unk1;  // push size to mult of 4 bytes
+  uint8_t unk2;  // push size to mult of 4 bytes
+  uint8_t unk3;  // push size to mult of 4 bytes
+  struct deck *pool;
+  struct player *p_remote;
+  struct player *p_bot;
 };
 
 /**
@@ -51,7 +50,7 @@ extern struct game_state *create_game(char *player_name);
  * @param game Pointer to the game state.
  * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_HAND_FULL,
  *	ERR_UNINITIALIZED_PLAYER, ERR_UNINITIALIZED_DECK, ERR_UNINITIALIZED_GAME
- *  on error 
+ *  on error
  */
 extern int deal(struct game_state *game);
 
@@ -86,6 +85,5 @@ extern int is_player_turn(struct game_state *game);
  * @return TRUE if yes, FALSE if no or ERR_UNINITIALIZED_GAME on error
  */
 extern int is_game_over(struct game_state *game);
-
 
 #endif

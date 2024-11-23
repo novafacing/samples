@@ -25,126 +25,94 @@
 #include <cstdlib.h>
 #include <new.h>
 
-namespace std
-{
-    template <typename T>
-    T* addressof(T& ref)
-    {
-        return reinterpret_cast<T*>(&reinterpret_cast<char&>(ref));
-    }
-};
+namespace std {
+template <typename T>
+T *addressof(T &ref) {
+  return reinterpret_cast<T *>(&reinterpret_cast<char &>(ref));
+}
+};  // namespace std
 
 template <class T>
-class vector
-{
-public:
-    vector() : size(0), allocated(0), items(nullptr) {};
-    vector(unsigned int initial)
-    {
-        enlarge(initial);
+class vector {
+ public:
+  vector() : size(0), allocated(0), items(nullptr) {};
+  vector(unsigned int initial) { enlarge(initial); }
+  vector(const vector &other) {
+    size = other.size;
+    allocated = other.size;
+    if (size) {
+      items = (T *)malloc(sizeof(T) * size);
+      for (unsigned int i = 0; i < size; i++) items[i] = other.items[i];
     }
-    vector(const vector &other)
-    {
-        size = other.size;
-        allocated = other.size;
-        if (size)
-        {
-            items = (T *)malloc(sizeof(T) * size);
-            for (unsigned int i = 0; i < size; i++)
-                items[i] = other.items[i];
-        }
+  }
+  ~vector() {
+    for (unsigned int i = 0; i < allocated; i++) {
+      items[i].~T();
     }
-    ~vector()
-    {
-        for (unsigned int i = 0; i < allocated; i++)
-        {
-            items[i].~T();
-        }
-        if (allocated)
-        {
-            free(items);
-            items = nullptr;
-        }
+    if (allocated) {
+      free(items);
+      items = nullptr;
     }
+  }
 
-    vector(vector &&) = delete;
-    vector& operator=(const vector& other)
-    {
-        size = other.size;
-        allocated = other.size;
-        if (size)
-        {
-            items = (T *)malloc(sizeof(T) * size);
-            for (unsigned int i = 0; i < size; i++)
-                items[i] = other.items[i];
-        }
-        return *this;
+  vector(vector &&) = delete;
+  vector &operator=(const vector &other) {
+    size = other.size;
+    allocated = other.size;
+    if (size) {
+      items = (T *)malloc(sizeof(T) * size);
+      for (unsigned int i = 0; i < size; i++) items[i] = other.items[i];
     }
+    return *this;
+  }
 
-    unsigned int length() const
-    {
-        return size;
+  unsigned int length() const { return size; }
+
+  T &operator[](unsigned int i) {
+    if (i >= size) exit(1);
+    return items[i];
+  }
+
+  const T &operator[](unsigned int i) const {
+    if (i >= size) exit(1);
+    return items[i];
+  }
+
+  void push_back(const T &item) {
+    if (size == allocated) enlarge(allocated == 0 ? 8 : allocated * 2);
+    items[size++] = item;
+  }
+
+  void enlarge(unsigned int length) {
+    if (length > allocated) {
+      items = (T *)realloc(items, sizeof(T) * length);
+      if (items == nullptr) exit(1);
+
+      T *start = std::addressof(items[allocated]);
+      T *end = std::addressof(items[length]);
+      while (start < end) {
+        new (start++) T();
+      }
+
+      allocated = length;
     }
+  }
 
-    T& operator[] (unsigned int i)
-    {
-        if (i >= size)
-            exit(1);
-        return items[i];
+  void resize(unsigned int length) {
+    enlarge(length);
+
+    if (size < length) {
+      // items are already set to default values
+      size = length;
+    } else {
+      // clear items
+      for (unsigned int i = length; i < size; i++) items[i] = T();
+      size = length;
     }
+  }
 
-    const T& operator[] (unsigned int i) const
-    {
-        if (i >= size)
-            exit(1);
-        return items[i];
-    }
-
-    void push_back(const T& item)
-    {
-        if (size == allocated)
-            enlarge(allocated == 0 ? 8 : allocated * 2);
-        items[size++] = item;
-    }
-
-    void enlarge(unsigned int length)
-    {
-        if (length > allocated)
-        {
-            items = (T *)realloc(items, sizeof(T) * length);
-            if (items == nullptr)
-                exit(1);
-
-            T *start = std::addressof(items[allocated]);
-            T *end = std::addressof(items[length]);
-            while (start < end)
-            {
-                new (start++) T();
-            }
-
-            allocated = length;
-        }
-    }
-
-    void resize(unsigned int length)
-    {
-        enlarge(length);
-
-        if (size < length)
-        {
-            // items are already set to default values
-            size = length;
-        }
-        else
-        {
-            // clear items
-            for (unsigned int i = length; i < size; i++)
-                items[i] = T();
-            size = length;
-        }
-    }
-private:
-    unsigned int size;
-    unsigned int allocated;
-    T *items;
+ private:
+  unsigned int size;
+  unsigned int allocated;
+  T *items;
 };

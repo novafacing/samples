@@ -34,22 +34,23 @@ THE SOFTWARE.
  * It points to the current byte/bit to be read
  **/
 typedef struct fpti_image_data {
-        char *buffer;
-        int max;
-        int cbyte;
-        int cbit;
-	char pixel;
+  char *buffer;
+  int max;
+  int cbyte;
+  int cbit;
+  char pixel;
 } fpti_image_data, *pfpti_image_data;
 
-int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at);
-int fpti_display_img( pfpti_image_data fid );
-int fpti_read_magic( pfpti_image_data fid );
-int fpti_read_xaxis( pfpti_image_data fid );
-int fpti_read_yaxis( pfpti_image_data fid );
-int fpti_read_axist( pfpti_image_data fid );
-int fpti_read_ptype( pfpti_image_data fid, int *ptype);
-int fpti_read_pixel( pfpti_image_data fid, int *x, int *y);
-int fpti_read_check( pfpti_image_data fid, int bitcount);
-int fpti_read_nbits( pfpti_image_data fid, int bitcount, int *value);
+int fpti_add_pixel(pfpti_image_data fid, int x, int y, char *image, int xlen,
+                   int ylen, int at);
+int fpti_display_img(pfpti_image_data fid);
+int fpti_read_magic(pfpti_image_data fid);
+int fpti_read_xaxis(pfpti_image_data fid);
+int fpti_read_yaxis(pfpti_image_data fid);
+int fpti_read_axist(pfpti_image_data fid);
+int fpti_read_ptype(pfpti_image_data fid, int *ptype);
+int fpti_read_pixel(pfpti_image_data fid, int *x, int *y);
+int fpti_read_check(pfpti_image_data fid, int bitcount);
+int fpti_read_nbits(pfpti_image_data fid, int bitcount, int *value);
 
 #endif

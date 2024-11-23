@@ -20,49 +20,48 @@
  * THE SOFTWARE.
  *
  */
+#include "link.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "link.h"
+void link_send(unsigned channel, unsigned length,
+               const unsigned char *payload) {
+  size_t bytes;
+  union {
+    link_hdr_t hdr;
+    unsigned char rawdata[LINK_PACKET_SIZE];
+  } pkt;
 
-void link_send(unsigned channel, unsigned length, const unsigned char *payload)
-{
-    size_t bytes;
-    union {
-        link_hdr_t hdr;
-        unsigned char rawdata[LINK_PACKET_SIZE];
-    } pkt;
+  pkt.hdr.length = length;
+  pkt.hdr.channel = channel;
+  pkt.hdr.flow = 1;
+  pkt.hdr.sbz = 0;
 
-    pkt.hdr.length = length;
-    pkt.hdr.channel = channel;
-    pkt.hdr.flow = 1;
-    pkt.hdr.sbz = 0;
+  if (length > LINK_PAYLOAD_SIZE) length = LINK_PAYLOAD_SIZE;
 
-    if (length > LINK_PAYLOAD_SIZE)
-        length = LINK_PAYLOAD_SIZE;
-
-    memcpy(pkt.hdr.payload, payload, length);
-    transmit(STDOUT, pkt.rawdata, length + sizeof(link_hdr_t), &bytes);
+  memcpy(pkt.hdr.payload, payload, length);
+  transmit(STDOUT, pkt.rawdata, length + sizeof(link_hdr_t), &bytes);
 }
 
-int link_recv(unsigned *channel, unsigned *length, unsigned char *payload)
-{
-    size_t bytes;
-    link_hdr_t hdr;
+int link_recv(unsigned *channel, unsigned *length, unsigned char *payload) {
+  size_t bytes;
+  link_hdr_t hdr;
 
 retry:
-    if (receive(STDIN, &hdr, sizeof(link_hdr_t), &bytes) != 0 || bytes < sizeof(link_hdr_t))
-        return -1;
-    
-    if (hdr.length > LINK_PAYLOAD_SIZE)
-        // bad packet, try again
-        goto retry;
+  if (receive(STDIN, &hdr, sizeof(link_hdr_t), &bytes) != 0 ||
+      bytes < sizeof(link_hdr_t))
+    return -1;
 
-    if (receive(STDIN, payload, hdr.length, &bytes) != 0 || bytes != hdr.length)
-        return -1;
+  if (hdr.length > LINK_PAYLOAD_SIZE)
+    // bad packet, try again
+    goto retry;
 
-    *channel = hdr.channel;
-    *length = hdr.length;
+  if (receive(STDIN, payload, hdr.length, &bytes) != 0 || bytes != hdr.length)
+    return -1;
 
-    return 0;
+  *channel = hdr.channel;
+  *length = hdr.length;
+
+  return 0;
 }

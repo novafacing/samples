@@ -28,33 +28,43 @@ namespace Backend {
 
 void InitDataStores(int secret_page_i);
 
-char *AddUser(const char *name, unsigned short length, unsigned short *pass_length);
+char *AddUser(const char *name, unsigned short length,
+              unsigned short *pass_length);
 bool CheckIfUserExists(const char *name, unsigned short length);
-bool VerifyPassword(const char *name, unsigned short name_length, const char *pass, unsigned short pass_length);
-bool DeleteUser(const char *name, unsigned short name_length, const char *pass, unsigned short pass_length);
+bool VerifyPassword(const char *name, unsigned short name_length,
+                    const char *pass, unsigned short pass_length);
+bool DeleteUser(const char *name, unsigned short name_length, const char *pass,
+                unsigned short pass_length);
 
-bool JoinChannel(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *chan_name, unsigned short chan_length);
+bool JoinChannel(const char *user_name, unsigned short user_length,
+                 const char *pass, unsigned short pass_length,
+                 const char *chan_name, unsigned short chan_length);
 bool CheckIfChannelExists(const char *name, unsigned short length);
-bool CheckIfUserJoinedChannel(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                        const char *chan_name, unsigned short chan_length);
+bool CheckIfUserJoinedChannel(const char *user_name, unsigned short user_length,
+                              const char *pass, unsigned short pass_length,
+                              const char *chan_name,
+                              unsigned short chan_length);
 User *GetChannelUsers(const char *chan_name, unsigned short length);
-bool PartChannel(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *chan_name, unsigned short chan_length);
-bool DeleteChannel(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *chan_name, unsigned short chan_length);
-bool AddChannelAdmin(const char *user_name, unsigned short user_length, const char *pass, unsigned short pass_length,
-                    const char *admin_name, unsigned short admin_name_length);
+bool PartChannel(const char *user_name, unsigned short user_length,
+                 const char *pass, unsigned short pass_length,
+                 const char *chan_name, unsigned short chan_length);
+bool DeleteChannel(const char *user_name, unsigned short user_length,
+                   const char *pass, unsigned short pass_length,
+                   const char *chan_name, unsigned short chan_length);
+bool AddChannelAdmin(const char *user_name, unsigned short user_length,
+                     const char *pass, unsigned short pass_length,
+                     const char *admin_name, unsigned short admin_name_length);
 char *GeneratePassword(unsigned short *new_pass_len);
 
 void DebugPrintUsers();
 void DebugPrintChannels();
 
-}
+}  // namespace Backend
 
 namespace AdminTasks {
 
-bool RemoteAdminTokenRequest(char *auth_val, unsigned int auth_val_length, unsigned short page_idx, int *token);
+bool RemoteAdminTokenRequest(char *auth_val, unsigned int auth_val_length,
+                             unsigned short page_idx, int *token);
 
 }
 

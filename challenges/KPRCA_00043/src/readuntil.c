@@ -22,35 +22,28 @@
  */
 #include "readuntil.h"
 
-int read_until(int fd, char *buf, size_t len, char delim)
-{
+int read_until(int fd, char *buf, size_t len, char delim) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      return -1;
-    if (*c == delim || *c == '\0')
-    {
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) return -1;
+    if (*c == delim || *c == '\0') {
       c++;
       break;
     }
     c++;
   }
-  *(c-1) = '\0';
+  *(c - 1) = '\0';
   return c - buf;
 }
 
-int read_n(int fd, char *buf, size_t len)
-{
+int read_n(int fd, char *buf, size_t len) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      break;
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) break;
     c++;
   }
   return c - buf;

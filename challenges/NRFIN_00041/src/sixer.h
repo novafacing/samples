@@ -18,17 +18,15 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef SIXER_H
 #define SIXER_H 1
 
-
 struct sixer {
-	unsigned int bits_used;
-	const char *p_idx;
-	const char *ais_msg;
+  unsigned int bits_used;
+  const char *p_idx;
+  const char *ais_msg;
 };
 
 /**
@@ -97,6 +95,4 @@ char sixer_bits_to_ASCII_str_char(unsigned char sixer_bits);
  */
 char unarmor_ASCII_char(unsigned char armored_char);
 
-
 #endif
-

@@ -74,8 +74,9 @@ typedef struct sad_node {
   };
 } sad_node_t;
 
-char* sadface_var2str(sad_var_t *var);
-int sadface_init(sadface_ctx_t **ctx, faces_t *faces, char *content, dict_t **vars);
+char *sadface_var2str(sad_var_t *var);
+int sadface_init(sadface_ctx_t **ctx, faces_t *faces, char *content,
+                 dict_t **vars);
 int sadface_render(sadface_ctx_t *ctx, char *out, size_t *out_len);
 void sadface_destroy(sadface_ctx_t *ctx);
 

@@ -25,8 +25,8 @@ THE SOFTWARE.
 
 */
 
-#include "filesystem.h"
 #include "auth.h"
+#include "filesystem.h"
 
 #ifndef SERVICE_H
 #define SERVICE_H
@@ -34,26 +34,21 @@ THE SOFTWARE.
 #define MAX_COMMAND_LEN (1024)
 
 typedef struct {
-
-	char *command;
-	int (* handler)(int, char **);
+  char *command;
+  int (*handler)(int, char **);
 
 } commandsTableType;
-
 
 int tokenize(char *string, char delimiter, char **args[]);
 int makeFile(int argcount, char **args);
 int eraseFile(int argcount, char **args);
 int listFiles(int argcount, char **args);
-int overwriteFile( int argcount, char **args);
-int dumpFile( int argcount, char **args);
-int readFromEnd( int argcount, char **args);
+int overwriteFile(int argcount, char **args);
+int dumpFile(int argcount, char **args);
+int readFromEnd(int argcount, char **args);
 int readFirstN(int argcount, char **args);
 int copyFile(int argcount, char **args);
 int setPermissions(int argcount, char **args);
 int makeMemFile(int argcount, char **args);
 
 #endif
-
-
-

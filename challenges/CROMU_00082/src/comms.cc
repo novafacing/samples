@@ -23,67 +23,56 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
+extern "C" {
 #include <libcgc.h>
+#include <prng.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <prng.h>
 }
 
 #include "comms.h"
 
-uint32_t RecvData( int32_t fd, uint8_t *pDest, uint32_t recvLen )
-{
-	if ( pDest == NULL )
-		return (0);
+uint32_t RecvData(int32_t fd, uint8_t *pDest, uint32_t recvLen) {
+  if (pDest == NULL) return (0);
 
-	if ( recvLen == 0 )
-		return (0);
+  if (recvLen == 0) return (0);
 
-	uint32_t curRecvLen = 0;
+  uint32_t curRecvLen = 0;
 
-	while ( curRecvLen < recvLen )
-	{
-		size_t num_bytes;
-		uint32_t recvRemaining = (recvLen - curRecvLen);
+  while (curRecvLen < recvLen) {
+    size_t num_bytes;
+    uint32_t recvRemaining = (recvLen - curRecvLen);
 
-		if ( receive( fd, (pDest+curRecvLen), recvRemaining, &num_bytes ) != 0 )
-			_terminate( -1 );
+    if (receive(fd, (pDest + curRecvLen), recvRemaining, &num_bytes) != 0)
+      _terminate(-1);
 
-		if ( num_bytes == 0 )
-			_terminate( -1 );
+    if (num_bytes == 0) _terminate(-1);
 
-		curRecvLen += num_bytes;			 
-	}
+    curRecvLen += num_bytes;
+  }
 
-	return curRecvLen;
+  return curRecvLen;
 }
 
-uint32_t SendData( int32_t fd, uint8_t *pSource, uint32_t sendLen )
-{
-	if ( pSource == NULL )
-		return (0);
+uint32_t SendData(int32_t fd, uint8_t *pSource, uint32_t sendLen) {
+  if (pSource == NULL) return (0);
 
-	if ( sendLen == 0 )
-		return (0);
+  if (sendLen == 0) return (0);
 
-	uint32_t curSendLen = 0;
+  uint32_t curSendLen = 0;
 
-	while ( curSendLen < sendLen )
-	{
-		size_t num_bytes;
-		uint32_t sendRemaining = (sendLen - curSendLen);
+  while (curSendLen < sendLen) {
+    size_t num_bytes;
+    uint32_t sendRemaining = (sendLen - curSendLen);
 
-		if ( transmit( fd, (pSource+curSendLen), sendRemaining, &num_bytes ) != 0 )
-			_terminate( -1 );
+    if (transmit(fd, (pSource + curSendLen), sendRemaining, &num_bytes) != 0)
+      _terminate(-1);
 
-		if ( num_bytes == 0 )
-			_terminate( -1 );
+    if (num_bytes == 0) _terminate(-1);
 
-		curSendLen += num_bytes;
-	}
+    curSendLen += num_bytes;
+  }
 
-	return (curSendLen);
+  return (curSendLen);
 }

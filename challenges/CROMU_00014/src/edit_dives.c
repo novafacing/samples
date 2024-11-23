@@ -23,203 +23,173 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include "service.h"
 #include "menu.h"
+#include "service.h"
 #include "stdlib.h"
 
-int edit_dives(logbook_type *Info)  {
+int edit_dives(logbook_type *Info) {
+  char buf[1024];
+  int rcv_cnt;
 
-	char buf[1024];
-	int rcv_cnt;
+  dive_log_type *next_dive;
+  next_dive = Info->dives;
 
-	dive_log_type *next_dive;
-	next_dive = Info->dives;
+  int dive_count = 1;
+  int dive_number_to_edit = 0;
 
-	int dive_count = 1;
-	int dive_number_to_edit = 0;
+  if (next_dive == 0) {
+    printf("\n");
+    printf("Dive Log is empty\n");
+    return 0;
+  }
 
-	if (next_dive == 0) {
+  list_dives(Info);
 
-		printf("\n");
-		printf("Dive Log is empty\n");
-		return 0;
-	}
+  printf("\n");
+  printf("Enter Dive # to edit: ");
 
-	list_dives(Info);
+  rcv_cnt = getline(buf, sizeof(buf));
 
-	printf("\n");
-	printf("Enter Dive # to edit: ");
+  if (rcv_cnt == 0) return 0;
 
-	rcv_cnt=getline(buf, sizeof(buf));
-		
-	if (rcv_cnt==0)
-		return 0;
+  dive_number_to_edit = atoi(buf);
 
-	dive_number_to_edit=atoi(buf);
+  next_dive = Info->dives;
+  dive_count = 1;
 
-	next_dive = Info->dives;
-	dive_count = 1;
+  while (dive_count < dive_number_to_edit && next_dive != 0) {
+    ++dive_count;
+    next_dive = next_dive->next;
+  }
 
-	while (dive_count < dive_number_to_edit && next_dive!= 0) {
-		++dive_count;
-		next_dive=next_dive->next;
+  if (dive_count == dive_number_to_edit && next_dive != 0) {
+    printf("Editing dive number @d\n", dive_number_to_edit);
 
-	}
+    // now display and allow for updating of the data
+    update_dive(next_dive);
+  } else {
+    printf("Invalid dive number entered\n");
+  }
 
-	if (dive_count==dive_number_to_edit && next_dive != 0) {
-		printf("Editing dive number @d\n", dive_number_to_edit);
-
-		// now display and allow for updating of the data
-		update_dive(next_dive);
-	}
-	else {
-
-		printf("Invalid dive number entered\n");
-
-	}
-	
-	return 0;
+  return 0;
 }
 
-
 int update_dive(dive_log_type *dive) {
+  char buffer[1024];
+  char buf2[1024];
+  size_t count;
 
+  printf("Dive Site");
 
-char buffer[1024];
-char buf2[1024];
-size_t count;
+  if (dive->dive_site_name[0] != 0) printf(" (@s)", dive->dive_site_name);
 
-	printf("Dive Site");
+  printf(": ");
 
-	if (dive->dive_site_name[0]!= 0)
-		printf(" (@s)", dive->dive_site_name);
+  count = getline(buffer, sizeof(dive->dive_site_name));
 
-	printf(": ");
+  if (count > 0) {
+    strncpy(dive->dive_site_name, buffer, sizeof(dive->dive_site_name));
+  }
 
-	count=getline(buffer, sizeof(dive->dive_site_name));
+  printf("Date");
 
-	if (count > 0) {
-		strncpy(dive->dive_site_name, buffer, sizeof(dive->dive_site_name));
-	}
+  if (dive->dive_date[0] != 0) printf(" (@s)", dive->dive_date);
 
-	printf("Date");
+  printf(": ");
 
-	if (dive->dive_date[0]!= 0)
-		printf(" (@s)", dive->dive_date);
+  count = getline(buffer, sizeof(dive->dive_date));
 
-	printf(": ");
+  if (count > 0) strncpy(dive->dive_date, buffer, sizeof(dive->dive_date));
 
-	count=getline(buffer, sizeof(dive->dive_date));
+  printf("Time");
 
-	if (count > 0)
-		strncpy(dive->dive_date, buffer, sizeof(dive->dive_date));
+  if (dive->dive_time[0] != 0) printf(" (@s)", dive->dive_time);
 
-	printf("Time");
+  printf(": ");
 
-	if (dive->dive_time[0]!= 0)
-		printf(" (@s)", dive->dive_time);
+  count = getline(buf2, sizeof(dive->dive_time));
 
-	printf(": ");
+  if (count > 0) strncpy(dive->dive_time, buf2, sizeof(dive->dive_time));
 
-	count=getline(buf2, sizeof(dive->dive_time));
+  strncat(buffer, " ", 1);
+  strncat(buffer, buf2, strlen(buf2));
 
-	if (count > 0)
-		strncpy(dive->dive_time, buf2, sizeof(dive->dive_time));
+  datetime_struct_type tm;
+  dive->timestamp = str2datetime(buffer, &tm);
 
-	strncat(buffer, " ", 1);
-	strncat(buffer, buf2, strlen(buf2));
+  printf("Location (area/city)");
 
-	datetime_struct_type tm;
-	dive->timestamp =  str2datetime(buffer, &tm);
+  if (dive->location[0] != 0) printf(" (@s)", dive->location);
 
-	printf("Location (area/city)");
-
-	if (dive->location[0]!= 0)
-		printf(" (@s)", dive->location);
-
-	printf(": ");
+  printf(": ");
 
 #ifdef PATCHED
-    count=getline(buffer, sizeof(dive->location));
+  count = getline(buffer, sizeof(dive->location));
 #else
-	count=getline(buffer, sizeof(buffer));
+  count = getline(buffer, sizeof(buffer));
 #endif
 
-	if (count > 0)
-		strncpy(dive->location, buffer, count);
+  if (count > 0) strncpy(dive->location, buffer, count);
 
-	printf("Max Depth in ft");
+  printf("Max Depth in ft");
 
-	if (dive->max_depth!= 0)
-		printf(" (@d)", dive->max_depth);
+  if (dive->max_depth != 0) printf(" (@d)", dive->max_depth);
 
-	printf(": ");
+  printf(": ");
 
-	count=getline(buffer, sizeof(buffer));
+  count = getline(buffer, sizeof(buffer));
 
-	if (count > 0)
-		dive->max_depth= atoi(buffer);
+  if (count > 0) dive->max_depth = atoi(buffer);
 
-	printf("Avg Depth in ft");
+  printf("Avg Depth in ft");
 
-	if (dive->avg_depth!= 0)
-		printf(" (@d)", dive->avg_depth);
+  if (dive->avg_depth != 0) printf(" (@d)", dive->avg_depth);
 
-	printf(": ");
+  printf(": ");
 
-	count=getline(buffer, sizeof(buffer));
+  count = getline(buffer, sizeof(buffer));
 
-	if (count > 0)
-		dive->avg_depth=atoi(buffer);
+  if (count > 0) dive->avg_depth = atoi(buffer);
 
-	printf("Dive Duration (mins)");
+  printf("Dive Duration (mins)");
 
-	if (dive->dive_length!= 0)
-		printf(" (@d)", dive->dive_length);
+  if (dive->dive_length != 0) printf(" (@d)", dive->dive_length);
 
-	printf(": ");
+  printf(": ");
 
-	count=getline(buffer, 13);
+  count = getline(buffer, 13);
 
-	if (count > 0)
-		dive->dive_length = atoi(buffer);
+  if (count > 0) dive->dive_length = atoi(buffer);
 
-	printf("O2 Percentage");
+  printf("O2 Percentage");
 
-	if (dive->O2_percent!= 0)
-		printf(" (@d)", dive->O2_percent);
+  if (dive->O2_percent != 0) printf(" (@d)", dive->O2_percent);
 
-	printf(": ");
+  printf(": ");
 
-	count=getline(buffer, 11);
+  count = getline(buffer, 11);
 
-	if (count > 0)
-		dive->O2_percent=atoi(buffer);
-	
-	printf("Pressure In (psi)");
+  if (count > 0) dive->O2_percent = atoi(buffer);
 
-	if (dive->pressure_in!= 0)
-		printf(" (@d)", dive->pressure_in);
+  printf("Pressure In (psi)");
 
-	printf(": ");
+  if (dive->pressure_in != 0) printf(" (@d)", dive->pressure_in);
 
-	count=getline(buffer, 20);
+  printf(": ");
 
-	if (count > 0)
-		dive->pressure_in=atoi(buffer);
+  count = getline(buffer, 20);
 
-	printf("Pressure Out (psi)");
+  if (count > 0) dive->pressure_in = atoi(buffer);
 
-	if (dive->pressure_out!= 0)
-		printf(" (@d)", dive->pressure_out);
+  printf("Pressure Out (psi)");
 
-	printf(": ");
+  if (dive->pressure_out != 0) printf(" (@d)", dive->pressure_out);
 
-	count=getline(buffer, 11);
+  printf(": ");
 
-	if (count > 0)
-		dive->pressure_out=atoi(buffer);
+  count = getline(buffer, 11);
 
-	return 0;
+  if (count > 0) dive->pressure_out = atoi(buffer);
 
+  return 0;
 }

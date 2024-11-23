@@ -21,20 +21,18 @@
  *
  */
 #include <string.h>
+
 #include "malloc_private.h"
 
-void *calloc(size_t count, size_t size)
-{
-    size_t n = count * size;
-    void *ptr;
+void *calloc(size_t count, size_t size) {
+  size_t n = count * size;
+  void *ptr;
 
-    if ((uintmax_t)count * size > (uintmax_t)SIZE_MAX)
-        return NULL;
+  if ((uintmax_t)count * size > (uintmax_t)SIZE_MAX) return NULL;
 
-    ptr = malloc_alloc(&g_heap, n);
-    if (ptr == NULL)
-        return NULL;
+  ptr = malloc_alloc(&g_heap, n);
+  if (ptr == NULL) return NULL;
 
-    memset(ptr, 0, n);
-    return ptr;
+  memset(ptr, 0, n);
+  return ptr;
 }

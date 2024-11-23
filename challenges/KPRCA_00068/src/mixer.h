@@ -25,28 +25,27 @@
 #include "linkedlist.h"
 #include "rng.h"
 
-class Mixer
-{
-public:
-    Mixer();
-    ~Mixer();
+class Mixer {
+ public:
+  Mixer();
+  ~Mixer();
 
-    unsigned int getLength() const;
+  unsigned int getLength() const;
 
-    void addTrack(AudioTrack *track);
-    AudioTrack *getTrack(unsigned int id) const;
-    inline LinkedList<AudioTrack *>::Iterator getTracks() const
-    {
-        return tracks.begin();
-    }
-    void removeTrack(unsigned int id);
-    bool splitTrack(unsigned int id);
-    bool combineTracks(unsigned int leftId, unsigned int rightId);
+  void addTrack(AudioTrack *track);
+  AudioTrack *getTrack(unsigned int id) const;
+  inline LinkedList<AudioTrack *>::Iterator getTracks() const {
+    return tracks.begin();
+  }
+  void removeTrack(unsigned int id);
+  bool splitTrack(unsigned int id);
+  bool combineTracks(unsigned int leftId, unsigned int rightId);
 
-    AudioTrack *exportMix();
-    AudioStream *generateWhiteNoise(unsigned int length);
-private:
-    unsigned int nextTrackId;
-    LinkedList<AudioTrack *> tracks;
-    Random rng;
+  AudioTrack *exportMix();
+  AudioStream *generateWhiteNoise(unsigned int length);
+
+ private:
+  unsigned int nextTrackId;
+  LinkedList<AudioTrack *> tracks;
+  Random rng;
 };

@@ -18,42 +18,42 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "libc.h"
 #include "malloc.h"
-//simple xorshift PRNG
+// simple xorshift PRNG
 
 static int initialized;
 static uint32_t x, y, z, w;
 
 void srand(uint32_t *seed) {
-    //SHOW ME WHAT YOU GOT
-    if (!seed) {
-        seed = (uint32_t*)FLAG_PAGE;
-    }
+  // SHOW ME WHAT YOU GOT
+  if (!seed) {
+    seed = (uint32_t *)FLAG_PAGE;
+  }
 
-    //I LIKE WHAT YOU GOT
-    x = seed[0]^seed[1];
-    y = seed[2]^seed[3];
-    z = seed[4]^seed[5];
-    w = seed[6]^seed[7];
-    initialized = 1;
+  // I LIKE WHAT YOU GOT
+  x = seed[0] ^ seed[1];
+  y = seed[2] ^ seed[3];
+  z = seed[4] ^ seed[5];
+  w = seed[6] ^ seed[7];
+  initialized = 1;
 }
 
 unsigned int getshifty() {
-    uint32_t tmp;
+  uint32_t tmp;
 
-    if (!initialized) {
-        srand(NULL);
-    }
+  if (!initialized) {
+    srand(NULL);
+  }
 
-    tmp = x ^ (x << 12);
+  tmp = x ^ (x << 12);
 
-    x = y;
-    y = z;
-    z = w;
+  x = y;
+  y = z;
+  z = w;
 
-    w = w ^ (w >> 18) ^ tmp ^ (tmp >> 9);
+  w = w ^ (w >> 18) ^ tmp ^ (tmp >> 9);
 
-    return w;
+  return w;
 }

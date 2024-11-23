@@ -28,12 +28,12 @@ THE SOFTWARE.
 
 #include <cutil_string.h>
 
-CUtil::String ReadLine( void );
+CUtil::String ReadLine(void);
 
-bool HexCharToInt( char c, uint8_t &outValue );
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen );
-char* ConvertToHexChars( uint8_t *pData, uint32_t dataLen );
-uint8_t* ConvertBackHexChars( uint8_t *pData, uint32_t dataLen );
-uint16_t GetByte( CUtil::String val, int offset );
+bool HexCharToInt(char c, uint8_t &outValue);
+void PrintHexBytes(uint8_t *pData, uint32_t dataLen);
+char *ConvertToHexChars(uint8_t *pData, uint32_t dataLen);
+uint8_t *ConvertBackHexChars(uint8_t *pData, uint32_t dataLen);
+uint16_t GetByte(CUtil::String val, int offset);
 
-#endif // __COMMON_H__
+#endif  // __COMMON_H__

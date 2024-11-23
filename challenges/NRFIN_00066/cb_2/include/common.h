@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #pragma once
 
 // This file holds common defines used in CB-specific /src code.
@@ -30,28 +30,28 @@
 #define NAME_CRS "CRS"
 #define NAME_CB1 "CLIENT"
 #define NAME_CB2 "SERVER"
-const char *dst2str[] = { 
-	"CRS",		// 0
-	"INVALID",	// 1
-	"INVALID",	// 2
-	"CB1",		// 3
-	"INVALID",	// 4
-	"CB2",		// 5
-	"INVALID"	// 6
+const char *dst2str[] = {
+    "CRS",      // 0
+    "INVALID",  // 1
+    "INVALID",  // 2
+    "CB1",      // 3
+    "INVALID",  // 4
+    "CB2",      // 5
+    "INVALID"   // 6
 };
 
-#define SZ_ENCKEY 4 // 32 * 4 = 128bits
-#define OFF_ENCKEY_IDX 42 // "arbitrary"
-#define OFF_AUTH_TOKEN_IDX 24 // "arbitrary"
+#define SZ_ENCKEY 4            // 32 * 4 = 128bits
+#define OFF_ENCKEY_IDX 42      // "arbitrary"
+#define OFF_AUTH_TOKEN_IDX 24  // "arbitrary"
 
 typedef struct __attribute__((packed)) msg {
-	uint32_t dst; // 4B
-	uint32_t x; // 8B
-	uint32_t y; // 12B
-	uint8_t op; // 13B
-	uint8_t nmb; // 14B
-	uint8_t pad[2]; // 16B
-	uint64_t result; // 24B
+  uint32_t dst;     // 4B
+  uint32_t x;       // 8B
+  uint32_t y;       // 12B
+  uint8_t op;       // 13B
+  uint8_t nmb;      // 14B
+  uint8_t pad[2];   // 16B
+  uint64_t result;  // 24B
 } msg;
 
 #define OP_ADD 0
@@ -60,4 +60,3 @@ typedef struct __attribute__((packed)) msg {
 #define OP_DIV 3
 #define OP_ACK 4
 #define OP_MOD 61
-

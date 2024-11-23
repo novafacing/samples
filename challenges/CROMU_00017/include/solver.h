@@ -29,7 +29,6 @@ THE SOFTWARE.
 void run_tests();
 int evaluate(int a, char op, int b, int *answer);
 int satisfy_paren();
-int solve_equation(char* str, int *answer);
+int solve_equation(char *str, int *answer);
 
-
-#endif // SOLVER_H_DEFINED
+#endif  // SOLVER_H_DEFINED

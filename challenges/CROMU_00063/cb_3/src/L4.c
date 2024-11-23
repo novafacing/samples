@@ -23,38 +23,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
-#include "L3.h"
 #include "L4.h"
+
+#include <libcgc.h>
+
+#include "L3.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 Handlers Listeners[MAX_HANDLERS];
 
 // Listen on L4 port
 uint8_t L4_RegisterHandler(uint8_t NewL4Addr, void *NewHandler) {
-	uint8_t i;
-	uint8_t FreeHandler = MAX_HANDLERS+1;
+  uint8_t i;
+  uint8_t FreeHandler = MAX_HANDLERS + 1;
 
-	if (!NewHandler) {
-		return(0);
-	}
+  if (!NewHandler) {
+    return (0);
+  }
 
-	for (i = 0; i < MAX_HANDLERS; i++) {
-		if (Listeners[i].Handler == NULL) {
-			FreeHandler = i;
-		}
-		if (Listeners[i].L4Addr == NewL4Addr) {
-			return(0);
-		}
-	}
-	if (FreeHandler == MAX_HANDLERS+1) {
-		return(0);
-	}
+  for (i = 0; i < MAX_HANDLERS; i++) {
+    if (Listeners[i].Handler == NULL) {
+      FreeHandler = i;
+    }
+    if (Listeners[i].L4Addr == NewL4Addr) {
+      return (0);
+    }
+  }
+  if (FreeHandler == MAX_HANDLERS + 1) {
+    return (0);
+  }
 
-	Listeners[FreeHandler].L4Addr = NewL4Addr;
-	Listeners[FreeHandler].Handler = NewHandler;
+  Listeners[FreeHandler].L4Addr = NewL4Addr;
+  Listeners[FreeHandler].Handler = NewHandler;
 
-	return(1);
+  return (1);
 }
-

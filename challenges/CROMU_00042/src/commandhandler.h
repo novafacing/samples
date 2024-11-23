@@ -26,36 +26,35 @@ THE SOFTWARE.
 #ifndef __COMMANDHANDLER_H__
 #define __COMMANDHANDLER_H__
 
-#define MAX_COMMAND_ENTRIES     (20)
-#define MAX_COMMAND_LENGTH      (128)
-#define MAX_DESCRIPTION_LENGTH  (512)
+#define MAX_COMMAND_ENTRIES (20)
+#define MAX_COMMAND_LENGTH (128)
+#define MAX_DESCRIPTION_LENGTH (512)
 
-typedef void (*tCmdFunction)( char *pszArgString );
+typedef void (*tCmdFunction)(char *pszArgString);
 
-typedef struct COMMAND_TABLE_ENTRY
-{
-    char            szCommand[128];
-    char            szDescription[512];
-    tCmdFunction    pCmdFunc;
+typedef struct COMMAND_TABLE_ENTRY {
+  char szCommand[128];
+  char szDescription[512];
+  tCmdFunction pCmdFunc;
 } tCommandTableEntry;
 
-class CCommandHandler
-{
-public:
-    CCommandHandler();
-    ~CCommandHandler();
+class CCommandHandler {
+ public:
+  CCommandHandler();
+  ~CCommandHandler();
 
-    bool RegisterCommand( const char *pszCommand, const char *pszDescription, tCmdFunction funcPtr );
+  bool RegisterCommand(const char *pszCommand, const char *pszDescription,
+                       tCmdFunction funcPtr);
 
-    tCmdFunction GetCommandFunction( const char *pszCommand );
+  tCmdFunction GetCommandFunction(const char *pszCommand);
 
-    void Run( void );
+  void Run(void);
 
-    void ListCommands( void );
+  void ListCommands(void);
 
-private:
-    tCommandTableEntry m_cmdTable[MAX_COMMAND_ENTRIES];
-    uint32_t m_cmdCount;
+ private:
+  tCommandTableEntry m_cmdTable[MAX_COMMAND_ENTRIES];
+  uint32_t m_cmdCount;
 };
 
-#endif // __COMMANDHANDLER_H___
+#endif  // __COMMANDHANDLER_H___

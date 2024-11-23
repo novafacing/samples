@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H
@@ -26,8 +26,12 @@
 #define MAX_ALLOCATIONS 65535
 #define MAX_LINE_SZ 4096
 
-#define assert(x) \
-    do { if (!(x)) { _terminate(10); } } while(0)
+#define assert(x)     \
+  do {                \
+    if (!(x)) {       \
+      _terminate(10); \
+    }                 \
+  } while (0)
 
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
@@ -35,7 +39,7 @@ extern int transmit_all(int fd, const char *buf, const size_t size);
 int recv_until(int fd, char *buf, const size_t buf_sz, const char delim);
 extern size_t strlen(const char *s);
 
-void * calloc(size_t nmemb, size_t sz);
+void *calloc(size_t nmemb, size_t sz);
 extern void free(void *p);
 
 void memcpy(void *d, const void *s, size_t size);
@@ -45,8 +49,8 @@ size_t read_ascii_line(int fd, char *data, size_t len);
 
 int buf_is_numeric(char *buf);
 int atoi(char *buf);
-char *strcat(char * s1, char *s2);
+char *strcat(char *s1, char *s2);
 unsigned int pos_ceil(double num);
 void malloc_reset();
-char * itoaB10(int value);
+char *itoaB10(int value);
 #endif

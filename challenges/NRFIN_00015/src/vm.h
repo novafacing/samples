@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #include "stack.h"
 
 #define PUSH_CMD "push"
@@ -38,15 +38,13 @@
 typedef char ProgramLine[8];
 
 typedef struct {
-	long long size;
-	int lineNumber;
-	ProgramLine lines;
+  long long size;
+  int lineNumber;
+  ProgramLine lines;
 } Program;
 
 void initProgram(Program **program, int socket);
 void addLine(Program *program, ProgramLine line);
 int isProgramFull(Program *program);
 void executeProgram(Program *program);
-int parseCmd(char* command, char* buffer);
-
-
+int parseCmd(char *command, char *buffer);

@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef RESORT_H
 #define RESORT_H 1
 
 #include <stdint.h>
+
 #include "decider.h"
 
 Decider *get_decider_by_id(uint32_t id);
@@ -37,10 +38,4 @@ int32_t lift_stats(void);
 int32_t trail_stats(void);
 int32_t rider_stats(void);
 
-
-
-
 #endif
-
-
-

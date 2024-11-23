@@ -25,24 +25,25 @@
 #include "database.h"
 #include "emulator.h"
 
-class Engine
-{
-private:
-    bool is_bmp(unsigned char *data, unsigned int len);
-    void process_bmp(unsigned char *data, unsigned int len);
-    bool is_exe(unsigned char *data, unsigned int len);
-    void process_exe(unsigned char *data, unsigned int len);
-public:
-    Engine();
-    ~Engine();
+class Engine {
+ private:
+  bool is_bmp(unsigned char *data, unsigned int len);
+  void process_bmp(unsigned char *data, unsigned int len);
+  bool is_exe(unsigned char *data, unsigned int len);
+  void process_exe(unsigned char *data, unsigned int len);
 
-    bool process(unsigned char *data, unsigned int len);
-    bool update_rules(unsigned char *data, unsigned int len);
-    void whitelist(unsigned char *data, unsigned int len);
-private:
-    Database d_db;
-    Database d_whitelist;
+ public:
+  Engine();
+  ~Engine();
 
-    unsigned char *d_heap;
-    bool d_malware;
+  bool process(unsigned char *data, unsigned int len);
+  bool update_rules(unsigned char *data, unsigned int len);
+  void whitelist(unsigned char *data, unsigned int len);
+
+ private:
+  Database d_db;
+  Database d_whitelist;
+
+  unsigned char *d_heap;
+  bool d_malware;
 };

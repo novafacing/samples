@@ -29,10 +29,10 @@ typedef struct sl_node {
   struct sl_node *next;
 } sl_node;
 
-typedef int (*cmp_fn) (void *e1, void *e2);
-typedef void (*free_fn) (void *e);
+typedef int (*cmp_fn)(void *e1, void *e2);
+typedef void (*free_fn)(void *e);
 
-sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp);
+sl_node *sl_insert(sl_node *head, void *elem, cmp_fn cmp);
 void sl_destroy(sl_node *head, free_fn ffn);
 
 #endif

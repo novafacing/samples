@@ -21,23 +21,19 @@
  *
  */
 #include "list.h"
+
 #include "safe.h"
 
-void AllocateAndInitializeListHead(list** List, void* Value)
-{
-  if (!List)
-    return;
+void AllocateAndInitializeListHead(list** List, void* Value) {
+  if (!List) return;
 
   *List = xcalloc(1, sizeof(list));
   (*List)->Value = Value;
 }
 
-void FreeList(list* List)
-{
-  if (List)
-  {
-    if (List->Next)
-    {
+void FreeList(list* List) {
+  if (List) {
+    if (List->Next) {
       FreeList(List->Next);
       List->Next = NULL;
     }
@@ -46,76 +42,56 @@ void FreeList(list* List)
   }
 }
 
-size_t LenList(list* List)
-{
+size_t LenList(list* List) {
   size_t Len = 0;
-  for (; List; Len++)
-    List = List->Next;
+  for (; List; Len++) List = List->Next;
 
   return Len;
 }
 
-void AppendToList(list* List, void* Value)
-{
-  if (!List)
-    return;
+void AppendToList(list* List, void* Value) {
+  if (!List) return;
 
-  while (List->Next)
-    List = List->Next;
+  while (List->Next) List = List->Next;
 
   List->Next = xcalloc(1, sizeof(list));
   List->Next->Value = Value;
 }
 
-void UniqAppendToList(list* List, void* Value)
-{
-  while (List->Next)
-  {
+void UniqAppendToList(list* List, void* Value) {
+  while (List->Next) {
     if (List->Value == Value)
       return;
     else
       List = List->Next;
   }
 
-  if (List->Value != Value)
-    AppendToList(List, Value);
+  if (List->Value != Value) AppendToList(List, Value);
 }
 
-list* UniqExtendList(list* L1, list* L2)
-{
+list* UniqExtendList(list* L1, list* L2) {
   list* Ret;
   list* L1Walker;
-  if (!L1 && L2)
-  {
+  if (!L1 && L2) {
     return L2;
-  }
-  else if (L1 && !L2)
-  {
+  } else if (L1 && !L2) {
     return L1;
-  }
-  else if (L1 && L2)
-  {
+  } else if (L1 && L2) {
     Ret = L1;
 
-    while (L2)
-    {
+    while (L2) {
       L1Walker = L1;
-      while (L1Walker)
-      {
-        if (L1Walker->Value == L2->Value)
-        {
+      while (L1Walker) {
+        if (L1Walker->Value == L2->Value) {
           break;
-        }
-        else
-        {
+        } else {
           // Check next value in L1
           L1Walker = L1Walker->Next;
         }
       }
 
       // Didn't find L2 value in L1.
-      if (!L1Walker)
-      {
+      if (!L1Walker) {
         AppendToList(L1, L2->Value);
       }
 
@@ -124,27 +100,20 @@ list* UniqExtendList(list* L1, list* L2)
     }
 
     return Ret;
-  }
-  else
-  {
+  } else {
     return NULL;
   }
 }
 
-int CheckForCycle(list* List)
-{
-  if (!List)
-    return 0;
+int CheckForCycle(list* List) {
+  if (!List) return 0;
 
   list* Speedy = List->Next;
 
-  while (Speedy && List)
-  {
-    if (Speedy == List)
-      return 1;
+  while (Speedy && List) {
+    if (Speedy == List) return 1;
 
-    if (Speedy->Next == NULL)
-      break;
+    if (Speedy->Next == NULL) break;
 
     Speedy = Speedy->Next->Next;
     List = List->Next;
@@ -153,10 +122,8 @@ int CheckForCycle(list* List)
   return 0;
 }
 
-void PrintList(FILE* Stream, list *List)
-{
-  while (List)
-  {
+void PrintList(FILE* Stream, list* List) {
+  while (List) {
     if (List->Next)
       fprintf(Stream, "%x:%s ", List, List->Value);
     else

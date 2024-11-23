@@ -26,49 +26,43 @@ THE SOFTWARE.
 
 #include "common.h"
 
-int main(void)
-{
-    bool bDone = false;
+int main(void) {
+  bool bDone = false;
 
-    CDataStream oDataStream;
-    CMessageHandler oMsgHandler;
-    CMessageRenderer oMsgRenderer;
+  CDataStream oDataStream;
+  CMessageHandler oMsgHandler;
+  CMessageRenderer oMsgRenderer;
 
-    oDataStream.Setup( STDIN );
+  oDataStream.Setup(STDIN);
 
-    uint32_t packet_rx_count = 0;
+  uint32_t packet_rx_count = 0;
 
-    // Enter receive loop
-    do
-    {
-        CMessagePacket *pPacket = CMessagePacket::ParseStream( &oDataStream );
+  // Enter receive loop
+  do {
+    CMessagePacket *pPacket = CMessagePacket::ParseStream(&oDataStream);
 
-        // Update packet counter
-        packet_rx_count++;
+    // Update packet counter
+    packet_rx_count++;
 
-        // Verify bytes received does not exceed maximum
-        if ( oDataStream.BytesReceived() > MAX_BYTES_RECEIVED )
-            bDone = true;
+    // Verify bytes received does not exceed maximum
+    if (oDataStream.BytesReceived() > MAX_BYTES_RECEIVED) bDone = true;
 
-        if ( pPacket )
-        {
-            // Process a packet
-            oMsgHandler.ReceivePacket( pPacket );
+    if (pPacket) {
+      // Process a packet
+      oMsgHandler.ReceivePacket(pPacket);
 
-            if ( oMsgHandler.IsMsgAvailable() )
-            {
-                // Get the first message and process it
-                CFullMessage *pNewMessage = oMsgHandler.PopFirstMessage();
+      if (oMsgHandler.IsMsgAvailable()) {
+        // Get the first message and process it
+        CFullMessage *pNewMessage = oMsgHandler.PopFirstMessage();
 
-                // Render message
-                oMsgRenderer.RenderMessage( pNewMessage );
+        // Render message
+        oMsgRenderer.RenderMessage(pNewMessage);
 
-                // Free it
-                delete pNewMessage;
-            }
-        }
-    } while ( !bDone );
+        // Free it
+        delete pNewMessage;
+      }
+    }
+  } while (!bDone);
 
-
-    return 0;
+  return 0;
 }

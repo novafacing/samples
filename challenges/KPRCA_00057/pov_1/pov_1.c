@@ -24,8 +24,7 @@
 
 #define BLOCK_SIZE 512
 typedef struct glue_t glue_t;
-struct glue_t
-{
+struct glue_t {
   char f_name[100];
   char f_mode[8];
   char uid[8];
@@ -44,9 +43,7 @@ struct glue_t
   char f_prefix[100];
 };
 
-
 int main(void) {
-
   int base = 0x4347C000;
 #if 1
   int pov_type = 2;
@@ -57,18 +54,16 @@ int main(void) {
   // negotiate type 2
   transmit_all(3, &pov_type, sizeof(pov_type));
 
-  if (length_read(3, (unsigned char *)&base, sizeof(base)) != sizeof(base))
-  {
+  if (length_read(3, (unsigned char *)&base, sizeof(base)) != sizeof(base)) {
     return -1;
   }
 
-  if (length_read(3, (unsigned char *)&size, sizeof(size)) != sizeof(size))
-  {
+  if (length_read(3, (unsigned char *)&size, sizeof(size)) != sizeof(size)) {
     return -1;
   }
 
-  if (length_read(3, (unsigned char *)&length, sizeof(length)) != sizeof(length))
-  {
+  if (length_read(3, (unsigned char *)&length, sizeof(length)) !=
+      sizeof(length)) {
     return -1;
   }
 #endif
@@ -81,14 +76,12 @@ int main(void) {
   glue_t *block = malloc(sizeof(glue_t));
   memset(block, '\0', sizeof(glue_t));
 
-  for (int i = 8 - 2; i >= 0; i--)
-  {
+  for (int i = 8 - 2; i >= 0; i--) {
     block->gid[i] = 0x30 + gid % 8;
     gid /= 8;
   }
 
-  for (int i = 8 - 2; i >= 0; i--)
-  {
+  for (int i = 8 - 2; i >= 0; i--) {
     block->uid[i] = 0x30 + uid % 8;
     uid /= 8;
   }

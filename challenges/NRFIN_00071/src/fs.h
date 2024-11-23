@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef FS_H
 #define FS_H
@@ -29,16 +29,15 @@
 #define MAX_FILE_SIZE 1023
 
 struct dirtree {
-    char name[MAX_FILENAME_SIZE+1];
-    struct list directories;
-    struct list files;
+  char name[MAX_FILENAME_SIZE + 1];
+  struct list directories;
+  struct list files;
 } typedef dirtree_t;
 
 struct file {
-    char name[MAX_FILENAME_SIZE+1];
-    char data[MAX_FILE_SIZE+1];
+  char name[MAX_FILENAME_SIZE + 1];
+  char data[MAX_FILE_SIZE + 1];
 } typedef file_t;
-
 
 /**
  * Make a new directory

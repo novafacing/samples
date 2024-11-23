@@ -29,98 +29,97 @@ THE SOFTWARE.
 extern gamestate *state;
 
 char *cardName(int cardNum) {
-	switch(cardNum+1) {
-		case 1:
-			return "two";
-		case 2:
-			return "three";
-		case 3:
-			return "four";
-		case 4:
-			return "five";
-		case 5:
-			return "six";
-		case 6:
-			return "seven";
-		case 7:
-			return "eight";
-		case 8:
-			return "nine";
-		case 9:
-			return "ten";
-		case 10:
-			return "jack";
-		case 11:
-			return "queen";
-		case 12:
-			return "king";
-		case 13:
-			return "ace";
-	}
-	return "?";
+  switch (cardNum + 1) {
+    case 1:
+      return "two";
+    case 2:
+      return "three";
+    case 3:
+      return "four";
+    case 4:
+      return "five";
+    case 5:
+      return "six";
+    case 6:
+      return "seven";
+    case 7:
+      return "eight";
+    case 8:
+      return "nine";
+    case 9:
+      return "ten";
+    case 10:
+      return "jack";
+    case 11:
+      return "queen";
+    case 12:
+      return "king";
+    case 13:
+      return "ace";
+  }
+  return "?";
 }
 
 char *cardSuite(int cardNum) {
-	switch(cardNum) {
-		case 0:
-			return "spades";
-		case 1:
-			return "hearts";
-		case 2:
-			return "clubs";
-		case 3:
-			return "diamonds";
-	}
-	return "?";
+  switch (cardNum) {
+    case 0:
+      return "spades";
+    case 1:
+      return "hearts";
+    case 2:
+      return "clubs";
+    case 3:
+      return "diamonds";
+  }
+  return "?";
 }
 
 void war() {
-	int wager;
-	unsigned int playerCard;
-	unsigned int dealerCard;
+  int wager;
+  unsigned int playerCard;
+  unsigned int dealerCard;
 
-	wager = getBet(state);
-	if(wager < 0)
-		return;
+  wager = getBet(state);
+  if (wager < 0) return;
 
-	playerCard = hugsnextrand(state);
-	dealerCard = hugsnextrand(state);
-	top:
-	if(dealerCard % 13 > playerCard % 13) {
-		put("Dealer's ");
-		put(cardName(dealerCard % 13));
-		put(" of ");
-		put(cardSuite(dealerCard % 4));
-		put(" beats player's ");
-		put(cardName(playerCard % 13));
-		put(" of ");
-		put(cardSuite(playerCard % 4));
-		put("\n");
-		handleOutcome(state, 0, wager);
-	} else if (dealerCard % 13 < playerCard % 13) {
-		put("Player's ");
-		put(cardName(playerCard % 13));
-		put(" of ");
-		put(cardSuite(playerCard % 4));
-		put(" beats dealer's ");
-		put(cardName(dealerCard % 13));
-		put(" of ");
-		put(cardSuite(dealerCard % 4));
-		put("\n");
-		handleOutcome(state, 1, wager);
-	} else {
-		put("Both players drew a ");
-		put(cardName(playerCard % 13));
-		put("\nTHIS MEANS WAR\n");
-		wager *= 2;
-		hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		playerCard = hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		dealerCard = hugsnextrand(state);
-		goto top;
-	}
+  playerCard = hugsnextrand(state);
+  dealerCard = hugsnextrand(state);
+top:
+  if (dealerCard % 13 > playerCard % 13) {
+    put("Dealer's ");
+    put(cardName(dealerCard % 13));
+    put(" of ");
+    put(cardSuite(dealerCard % 4));
+    put(" beats player's ");
+    put(cardName(playerCard % 13));
+    put(" of ");
+    put(cardSuite(playerCard % 4));
+    put("\n");
+    handleOutcome(state, 0, wager);
+  } else if (dealerCard % 13 < playerCard % 13) {
+    put("Player's ");
+    put(cardName(playerCard % 13));
+    put(" of ");
+    put(cardSuite(playerCard % 4));
+    put(" beats dealer's ");
+    put(cardName(dealerCard % 13));
+    put(" of ");
+    put(cardSuite(dealerCard % 4));
+    put("\n");
+    handleOutcome(state, 1, wager);
+  } else {
+    put("Both players drew a ");
+    put(cardName(playerCard % 13));
+    put("\nTHIS MEANS WAR\n");
+    wager *= 2;
+    hugsnextrand(state);
+    hugsnextrand(state);
+    hugsnextrand(state);
+    playerCard = hugsnextrand(state);
+    hugsnextrand(state);
+    hugsnextrand(state);
+    hugsnextrand(state);
+    dealerCard = hugsnextrand(state);
+    goto top;
+  }
 }

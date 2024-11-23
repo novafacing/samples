@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 typedef struct user_s {
   char *name;
-  char hostname[HMAX+1];
+  char hostname[HMAX + 1];
   unsigned long idletime;
   char *realname;
   char *phone;

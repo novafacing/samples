@@ -25,8 +25,8 @@
 
 #include <stdint.h>
 
-#define ECC_SIZE 127 // number of bits
-#define ECC_PARITY_SIZE 28 // number of parity bits
+#define ECC_SIZE 127        // number of bits
+#define ECC_PARITY_SIZE 28  // number of parity bits
 
 void ecc_init();
 int ecc_decode(uint8_t *bits);

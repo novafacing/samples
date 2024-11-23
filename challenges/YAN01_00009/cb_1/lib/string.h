@@ -2,6 +2,7 @@
 #define STRING_H
 
 #include <libcgc.h>
+
 #include "inttypes.h"
 
 size_t strncpy(char* dst, size_t len, const char* src);
@@ -21,4 +22,4 @@ char* strrchr(char* haystack, char needle);
 size_t strlen(const char* str);
 
 uint32_t strToUint32(const char* str);
-#endif//STRING_H
+#endif  // STRING_H

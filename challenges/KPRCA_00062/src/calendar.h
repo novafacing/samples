@@ -26,12 +26,12 @@
 struct event;
 struct event_list;
 typedef struct {
-    int num_events;
-    struct event_list *events;
+  int num_events;
+  struct event_list *events;
 } calendar_t;
 
-#include "event.h"
 #include "datetime.h"
+#include "event.h"
 #define MAX_EVENTS 5000
 
 void view_day(calendar_t *cal, date_t date);

@@ -5,13 +5,13 @@
 
 typedef struct state state_t;
 struct state {
-    unsigned int id;
-    unsigned char input;
-    unsigned char is_accepting_state;
+  unsigned int id;
+  unsigned char input;
+  unsigned char is_accepting_state;
 
-    state_t *t1;
-    state_t *t2;
-    state_t *end_state;
+  state_t *t1;
+  state_t *t2;
+  state_t *end_state;
 };
 
 void init_regex();

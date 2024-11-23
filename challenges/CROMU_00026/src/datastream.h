@@ -27,31 +27,27 @@ THE SOFTWARE.
 #define __DATA_STREAM_H__
 
 // Used to receive incoming data (bit stream)
-class CDataStream
-{
-public:
-    CDataStream();
-    ~CDataStream();
+class CDataStream {
+ public:
+  CDataStream();
+  ~CDataStream();
 
-    void Setup( int32_t socketNumber );
+  void Setup(int32_t socketNumber);
 
-    uint8_t ReadBit( void );
-    uint8_t ReadByte( void );
+  uint8_t ReadBit(void);
+  uint8_t ReadByte(void);
 
-    uint32_t BytesReceived( void ) const
-    {
-        return (m_bytesRxCount);
-    }
+  uint32_t BytesReceived(void) const { return (m_bytesRxCount); }
 
-private:
-    void RefillBuffer( void );
+ private:
+  void RefillBuffer(void);
 
-private:
-    uint32_t m_bytesRxCount;
-    int32_t m_socketNumber;
+ private:
+  uint32_t m_bytesRxCount;
+  int32_t m_socketNumber;
 
-    uint8_t m_bitpos;
-    uint8_t m_buffer;
+  uint8_t m_bitpos;
+  uint8_t m_buffer;
 };
 
-#endif // __DATA_STREAM_H__
+#endif  // __DATA_STREAM_H__

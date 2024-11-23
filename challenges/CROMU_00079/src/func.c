@@ -24,15 +24,18 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "string.h"
-#include "char.h"
 #include "func.h"
+
+#include <libcgc.h>
+
+#include "char.h"
+#include "eval.h"
 #include "malloc.h"
 #include "protocol.h"
-#include "eval.h"
+#include "string.h"
 
-#define FUNC(name, func) if (0 == strcmp(name, func_name)) return func(stk);
+#define FUNC(name, func) \
+  if (0 == strcmp(name, func_name)) return func(stk);
 
 void ord(stack_elem* stk) {
   sint32 offset = stack_pop_sint32(stk);
@@ -42,9 +45,9 @@ void ord(stack_elem* stk) {
   if (offset < 1) _terminate(-1);
   if (offset > strlen(body)) _terminate(-1);
 #endif
-  
+
   sint32 char_value = ((unsigned char*)body)[offset - 1];
-  
+
   stack_push_sint32(stk, char_value);
 }
 
@@ -58,7 +61,6 @@ void upcase(stack_elem* stk) {
   }
   stack_push_str(stk, new);
 }
-
 
 void downcase(stack_elem* stk) {
   char* body = stack_pop_str(stk);
@@ -119,7 +121,7 @@ void chomp(stack_elem* stk) {
     idx++;
     jdx++;
   }
-  
+
   stack_push_str(stk, new);
 }
 

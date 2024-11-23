@@ -21,38 +21,33 @@
  *
  */
 #include "TreasureObject.h"
+
 #include "Program.h"
 
 DefineClass(TreasureObject, MapObject)
 
-DefineFunction(TreasureObject, void, $init)
-{
-    this->m_icon = '$';
-    this->m_value = $($g->m_random, randint, 40) * 10;
+    DefineFunction(TreasureObject, void, $init) {
+  this->m_icon = '$';
+  this->m_value = $($g->m_random, randint, 40) * 10;
 }
 
-DefineFunction(TreasureObject, int, on_collide, Player *p)
-{
-    if (this->m_icon == '$')
-    {
-        p->m_money += this->m_value;
-        this->m_icon = ' ';
-    }
-    return 0;
+DefineFunction(TreasureObject, int, on_collide, Player *p) {
+  if (this->m_icon == '$') {
+    p->m_money += this->m_value;
+    this->m_icon = ' ';
+  }
+  return 0;
 }
 
-DefineFunction(TreasureObject, void, serialize, Buffer *buf)
-{
-    $(buf, write_number, 1); // used by MapObject_deserialize
-    $(buf, write_number, this->m_icon);
-    $(buf, write_number, this->m_value);
+DefineFunction(TreasureObject, void, serialize, Buffer *buf) {
+  $(buf, write_number, 1);  // used by MapObject_deserialize
+  $(buf, write_number, this->m_icon);
+  $(buf, write_number, this->m_value);
 }
 
-DefineFunction(TreasureObject, void, deserialize, Buffer *buf)
-{
-    unsigned int type = $(buf, read_number);
-    ASSERT_OR_RAISE(type == 1, EXC_BAD_STATE);
-    this->m_icon = $(buf, read_number);
-    this->m_value = $(buf, read_number);
+DefineFunction(TreasureObject, void, deserialize, Buffer *buf) {
+  unsigned int type = $(buf, read_number);
+  ASSERT_OR_RAISE(type == 1, EXC_BAD_STATE);
+  this->m_icon = $(buf, read_number);
+  this->m_value = $(buf, read_number);
 }
-

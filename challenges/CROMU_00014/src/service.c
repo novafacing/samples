@@ -24,40 +24,33 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
+
+#include <libcgc.h>
+
 #include "menu.h"
+#include "stdlib.h"
 
 logbook_type logbook;
 
 int main(void) {
-    
-    menu_item menu[] = {
+  menu_item menu[] = {
 
-    	{"Change Diver Info","Cc", edit_diver },
-   		{"Log a New Dive","Ll", log_dives },
-   		{"Download Dive Data","Dd", download_dive },
-   		{"Edit Dives", "Ee", edit_dives },
-   		{"Print Dive Logs","Pp", print_dives },
-   		{"Remove Dives", "Rr", remove_dives },
-   		{"Diver Statistics","Ss", dive_statistics },
-   		{"Exit Application", "Xx", exit_app}
+      {"Change Diver Info", "Cc", edit_diver},
+      {"Log a New Dive", "Ll", log_dives},
+      {"Download Dive Data", "Dd", download_dive},
+      {"Edit Dives", "Ee", edit_dives},
+      {"Print Dive Logs", "Pp", print_dives},
+      {"Remove Dives", "Rr", remove_dives},
+      {"Diver Statistics", "Ss", dive_statistics},
+      {"Exit Application", "Xx", exit_app}
 
-   };
+  };
 
+  bzero((void *)&logbook, sizeof(logbook));
 
-  	bzero((void *)&logbook, sizeof(logbook));
+  process_menu(menu, sizeof(menu) / sizeof(menu_item));
 
-  	process_menu(menu, sizeof(menu)/ sizeof(menu_item));
+}  // main
 
- 
-}  // main  
-
-
-int exit_app(int ret_code)
-{
-
-	_terminate(ret_code);
-
-}
+int exit_app(int ret_code) { _terminate(ret_code); }

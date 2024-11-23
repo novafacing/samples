@@ -20,27 +20,22 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "vector.h"
-
 #include "trunc.h"
 
-double
-float_trunc(double d)
-{
-    union {
-        double d;
-        unsigned long long ull;
-    } parts;
+#include "vector.h"
 
-    parts.d = d;
-    parts.ull &= ~0xffffull;
+double float_trunc(double d) {
+  union {
+    double d;
+    unsigned long long ull;
+  } parts;
 
-    return parts.d;
+  parts.d = d;
+  parts.ull &= ~0xffffull;
+
+  return parts.d;
 }
 
-struct vector
-vector_trunc(struct vector v)
-{
-    return make_vector(float_trunc(v.x), float_trunc(v.y), float_trunc(v.z));
+struct vector vector_trunc(struct vector v) {
+  return make_vector(float_trunc(v.x), float_trunc(v.y), float_trunc(v.z));
 }
-

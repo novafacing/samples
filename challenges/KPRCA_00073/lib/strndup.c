@@ -23,15 +23,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *strndup(const char *s1, size_t n)
-{
+char *strndup(const char *s1, size_t n) {
   size_t len = strlen(s1);
-  if (len > n)
-    len = n;
+  if (len > n) len = n;
 
   char *cpy = malloc(len + 1);
-  if (!cpy)
-    return NULL;
+  if (!cpy) return NULL;
 
   memcpy(cpy, s1, len);
   cpy[len] = '\0';

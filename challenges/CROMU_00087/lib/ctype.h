@@ -26,18 +26,18 @@ THE SOFTWARE.
 #ifndef __CTYPE_H__
 #define __CTYPE_H__
 
-int isdigit( int c );
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isalnum( int c );
-int isprint( int c );
-int isspace( int c );
+int isdigit(int c);
+int islower(int c);
+int isupper(int c);
+int isalpha(int c);
+int isalnum(int c);
+int isprint(int c);
+int isspace(int c);
 
-int toupper( int c );
-int tolower( int c );
+int toupper(int c);
+int tolower(int c);
 
-double multiply( double a, double b);
-double add( double a, double b);
+double multiply(double a, double b);
+double add(double a, double b);
 
-#endif // __CTYPE_H__
+#endif  // __CTYPE_H__

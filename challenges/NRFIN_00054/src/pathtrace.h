@@ -30,10 +30,10 @@
 struct image;
 
 struct pt_ctx {
-    struct pool pool;
-    struct ray camera;
-    double fov;
-    struct shape *head;
+  struct pool pool;
+  struct ray camera;
+  double fov;
+  struct shape *head;
 };
 
 /**
@@ -72,8 +72,8 @@ void pt_setup_camera(struct pt_ctx *ctx, struct ray camera, double fov);
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int pt_add_sphere(struct pt_ctx *ctx, enum surface_type material,
-        struct vector position, struct vector color, struct vector emission,
-        double radius);
+                  struct vector position, struct vector color,
+                  struct vector emission, double radius);
 
 /**
  * Add a plane to the scene
@@ -87,8 +87,8 @@ int pt_add_sphere(struct pt_ctx *ctx, enum surface_type material,
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
 int pt_add_plane(struct pt_ctx *ctx, enum surface_type material,
-        struct vector position, struct vector color, struct vector emission,
-        struct vector normal);
+                 struct vector position, struct vector color,
+                 struct vector emission, struct vector normal);
 
 /**
  * Render a scene to an image
@@ -106,4 +106,3 @@ void pt_render(struct pt_ctx *ctx, struct image *img);
 void pt_clear_ctx(struct pt_ctx *ctx);
 
 #endif /* PATHTRACE_H_ */
-

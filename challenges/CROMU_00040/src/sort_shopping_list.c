@@ -24,47 +24,37 @@ THE SOFTWARE.
 
 */
 
-
-
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
 void sort_shopping_list(Shopping_List_Type *the_list) {
+  char *tmp;
+  Shopping_List_Type *tmp_list;
+  int swapped;
 
-char *tmp;
-Shopping_List_Type *tmp_list;
-int swapped;
+  // implements a simple bubble sort
+  do {
+    tmp_list = the_list;
 
+    swapped = 0;
 
-	// implements a simple bubble sort
-	do {
-	
-		tmp_list = the_list;
+    while (tmp_list->next != 0) {
+      if (compare_strings(tmp_list->item, tmp_list->next->item) == 1) {
+        tmp = tmp_list->item;
 
-		swapped = 0;
+        tmp_list->item = tmp_list->next->item;
 
-		while (tmp_list->next != 0) {
+        tmp_list->next->item = tmp;
 
+        swapped = 1;
+      }
 
-			if (compare_strings(tmp_list->item, tmp_list->next->item) == 1) {
+      tmp_list = tmp_list->next;
+    }
 
-				tmp = tmp_list->item;
+  } while (swapped == 1);
 
-				tmp_list->item = tmp_list->next->item;
-
-				tmp_list->next->item = tmp;
-
-				swapped = 1;
-
-			}
-
-			tmp_list = tmp_list->next;
-
-		}
-
-	} while (swapped==1);
-
-return;
-
+  return;
 }

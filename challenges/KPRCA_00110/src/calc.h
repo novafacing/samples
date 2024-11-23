@@ -22,8 +22,9 @@
  */
 #pragma once
 
-#include "stdlib.h"
 #include <stdint.h>
+
+#include "stdlib.h"
 
 typedef enum {
   OP_ADD = 0x45FD1D19,

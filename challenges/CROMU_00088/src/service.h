@@ -25,8 +25,8 @@ THE SOFTWARE.
 
 */
 
-#include "filesystem.h"
 #include "auth.h"
+#include "filesystem.h"
 
 #ifndef SERVICE_H
 #define SERVICE_H
@@ -39,82 +39,68 @@ THE SOFTWARE.
 #define LOGINMESSAGE_LEN 40
 
 typedef struct {
-
-	char name[USERNAME_LEN+1];
-	char password[PASSWORD_LEN+1];
-	char fullname[REALNAME_LEN+1];
+  char name[USERNAME_LEN + 1];
+  char password[PASSWORD_LEN + 1];
+  char fullname[REALNAME_LEN + 1];
 
 } newUserMessageType;
 
 typedef struct {
-
-	unsigned int responseCode;
+  unsigned int responseCode;
 
 } responseMessageType;
 
-
 typedef struct {
-
-	char name[USERNAME_LEN+1];
-	char password[PASSWORD_LEN+1];
+  char name[USERNAME_LEN + 1];
+  char password[PASSWORD_LEN + 1];
 
 } loginMessageType;
 
 typedef struct {
-
-	unsigned int sessionToken;
-	char message[LOGINMESSAGE_LEN];
+  unsigned int sessionToken;
+  char message[LOGINMESSAGE_LEN];
 
 } loginResponseMessageType;
 
 typedef struct {
+  unsigned int sessionToken;
 
-	unsigned int sessionToken;
-
-}  feedRequestMessageType;
-
-typedef struct {
-
-	unsigned int postID;
-
-}  requestPostMessageType;
-
+} feedRequestMessageType;
 
 typedef struct {
+  unsigned int postID;
 
-	unsigned int postID;
-	char fullname[REALNAME_LEN];
-	char post[MAXPOST_LEN];
-	char comment[COMMENT_LEN];
+} requestPostMessageType;
+
+typedef struct {
+  unsigned int postID;
+  char fullname[REALNAME_LEN];
+  char post[MAXPOST_LEN];
+  char comment[COMMENT_LEN];
 
 } feedMessageType;
 
 typedef struct {
+  unsigned int sessionToken;
+  char post[MAXPOST_LEN];
 
-	unsigned int sessionToken;
-	char post[MAXPOST_LEN];
-
-}  newPostMessageType;
+} newPostMessageType;
 
 typedef struct {
+  unsigned int postID;
+  unsigned int commenterID;
+  char comment[COMMENT_LEN];
 
-	unsigned int postID;
-	unsigned int commenterID;
-	char comment[COMMENT_LEN];
+} addCommentMessageType;
 
-}  addCommentMessageType;
-
-
-int receiveMessage( void *message );
-int sendResponse( void *message, int length );
+int receiveMessage(void *message);
+int sendResponse(void *message, int length);
 int savePost(unsigned int nextPostID, unsigned int sessionToken, char *post);
 int saveComment(unsigned int postID, unsigned int commenterID, char *comment);
-int newFeedPost(unsigned int sessionToken, char **postMessage, int *messageSize );
-int retrievePost( unsigned int postID, int includeComments, char **postMessage, int *messageSize);
-int sendStickPost( unsigned int postID );
-
+int newFeedPost(unsigned int sessionToken, char **postMessage,
+                int *messageSize);
+int retrievePost(unsigned int postID, int includeComments, char **postMessage,
+                 int *messageSize);
+int sendStickPost(unsigned int postID);
 
 #endif
-
-
-

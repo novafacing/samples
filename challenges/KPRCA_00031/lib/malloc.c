@@ -23,13 +23,13 @@
  *
  */
 
-#include "libcgc.h"
 #include "malloc.h"
+
+#include "libcgc.h"
 #include "stdlib.h"
 
 /* Get some more memory through allocate */
-static int allocate_new_blk(void)
-{
+static int allocate_new_blk(void) {
   void *ret;
   struct blk_t *new_blk;
   size_t size = NEW_CHUNK_SIZE;
@@ -38,8 +38,7 @@ static int allocate_new_blk(void)
     return 1;
   }
 
-  if (ret == NULL)
-    return 1;
+  if (ret == NULL) return 1;
 
   new_blk = (struct blk_t *)ret;
   new_blk->size = size;
@@ -54,50 +53,41 @@ static int allocate_new_blk(void)
 }
 
 /* Find first fit block for a size */
-static int find_fit(size_t size, struct blk_t **blk)
-{
+static int find_fit(size_t size, struct blk_t **blk) {
   int sc_i = get_size_class(size);
 
   for (; sc_i < NUM_FREE_LISTS; sc_i++) {
     *blk = free_lists[sc_i];
-    for(; *blk != NULL; *blk = (*blk)->fsucc)
-      if ((*blk)->size >= size)
-        return sc_i;
+    for (; *blk != NULL; *blk = (*blk)->fsucc)
+      if ((*blk)->size >= size) return sc_i;
   }
 
   *blk = NULL;
   return -1;
 }
 
-static void *malloc_huge(size_t size)
-{
-    void *mem;
-    size += HEADER_PADDING;
-    if (allocate(size, 0, &mem) != 0)
-        return NULL;
-    struct blk_t *blk = mem;
-    blk->size = size;
-    blk->free = 0;
-    blk->fpred = NULL;
-    blk->fsucc = NULL;
-    blk->prev = NULL;
-    blk->next = NULL;
-    return (void *)((intptr_t)blk + HEADER_PADDING);
+static void *malloc_huge(size_t size) {
+  void *mem;
+  size += HEADER_PADDING;
+  if (allocate(size, 0, &mem) != 0) return NULL;
+  struct blk_t *blk = mem;
+  blk->size = size;
+  blk->free = 0;
+  blk->fpred = NULL;
+  blk->fsucc = NULL;
+  blk->prev = NULL;
+  blk->next = NULL;
+  return (void *)((intptr_t)blk + HEADER_PADDING);
 }
 
-void *malloc(size_t size)
-{
-  if (size == 0)
-    return NULL;
+void *malloc(size_t size) {
+  if (size == 0) return NULL;
 
-  if (size + HEADER_PADDING >= NEW_CHUNK_SIZE)
-    return malloc_huge(size);
+  if (size + HEADER_PADDING >= NEW_CHUNK_SIZE) return malloc_huge(size);
 
-  if (size % ALIGNMENT != 0)
-    size = (size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
+  if (size % ALIGNMENT != 0) size = (size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
 
-  if (size >= 0x80000000)
-    return NULL;
+  if (size >= 0x80000000) return NULL;
   size += HEADER_PADDING;
 
   struct blk_t *blk = NULL;
@@ -131,8 +121,7 @@ void *malloc(size_t size)
     /* Patch up blk list pointers */
     nb->prev = blk;
     nb->next = blk->next;
-    if (blk->next)
-      blk->next->prev = nb;
+    if (blk->next) blk->next->prev = nb;
     blk->next = nb;
 
     /* Put the new block into the free list */

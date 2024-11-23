@@ -24,35 +24,35 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "service.h"
-#include "stdio.h"
-#include "string.h"
+
+#include <libcgc.h>
+
 #include "output_strings.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 char *obf_strings(char *input_string);
 
 extern char test[];
 
 int main(void) {
+  unsigned int databaseCheck;
+  productDefType *productDatabase;
 
-	unsigned int databaseCheck;
-	productDefType *productDatabase;
+  productDatabase = 0;
 
-	productDatabase = 0; 
+  databaseCheck = calc_version();
 
-	databaseCheck = calc_version();
+  printf(obf_strings(Tool_Title), databaseCheck);
 
-	printf(obf_strings(Tool_Title), databaseCheck);
+  // wait for commands
+  receive_commands(&productDatabase);
 
-	// wait for commands
- 	receive_commands(&productDatabase); 
+  // clean up the data structures
+  destroy_database(&productDatabase);
 
-	// clean up the data structures
-   destroy_database( &productDatabase );
+  _terminate(0);
 
-    _terminate(0);
-
-}  // main  
-
+}  // main

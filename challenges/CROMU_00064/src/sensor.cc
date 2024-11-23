@@ -26,23 +26,16 @@ THE SOFTWARE.
 
 #include "sensor.h"
 
-Sensor::Sensor()
-{
+Sensor::Sensor() {}
 
-}
-
-Sensor::~Sensor()
-{
-
-}
+Sensor::~Sensor() {}
 
 //
 // type, address, coeff, enabled?
 //
-Sensor::Sensor( int a, int b, int c, bool d )
-{
-	this->m_type = a;
-	this->m_address = b;
-	this->m_coefficient = c;
-	this->m_enabled = d;
+Sensor::Sensor(int a, int b, int c, bool d) {
+  this->m_type = a;
+  this->m_address = b;
+  this->m_coefficient = c;
+  this->m_enabled = d;
 }

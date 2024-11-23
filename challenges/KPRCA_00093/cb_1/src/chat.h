@@ -28,20 +28,20 @@
 class User;
 
 class Chat {
-  public:
-    Chat();
-    Chat(char *msg, unsigned short msg_length, User *from);
+ public:
+  Chat();
+  Chat(char *msg, unsigned short msg_length, User *from);
 
-    static void Delete(Chat *chat);
+  static void Delete(Chat *chat);
 
-    const char *msg();
-    const unsigned short msg_length();
-    const User *from();
+  const char *msg();
+  const unsigned short msg_length();
+  const User *from();
 
-  private:
-    char *msg_;
-    unsigned short msg_length_;
-    User *from_;
+ private:
+  char *msg_;
+  unsigned short msg_length_;
+  User *from_;
 };
 
 #endif /* CHAT_H_ */

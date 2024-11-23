@@ -23,8 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
 #include "stdlib.h"
+
+#include <libcgc.h>
+
 #include "io.h"
 
 int strlen(char *s) {
@@ -41,7 +43,7 @@ void bzero(char *s, size_t length) {
 }
 
 void memcpy(char *d, char *s, size_t num) {
-  while(num > 0) {
+  while (num > 0) {
     *d++ = *s++;
     num--;
   }
@@ -56,9 +58,8 @@ int atoi(char *s) {
   int num_digits = 0;
   int number = 0;
 
-  while(*s != '\0')
-  {
-    if ((*s == '-') && (num_digits==0)) {
+  while (*s != '\0') {
+    if ((*s == '-') && (num_digits == 0)) {
       negative = 1;
       s++;
       continue;
@@ -84,8 +85,8 @@ int atoi(char *s) {
 // terminated strings stopping after the first double null is found
 int count_strings(char *s) {
   int count = 0;
-  while (*s != '\0' || *(s+1) != '\0') {
-    if (*(s+1) == '\0') {
+  while (*s != '\0' || *(s + 1) != '\0') {
+    if (*(s + 1) == '\0') {
       count++;
     }
     s++;
@@ -107,5 +108,3 @@ char *next_string(char *s) {
     return n;
   }
 }
-
-

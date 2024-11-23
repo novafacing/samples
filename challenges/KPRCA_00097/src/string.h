@@ -25,47 +25,39 @@
 #include "hashmap.h"
 #include "stringmanager.h"
 
-class String
-{
-private:
-    String(const char *str);
-    inline ~String() {}
-public:
-    static String *create(const char *str);
-    static inline const String *intern(const char *str)
-    {
-        return StringManager::get().intern(str);
-    }
+class String {
+ private:
+  String(const char *str);
+  inline ~String() {}
 
-    inline const char *cstr() const { return d_data; }
-    inline void destroy() { free(this); }
-private:
-    char d_data[];
+ public:
+  static String *create(const char *str);
+  static inline const String *intern(const char *str) {
+    return StringManager::get().intern(str);
+  }
+
+  inline const char *cstr() const { return d_data; }
+  inline void destroy() { free(this); }
+
+ private:
+  char d_data[];
 };
 
-class StringComparator
-{
-public:
-    static inline unsigned int hash(const String *s)
-    {
-        return CStringComparator::hash(s->cstr());
-    }
-    static inline bool equals(const String *a, const String *b)
-    {
-        return CStringComparator::equals(a->cstr(), b->cstr());
-    }
+class StringComparator {
+ public:
+  static inline unsigned int hash(const String *s) {
+    return CStringComparator::hash(s->cstr());
+  }
+  static inline bool equals(const String *a, const String *b) {
+    return CStringComparator::equals(a->cstr(), b->cstr());
+  }
 };
 
-class InternedComparator
-{
-public:
-    static inline unsigned int hash(const String *s)
-    {
-        intptr_t p = reinterpret_cast<intptr_t>(s);
-        return (p * 761886451) ^ (p << 16);
-    }
-    static inline bool equals(const String *a, const String *b)
-    {
-        return a == b;
-    }
+class InternedComparator {
+ public:
+  static inline unsigned int hash(const String *s) {
+    intptr_t p = reinterpret_cast<intptr_t>(s);
+    return (p * 761886451) ^ (p << 16);
+  }
+  static inline bool equals(const String *a, const String *b) { return a == b; }
 };

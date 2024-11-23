@@ -30,25 +30,24 @@ THE SOFTWARE.
 void dprintf(char *str);
 
 typedef struct _regTarget {
-	unsigned char regSel:3;
-	unsigned char reg:5;
+  unsigned char regSel : 3;
+  unsigned char reg : 5;
 } regTarget;
 
 typedef struct _fmtQatbInstruction {
-	unsigned char op:2;
-	unsigned char gt:1;
-	unsigned char eq:1;
-	unsigned char lt:1;
-	unsigned char broff1:2;
-	unsigned char io:1;
-	union {
-		regTarget rs2;
-		unsigned char imm;
-	} arg2;
-	regTarget rs1;
-	unsigned char broff2:8;
+  unsigned char op : 2;
+  unsigned char gt : 1;
+  unsigned char eq : 1;
+  unsigned char lt : 1;
+  unsigned char broff1 : 2;
+  unsigned char io : 1;
+  union {
+    regTarget rs2;
+    unsigned char imm;
+  } arg2;
+  regTarget rs1;
+  unsigned char broff2 : 8;
 
 } fmtQatbInstruction;
-
 
 #endif

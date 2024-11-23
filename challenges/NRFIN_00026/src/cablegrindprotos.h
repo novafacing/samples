@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef CABLEGRINDPROTOS_H
 #define CABLEGRINDPROTOS_H
 void process_rachiometersuprachoroid(uint8_t **, int *);
@@ -1021,6 +1021,5 @@ void process_catmalisoncoevally(uint8_t **, int *);
 void process_rosiedunarchdeacon(uint8_t **, int *);
 void process_Theodotianjigget(uint8_t **, int *);
 void process_cycloolefinmonostylous(uint8_t **, int *);
-
 
 #endif

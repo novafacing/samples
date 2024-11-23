@@ -24,27 +24,28 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
+
 #include "stdlib.h"
 
 int readUntil(char *buf, int max, char delim) {
-	unsigned char c;
-	size_t size;
-	unsigned int i;
+  unsigned char c;
+  size_t size;
+  unsigned int i;
 
-	i = 0;
-	while (i < max) {
-		if (receive(STDIN, &c, 1, &size) != 0) {
-			return(-1);
-		}
-		if (size != 1) {
-			return(-1);
-		}
-		if (c == delim) {
-			break;
-		}
-		*buf++ = c;
-		i++;
-	}
-	*buf = '\0';
-	return(i);
+  i = 0;
+  while (i < max) {
+    if (receive(STDIN, &c, 1, &size) != 0) {
+      return (-1);
+    }
+    if (size != 1) {
+      return (-1);
+    }
+    if (c == delim) {
+      break;
+    }
+    *buf++ = c;
+    i++;
+  }
+  *buf = '\0';
+  return (i);
 }

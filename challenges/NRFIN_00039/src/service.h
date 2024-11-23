@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define TRANSMIT_ERROR 1
 #define RECEIVE_ERROR 2
 #define ALLOCATE_ERROR 3
@@ -35,18 +35,18 @@
 #define MAX_FIELD_SIZE 32000
 
 typedef struct field_t {
-	struct field_t *next;
-	short start;
-	short size;
+  struct field_t *next;
+  short start;
+  short size;
 } Field;
 
 typedef struct record_t {
-	struct record_t *next;
-	char* data;
+  struct record_t *next;
+  char *data;
 } Record;
 
 typedef struct report_t {
-	struct record_t *head;
-	struct field_t *fields;
-	short record_size;
+  struct record_t *head;
+  struct field_t *fields;
+  short record_size;
 } Report;

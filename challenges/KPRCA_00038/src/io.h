@@ -2,11 +2,11 @@
 #define IO_H_
 
 typedef struct {
-    int fd;
-    char *buf;
-    int pos;
-    int length;
-    int mark;
+  int fd;
+  char *buf;
+  int pos;
+  int length;
+  int mark;
 } io_t;
 
 void io_init_fd(io_t *io, int fd);

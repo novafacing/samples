@@ -30,12 +30,7 @@
  * EXP = ATOM | CONS
  * ATOM = STR
  */
-enum exp_type {
-  ATOM = 1,
-  FUNC,
-  CONS,
-  LAMB
-};
+enum exp_type { ATOM = 1, FUNC, CONS, LAMB };
 
 struct sym_list;
 
@@ -77,52 +72,46 @@ DEF_LIST(sym, sym_t *);
 
 #define NEWE() (calloc(1, sizeof(exp_t)))
 
-#define ATOM(e, s) \
-  do { \
-    if (e == NULL) \
-      break; \
-    if (s == NULL) { \
-      *e = NULL; \
-      break; \
-    } \
-    *e = NEWE(); \
-    if (*e == NULL) \
-      break; \
-    e->t = ATOM; \
-    e->name = s; \
-    e->car = NULL; \
-    e->cdr = NULL; \
+#define ATOM(e, s)         \
+  do {                     \
+    if (e == NULL) break;  \
+    if (s == NULL) {       \
+      *e = NULL;           \
+      break;               \
+    }                      \
+    *e = NEWE();           \
+    if (*e == NULL) break; \
+    e->t = ATOM;           \
+    e->name = s;           \
+    e->car = NULL;         \
+    e->cdr = NULL;         \
   } while (0)
 
-#define CONZ(e, e1, e2) \
-  do { \
-    if (e == NULL) \
-      break; \
-    *e = NEWE(); \
-    if (*e == NULL) \
-      break; \
-    (*e)->t = CONS; \
-    (*e)->car = e1; \
-    (*e)->cdr = e2; \
-    (*e)->name = NULL; \
-  } while(0)
+#define CONZ(e, e1, e2)    \
+  do {                     \
+    if (e == NULL) break;  \
+    *e = NEWE();           \
+    if (*e == NULL) break; \
+    (*e)->t = CONS;        \
+    (*e)->car = e1;        \
+    (*e)->cdr = e2;        \
+    (*e)->name = NULL;     \
+  } while (0)
 
-#define APPEND(l, e) \
-  do { \
-    exp_t *li = l; \
-    li->t = CONS; \
-    while (li && CDR(li)) \
-      li = CDR(li); \
-    /* Empty list case */ \
-    if (!CAR(li)) { \
-      li->car = e; \
-      li->cdr = NULL; \
-      break; \
-    } else { \
-      CONZ(&CDR(li), e, NULL); \
-      if (CDR(li) == NULL) \
-        exit(1); \
-    } \
+#define APPEND(l, e)                    \
+  do {                                  \
+    exp_t *li = l;                      \
+    li->t = CONS;                       \
+    while (li && CDR(li)) li = CDR(li); \
+    /* Empty list case */               \
+    if (!CAR(li)) {                     \
+      li->car = e;                      \
+      li->cdr = NULL;                   \
+      break;                            \
+    } else {                            \
+      CONZ(&CDR(li), e, NULL);          \
+      if (CDR(li) == NULL) exit(1);     \
+    }                                   \
   } while (0)
 
 #define CAR(e) (e->car)
@@ -132,6 +121,5 @@ DEF_LIST(sym, sym_t *);
 
 #define CONSP(e) (e->t == CONS)
 #define ATOMP(e) (e->t == ATOM)
-
 
 #endif /* __EXP_H_ */

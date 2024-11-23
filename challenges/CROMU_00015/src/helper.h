@@ -30,10 +30,10 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdlib.h>
 
-#include "string.h"
 #include "service.h"
+#include "string.h"
 
-char *pullNextElementName( pstring str );
-element elementNameToEnum( char *elementId );
+char *pullNextElementName(pstring str);
+element elementNameToEnum(char *elementId);
 
 #endif

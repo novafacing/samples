@@ -25,218 +25,199 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
-#include "service.h"
+
 #include "input.h"
+#include "service.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 // algo 1
 char matchDealer(unsigned char dealer_show_card, unsigned char *player_cards) {
+  int player_score;
 
-int player_score;
+  player_score = score_cards(player_cards);
 
-
-	player_score = score_cards(player_cards);
-
-	if (player_score > 16)
-		return('S');
-	else
-		return('H');
-
-
+  if (player_score > 16)
+    return ('S');
+  else
+    return ('H');
 }
 
 // algo 4
-char neverBustAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char neverBustAlgo(unsigned char dealer_show_card,
+                   unsigned char *player_cards) {
+  int player_score;
 
-int player_score;
+  player_score = score_cards(player_cards);
 
-	player_score = score_cards(player_cards);
-
- 	if (player_score > 11 )
- 		return 'S';
- 	else
- 		return 'H';
-
+  if (player_score > 11)
+    return 'S';
+  else
+    return 'H';
 }
 
 // algo 2
-char basicAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char basicAlgo(unsigned char dealer_show_card, unsigned char *player_cards) {
+  int i;
+  int hard;
+  int player_score;
+  char answer;
 
+  hard = 1;
 
-int i;
-int hard;
-int player_score;
-char answer;
+  for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+    if (player_cards[i] == 1) {
+      hard = 0;
+    }
+  }
 
-	hard = 1;
+  player_score = score_cards(player_cards);
 
-	for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+  switch (hard) {
+    case 1:
 
-		if (player_cards[i] == 1) {
+      if (player_score < 12)
+        answer = 'H';
 
-			hard = 0;
-		}
-	}
+      else if (player_score > 16)
+        answer = 'S';
 
-	player_score = score_cards(player_cards);
+      else if (player_score > 11 && player_score < 17 && dealer_show_card > 6)
+        answer = 'H';
 
-	switch (hard) {
+      else if (player_score == 12 && dealer_show_card < 4)
+        answer = 'H';
 
+      else
+        answer = 'S';
 
+      break;
 
-		case 1:
+    case 0:
 
-			if (player_score < 12)
-				answer = 'H';
+      if (player_score < 18)
+        answer = 'H';
 
-			else if (player_score > 16)
-				answer = 'S';
+      else if (player_score == 18 && dealer_show_card > 8 &&
+               dealer_show_card < 11)
+        answer = 'H';
 
-			else if (player_score > 11 && player_score < 17 && dealer_show_card > 6)
-				answer = 'H';
+      else
+        answer = 'S';
 
-			else if (player_score == 12 && dealer_show_card < 4)
-				answer = 'H';
+      break;
+  }
 
-			else
-				answer = 'S';
-
-			break;
-
-		case 0:
-
-			if (player_score < 18)
-				answer = 'H';
-
-			else if (player_score == 18 && dealer_show_card > 8 && dealer_show_card < 11)
-				answer = 'H';
-
-			else
-				answer = 'S';
-
-			break;
-	}
-
-	return answer;
+  return answer;
 }
 
-
 // algo 3
-char simpleAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char simpleAlgo(unsigned char dealer_show_card, unsigned char *player_cards) {
+  int i;
+  int hard;
+  int player_score;
 
-int i;
-int hard;
-int player_score;
+  for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+    if (player_cards[i] == 1) {
+      hard = 0;
+    }
+  }
 
+  player_score = score_cards(player_cards);
 
-	for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+  if (hard) {
+    if (player_score < 12)
+      return 'H';
 
-		if (player_cards[i] == 1) {
+    else if (player_score > 16)
+      return 'S';
 
-			hard = 0;
-		}
-	}
+    else if (dealer_show_card < 7)
+      return 'S';
 
-	player_score = score_cards(player_cards);
+    else
+      return 'H';
 
-	if (hard) {
+  } else {
+    if (player_score < 18)
+      return 'H';
 
+    else if (player_score == 18 && dealer_show_card < 7)
+      return 'S';
 
-		if (player_score < 12)
-			return 'H';
+    else if (player_score == 18 && dealer_show_card > 7)
+      return 'H';
 
-		else if (player_score > 16)
-			return 'S';
-
-		else if (dealer_show_card < 7)
-			return 'S';
-
-		else
-			return 'H';
-
-	}
-	else {
-
-		if (player_score < 18 )
-			return 'H';
-
-		else if (player_score == 18 && dealer_show_card < 7)
-			return 'S';
-
-		else if (player_score == 18 && dealer_show_card > 7)
-			return 'H';
-
-		else 
-			return 'S';
-
-	}
-
+    else
+      return 'S';
+  }
 }
 
 // algo 5
-char superDuperAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char superDuperAlgo(unsigned char dealer_show_card,
+                    unsigned char *player_cards) {
+  int i;
+  int hard;
+  int player_score;
 
-int i;
-int hard;
-int player_score;
+  char decision_table_hard[14][21] = {
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S'};
 
-char decision_table_hard[14][21] = { 	'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'H','S', 'S', 'S' };
+  char decision_table_soft[14][21] = {
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'S',
+      'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H',
+      'H', 'H', 'H', 'H', 'H', 'S', 'S', 'S', 'S'};
 
-char decision_table_soft[14][21] = { 	'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S',
-										'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H','H', 'H', 'H','H', 'H', 'S','S', 'S', 'S' };
+  hard = 1;
 
-	hard = 1;
+  for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+    if (player_cards[i] == 1) {
+      hard = 0;
+    }
+  }
 
-	for (i = 0; i < MAX_CARDS && player_cards[i] != 0; ++i) {
+  player_score = score_cards(player_cards);
 
-		if (player_cards[i] == 1) {
-
-			hard = 0;
-		}
-
-	}
-
-	player_score = score_cards(player_cards);
-
-	if (hard) {
-
-		return decision_table_hard[dealer_show_card][player_score];
-	}
-	else {
-
-		return decision_table_soft[dealer_show_card][player_score];
-	}
-
-
-
+  if (hard) {
+    return decision_table_hard[dealer_show_card][player_score];
+  } else {
+    return decision_table_soft[dealer_show_card][player_score];
+  }
 }
-
-
-

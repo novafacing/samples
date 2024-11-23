@@ -20,8 +20,9 @@
  * THE SOFTWARE.
  *
  */
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "insn.h"
 
 #define MAX_PKT_LEN 0x10000
@@ -30,97 +31,87 @@
 #define MINOR 10
 
 typedef struct {
-    unsigned int ts;
-    unsigned int ts_usec;
-    unsigned int length;
-    unsigned int orig_length;
-    unsigned char data[];
+  unsigned int ts;
+  unsigned int ts_usec;
+  unsigned int length;
+  unsigned int orig_length;
+  unsigned char data[];
 } pkt_hdr_t;
 
 typedef struct {
-    unsigned int magic;
-    unsigned short major;
-    unsigned short minor;
-    unsigned int maxlen;
-    unsigned int type;
-    pkt_hdr_t pkt[];
+  unsigned int magic;
+  unsigned short major;
+  unsigned short minor;
+  unsigned int maxlen;
+  unsigned int type;
+  pkt_hdr_t pkt[];
 } file_hdr_t;
 
-void check_seed()
-{
-    unsigned int x = 0;
-    fread(&x, sizeof(x), stdin);
-    if (x == *(unsigned int*)0x4347c000)
-        fwrite((void *)0x4347c000, 0x1000, stdout);
+void check_seed() {
+  unsigned int x = 0;
+  fread(&x, sizeof(x), stdin);
+  if (x == *(unsigned int *)0x4347c000)
+    fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-    file_hdr_t *file;
-    filter_t *filter;
-    pkt_hdr_t *pkt;
-    unsigned int length, value, i;
-    void *secret_page = (void *)secret_page_i;
+  file_hdr_t *file;
+  filter_t *filter;
+  pkt_hdr_t *pkt;
+  unsigned int length, value, i;
+  void *secret_page = (void *)secret_page_i;
 
-    (void) secret_page;
+  (void)secret_page;
 
-    fbuffered(stdout, 1);
-    check_seed();
+  fbuffered(stdout, 1);
+  check_seed();
 
-    if (fread(&length, sizeof(length), stdin) < 0)
-        return 0;
+  if (fread(&length, sizeof(length), stdin) < 0) return 0;
 
-    filter = filter_alloc(length);
-    if (filter == NULL)
-        return 0;
+  filter = filter_alloc(length);
+  if (filter == NULL) return 0;
 
-    for (i = 0; i < length; i++)
-    {
-        if (fread(&filter->insn[i], sizeof(filter->insn[0]), stdin) < 0)
-            return 0;
-    }
+  for (i = 0; i < length; i++) {
+    if (fread(&filter->insn[i], sizeof(filter->insn[0]), stdin) < 0) return 0;
+  }
 
-    if (!filter_validate(filter))
-    {
-invalid:
-        fwrite("\x00", 1, stdout);
-        fflush(stdout);
-        return 0;
-    }
-
-    fwrite("\x01", 1, stdout);
+  if (!filter_validate(filter)) {
+  invalid:
+    fwrite("\x00", 1, stdout);
     fflush(stdout);
-
-    if (fread(&length, sizeof(length), stdin) < 0)
-        return 0;
-
-    if (length >= INT_MAX)
-        return 0;
-
-    file = malloc(length);
-    if (fread(file, length, stdin) < 0)
-        return 0;
-
-    if (file->magic != MAGIC || file->major != MAJOR || file->minor < MINOR)
-        goto invalid;
-
-    fwrite("\x01", 1, stdout);
-
-    pkt = &file->pkt[0];
-    for (i = 0; (uintptr_t)pkt < (uintptr_t)file + length; i++)
-    {
-        if (pkt->length >= MAX_PKT_LEN)
-            break;
-
-        value = filter_execute(filter, (unsigned char *)pkt, sizeof(pkt_hdr_t) + pkt->length);
-        fwrite(&value, sizeof(value), stdout);
-        fprintf(stderr, "Packet %d: returned %08X\n", i, value);
-
-        pkt = (pkt_hdr_t *)&pkt->data[pkt->length];
-    }
-
-    fflush(stdout);
-
-    free(file);
-    free(filter);
     return 0;
+  }
+
+  fwrite("\x01", 1, stdout);
+  fflush(stdout);
+
+  if (fread(&length, sizeof(length), stdin) < 0) return 0;
+
+  if (length >= INT_MAX) return 0;
+
+  file = malloc(length);
+  if (fread(file, length, stdin) < 0) return 0;
+
+  if (file->magic != MAGIC || file->major != MAJOR || file->minor < MINOR)
+    goto invalid;
+
+  fwrite("\x01", 1, stdout);
+
+  pkt = &file->pkt[0];
+  for (i = 0; (uintptr_t)pkt < (uintptr_t)file + length; i++) {
+    if (pkt->length >= MAX_PKT_LEN) break;
+
+    value = filter_execute(filter, (unsigned char *)pkt,
+                           sizeof(pkt_hdr_t) + pkt->length);
+    fwrite(&value, sizeof(value), stdout);
+    fprintf(stderr, "Packet %d: returned %08X\n", i, value);
+
+    pkt = (pkt_hdr_t *)&pkt->data[pkt->length];
+  }
+
+  fflush(stdout);
+
+  free(file);
+  free(filter);
+  return 0;
 }

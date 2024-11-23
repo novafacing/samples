@@ -8,10 +8,9 @@
 
 #define RESHUFFLE_CARD (int)(.65 * NUM_CARDS)
 
-typedef struct deck
-{
-    card_t cards[NUM_CARDS];
-    int top_of_deck;
+typedef struct deck {
+  card_t cards[NUM_CARDS];
+  int top_of_deck;
 } deck_t;
 
 void init_deck(deck_t *d, unsigned int *seed);

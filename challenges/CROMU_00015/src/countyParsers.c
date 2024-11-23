@@ -26,179 +26,179 @@ THE SOFTWARE.
 
 #include "countyParsers.h"
 
-int countyMenu( pCounty co )
-{
-	int choice = 0;
-	char selection[30];
-	pBorder pb = NULL;
-	pCity pc = NULL;
+int countyMenu(pCounty co) {
+  int choice = 0;
+  char selection[30];
+  pBorder pb = NULL;
+  pCity pc = NULL;
 
-	if ( co == NULL ) {
-		return 0;
-	}
+  if (co == NULL) {
+    return 0;
+  }
 
-	while ( 1 ) {
-		printf("County: @s\n", co->name );
-		printf("1) Display County Info\n");
-		printf("2) Set Seat\n");
-		printf("3) Set Population\n");
-		printf("4) Set Area\n");
-		printf("5) Set Density\n");
-		printf("6) Add Border\n");
-		printf("7) Add City\n");
-		printf("8) Select City\n");
-		printf("9) Delete County and Exit Menu\n");
-		printf("10) Exit Menu\n");
-		printf("Selection: ");
+  while (1) {
+    printf("County: @s\n", co->name);
+    printf("1) Display County Info\n");
+    printf("2) Set Seat\n");
+    printf("3) Set Population\n");
+    printf("4) Set Area\n");
+    printf("5) Set Density\n");
+    printf("6) Add Border\n");
+    printf("7) Add City\n");
+    printf("8) Select City\n");
+    printf("9) Delete County and Exit Menu\n");
+    printf("10) Exit Menu\n");
+    printf("Selection: ");
 
-		bzero(selection, 4 );
-		receive_until( selection, '\n', 3);
+    bzero(selection, 4);
+    receive_until(selection, '\n', 3);
 
-		choice = atoi( selection );
-		bzero( selection, 30 );
+    choice = atoi(selection);
+    bzero(selection, 30);
 
-		switch( choice ) {
-			case 1:
-				printCountyInfo( co );
-				break;
-			case 2: 	// Set Seat
-				printf("\n-> ");
-				receive_until(selection, '\n', 19 );
-				
-				choice = 0;
-				while ( isalpha( selection[choice] ) ) {
-					co->seat[choice] = selection[choice];
-					choice++;
-				}
-				
-				/// NULL terminated
-				co->seat[choice] = '\x00';				
-				break;
-			case 3:		// Set Population
-				printf("\n-> ");
-				receive_until( selection, '\n', 19 );
+    switch (choice) {
+      case 1:
+        printCountyInfo(co);
+        break;
+      case 2:  // Set Seat
+        printf("\n-> ");
+        receive_until(selection, '\n', 19);
 
-				co->population = atoi(selection);
+        choice = 0;
+        while (isalpha(selection[choice])) {
+          co->seat[choice] = selection[choice];
+          choice++;
+        }
 
-				break;
-			case 4:		/// Set Area
-				printf("\n-> ");
-				receive_until( selection, '\n', 19);
-				co->area = atof( selection );
-				break;
-			case 5:		/// Set Density
-				printf("\n-> ");
-				receive_until( selection, '\n', 19);
-				co->density = atof( selection );
-				break;
-			case 6:	/// Add border
-				if ( co->border_count >= COUNTYBORDERMAX) {
-                                        printf("!!Max borders reached\n");
-					break;
-                                }
+        /// NULL terminated
+        co->seat[choice] = '\x00';
+        break;
+      case 3:  // Set Population
+        printf("\n-> ");
+        receive_until(selection, '\n', 19);
 
-                                if ( allocate( sizeof(Border), 0, (void**)&pb) != 0 ) {
-                                        pb = NULL;
-                                        break;
-                                }
+        co->population = atoi(selection);
 
-                                printf("Lat Start: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->latStart = atof(selection);
+        break;
+      case 4:  /// Set Area
+        printf("\n-> ");
+        receive_until(selection, '\n', 19);
+        co->area = atof(selection);
+        break;
+      case 5:  /// Set Density
+        printf("\n-> ");
+        receive_until(selection, '\n', 19);
+        co->density = atof(selection);
+        break;
+      case 6:  /// Add border
+        if (co->border_count >= COUNTYBORDERMAX) {
+          printf("!!Max borders reached\n");
+          break;
+        }
 
-                                printf("Long Start: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->lngStart = atof(selection);
+        if (allocate(sizeof(Border), 0, (void **)&pb) != 0) {
+          pb = NULL;
+          break;
+        }
 
-                                printf("Lat End: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->latEnd = atof(selection);
+        printf("Lat Start: ");
+        bzero(selection, 30);
+        receive_until(selection, '\n', 19);
+        pb->latStart = atof(selection);
 
-                                printf("Long End: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->lngEnd = atof(selection);
+        printf("Long Start: ");
+        bzero(selection, 30);
+        receive_until(selection, '\n', 19);
+        pb->lngStart = atof(selection);
 
-                                co->borders[ co->border_count ] = pb;
-                                co->border_count++;
-				break;
-			case 7:
-				/// Add City
-				/// Find a free slot
-				choice = 0;
-				while ( choice < COUNTYCITYMAX ) {
-					if ( co->cities[choice] == NULL ) {
-						break;
-					}
-					choice++;
-				}
+        printf("Lat End: ");
+        bzero(selection, 30);
+        receive_until(selection, '\n', 19);
+        pb->latEnd = atof(selection);
 
-				if ( choice == COUNTYCITYMAX ) {
-					printf("!!Max cities reached\n");
-					continue;
-				}
+        printf("Long End: ");
+        bzero(selection, 30);
+        receive_until(selection, '\n', 19);
+        pb->lngEnd = atof(selection);
 
-				if ( allocate( sizeof(City), 0, (void**)(&pc)) != 0 ) {
-					pc = NULL;
-					continue;
-				}
+        co->borders[co->border_count] = pb;
+        co->border_count++;
+        break;
+      case 7:
+        /// Add City
+        /// Find a free slot
+        choice = 0;
+        while (choice < COUNTYCITYMAX) {
+          if (co->cities[choice] == NULL) {
+            break;
+          }
+          choice++;
+        }
 
-				initCity( pc );
+        if (choice == COUNTYCITYMAX) {
+          printf("!!Max cities reached\n");
+          continue;
+        }
 
-				co->cities[choice] = pc;
+        if (allocate(sizeof(City), 0, (void **)(&pc)) != 0) {
+          pc = NULL;
+          continue;
+        }
 
-				printf("New City Name: ");
-				receive_until( selection, '\n', 19 );
+        initCity(pc);
 
-				choice = 0;
-				while( isalnum( selection[choice] ) ) {
-					pc->name[choice] = selection[choice];
-					choice++;
-				} 
+        co->cities[choice] = pc;
 
-				pc->name[choice] = '\x00';
-				co->city_count++;
-				break;
-			case 8:
-				/// select city
-				for ( choice = 0; choice < COUNTYCITYMAX; choice++ ) {
-					if ( co->cities[choice] != NULL ) {
-						printf("@d) @s\n", choice + 1, co->cities[choice]);
-					}
-				}
+        printf("New City Name: ");
+        receive_until(selection, '\n', 19);
 
-				printf("\n-> ");
-				bzero( selection, 30 );
-				receive_until( selection, '\n', 4 );
+        choice = 0;
+        while (isalnum(selection[choice])) {
+          pc->name[choice] = selection[choice];
+          choice++;
+        }
 
-				choice = atoi( selection );
+        pc->name[choice] = '\x00';
+        co->city_count++;
+        break;
+      case 8:
+        /// select city
+        for (choice = 0; choice < COUNTYCITYMAX; choice++) {
+          if (co->cities[choice] != NULL) {
+            printf("@d) @s\n", choice + 1, co->cities[choice]);
+          }
+        }
 
-				if ( choice < 1 || choice > COUNTYCITYMAX || co->cities[choice-1] == NULL ) {
-					printf("Invalid choice\n");
-					continue;
-				}
+        printf("\n-> ");
+        bzero(selection, 30);
+        receive_until(selection, '\n', 4);
 
-				if ( cityMenu( co->cities[choice-1] ) == 0 ) {
-					co->cities[choice-1] = NULL;
-					co->city_count--;
-				}
-				break;
-			case 9:
-				freeCounty( co );
-				return 0;
-				break;
-			case 10:
-				return 1;
-				break;
-			default:
-				printf("Invalid choice\n");
-				continue;
-		};
-	}
-	return 1;
+        choice = atoi(selection);
+
+        if (choice < 1 || choice > COUNTYCITYMAX ||
+            co->cities[choice - 1] == NULL) {
+          printf("Invalid choice\n");
+          continue;
+        }
+
+        if (cityMenu(co->cities[choice - 1]) == 0) {
+          co->cities[choice - 1] = NULL;
+          co->city_count--;
+        }
+        break;
+      case 9:
+        freeCounty(co);
+        return 0;
+        break;
+      case 10:
+        return 1;
+        break;
+      default:
+        printf("Invalid choice\n");
+        continue;
+    };
+  }
+  return 1;
 }
 
 /**
@@ -206,29 +206,28 @@ int countyMenu( pCounty co )
  * @param co Pointer to a county structure
  * @return Returns nothing
  **/
-void freeCounty( pCounty co )
-{
-	int index = 0;
+void freeCounty(pCounty co) {
+  int index = 0;
 
-	if ( co == NULL ) {
-		return;
-	}
+  if (co == NULL) {
+    return;
+  }
 
-	for ( index = 0; index < co->border_count; index++ ) {
-		if ( co->borders[index] != NULL ) {
-			deallocate(co->borders[index], sizeof(Border) );
-			co->borders[index] = NULL;
-		}
-	}
+  for (index = 0; index < co->border_count; index++) {
+    if (co->borders[index] != NULL) {
+      deallocate(co->borders[index], sizeof(Border));
+      co->borders[index] = NULL;
+    }
+  }
 
-	for (index = 0; index < COUNTYCITYMAX; index++ ) {
-		freeCity( co->cities[index] );
-		co->cities[index] = NULL;
-	}
+  for (index = 0; index < COUNTYCITYMAX; index++) {
+    freeCity(co->cities[index]);
+    co->cities[index] = NULL;
+  }
 
-	deallocate( co, sizeof(County) );
-	
-	return;
+  deallocate(co, sizeof(County));
+
+  return;
 }
 
 /**
@@ -236,29 +235,28 @@ void freeCounty( pCounty co )
  * @param co Pointer to a county structure
  * @return Returns nothing
  **/
-void initCounty( pCounty co )
-{
-	int index = 0;
+void initCounty(pCounty co) {
+  int index = 0;
 
-	if ( co == NULL ) {
-		return;
-	}
+  if (co == NULL) {
+    return;
+  }
 
-	for ( index = 0; index < 20; index++ ) {
-		co->name[index] = 0;
-		co->seat[index] = 0;
+  for (index = 0; index < 20; index++) {
+    co->name[index] = 0;
+    co->seat[index] = 0;
 
-		co->cities[index] = NULL;
-		co->borders[index] = NULL;
-	}
+    co->cities[index] = NULL;
+    co->borders[index] = NULL;
+  }
 
-	co->population = -1;
-	co->area = -1.0;
-	co->density = -1.0;
-	co->city_count = 0;
-	co->border_count = 0;
+  co->population = -1;
+  co->area = -1.0;
+  co->density = -1.0;
+  co->city_count = 0;
+  co->border_count = 0;
 
-	return;
+  return;
 }
 
 /**
@@ -266,51 +264,52 @@ void initCounty( pCounty co )
  * @param co Pointer to the county structure
  * @return Returns nothing
  **/
-void printCountyInfo( pCounty co )
-{
-	int index = 0;
+void printCountyInfo(pCounty co) {
+  int index = 0;
 
-	if ( co == NULL ) {
-		return;
-	}
+  if (co == NULL) {
+    return;
+  }
 
-	printf("\t\t\tCounty: ");
-	if ( co->name[0] == '\x00' ) {
-		printf("Unknown\n");
-	} else {
-		printf("@s\n", co->name);
-	}
+  printf("\t\t\tCounty: ");
+  if (co->name[0] == '\x00') {
+    printf("Unknown\n");
+  } else {
+    printf("@s\n", co->name);
+  }
 
-	printf("\t\t\t\tSeat: ");
-	if ( co->seat[0] == '\x00' ) {
-		printf("Unknown\n");
-	} else {
-		printf("@s\n", co->seat);
-	}
+  printf("\t\t\t\tSeat: ");
+  if (co->seat[0] == '\x00') {
+    printf("Unknown\n");
+  } else {
+    printf("@s\n", co->seat);
+  }
 
-	if ( co->population >= 0 ) {
-		printf("\t\t\t\tPopulation: @d\n", co->population);
-	}
+  if (co->population >= 0) {
+    printf("\t\t\t\tPopulation: @d\n", co->population);
+  }
 
-	if ( co->area >= 0 ) {
-		printf("\t\t\t\tArea: @f\n", co->area);
-	}
+  if (co->area >= 0) {
+    printf("\t\t\t\tArea: @f\n", co->area);
+  }
 
-	if ( co->density >= 0 ) {
-		printf("\t\t\t\tDensity: @f\n", co->density);
-	}
+  if (co->density >= 0) {
+    printf("\t\t\t\tDensity: @f\n", co->density);
+  }
 
-	for (index = 0; index < co->border_count; index++ ) {
-		printf("\t\t\t\tBorder: @f @f @f @f\n", co->borders[index]->latStart, co->borders[index]->lngStart, co->borders[index]->latEnd, co->borders[index]->lngEnd);
-	}
+  for (index = 0; index < co->border_count; index++) {
+    printf("\t\t\t\tBorder: @f @f @f @f\n", co->borders[index]->latStart,
+           co->borders[index]->lngStart, co->borders[index]->latEnd,
+           co->borders[index]->lngEnd);
+  }
 
-	for (index = 0; index < COUNTYCITYMAX; index++ ) {
-		if ( co->cities[index] != NULL ) {
-			printCityInfo( co->cities[ index ]);
-		}
-	}
+  for (index = 0; index < COUNTYCITYMAX; index++) {
+    if (co->cities[index] != NULL) {
+      printCityInfo(co->cities[index]);
+    }
+  }
 
-	return;
+  return;
 }
 
 /**
@@ -318,241 +317,239 @@ void printCountyInfo( pCounty co )
  * @param str Pointer to the string structure to parse
  * @return Returns a pointer to a filled out county structure or NULL on failure
  **/
-pCounty countyTopLevel( pstring str )
-{
-	pCounty newCounty = NULL;
-	int startIndex = 0;
-	int endIndex = 0;
-	int lastGood = 0;
-	int tempInt = 0;
-	char *tempChar = NULL;
-	element el;
+pCounty countyTopLevel(pstring str) {
+  pCounty newCounty = NULL;
+  int startIndex = 0;
+  int endIndex = 0;
+  int lastGood = 0;
+  int tempInt = 0;
+  char *tempChar = NULL;
+  element el;
 
-	if ( str == NULL ) {
-		return NULL;
-	}
+  if (str == NULL) {
+    return NULL;
+  }
 
-	skipWhiteSpace( str );
+  skipWhiteSpace(str);
 
-	lastGood = str->index;
+  lastGood = str->index;
 
-	if ( !atChar( str, '{' ) ) {
-		goto end;
-	}
+  if (!atChar(str, '{')) {
+    goto end;
+  }
 
-	incChar( str );
+  incChar(str);
 
-	skipWhiteSpace(str);
+  skipWhiteSpace(str);
 
-	getIndex( str, &startIndex );
+  getIndex(str, &startIndex);
 
-	endIndex = skipAlpha( str );
+  endIndex = skipAlpha(str);
 
-	if ( endIndex == -1 ) {
-		goto end;
-	}
+  if (endIndex == -1) {
+    goto end;
+  }
 
-	if ( startIndex == endIndex ) {
-		goto end;
-	}
+  if (startIndex == endIndex) {
+    goto end;
+  }
 
-	tempChar = copyData( str, startIndex, endIndex );
+  tempChar = copyData(str, startIndex, endIndex);
 
-	if ( tempChar == NULL ) {
-		goto end;
-	}
+  if (tempChar == NULL) {
+    goto end;
+  }
 
-	if ( strcmp( tempChar, "County" ) != 0 ) {
-		goto end;
-	}
+  if (strcmp(tempChar, "County") != 0) {
+    goto end;
+  }
 
-	deallocate(tempChar, (endIndex-startIndex)+1);
+  deallocate(tempChar, (endIndex - startIndex) + 1);
 
-	skipWhiteSpace( str );
+  skipWhiteSpace(str);
 
-	if ( !atChar( str, '}') ) {
-		goto end;
-	}
+  if (!atChar(str, '}')) {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
+  skipWhiteSpace(str);
 
-	/// Skip past the closing brace
-	incChar( str );
+  /// Skip past the closing brace
+  incChar(str);
 
-	if ( allocate( sizeof(County), 0, (void**)&newCounty) != 0 ) {
-		newCounty = NULL;
-		goto end;
-	}
+  if (allocate(sizeof(County), 0, (void **)&newCounty) != 0) {
+    newCounty = NULL;
+    goto end;
+  }
 
-	lastGood = str->index;
+  lastGood = str->index;
 
-	initCounty( newCounty );
+  initCounty(newCounty);
 
-	tempChar = pullNextElementName( str );
+  tempChar = pullNextElementName(str);
 
-	while (tempChar != NULL ) {
-		el = elementNameToEnum( tempChar );
+  while (tempChar != NULL) {
+    el = elementNameToEnum(tempChar);
 
-		deallocate( tempChar, strlen(tempChar) + 1 );
+    deallocate(tempChar, strlen(tempChar) + 1);
 
-		switch ( el ) {
-			case name:
-				tempChar = extractName( str );
+    switch (el) {
+      case name:
+        tempChar = extractName(str);
 
-				if ( tempChar == NULL ) {
-					goto error;
-				}
-	
-				bzero( newCounty->name, 20 );
-				strncpy( newCounty->name, tempChar, 19 );
+        if (tempChar == NULL) {
+          goto error;
+        }
 
-				deallocate( tempChar, strlen(tempChar) + 1 );
-				tempChar = NULL;
-				break;
-			case seat:
-				tempChar = extractSeat( str );
+        bzero(newCounty->name, 20);
+        strncpy(newCounty->name, tempChar, 19);
 
-				if ( tempChar == NULL ) {
-					goto error;
-				}
+        deallocate(tempChar, strlen(tempChar) + 1);
+        tempChar = NULL;
+        break;
+      case seat:
+        tempChar = extractSeat(str);
 
-				bzero( newCounty->seat, 20 );
-				strncpy( newCounty->seat, tempChar, 19);
+        if (tempChar == NULL) {
+          goto error;
+        }
 
-				deallocate( tempChar, strlen(tempChar) + 1 );
-				tempChar = NULL;
-				break;
-			case density:
-				newCounty->density = extractDensity( str );
+        bzero(newCounty->seat, 20);
+        strncpy(newCounty->seat, tempChar, 19);
 
-				if ( newCounty->density < 0.0 ) {
-					goto error;
-				}
-				break;
-			case population:
-				newCounty->population = extractPopulation( str );
+        deallocate(tempChar, strlen(tempChar) + 1);
+        tempChar = NULL;
+        break;
+      case density:
+        newCounty->density = extractDensity(str);
 
-				if ( newCounty->population < 0 ) {
-					goto error;
-				}
+        if (newCounty->density < 0.0) {
+          goto error;
+        }
+        break;
+      case population:
+        newCounty->population = extractPopulation(str);
 
-				break;
+        if (newCounty->population < 0) {
+          goto error;
+        }
 
-			case area:
-				newCounty->area = extractArea( str );
+        break;
 
-				if ( newCounty->area < 0.0 ) {
-					goto error;
-				}
+      case area:
+        newCounty->area = extractArea(str);
 
-				break;
-			case border:
-				tempInt = newCounty->border_count;
+        if (newCounty->area < 0.0) {
+          goto error;
+        }
 
-				if ( tempInt >= COUNTYBORDERMAX ) {
-					goto error;
-				}
+        break;
+      case border:
+        tempInt = newCounty->border_count;
 
-				newCounty->borders[ tempInt ] = extractBorder( str );
+        if (tempInt >= COUNTYBORDERMAX) {
+          goto error;
+        }
 
-				if ( newCounty->borders[tempInt] == NULL ) {
-					goto error;
-				}
+        newCounty->borders[tempInt] = extractBorder(str);
 
-				newCounty->border_count++;
+        if (newCounty->borders[tempInt] == NULL) {
+          goto error;
+        }
 
-				break;
-			case city:
-				tempInt = newCounty->city_count;
+        newCounty->border_count++;
 
-				if ( tempInt >= COUNTYCITYMAX ) {
-					goto error;
-				}
+        break;
+      case city:
+        tempInt = newCounty->city_count;
 
-				newCounty->cities[ tempInt ] = cityTopLevel( str );
+        if (tempInt >= COUNTYCITYMAX) {
+          goto error;
+        }
 
-				if ( newCounty->cities[tempInt] == NULL ) {
-					goto error;
-				}
+        newCounty->cities[tempInt] = cityTopLevel(str);
 
-				newCounty->city_count++;
-				break;
-			default:
-				printf("!!Element not allowed\n");
-				goto error;
-				break;
-		
-		};
+        if (newCounty->cities[tempInt] == NULL) {
+          goto error;
+        }
 
-		getIndex( str, &lastGood);
+        newCounty->city_count++;
+        break;
+      default:
+        printf("!!Element not allowed\n");
+        goto error;
+        break;
+    };
 
-		tempChar = pullNextElementName( str );
-	}
+    getIndex(str, &lastGood);
 
-	/// Skip any residual white space
-	skipWhiteSpace( str );
+    tempChar = pullNextElementName(str);
+  }
 
-	/// It must be at the final opening brace
-	if ( !atChar( str, '{') ) {
-		goto error;
-	}
+  /// Skip any residual white space
+  skipWhiteSpace(str);
 
-	skipLength( str, 1);
-	skipWhiteSpace( str );
+  /// It must be at the final opening brace
+  if (!atChar(str, '{')) {
+    goto error;
+  }
 
-	if ( !atChar( str, '#' ) ) {
-		goto error;
-	}
+  skipLength(str, 1);
+  skipWhiteSpace(str);
 
-	skipLength(str, 1);
-	
-	getIndex( str, &startIndex );
-	skipAlpha( str );
-	getIndex( str, &endIndex);
+  if (!atChar(str, '#')) {
+    goto error;
+  }
 
-	if ( startIndex == endIndex ) {
-		goto error;
-	} else if ( endIndex == -1 ) {
-		goto error;
-	}
+  skipLength(str, 1);
 
-	tempChar = copyData( str, startIndex, endIndex );
+  getIndex(str, &startIndex);
+  skipAlpha(str);
+  getIndex(str, &endIndex);
+
+  if (startIndex == endIndex) {
+    goto error;
+  } else if (endIndex == -1) {
+    goto error;
+  }
+
+  tempChar = copyData(str, startIndex, endIndex);
 
 #ifdef PATCHED
-	if ( tempChar == NULL ) {
-		goto error;
-	}
+  if (tempChar == NULL) {
+    goto error;
+  }
 #endif
 
-	if ( strcmp( tempChar, "County" ) != 0 ) {
-		deallocate( tempChar, strlen(tempChar) + 1 );
-		goto error;
-	}
+  if (strcmp(tempChar, "County") != 0) {
+    deallocate(tempChar, strlen(tempChar) + 1);
+    goto error;
+  }
 
-	deallocate( tempChar, strlen(tempChar) + 1 );
+  deallocate(tempChar, strlen(tempChar) + 1);
 
-	skipWhiteSpace( str );
-	
-	if ( !atChar( str, '}' ) ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
 
-	incChar( str );
+  if (!atChar(str, '}')) {
+    goto error;
+  }
 
-	goto end;
+  incChar(str);
+
+  goto end;
 
 error:
-	if ( newCounty ) {
-		freeCounty( newCounty );
-		newCounty = NULL;
-	}
+  if (newCounty) {
+    freeCounty(newCounty);
+    newCounty = NULL;
+  }
 
-	printf("!!Error at: @s\n", str->buffer + lastGood );
-	str->index = lastGood;
+  printf("!!Error at: @s\n", str->buffer + lastGood);
+  str->index = lastGood;
 
 end:
 
-	return newCounty;
+  return newCounty;
 }
 
 /**
@@ -562,68 +559,67 @@ end:
  * @param ending Used as a bool to indicate if it is a closing element
  * @return Returns 1 on valid 0 on failure.
  **/
-int checkId ( pstring str, char *id, int ending )
-{
-	int retval = 0;
-	int startIndex = 0;
-	int endIndex = 0;
-	char *temp = NULL;
+int checkId(pstring str, char *id, int ending) {
+  int retval = 0;
+  int startIndex = 0;
+  int endIndex = 0;
+  char *temp = NULL;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	
-	if ( !atChar(str, '{'))  {
-		goto end;
-	}
+  skipWhiteSpace(str);
 
-	incChar( str );
+  if (!atChar(str, '{')) {
+    goto end;
+  }
 
-	/// If it is the end check for #
-	if ( ending == 1 ) {
-		skipWhiteSpace(str);
-		if ( !atChar( str, '#' ) ) {
-			goto end;
-		}
+  incChar(str);
 
-		incChar( str );
-	}
+  /// If it is the end check for #
+  if (ending == 1) {
+    skipWhiteSpace(str);
+    if (!atChar(str, '#')) {
+      goto end;
+    }
 
-	startIndex = skipWhiteSpace( str );
-	endIndex = skipAlpha( str );
+    incChar(str);
+  }
 
-	if ( endIndex == -1 ) { 
-		goto end;
-	} else if ( startIndex == endIndex ) {
-		goto end;
-	}
+  startIndex = skipWhiteSpace(str);
+  endIndex = skipAlpha(str);
 
-	temp = copyData( str, startIndex, endIndex );
+  if (endIndex == -1) {
+    goto end;
+  } else if (startIndex == endIndex) {
+    goto end;
+  }
 
-	if ( !temp ) {
-		goto end;
-	}
+  temp = copyData(str, startIndex, endIndex);
 
-	if ( strcmp( temp, id ) != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
+  if (!temp) {
+    goto end;
+  }
 
-		goto end;
-	}
+  if (strcmp(temp, id) != 0) {
+    deallocate(temp, strlen(temp) + 1);
 
-	deallocate( temp, strlen(temp) + 1 );
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	if ( str->buffer[str->index] != '}' ) {
-		goto end;
-	}
+  deallocate(temp, strlen(temp) + 1);
 
-	incChar( str );
+  skipWhiteSpace(str);
+  if (str->buffer[str->index] != '}') {
+    goto end;
+  }
 
-	retval = 1;
+  incChar(str);
+
+  retval = 1;
 end:
-	return retval;
+  return retval;
 }
 
 /**
@@ -631,58 +627,57 @@ end:
  * @param str Pointer to the string structure
  * @return Returns the density double or -1.0 on failure
  **/
-double extractDensity( pstring str )
-{
-	double density = -1.0;
-	register int startIndex = 0;
-	register int endIndex = 0;
-	char *temp = NULL;
-	int lastGood = 0;
+double extractDensity(pstring str) {
+  double density = -1.0;
+  register int startIndex = 0;
+  register int endIndex = 0;
+  char *temp = NULL;
+  int lastGood = 0;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	getIndex( str, &lastGood );
+  getIndex(str, &lastGood);
 
-	if ( checkId( str, "Density", 0) == 0 ) {
-		goto error;
-	}
+  if (checkId(str, "Density", 0) == 0) {
+    goto error;
+  }
 
-	startIndex = skipWhiteSpace(str);
-	endIndex = skipFloat( str );
+  startIndex = skipWhiteSpace(str);
+  endIndex = skipFloat(str);
 
-	if ( startIndex == endIndex ) {
-		goto end;
-	}
+  if (startIndex == endIndex) {
+    goto end;
+  }
 
-	if ( endIndex == -1 ) {
-		goto end;
-	}
+  if (endIndex == -1) {
+    goto end;
+  }
 
-	temp = copyData( str, startIndex, endIndex );
+  temp = copyData(str, startIndex, endIndex);
 
-	if (temp == NULL) {
-		goto end;
-	}
+  if (temp == NULL) {
+    goto end;
+  }
 
-	density = atof( temp );
+  density = atof(temp);
 
-	deallocate( temp, (endIndex-startIndex) + 1 );
-	temp = NULL;
+  deallocate(temp, (endIndex - startIndex) + 1);
+  temp = NULL;
 
-	if ( checkId( str, "Density", 1 ) == 0 ) {
-		goto error;
-	}
+  if (checkId(str, "Density", 1) == 0) {
+    goto error;
+  }
 
-	goto end;
-	
+  goto end;
+
 error:
-	str->index = lastGood;
-	density = -1.0;
+  str->index = lastGood;
+  density = -1.0;
 
 end:
-	return density;
+  return density;
 }
 
 /**
@@ -690,120 +685,119 @@ end:
  * @param str Pointer to the string structure
  * @return Returns the area double or -1.0 on failure
  **/
-double extractArea( pstring str )
-{
-	double area = -1.0;
-	int startIndex = 0;
-	int endIndex = 0;
-	char *temp = NULL;
-	int lastGood = 0;
+double extractArea(pstring str) {
+  double area = -1.0;
+  int startIndex = 0;
+  int endIndex = 0;
+  char *temp = NULL;
+  int lastGood = 0;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	getIndex( str, &lastGood );
-	
-	if ( str->buffer[ str->index ] != '{' ) {
-		goto end;
-	}
+  skipWhiteSpace(str);
+  getIndex(str, &lastGood);
 
-	incChar( str );
+  if (str->buffer[str->index] != '{') {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	getIndex( str, &startIndex);
-	endIndex = skipAlpha( str );
+  incChar(str);
 
-	if ( endIndex == -1 || startIndex == endIndex ) {
-		goto end;
-	}	
+  skipWhiteSpace(str);
+  getIndex(str, &startIndex);
+  endIndex = skipAlpha(str);
 
-	temp = copyData( str, startIndex, endIndex );
+  if (endIndex == -1 || startIndex == endIndex) {
+    goto end;
+  }
 
-	if ( !temp ) {
-		goto end;
-	}
+  temp = copyData(str, startIndex, endIndex);
 
-	if ( strcmp( temp, "Area" ) != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
+  if (!temp) {
+    goto end;
+  }
 
-		goto end;
-	}
+  if (strcmp(temp, "Area") != 0) {
+    deallocate(temp, strlen(temp) + 1);
 
-	deallocate( temp, strlen(temp) + 1 );
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	if ( str->buffer[str->index] != '}' ) {
-		goto end;
-	}
+  deallocate(temp, strlen(temp) + 1);
 
-	incChar( str );
-	startIndex = skipWhiteSpace(str);
-	endIndex = skipFloat( str );
+  skipWhiteSpace(str);
+  if (str->buffer[str->index] != '}') {
+    goto end;
+  }
 
-	if ( startIndex == endIndex ) {
-		goto end;
-	}
+  incChar(str);
+  startIndex = skipWhiteSpace(str);
+  endIndex = skipFloat(str);
 
-	if ( endIndex == -1 ) {
-		goto end;
-	}
+  if (startIndex == endIndex) {
+    goto end;
+  }
 
-	temp = copyData( str, startIndex, endIndex );
+  if (endIndex == -1) {
+    goto end;
+  }
 
-	if (temp == NULL) {
-		goto end;
-	}
+  temp = copyData(str, startIndex, endIndex);
 
-	area = atof( temp );
+  if (temp == NULL) {
+    goto end;
+  }
 
-	deallocate( temp, (endIndex-startIndex) + 1 );
-	temp = NULL;
+  area = atof(temp);
 
-	skipWhiteSpace( str );
-	if ( !atChar( str, '{' ) ) {
-		goto error;
-	}
+  deallocate(temp, (endIndex - startIndex) + 1);
+  temp = NULL;
 
-	incChar( str );
-	skipWhiteSpace(str);
+  skipWhiteSpace(str);
+  if (!atChar(str, '{')) {
+    goto error;
+  }
 
-	if (!atChar( str, '#' ) ) {
-		goto error;
-	}
+  incChar(str);
+  skipWhiteSpace(str);
 
-	startIndex = incChar( str );
-	endIndex = skipAlpha( str );
+  if (!atChar(str, '#')) {
+    goto error;
+  }
 
-	temp = copyData( str, startIndex, endIndex );
+  startIndex = incChar(str);
+  endIndex = skipAlpha(str);
 
-	if ( temp == NULL ) {
-		goto error;
-	}
+  temp = copyData(str, startIndex, endIndex);
 
-	if ( strcmp( temp, "Area") != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
-		goto error;
-	}
+  if (temp == NULL) {
+    goto error;
+  }
 
-	deallocate( temp, strlen(temp) + 1 );
+  if (strcmp(temp, "Area") != 0) {
+    deallocate(temp, strlen(temp) + 1);
+    goto error;
+  }
 
-	skipWhiteSpace( str );
-	if ( !atChar( str, '}') ) {
-		goto error;
-	}
+  deallocate(temp, strlen(temp) + 1);
 
-	incChar( str );
-	
-	goto end;
-	
+  skipWhiteSpace(str);
+  if (!atChar(str, '}')) {
+    goto error;
+  }
+
+  incChar(str);
+
+  goto end;
+
 error:
-	str->index = lastGood;
-	area = -1.0;
+  str->index = lastGood;
+  area = -1.0;
 
 end:
-	return area;
+  return area;
 }
 
 /**
@@ -811,125 +805,123 @@ end:
  * @param str Pointer to the string structure
  * @return Returns a pointer to the seat data or NULL on failure
  **/
-char *extractSeat( pstring str )
-{
-	char *seat = NULL;
-	int startIndex = 0;
-	int endIndex = 0;
-	char *temp = NULL;
-	int lastGood = 0;
+char *extractSeat(pstring str) {
+  char *seat = NULL;
+  int startIndex = 0;
+  int endIndex = 0;
+  char *temp = NULL;
+  int lastGood = 0;
 
-	if ( str == NULL ) {
-		goto end;
-	}
+  if (str == NULL) {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	getIndex( str, &lastGood );
-	
-	if ( str->buffer[ str->index ] != '{' ) {
-		goto end;
-	}
+  skipWhiteSpace(str);
+  getIndex(str, &lastGood);
 
-	incChar( str );
+  if (str->buffer[str->index] != '{') {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	getIndex( str, &startIndex);
-	endIndex = skipAlpha( str );
+  incChar(str);
 
-	if ( endIndex == -1 || startIndex == endIndex ) {
-		goto end;
-	}	
+  skipWhiteSpace(str);
+  getIndex(str, &startIndex);
+  endIndex = skipAlpha(str);
 
-	temp = copyData( str, startIndex, endIndex );
+  if (endIndex == -1 || startIndex == endIndex) {
+    goto end;
+  }
 
-	if ( !temp ) {
-		goto end;
-	}
+  temp = copyData(str, startIndex, endIndex);
 
-	if ( strcmp( temp, "Seat" ) != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
-		goto end;
-	}
+  if (!temp) {
+    goto end;
+  }
 
-	deallocate( temp, strlen(temp) + 1 );
+  if (strcmp(temp, "Seat") != 0) {
+    deallocate(temp, strlen(temp) + 1);
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	if ( str->buffer[str->index] != '}' ) {
-		goto end;
-	}
+  deallocate(temp, strlen(temp) + 1);
 
-	incChar( str );
-	startIndex = skipWhiteSpace(str);
-	endIndex = skipAlpha( str );
+  skipWhiteSpace(str);
+  if (str->buffer[str->index] != '}') {
+    goto end;
+  }
 
+  incChar(str);
+  startIndex = skipWhiteSpace(str);
+  endIndex = skipAlpha(str);
 
-	if ( startIndex == endIndex ) {
-		goto end;
-	}
+  if (startIndex == endIndex) {
+    goto end;
+  }
 
-	if ( endIndex == -1 ) {
-		goto end;
-	}
+  if (endIndex == -1) {
+    goto end;
+  }
 
-	seat = copyData( str, startIndex, endIndex );
+  seat = copyData(str, startIndex, endIndex);
 
-	if (seat == NULL) {
-		goto end;
-	}
+  if (seat == NULL) {
+    goto end;
+  }
 
-	skipWhiteSpace( str );
-	if ( !atChar( str, '{' ) ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
+  if (!atChar(str, '{')) {
+    goto error;
+  }
 
-	incChar( str );
-	skipWhiteSpace(str);
+  incChar(str);
+  skipWhiteSpace(str);
 
-	if (!atChar( str, '#' ) ) {
-		goto error;
-	}
+  if (!atChar(str, '#')) {
+    goto error;
+  }
 
-	startIndex = incChar( str );
-	endIndex = skipAlpha( str );
+  startIndex = incChar(str);
+  endIndex = skipAlpha(str);
 
-	if ( startIndex == endIndex ) {
-		goto error;
-	}
+  if (startIndex == endIndex) {
+    goto error;
+  }
 
-	if ( endIndex == -1 ) {
-		goto error;
-	}
+  if (endIndex == -1) {
+    goto error;
+  }
 
-	temp = copyData( str, startIndex, endIndex );
+  temp = copyData(str, startIndex, endIndex);
 
-	if ( temp == NULL ) {
-		goto error;
-	}
+  if (temp == NULL) {
+    goto error;
+  }
 
-	if ( strcmp( temp, "Seat") != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
-		goto error;
-	}
+  if (strcmp(temp, "Seat") != 0) {
+    deallocate(temp, strlen(temp) + 1);
+    goto error;
+  }
 
-	deallocate( temp, strlen(temp) + 1 );
+  deallocate(temp, strlen(temp) + 1);
 
-	skipWhiteSpace( str );
-	if ( !atChar( str, '}') ) {
-		goto error;
-	}
+  skipWhiteSpace(str);
+  if (!atChar(str, '}')) {
+    goto error;
+  }
 
-	incChar( str );
-	
-	goto end;
-	
+  incChar(str);
+
+  goto end;
+
 error:
-	if ( seat ) {
-		deallocate( seat, strlen(seat) + 1 );
-		seat = NULL;
-	}
+  if (seat) {
+    deallocate(seat, strlen(seat) + 1);
+    seat = NULL;
+  }
 
-	str->index = lastGood;
+  str->index = lastGood;
 
 end:
-	return seat;
+  return seat;
 }

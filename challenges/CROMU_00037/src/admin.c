@@ -24,11 +24,12 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "service.h"
+
 #include "jlib.h"
+#include "service.h"
 
 extern int CURRENT_USER;
-//extern users_t USERS[MAX_USERS];
+// extern users_t USERS[MAX_USERS];
 extern users_t *USERS;
 extern int NUM_USERS;
 
@@ -36,80 +37,78 @@ char ADMIN_PASSWD[] = "GIMMIE";
 int ADMIN_ACCESS;
 
 void PrintAdminMenu(void) {
+  print("1) Send Broadcast Message\n");
+  print("2) Leave Admin Mode\n");
+  print("3) Exit\n");
+  print(": ");
 
-        print("1) Send Broadcast Message\n");
-        print("2) Leave Admin Mode\n");
-        print("3) Exit\n");
-        print(": ");
-
-	return;
+  return;
 }
 
 void AdminLogin(void) {
-	char buf[100];
+  char buf[100];
 
-	zero(buf, 100);
-	print("Admin Password: ");
-	if (read_until(buf, '\n', 100) == -1) {
-		_terminate(-1);
-	}
+  zero(buf, 100);
+  print("Admin Password: ");
+  if (read_until(buf, '\n', 100) == -1) {
+    _terminate(-1);
+  }
 
-	if (strmatch(ADMIN_PASSWD, buf)) {
-		ADMIN_ACCESS = 1;
-		print("[-] Admin access granted\n");
-		return;
-	}
+  if (strmatch(ADMIN_PASSWD, buf)) {
+    ADMIN_ACCESS = 1;
+    print("[-] Admin access granted\n");
+    return;
+  }
 
-	print("[-] Admin access denied\n");
-	ADMIN_ACCESS = 0;
+  print("[-] Admin access denied\n");
+  ADMIN_ACCESS = 0;
 
-	return;
+  return;
 }
 
 // send a message to all users
 void SendBroadcastMessage(void) {
-	int i, j;
+  int i, j;
 #ifdef PATCHED
-	char message[MAX_MESSAGE_LEN];
+  char message[MAX_MESSAGE_LEN];
 
-	// read in the Message:
-	zero(message, MAX_MESSAGE_LEN);
-	print("Message: ");
-	if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
+  // read in the Message:
+  zero(message, MAX_MESSAGE_LEN);
+  print("Message: ");
+  if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
 #else
-	char message[1024];
+  char message[1024];
 
-	// read in the Message:
-	zero(message, 1024);
-	print("Message: ");
-	if (read_until(message, '\n', 1024) == -1) {
+  // read in the Message:
+  zero(message, 1024);
+  print("Message: ");
+  if (read_until(message, '\n', 1024) == -1) {
 #endif
-		_terminate(-1);
-	}
-	if (strlen(message) == 0) {
-		return;
-	}
+    _terminate(-1);
+  }
+  if (strlen(message) == 0) {
+    return;
+  }
 
-	// for all valid users
-	for (i = 0; i < NUM_USERS; i++) {
-		if (USERS[i].name[0] == '\0') {
-			continue;
-		}
+  // for all valid users
+  for (i = 0; i < NUM_USERS; i++) {
+    if (USERS[i].name[0] == '\0') {
+      continue;
+    }
 
-		if (USERS[i].top_message == MAX_MESSAGES) {
-			print("[*] Unable to send message to ");
-			print(USERS[i].name);
-			print(". Their mailbox is full.\n");
-			continue;
-		}
+    if (USERS[i].top_message == MAX_MESSAGES) {
+      print("[*] Unable to send message to ");
+      print(USERS[i].name);
+      print(". Their mailbox is full.\n");
+      continue;
+    }
 
-		// store the message
-		j = USERS[i].top_message+1;
-		strcopy(USERS[i].messages[j], message);
-		USERS[i].msg_read[j] = 0;
-		USERS[i].top_message = j;
+    // store the message
+    j = USERS[i].top_message + 1;
+    strcopy(USERS[i].messages[j], message);
+    USERS[i].msg_read[j] = 0;
+    USERS[i].top_message = j;
+  }
 
-	}
-
-	return;
+  return;
 }

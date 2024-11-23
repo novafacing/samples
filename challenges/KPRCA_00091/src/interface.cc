@@ -20,53 +20,46 @@
  * THE SOFTWARE.
  *
  */
-#include <cstdio.h>
 #include "interface.h"
 
-Interface::Interface(Engine &engine) : d_engine(engine)
-{
-}
+#include <cstdio.h>
 
-Interface::~Interface()
-{
-}
+Interface::Interface(Engine &engine) : d_engine(engine) {}
 
-bool Interface::process(unsigned char *data, unsigned int len)
-{
-    unsigned int msg;
+Interface::~Interface() {}
 
-    if (len < 4)
-        return true;
+bool Interface::process(unsigned char *data, unsigned int len) {
+  unsigned int msg;
 
-    msg = *(unsigned int *)data;
-    data += 4;
-    len -= 4;
+  if (len < 4) return true;
 
-    switch (msg)
-    {
+  msg = *(unsigned int *)data;
+  data += 4;
+  len -= 4;
+
+  switch (msg) {
     case MSG_QUIT:
-        send_response(RESP_OK);
-        return false;
+      send_response(RESP_OK);
+      return false;
     case MSG_UPDATE:
-        if (d_engine.update_rules(data, len))
-            return send_response(RESP_OK);
-        else
-            return send_response(RESP_ERROR);
-    case MSG_CHECK:
-        if (d_engine.process(data, len))
-            // return ERROR if malware
-            return send_response(RESP_ERROR);
-        else
-            return send_response(RESP_OK);
-    case MSG_WHITELIST:
-        d_engine.whitelist(data, len);
+      if (d_engine.update_rules(data, len))
         return send_response(RESP_OK);
-    default:
+      else
         return send_response(RESP_ERROR);
-    }
+    case MSG_CHECK:
+      if (d_engine.process(data, len))
+        // return ERROR if malware
+        return send_response(RESP_ERROR);
+      else
+        return send_response(RESP_OK);
+    case MSG_WHITELIST:
+      d_engine.whitelist(data, len);
+      return send_response(RESP_OK);
+    default:
+      return send_response(RESP_ERROR);
+  }
 }
 
-bool Interface::send_response(unsigned int resp)
-{
-    return fwrite(&resp, 4, stdout) == 4;
+bool Interface::send_response(unsigned int resp) {
+  return fwrite(&resp, 4, stdout) == 4;
 }

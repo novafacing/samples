@@ -24,325 +24,256 @@ THE SOFTWARE.
 
 */
 
-
+#include "input.h"
 #include "service.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "input.h"
 
-char *cardType[] = { "", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+char *cardType[] = {"",  "A", "2", "3",  "4", "5", "6",
+                    "7", "8", "9", "10", "J", "Q", "K"};
 
 int score_cards(unsigned char *cards) {
+  int score1 = 0;
+  int ace = 0;
+  int i;
 
-int score1 = 0;
-int ace = 0;
-int i;
+  for (i = 0; i < MAX_CARDS; ++i) {
+    if (cards[i] > 1 && cards[i] < 10) {
+      score1 += cards[i];
 
-	for (i=0; i < MAX_CARDS;++i) {
+    } else if (cards[i] >= 10) {
+      score1 += 10;
+    } else if (cards[i] == 1) {
+      ace += 1;
+      score1 += 11;
+    }
+  }
 
-		if (cards[i] > 1 && cards[i] < 10) {
+  while (score1 > 21 && ace > 0) {
+    score1 -= 10;
+    ace--;
+  }
 
-			score1 += cards[i];
-
-		}
-		else if (cards[i] >= 10) {
-
-			score1 += 10;
-		}
-		else if (cards[i] == 1) {
-
-			ace += 1;
-			score1 += 11;
-
-		}
-
-	}
-
-	while (score1 > 21 && ace > 0) {
-		score1 -= 10;
-		ace--;
-	}
-
-	return score1;
+  return score1;
 }
-
-
 
 void show_cards(unsigned char *dealer_cards, playerInfoType *playerList) {
+  int i;
+  int x;
 
-int i;
-int x;
+  printf("Dealer:");
 
-	
-	printf("Dealer:");
+  for (i = 0; i < MAX_CARDS && dealer_cards[i] != 0; ++i)
+    printf(" $s", cardType[dealer_cards[i]]);
 
-	for (i=0; i< MAX_CARDS && dealer_cards[i]!= 0; ++i)
-		printf(" $s", cardType[dealer_cards[i]]);
+  printf(" ($d)\n", score_cards(dealer_cards));
 
-	printf(" ($d)\n", score_cards(dealer_cards));
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] != 0) {
+      printf("$s:", playerList[i].player_name);
 
-	for (i = 0; i < MAX_PLAYERS; ++i) {
+      for (x = 0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
+        printf(" $s", cardType[playerList[i].cards[x]]);
 
-		if (playerList[i].player_name[0] != 0) {
-
-			printf("$s:", playerList[i].player_name);
-
-			for (x=0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
-				printf(" $s", cardType[playerList[i].cards[x]]);
-
-			printf(" ($d)\n", score_cards(playerList[i].cards));
-		}
-
-	}	
-
-
+      printf(" ($d)\n", score_cards(playerList[i].cards));
+    }
+  }
 }
-
 
 int play_round(playerInfoType *playerList, unsigned short *next_card) {
+  unsigned short *deck;
+  int i;
+  int x;
+  unsigned char dealer_cards[MAX_CARDS];
+  char buffer[5];
+  int score;
+  int finished;
+  int dealer_score;
+  int player_count;
+  int bet;
 
-unsigned short *deck;
-int i;
-int x;
-unsigned char dealer_cards[MAX_CARDS];
-char buffer[5];
-int score;
-int finished;
-int dealer_score;
-int player_count;
-int bet;
+  for (i = 0; i < MAX_CARDS; ++i) dealer_cards[i] = 0;
 
-	for (i=0; i < MAX_CARDS; ++i)
-		dealer_cards[i] = 0;
+  player_count = 0;
 
-	player_count = 0;
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] != 0) ++player_count;
 
-	for (i=0; i < MAX_PLAYERS; ++i) {
-	
-		if (playerList[i].player_name[0] != 0)
-			++player_count;
+    for (x = 0; x < MAX_CARDS; ++x) playerList[i].cards[x] = 0;
+  }
 
-		for (x = 0; x < MAX_CARDS; ++x)
-			playerList[i].cards[x] = 0;
+  if (player_count == 0) {
+    printf("No players\n");
+    return -1;
+  }
 
-	}
+  // Now each player gets to play in turn
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] == 0) continue;
 
-	if (player_count == 0) {
+    finished = 0;
+    printf("Player: $s\n", playerList[i].player_name);
 
-		printf("No players\n");
-		return -1;
-	}
+    printf("Place your bet (1-$d)\n", playerList[i].funds);
 
- 	// Now each player gets to play in turn
-	for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].computerPlayer == 1) {
+      playerList[i].bet = COMPUTER_PLAYER_BET;
 
-		if (playerList[i].player_name[0] == 0)
-			continue;
+    } else {
+      if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-		finished = 0;
-		printf("Player: $s\n", playerList[i].player_name);
+      bet = atoi(buffer);
 
-		printf("Place your bet (1-$d)\n", playerList[i].funds);
+      playerList[i].bet = bet;
+    }
+  }
 
-		if (playerList[i].computerPlayer==1) {
+  // first deal out the initial cards
+  deck = (unsigned short *)RANDOM_CARD_DATA;
 
-			playerList[i].bet = COMPUTER_PLAYER_BET;
+  // dealer gets a card
+  dealer_cards[0] = (deck[*next_card] % 13) + 1;
+  *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
 
-		}
-		else {
+  // now around the table each player gets a card
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] != 0) {
+      playerList[i].cards[0] = (deck[*next_card] % 13) + 1;
+      *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+    }
+  }
 
-			if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-				return -1;
+  // dealers second card
+  dealer_cards[1] = (deck[*next_card] % 13) + 1;
+  *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
 
-			bet = atoi(buffer);
+  // around the table once more
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] != 0) {
+      playerList[i].cards[1] = (deck[*next_card] % 13) + 1;
+      *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+    }
+  }
 
-			playerList[i].bet = bet;
-		}
-	}
+  show_cards(dealer_cards, playerList);
+  // printf("Dealer shows: $d $d\n", dealer_cards[0], dealer_cards[1]);
 
-	// first deal out the initial cards
-	deck = (unsigned short *)RANDOM_CARD_DATA;
+  // Now each player gets to play in turn
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] == 0) continue;
 
-	// dealer gets a card
-	dealer_cards[0] = (deck[*next_card] % 13) +1;
-	*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+    finished = 0;
+    printf("Player: $s\n", playerList[i].player_name);
 
-	// now around the table each player gets a card
-	for (i = 0; i < MAX_PLAYERS; ++i) {
+    while (!finished) {
+      for (x = 0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
+        printf("$s ", cardType[playerList[i].cards[x]]);
 
-		if (playerList[i].player_name[0] != 0) {
+      printf("($d)\n", score_cards(playerList[i].cards));
 
-			playerList[i].cards[0] = (deck[*next_card] % 13) +1;
-			*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+      if (playerList[i].useHints == 1) {
+        printf("Do you want a hint?\n");
 
-		}
+        if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
 
-	}
+        if (buffer[0] == 'y' || buffer[0] == 'Y') {
+          buffer[0] = playerList[i].whackJackAlgorithm(dealer_cards[1],
+                                                       playerList[i].cards);
 
-	// dealers second card
-	dealer_cards[1] = (deck[*next_card] % 13) +1;
-	*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+          switch (buffer[0]) {
+            case 'S':
 
-	// around the table once more
-	for (i = 0; i < MAX_PLAYERS; ++i) {
+              printf("You should Stand\n");
+              break;
 
-		if (playerList[i].player_name[0] != 0) {
+            case 'H':
 
-			playerList[i].cards[1] = (deck[*next_card] % 13) +1;
-			*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+              printf("You should Hit\n");
+              break;
 
+            default:
+              printf("Uh.... it didn't say\n");
 
-		}
+          }  // switch
 
-	}
+        }  // if  yes to hints
 
- 	show_cards(dealer_cards, playerList);
-	//printf("Dealer shows: $d $d\n", dealer_cards[0], dealer_cards[1]);
+      }  // if useHints
 
+      printf("Do you wish to H)it or S)tand\n");
 
- 	// Now each player gets to play in turn
-	for (i = 0; i < MAX_PLAYERS; ++i) {
+      if (playerList[i].computerPlayer == 1) {
+        buffer[0] = playerList[i].whackJackAlgorithm(dealer_cards[1],
+                                                     playerList[i].cards);
 
-		if (playerList[i].player_name[0] == 0)
-			continue;
+      } else {
+        if (receive_until(buffer, '\n', sizeof(buffer)) == 0) return -1;
+      }
+      if (buffer[0] == 'S')
+        finished = 1;
+      else if (buffer[0] == 'H') {
+        playerList[i].cards[x] = (deck[*next_card] % 13) + 1;
+        *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
 
-		finished = 0;
-		printf("Player: $s\n", playerList[i].player_name);
+        printf("$s draws $s\n", playerList[i].player_name,
+               cardType[playerList[i].cards[x]]);
+        score = score_cards(playerList[i].cards);
 
-		while (!finished) {
+        if (score > 21) finished = 1;
+      }
 
-			for (x=0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
-				printf("$s ", cardType[playerList[i].cards[x]]);		
+    }  // while
 
-			printf("($d)\n", score_cards(playerList[i].cards));	
+  }  // for (i)
 
-			if (playerList[i].useHints == 1) {
+  finished = 0;
+  x = 0;
 
-				printf("Do you want a hint?\n");
+  while (dealer_cards[x] != 0) ++x;
 
-				if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-					return -1;
+  while (!finished) {
+    dealer_score = score_cards(dealer_cards);
 
-				if (buffer[0] == 'y' || buffer[0] == 'Y') {
+    if (dealer_score > 16) break;
 
-					buffer[0] = playerList[i].whackJackAlgorithm(dealer_cards[1], playerList[i].cards);
+    dealer_cards[x] = (deck[*next_card] % 13) + 1;
+    printf("Dealer draws $s\n", cardType[dealer_cards[x]]);
 
+    *next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
+    ++x;
+  }
 
-					switch (buffer[0]) {
+  for (i = 0; i < MAX_PLAYERS; ++i) {
+    if (playerList[i].player_name[0] == 0) continue;
 
-						case 'S':
+    printf("$s: ", playerList[i].player_name);
 
-							printf("You should Stand\n");
-							break;
+    score = score_cards(playerList[i].cards);
 
-						case 'H':
+    if (dealer_score > 21 && score < 22) {
+      printf("wins!\n");
+      playerList[i].funds += playerList[i].bet;
+      playerList[i].wins++;
+    } else if (score < 22 && score > dealer_score) {
+      printf("wins!\n");
+      playerList[i].wins++;
+      playerList[i].funds += playerList[i].bet;
+    } else if (score == dealer_score)
+      printf("pushes\n");
+    else {
+      printf("loses\n");
+      playerList[i].funds -= playerList[i].bet;
+      playerList[i].losses++;
 
-							printf("You should Hit\n");
-							break;
+      if (playerList[i].funds == 0) {
+        playerList[i].player_name[0] = 0;
+        playerList[i].wins = 0;
+        playerList[i].losses = 0;
+        playerList[i].computerPlayer = 0;
+      }
+    }
 
-						default:
-							printf("Uh.... it didn't say\n");
+  }  // for (i)
 
-					} //switch
-
-
-				} // if  yes to hints
-
-			} // if useHints
-
-			printf("Do you wish to H)it or S)tand\n");
-
-			if (playerList[i].computerPlayer==1) {
-
-				buffer[0] = playerList[i].whackJackAlgorithm(dealer_cards[1], playerList[i].cards);
-
-
-			}
-			else {
-				if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
-					return -1;
-			}
-			if (buffer[0] == 'S')
-				finished = 1;
-			else if (buffer[0] == 'H') {
-
-				playerList[i].cards[x] = (deck[*next_card] % 13) +1;
-				*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
-
-				printf("$s draws $s\n", playerList[i].player_name, cardType[playerList[i].cards[x]]);
-				score = score_cards(playerList[i].cards);
-
-				if (score > 21)
-					finished = 1;
-			}
-
-		} // while
-
-	} // for (i)
-
-
-	finished = 0;
-	x = 0;
-
-	while(dealer_cards[x] != 0)
-		++x;
-
-	while (!finished) {
-
-		dealer_score = score_cards(dealer_cards);
-
-		if ( dealer_score > 16 )
-			break;
-
-		dealer_cards[x] = (deck[*next_card] % 13) +1;
-		printf("Dealer draws $s\n", cardType[dealer_cards[x]]);
-
-		*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
-		++x;
-
-	}
-
-
-	for (i = 0; i < MAX_PLAYERS; ++i) {
-
-		if (playerList[i].player_name[0] == 0)
-			continue;
-
-		printf("$s: ", playerList[i].player_name);
-
-		score = score_cards(playerList[i].cards);
-
-		if (dealer_score > 21 && score < 22) {
-			printf("wins!\n");
-			playerList[i].funds += playerList[i].bet;
-			playerList[i].wins++;
-		}
-		else if ( score < 22 && score > dealer_score) {
-			printf("wins!\n");
-			playerList[i].wins++;
-			playerList[i].funds += playerList[i].bet;
-		}
-		else if ( score == dealer_score)
-			printf("pushes\n");
-		else  {
-			printf("loses\n");
-			playerList[i].funds -= playerList[i].bet;
-			playerList[i].losses++;
-
-			if (playerList[i].funds == 0) {
-
-				playerList[i].player_name[0] = 0;
-				playerList[i].wins = 0;
-				playerList[i].losses = 0;
-				playerList[i].computerPlayer = 0;
-
-			}
-		}
-
-
-	} // for (i)
-
-	return 0;
+  return 0;
 }
-
-

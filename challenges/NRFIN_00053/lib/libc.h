@@ -18,25 +18,26 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H 1
 
-#include <libcgc.h>
 #include <errno.h>
+#include <libcgc.h>
 #include <stdint.h>
-#include "memset.h"
+
 #include "conv.h"
-#include "memcpy.h"
-#include "recv_until_delim_n.h"
-#include "send_bytes.h"
-#include "recv_bytes.h"
-#include "rand.h"
-#include "streq.h"
-#include "strlen.h"
+#include "hash_table.h"
 #include "list.h"
 #include "malloc.h"
-#include "hash_table.h"
+#include "memcpy.h"
+#include "memset.h"
+#include "rand.h"
+#include "recv_bytes.h"
+#include "recv_until_delim_n.h"
+#include "send_bytes.h"
+#include "streq.h"
+#include "strlen.h"
 #include "xxprintf.h"
 
 #define DEBUG 1
@@ -45,23 +46,29 @@
 
 #define READ_FD STDIN
 
-#define SEND(f,b,s) if(s != send_bytes(f,b,s)) _terminate(ERRNO_SEND)
+#define SEND(f, b, s) \
+  if (s != send_bytes(f, b, s)) _terminate(ERRNO_SEND)
 
-#define RECV_DELIM(f,t,b,s)	if(0 > recv_until_delim_n(f,t,b,s)) _terminate(ERRNO_RECV)
+#define RECV_DELIM(f, t, b, s) \
+  if (0 > recv_until_delim_n(f, t, b, s)) _terminate(ERRNO_RECV)
 
 // trim delimiter from resultant string
-#define RECV_DELIM_TRIM(f,t,b,s)	\
- 			do { \
- 				int r_u_d_n = 0; \
- 				r_u_d_n = recv_until_delim_n(f,t,b,s); \
-				if (0 >= r_u_d_n) _terminate(ERRNO_RECV); \
-				if (t == b[r_u_d_n - 1]) b[r_u_d_n - 1] = '\0'; \
-			} while (0);
+#define RECV_DELIM_TRIM(f, t, b, s)                 \
+  do {                                              \
+    int r_u_d_n = 0;                                \
+    r_u_d_n = recv_until_delim_n(f, t, b, s);       \
+    if (0 >= r_u_d_n) _terminate(ERRNO_RECV);       \
+    if (t == b[r_u_d_n - 1]) b[r_u_d_n - 1] = '\0'; \
+  } while (0);
 
-#define RECV(f,b,s) if(0 > recv_bytes(f,b,s)) _terminate(ERRNO_RECV)
+#define RECV(f, b, s) \
+  if (0 > recv_bytes(f, b, s)) _terminate(ERRNO_RECV)
 
-#define FAIL_BAIL_RET(e) if (SUCCESS != (ret = e)) return ret;
-#define NEG_BAIL_RET(e) if (0 > (ret = e)) return ret
-#define MALLOC_OK(p) if (NULL == p) _terminate(ERRNO_ALLOC)
+#define FAIL_BAIL_RET(e) \
+  if (SUCCESS != (ret = e)) return ret;
+#define NEG_BAIL_RET(e) \
+  if (0 > (ret = e)) return ret
+#define MALLOC_OK(p) \
+  if (NULL == p) _terminate(ERRNO_ALLOC)
 
 #endif

@@ -27,40 +27,40 @@ THE SOFTWARE.
 #ifndef __3dc_h
 #define __3dc_h
 
+#include <input.h>
+#include <malloc.h>
+#include <math.h>
+#include <prng.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
-#include <input.h>
 #include <string.h>
-#include <math.h>
-#include <prng.h>
 
-#define MAGIC_PAGE      0x4347C000
+#define MAGIC_PAGE 0x4347C000
 #define MAGIC_PAGE_SIZE 4096
 
-#define MAX_PIXELS      (MAGIC_PAGE_SIZE / sizeof(t3DCPixel))
-#define MAX_FILE_SIZE   (MAX_PIXELS) * sizeof(t3DCPixel)
+#define MAX_PIXELS (MAGIC_PAGE_SIZE / sizeof(t3DCPixel))
+#define MAX_FILE_SIZE (MAX_PIXELS) * sizeof(t3DCPixel)
 
-#define MIN(a,b)        ((a > b) ? a : b)
-#define MAX(a,b)        ((a < b) ? a : b)
+#define MIN(a, b) ((a > b) ? a : b)
+#define MAX(a, b) ((a < b) ? a : b)
 
-#pragma pack (1)
+#pragma pack(1)
 typedef struct {
-    int16_t x;
-    int16_t y;
-    int16_t z;
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
+  int16_t x;
+  int16_t y;
+  int16_t z;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+  uint8_t a;
 } t3DCPixel;
 
-typedef void (*task_callback)(t3DCPixel*,int16_t);
+typedef void (*task_callback)(t3DCPixel *, int16_t);
 
 // Data functions
 void Push(t3DCPixel **px_list, t3DCPixel *px);
-t3DCPixel* Pop(t3DCPixel **px_list);
+t3DCPixel *Pop(t3DCPixel **px_list);
 void RunTask(t3DCPixel **px_list, task_callback pFunc, int16_t fptr_arg);
 void ReadFile(t3DCPixel **px_list);
 

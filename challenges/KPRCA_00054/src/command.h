@@ -25,249 +25,210 @@
 #define COMMAND_H
 
 extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
+#include <stdlib.h>
+#include <string.h>
 };
 
 #include "file_manager.h"
 
-class Command
-{
-  public:
-    enum CmdType { CT_LIST, CT_CREATE, CT_OPEN, CT_CLOSE,
-                   CT_CLOSEALL, CT_READ, CT_MODIFY, CT_DELETE,
-                   CT_CREATEDIR, CT_DELETEDIR, CT_CHANGEDIR,
-                   CT_QUIT, CT_HELP };
-  protected:
-    char name[256];
-    char alias[256];
+class Command {
+ public:
+  enum CmdType {
+    CT_LIST,
+    CT_CREATE,
+    CT_OPEN,
+    CT_CLOSE,
+    CT_CLOSEALL,
+    CT_READ,
+    CT_MODIFY,
+    CT_DELETE,
+    CT_CREATEDIR,
+    CT_DELETEDIR,
+    CT_CHANGEDIR,
+    CT_QUIT,
+    CT_HELP
+  };
 
-  public:
-    Command(const char *name, const char *alias);
-    virtual ~Command() = 0;
+ protected:
+  char name[256];
+  char alias[256];
 
-    friend bool operator== (Command &cmd1, Command &cmd2)
-    {
-      return (strcmp(cmd1.name, cmd2.name) == 0);
-    }
-    friend bool operator!= (Command &cmd1, Command &cmd2)
-    {
-      return !(cmd1 == cmd2);
-    }
+ public:
+  Command(const char* name, const char* alias);
+  virtual ~Command() = 0;
 
-    virtual const char* Usage() = 0;
-    virtual int Execute(FileManager* fm, int argc, char** argv) = 0;
-    virtual CmdType GetType() = 0;
+  friend bool operator==(Command& cmd1, Command& cmd2) {
+    return (strcmp(cmd1.name, cmd2.name) == 0);
+  }
+  friend bool operator!=(Command& cmd1, Command& cmd2) {
+    return !(cmd1 == cmd2);
+  }
 
-    void SetName(const char* name)
-    {
-      /* Assumes the length of the strings are validated */
-      strcpy(this->name, name);
-    }
-    void SetAlias(const char* alias)
-    {
-      /* Assumes the length of the strings are validated */
-      strcpy(this->alias, alias);
-    }
-    const char* GetName() { return name; }
-    const char* GetAlias() { return alias; }
-    
-    void HandleResponse(int res);
+  virtual const char* Usage() = 0;
+  virtual int Execute(FileManager* fm, int argc, char** argv) = 0;
+  virtual CmdType GetType() = 0;
+
+  void SetName(const char* name) {
+    /* Assumes the length of the strings are validated */
+    strcpy(this->name, name);
+  }
+  void SetAlias(const char* alias) {
+    /* Assumes the length of the strings are validated */
+    strcpy(this->alias, alias);
+  }
+  const char* GetName() { return name; }
+  const char* GetAlias() { return alias; }
+
+  void HandleResponse(int res);
 };
 
-class ListCmd: public Command
-{
-  public:
-    ~ListCmd() {};
-    ListCmd() : Command("list", "ls") {}
+class ListCmd : public Command {
+ public:
+  ~ListCmd() {};
+  ListCmd() : Command("list", "ls") {}
 
-    const char* Usage()
-    {
-      return "list [file ..]\n - Lists files and directories.";
-    }
+  const char* Usage() {
+    return "list [file ..]\n - Lists files and directories.";
+  }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_LIST; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_LIST; }
 };
 
-class CreateCmd: public Command
-{
-  public:
-    ~CreateCmd() {};
-    CreateCmd() : Command("create", "new") {}
+class CreateCmd : public Command {
+ public:
+  ~CreateCmd() {};
+  CreateCmd() : Command("create", "new") {}
 
-    const char* Usage()
-    {
-      return "create <filename>\n - Creates a file.";
-    }
+  const char* Usage() { return "create <filename>\n - Creates a file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_CREATE; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_CREATE; }
 };
 
-class OpenCmd: public Command
-{
-  public:
-    ~OpenCmd() {};
-    OpenCmd() : Command("open", 0) {}
+class OpenCmd : public Command {
+ public:
+  ~OpenCmd() {};
+  OpenCmd() : Command("open", 0) {}
 
-    const char* Usage()
-    {
-      return "open <filename>\n - Opens a file.";
-    }
+  const char* Usage() { return "open <filename>\n - Opens a file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_OPEN; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_OPEN; }
 };
 
-class CloseCmd: public Command
-{
-  public:
-    ~CloseCmd() {};
-    CloseCmd() : Command("close", 0) {}
+class CloseCmd : public Command {
+ public:
+  ~CloseCmd() {};
+  CloseCmd() : Command("close", 0) {}
 
-    const char* Usage()
-    {
-      return "close <fileno>\n - Closes an open file.";
-    }
+  const char* Usage() { return "close <fileno>\n - Closes an open file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_CLOSE; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_CLOSE; }
 };
 
-class CloseAllCmd: public Command
-{
-  public:
-    ~CloseAllCmd() {};
-    CloseAllCmd() : Command("close_all", 0) {}
+class CloseAllCmd : public Command {
+ public:
+  ~CloseAllCmd() {};
+  CloseAllCmd() : Command("close_all", 0) {}
 
-    const char* Usage()
-    {
-      return "close_all\n - Closes all open files.";
-    }
+  const char* Usage() { return "close_all\n - Closes all open files."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_CLOSEALL; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_CLOSEALL; }
 };
 
-class ReadCmd: public Command
-{
-  public:
-    ~ReadCmd() {};
-    ReadCmd() : Command("read", "cat") {}
+class ReadCmd : public Command {
+ public:
+  ~ReadCmd() {};
+  ReadCmd() : Command("read", "cat") {}
 
-    const char* Usage()
-    {
-      return "read <fileno> [pos] [len]\n - Reads a file.";
-    }
+  const char* Usage() { return "read <fileno> [pos] [len]\n - Reads a file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_READ; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_READ; }
 };
 
-class ModifyCmd: public Command
-{
-  public:
-    ~ModifyCmd() {};
-    ModifyCmd() : Command("modify", "write") {}
+class ModifyCmd : public Command {
+ public:
+  ~ModifyCmd() {};
+  ModifyCmd() : Command("modify", "write") {}
 
-    const char* Usage()
-    {
-      return "modify <fileno> [pos]\n - Modifies a file.";
-    }
+  const char* Usage() { return "modify <fileno> [pos]\n - Modifies a file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_MODIFY; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_MODIFY; }
 };
 
-class DeleteCmd: public Command
-{
-  public:
-    ~DeleteCmd() {};
-    DeleteCmd() : Command("delete", "rm") {}
+class DeleteCmd : public Command {
+ public:
+  ~DeleteCmd() {};
+  DeleteCmd() : Command("delete", "rm") {}
 
-    const char* Usage()
-    {
-      return "delete <filename>\n - Deletes a file.";
-    }
+  const char* Usage() { return "delete <filename>\n - Deletes a file."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_DELETE; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_DELETE; }
 };
 
-class CreateDirCmd: public Command
-{
-  public:
-    ~CreateDirCmd() {};
-    CreateDirCmd() : Command("mkdir", 0) {}
+class CreateDirCmd : public Command {
+ public:
+  ~CreateDirCmd() {};
+  CreateDirCmd() : Command("mkdir", 0) {}
 
-    const char* Usage()
-    {
-      return "mkdir <dirname>\n - Creates a directory.";
-    }
+  const char* Usage() { return "mkdir <dirname>\n - Creates a directory."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_CREATEDIR; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_CREATEDIR; }
 };
 
-class DeleteDirCmd: public Command
-{
-  public:
-    ~DeleteDirCmd() {};
-    DeleteDirCmd() : Command("rmdir", 0) {}
+class DeleteDirCmd : public Command {
+ public:
+  ~DeleteDirCmd() {};
+  DeleteDirCmd() : Command("rmdir", 0) {}
 
-    const char* Usage()
-    {
-      return "rmdir <dirname>\n - Deletes a directory.";
-    }
+  const char* Usage() { return "rmdir <dirname>\n - Deletes a directory."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_DELETEDIR; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_DELETEDIR; }
 };
 
-class ChangeDirCmd: public Command
-{
-  public:
-    ~ChangeDirCmd() {};
-    ChangeDirCmd() : Command("chdir", "cd") {}
+class ChangeDirCmd : public Command {
+ public:
+  ~ChangeDirCmd() {};
+  ChangeDirCmd() : Command("chdir", "cd") {}
 
-    const char* Usage()
-    {
-      return "chdir <dirname>\n - Changes the working directory.";
-    }
+  const char* Usage() {
+    return "chdir <dirname>\n - Changes the working directory.";
+  }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_CHANGEDIR; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_CHANGEDIR; }
 };
 
-class QuitCmd: public Command
-{
-  public:
-    ~QuitCmd() {};
-    QuitCmd() : Command("quit", "exit") {}
+class QuitCmd : public Command {
+ public:
+  ~QuitCmd() {};
+  QuitCmd() : Command("quit", "exit") {}
 
-    const char* Usage()
-    {
-      return "quit\n - Quits the program.";
-    }
+  const char* Usage() { return "quit\n - Quits the program."; }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_QUIT; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_QUIT; }
 };
 
-class HelpCmd: public Command
-{
-  public:
-    ~HelpCmd() {};
-    HelpCmd() : Command("help", "?") {}
+class HelpCmd : public Command {
+ public:
+  ~HelpCmd() {};
+  HelpCmd() : Command("help", "?") {}
 
-    const char* Usage()
-    {
-      return "help [command]\n - Displays the help message.";
-    }
+  const char* Usage() {
+    return "help [command]\n - Displays the help message.";
+  }
 
-    int Execute(FileManager *fm, int argc, char** argv);
-    CmdType GetType() { return CT_HELP; }
+  int Execute(FileManager* fm, int argc, char** argv);
+  CmdType GetType() { return CT_HELP; }
 };
 
 #endif

@@ -23,38 +23,33 @@
 
 #include "compare.h"
 
-int CompareIds(tag_and_file *song1, tag_and_file *song2)
-{
-    if (song1->tag.id > song2->tag.id)
-        return 1;
-    else if (song1->tag.id == song2->tag.id)
-        return 0;
-    else
-        return -1;
+int CompareIds(tag_and_file *song1, tag_and_file *song2) {
+  if (song1->tag.id > song2->tag.id)
+    return 1;
+  else if (song1->tag.id == song2->tag.id)
+    return 0;
+  else
+    return -1;
 }
 
-int CompareTitles(tag_and_file *song1, tag_and_file *song2)
-{
-    return memcmp(song1->tag.title, song2->tag.title, sizeof(song1->tag.title));
+int CompareTitles(tag_and_file *song1, tag_and_file *song2) {
+  return memcmp(song1->tag.title, song2->tag.title, sizeof(song1->tag.title));
 }
 
-int CompareArtists(tag_and_file *song1, tag_and_file *song2)
-{
-    return memcmp(song1->tag.artist, song2->tag.artist, sizeof(song1->tag.artist));
+int CompareArtists(tag_and_file *song1, tag_and_file *song2) {
+  return memcmp(song1->tag.artist, song2->tag.artist,
+                sizeof(song1->tag.artist));
 }
 
-int CompareAlbums(tag_and_file *song1, tag_and_file *song2)
-{
-    return memcmp(song1->tag.album, song2->tag.album, sizeof(song1->tag.album));
+int CompareAlbums(tag_and_file *song1, tag_and_file *song2) {
+  return memcmp(song1->tag.album, song2->tag.album, sizeof(song1->tag.album));
 }
 
-int CompareAlbumTracks(tag_and_file *song1, tag_and_file *song2)
-{
-    if (song1->tag.track_number > song2->tag.track_number)
-        return 1;
-    else if (song1->tag.track_number == song2->tag.track_number)
-        return 0;
-    else
-        return -1;
+int CompareAlbumTracks(tag_and_file *song1, tag_and_file *song2) {
+  if (song1->tag.track_number > song2->tag.track_number)
+    return 1;
+  else if (song1->tag.track_number == song2->tag.track_number)
+    return 0;
+  else
+    return -1;
 }
-

@@ -27,31 +27,32 @@ THE SOFTWARE.
 #define IO_H
 
 #include <libcgc.h>
+
 #include "stdint.h"
 
-#define CMD_ADD_USER              (0)
-#define CMD_DEL_USER              (1)
-#define CMD_ADD_DEVICE            (2)
-#define CMD_DEL_DEVICE            (3)
-#define CMD_POWER_OFF             (4)
-#define CMD_GRANT_ACCESS          (5)
-#define CMD_UPDATE_DEVICE         (6)
-#define CMD_ADD_DEVICE_TO_ALARM   (7)
-#define CMD_LIST_ALARM_CODES      (8)
+#define CMD_ADD_USER (0)
+#define CMD_DEL_USER (1)
+#define CMD_ADD_DEVICE (2)
+#define CMD_DEL_DEVICE (3)
+#define CMD_POWER_OFF (4)
+#define CMD_GRANT_ACCESS (5)
+#define CMD_UPDATE_DEVICE (6)
+#define CMD_ADD_DEVICE_TO_ALARM (7)
+#define CMD_LIST_ALARM_CODES (8)
 
-#define RESP_INVALID_CMD                 (0)
-#define RESP_MAX_USERS                   (1)
-#define RESP_ADD_USER_FAILED             (2)
-#define RESP_SUCCESS                     (3)
-#define RESP_DEL_USER_FAILED             (4)
-#define RESP_ADD_DEVICE_FAILED           (5)
-#define RESP_DEL_DEVICE_FAILED           (6)
-#define RESP_GRANT_FAILED                (7)
-#define RESP_UPDATE_DEVICE_FAILED        (8)
-#define RESP_ADD_DEVICE_TO_ALARM_FAILED  (9)
-#define RESP_ALARM_ON                   (10)
-#define RESP_ALARM_OFF                  (11)
-#define RESP_LIST_ALARM_CODES           (12)
+#define RESP_INVALID_CMD (0)
+#define RESP_MAX_USERS (1)
+#define RESP_ADD_USER_FAILED (2)
+#define RESP_SUCCESS (3)
+#define RESP_DEL_USER_FAILED (4)
+#define RESP_ADD_DEVICE_FAILED (5)
+#define RESP_DEL_DEVICE_FAILED (6)
+#define RESP_GRANT_FAILED (7)
+#define RESP_UPDATE_DEVICE_FAILED (8)
+#define RESP_ADD_DEVICE_TO_ALARM_FAILED (9)
+#define RESP_ALARM_ON (10)
+#define RESP_ALARM_OFF (11)
+#define RESP_LIST_ALARM_CODES (12)
 
 size_t ReadBytes(unsigned char *Buf, size_t Max);
 size_t SendBytes(unsigned char *Buf, size_t Max);
@@ -59,4 +60,3 @@ uint8_t SendResp(uint8_t Code, unsigned char *Data);
 uint8_t RecvCommand();
 
 #endif
-

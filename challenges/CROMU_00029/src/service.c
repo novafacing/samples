@@ -24,12 +24,13 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "stdint.h"
+
+#include "input.h"
 #include "room.h"
+#include "stdint.h"
+#include "stdlib.h"
 #include "tsim.h"
 #include "tvis.h"
-#include "input.h"
 
 extern double *TGrid;
 extern double *HGrid;
@@ -38,34 +39,33 @@ extern uint32_t Y;
 extern uint32_t Z;
 
 int main(void) {
+  // Init global vars
+  TGrid = NULL;
+  HGrid = NULL;
+  X = 0;
+  Y = 0;
+  Z = 0;
 
-	// Init global vars
-	TGrid = NULL;
-	HGrid = NULL;
-	X = 0;
-	Y = 0;
-	Z = 0;
+  // Init Material
+  if (InitMaterial()) {
+    _terminate(-1);
+  }
 
-	// Init Material
-	if (InitMaterial()) {
-		_terminate(-1);
-	}
+  // Determine length of simulation
+  if (GetSimLength()) {
+    _terminate(-1);
+  }
 
-	// Determine length of simulation
-	if (GetSimLength()) {
-		_terminate(-1);
-	}
+  // Print Starting Temps
+  GraphTemps(TGrid);
+  printf("At 0.00000 seconds\n");
+  kbhit();
 
-	// Print Starting Temps
-	GraphTemps(TGrid);
-	printf("At 0.00000 seconds\n");
-	kbhit();
+  // Run the simulation
+  RunSim();
 
-	// Run the simulation
-	RunSim();
+  // Output the results
+  GraphTemps(TGrid);
 
-	// Output the results
-	GraphTemps(TGrid);
-
-	return(0);
+  return (0);
 }

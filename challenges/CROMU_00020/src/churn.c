@@ -24,15 +24,16 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
 #include "churn.h"
+
+#include <libcgc.h>
 
 churn_item gyre[CHURN_GYRE_SIZE];
 size_t gyre_pos = 0;
 
-uint64  init_one(uint64,  uint64);
+uint64 init_one(uint64, uint64);
 float64 init_two(float64, float64);
-uint64  init_thr(uint64,  uint64);
+uint64 init_thr(uint64, uint64);
 float64 init_fou(float64, float64);
 
 void churn_initialize(churn_item* start) {
@@ -57,12 +58,10 @@ void churn_initialize(churn_item* start) {
   gyre_pos = 0;
 }
 
-
-
 uint64 init_one(uint64 i, uint64 j) {
   i = i ^ (j >> 21);
-  i = i ^ ((j << 37) & 0x6469652068617264); // die hard
-  i = i ^ ((j >> 9) & 0x6372616e6b74776f); // cranktwo
+  i = i ^ ((j << 37) & 0x6469652068617264);  // die hard
+  i = i ^ ((j >> 9) & 0x6372616e6b74776f);   // cranktwo
   i = i ^ (j << 50);
   return i;
 }
@@ -77,8 +76,8 @@ float64 init_two(float64 i, float64 j) {
 
 uint64 init_thr(uint64 i, uint64 j) {
   i = i ^ (j << 16);
-  i = i ^ ((j >> 44) & 0x6578706e64626c73); // expndbls
-  i = i ^ ((j << 36) & 0x636f6d6d616e646f); // commando
+  i = i ^ ((j >> 44) & 0x6578706e64626c73);  // expndbls
+  i = i ^ ((j << 36) & 0x636f6d6d616e646f);  // commando
   i = i ^ (j >> 10);
   return i;
 }
@@ -95,25 +94,21 @@ float64 init_fou(float64 i, float64 j) {
 uint8 churn_rand_uint8() {
   uint64 candidate = churn_rand_uint64();
   uint64 selector = 8 * (candidate & 7);
-  return (uint8) ((candidate >> selector) & 0xff);
+  return (uint8)((candidate >> selector) & 0xff);
 }
 
 uint32 churn_rand_uint32() {
   uint64 candidate = churn_rand_uint64();
   if ((candidate & 1) == 1) {
-    return (uint32) ((candidate >> 31) & 0x00000000ffffffff);
+    return (uint32)((candidate >> 31) & 0x00000000ffffffff);
   } else {
-    return (uint32) candidate & 0x00000000ffffffff;
+    return (uint32)candidate & 0x00000000ffffffff;
   }
 };
 
-uint64 churn_rand_uint64() {
-  return churn_rand_item().i;
-}
+uint64 churn_rand_uint64() { return churn_rand_item().i; }
 
-float64 churn_rand_float64() {
-  return churn_rand_item().f;
-}
+float64 churn_rand_float64() { return churn_rand_item().f; }
 
 churn_item churn_rand_item() {
   churn_item candidate = gyre[gyre_pos];

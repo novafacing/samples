@@ -26,14 +26,22 @@
 #define BOARD_WIDTH 3
 #define BOARD_HEIGHT 3
 
-enum {BLANK=0, COMPUTER=64, HUMAN=-64};
-enum {BAD_MOVE=0, SUCCESS=1, GAME_IN_PROGRESS=2, GAME_OVER=4, WINNER_HUMAN=8, WINNER_COMP=16, TIE=32, ERROR=-1};
+enum { BLANK = 0, COMPUTER = 64, HUMAN = -64 };
+enum {
+  BAD_MOVE = 0,
+  SUCCESS = 1,
+  GAME_IN_PROGRESS = 2,
+  GAME_OVER = 4,
+  WINNER_HUMAN = 8,
+  WINNER_COMP = 16,
+  TIE = 32,
+  ERROR = -1
+};
 
-typedef struct board
-{
-    char ttt_board[BOARD_HEIGHT][BOARD_WIDTH];
-    int num_moves;
-    int winner;
+typedef struct board {
+  char ttt_board[BOARD_HEIGHT][BOARD_WIDTH];
+  int num_moves;
+  int winner;
 } board_t;
 
 board_t *create_board();

@@ -27,4 +27,3 @@
 #define EPSILON (1.0e-10)
 
 #endif /* FLOAT_H_ */
-

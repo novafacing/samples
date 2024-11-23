@@ -26,146 +26,123 @@
 #include "engine.h"
 #include "io.h"
 
-static int handle_result()
-{
-    char tmp[16];
-    int result;
-    size_t n;
+static int handle_result() {
+  char tmp[16];
+  int result;
+  size_t n;
 
-    memset(tmp, 0, sizeof(tmp));
-    for (n = 0; n < sizeof(tmp) - 1; n++)
-    {
-        if (!read_all(&tmp[n], 1))
-            return 0;
-        if (tmp[n] == ' ' || tmp[n] == '\n')
-            break;
-    }
-    if (n == sizeof(tmp))
-        return sink_error("result ... ");
+  memset(tmp, 0, sizeof(tmp));
+  for (n = 0; n < sizeof(tmp) - 1; n++) {
+    if (!read_all(&tmp[n], 1)) return 0;
+    if (tmp[n] == ' ' || tmp[n] == '\n') break;
+  }
+  if (n == sizeof(tmp)) return sink_error("result ... ");
 
-    /* sink until EOL */
-    while (tmp[n] != '\n')
-    {
-        char c;
-        if (!read_all(&c, 1))
-            return 0;
-        if (c == '\n')
-            break;
-    }
+  /* sink until EOL */
+  while (tmp[n] != '\n') {
+    char c;
+    if (!read_all(&c, 1)) return 0;
+    if (c == '\n') break;
+  }
 
-    if (strncmp(tmp, "1-0", 3) == 0)
-        result = WHITE_WON;
-    else if (strncmp(tmp, "0-1", 3) == 0)
-        result = BLACK_WON;
-    else if (strncmp(tmp, "1/2-1/2", 7) == 0)
-        result = DRAW;
-    else if (strncmp(tmp, "*", 1) == 0)
-        result = UNFINISHED;
-    else
-    {
-        write_string("Error (invalid command): result\n");
-        return 1;
-    }
-
-    engine_result(result);
+  if (strncmp(tmp, "1-0", 3) == 0)
+    result = WHITE_WON;
+  else if (strncmp(tmp, "0-1", 3) == 0)
+    result = BLACK_WON;
+  else if (strncmp(tmp, "1/2-1/2", 7) == 0)
+    result = DRAW;
+  else if (strncmp(tmp, "*", 1) == 0)
+    result = UNFINISHED;
+  else {
+    write_string("Error (invalid command): result\n");
     return 1;
+  }
+
+  engine_result(result);
+  return 1;
 }
 
-static int handle_sd()
-{
-    char tmp[16];
-    size_t n;
+static int handle_sd() {
+  char tmp[16];
+  size_t n;
 
-    memset(tmp, 0, sizeof(tmp));
-    for (n = 0; n < sizeof(tmp) - 1; n++)
-    {
-        if (!read_all(&tmp[n], 1))
-            return 0;
-        if (tmp[n] == '\n')
-            break;
-    }
-    if (n == sizeof(tmp))
-        return sink_error("sd ... ");
+  memset(tmp, 0, sizeof(tmp));
+  for (n = 0; n < sizeof(tmp) - 1; n++) {
+    if (!read_all(&tmp[n], 1)) return 0;
+    if (tmp[n] == '\n') break;
+  }
+  if (n == sizeof(tmp)) return sink_error("sd ... ");
 
-    engine_set_depth(strtol(tmp, 0, 10));
-    return 1;
+  engine_set_depth(strtol(tmp, 0, 10));
+  return 1;
 }
 
-int main()
-{
-    char input[16];
-    int done = 0, state;
+int main() {
+  char input[16];
+  int done = 0, state;
 
-    if (!engine_init())
-        return 1;
-    init_states();
+  if (!engine_init()) return 1;
+  init_states();
 
-    while (!done)
-    {
-        state = read_keyword(input, sizeof(input));
-        if (state == 0)
-            break;
-        if (state == STATE_ERROR)
-            continue;
-        
-        //fprintf(stderr, "cmd %s state %d\n", input, state);
+  while (!done) {
+    state = read_keyword(input, sizeof(input));
+    if (state == 0) break;
+    if (state == STATE_ERROR) continue;
 
+    // fprintf(stderr, "cmd %s state %d\n", input, state);
 
-        switch (state)
-        {
-        case STATE_BLACK:
-            engine_set_color(BLACK);
-            break;
-        case STATE_WHITE:
-            engine_set_color(WHITE);
-            break;
-        case STATE_CGCBOARD:
-            write_string("\n");
-            break;
-        case STATE_DRAW:
-            engine_offer_draw();
-            break;
-        case STATE_FORCE:
-            engine_set_go(0);
-            break;
-        case STATE_GO:
-            engine_set_go(1);
-            break;
-        case STATE_NEW:
-            engine_new();
-            break;
-        case STATE_RANDOM:
-            engine_set_random(!engine_get_random());
-            break;
-        case STATE_RESULT:
-            if (!handle_result())
-                done = 1;
-            break;
-        case STATE_REMOVE:
-            engine_undo();
-            engine_undo();
-            break;
-        case STATE_QUIT:
-            write_string("bye\n");
-            done = 1;
-            break;
-        case STATE_SD:
-            if (!handle_sd())
-                done = 1;
-            break;
-        case STATE_UNDO:
-            engine_undo();
-            break;
-        case STATE_MOVE:
-            engine_move(str_to_move(input));
-            break;
-        case STATE_PLAY:
-            engine_go();
-            break;
-        }
+    switch (state) {
+      case STATE_BLACK:
+        engine_set_color(BLACK);
+        break;
+      case STATE_WHITE:
+        engine_set_color(WHITE);
+        break;
+      case STATE_CGCBOARD:
+        write_string("\n");
+        break;
+      case STATE_DRAW:
+        engine_offer_draw();
+        break;
+      case STATE_FORCE:
+        engine_set_go(0);
+        break;
+      case STATE_GO:
+        engine_set_go(1);
+        break;
+      case STATE_NEW:
+        engine_new();
+        break;
+      case STATE_RANDOM:
+        engine_set_random(!engine_get_random());
+        break;
+      case STATE_RESULT:
+        if (!handle_result()) done = 1;
+        break;
+      case STATE_REMOVE:
+        engine_undo();
+        engine_undo();
+        break;
+      case STATE_QUIT:
+        write_string("bye\n");
+        done = 1;
+        break;
+      case STATE_SD:
+        if (!handle_sd()) done = 1;
+        break;
+      case STATE_UNDO:
+        engine_undo();
+        break;
+      case STATE_MOVE:
+        engine_move(str_to_move(input));
+        break;
+      case STATE_PLAY:
+        engine_go();
+        break;
     }
+  }
 
-    engine_destroy();
+  engine_destroy();
 
-    return 0;
+  return 0;
 }

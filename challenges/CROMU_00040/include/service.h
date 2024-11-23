@@ -28,32 +28,26 @@ THE SOFTWARE.
 #define SERVICE_H
 
 typedef struct Ingredient {
-
-	char measurement[20];
-	char item[100];
-	struct Ingredient *next;
+  char measurement[20];
+  char item[100];
+  struct Ingredient *next;
 
 } Ingredient_Type;
 
-
 typedef struct Recipe {
-
-	char Title[200];
-	int Tagged;
-	Ingredient_Type *Ingredient_List;
-	char **Instructions;
-	struct Recipe *next;
+  char Title[200];
+  int Tagged;
+  Ingredient_Type *Ingredient_List;
+  char **Instructions;
+  struct Recipe *next;
 
 } Recipe_Type;
 
-
 typedef struct List {
-
-	char *item;
-	struct List *next;
+  char *item;
+  struct List *next;
 
 } Shopping_List_Type;
-
 
 void print_main_menu(void);
 int new_recipe(Recipe_Type **);
@@ -70,6 +64,6 @@ void sort_shopping_list(Shopping_List_Type *);
 int compare_strings(char *, char *);
 int split_ingredient(char *, char *, int, char *, int);
 
-//int parse_command(char *buffer, char separator, char ***args);
-//void find_matches(bst_node_type *head, int arg_count, char **args);
+// int parse_command(char *buffer, char separator, char ***args);
+// void find_matches(bst_node_type *head, int arg_count, char **args);
 #endif

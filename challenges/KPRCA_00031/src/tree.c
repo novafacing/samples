@@ -21,17 +21,17 @@
  *
  */
 
-#include <stdlib.h>
-#include "common.h"
-#include "list.h"
-#include "error.h"
 #include "tree.h"
 
-tree *init_tree(HASH h, const DATA d)
-{
+#include <stdlib.h>
+
+#include "common.h"
+#include "error.h"
+#include "list.h"
+
+tree *init_tree(HASH h, const DATA d) {
   tree *new = calloc(1, sizeof(tree));
-  if (!new)
-    error(EALLOC);
+  if (!new) error(EALLOC);
 
   if (h && d) {
     new->h = h;
@@ -41,24 +41,18 @@ tree *init_tree(HASH h, const DATA d)
   return new;
 }
 
-list *get_tree(tree *t, HASH h)
-{
-  if (!t)
-    return NULL;
+list *get_tree(tree *t, HASH h) {
+  if (!t) return NULL;
 
-  if (h < t->h)
-    return get_tree(t->l, h);
+  if (h < t->h) return get_tree(t->l, h);
 
-  if (h > t->h)
-    return get_tree(t->r, h);
+  if (h > t->h) return get_tree(t->r, h);
 
   return t->dl;
 }
 
-int ins_tree(tree *t, HASH h, const DATA d)
-{
-  if (!t)
-    return -1;
+int ins_tree(tree *t, HASH h, const DATA d) {
+  if (!t) return -1;
 
   tree **next = NULL;
 
@@ -71,51 +65,40 @@ int ins_tree(tree *t, HASH h, const DATA d)
     return 0;
   }
 
-  if (*next)
-    return ins_tree(*next, h, d);
+  if (*next) return ins_tree(*next, h, d);
 
   *next = init_tree(h, d);
 
   return 0;
 }
 
-size_t num_nodes(tree *t)
-{
-  if (!t)
-    return 0;
+size_t num_nodes(tree *t) {
+  if (!t) return 0;
 
   return 1 + num_nodes(t->l) + num_nodes(t->r);
 }
 
-int _tree_to_list(tree *t, list *l)
-{
-  if (!t)
-    return 0;
+int _tree_to_list(tree *t, list *l) {
+  if (!t) return 0;
 
   append_list(&l, t->dl, 1);
 
-  if (_tree_to_list(t->l, l) < 0)
-    return -1;
-  if (_tree_to_list(t->r, l) < 0)
-    return -1;
+  if (_tree_to_list(t->l, l) < 0) return -1;
+  if (_tree_to_list(t->r, l) < 0) return -1;
 
   return 0;
 }
 
-list *tree_to_list(tree *t)
-{
+list *tree_to_list(tree *t) {
   list *l = NULL;
 
-  if (!t)
-    return NULL;
+  if (!t) return NULL;
 
   l = init_list(t->dl);
 
-  if (_tree_to_list(t->l, l) < 0)
-    return NULL;
+  if (_tree_to_list(t->l, l) < 0) return NULL;
 
-  if (_tree_to_list(t->r, l) < 0)
-    return NULL;
+  if (_tree_to_list(t->r, l) < 0) return NULL;
 
   return l;
 }

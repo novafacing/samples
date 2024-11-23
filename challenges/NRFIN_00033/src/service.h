@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
@@ -26,7 +26,7 @@
 #define RESOURCE_SIZE 10
 #define MAX_ARGS_SIZE 4600
 #define CMD_TYPE_SIZE 4
-#define MAX_COMMAND_SIZE  CMD_TYPE_SIZE+sizeof(long)+MAX_ARGS_SIZE
+#define MAX_COMMAND_SIZE CMD_TYPE_SIZE + sizeof(long) + MAX_ARGS_SIZE
 #define FAILED_AUTH_STR "Authentication failed for resource "
 #define ACCESS_STR "Access to "
 #define SUCCESS_AUTH_STR " is granted!"
@@ -56,23 +56,23 @@
 #define ACCESS_REVOKED 1
 
 typedef struct {
-	char type[4];
-	unsigned long id;
-	unsigned long token;
-	char input[MAX_ARGS_SIZE];
+  char type[4];
+  unsigned long id;
+  unsigned long token;
+  char input[MAX_ARGS_SIZE];
 } Command;
 
 typedef struct resource_t {
-	struct resource_t *next;
-	char name[RESOURCE_SIZE];
-	unsigned long token;
+  struct resource_t *next;
+  char name[RESOURCE_SIZE];
+  unsigned long token;
 } Resource;
 
 typedef struct user_t {
-	struct user_t *next;
-	unsigned long id;
-	unsigned long token;
-	Resource* resourceList;
+  struct user_t *next;
+  unsigned long id;
+  unsigned long token;
+  Resource *resourceList;
 } User;
 
 #endif

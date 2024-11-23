@@ -26,10 +26,9 @@ THE SOFTWARE.
 
 #ifndef ui_h
 #define ui_h
-#define DELIM  			0x0a//\n
-#define MAX_MESSAGE_LEN	0x0100
-#define MAGIC 			0x5AA5
-
+#define DELIM 0x0a  //\n
+#define MAX_MESSAGE_LEN 0x0100
+#define MAGIC 0x5AA5
 
 int ui_main();
 void get_bytes(unsigned char *buf, unsigned int num);

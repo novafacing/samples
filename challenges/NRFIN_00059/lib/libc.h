@@ -18,26 +18,32 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H 1
 
 #include <errno.h>
 #include <stdint.h>
+
 #include "memset.h"
-#include "send_bytes.h"
 #include "recv_bytes.h"
+#include "send_bytes.h"
 
 #define DEBUG 1
 
 #define FLAG_PAGE 0x4347C000
 
-#define SEND(f,b,s) if(s != send_bytes(f,b,s)) _terminate(ERRNO_SEND)
+#define SEND(f, b, s) \
+  if (s != send_bytes(f, b, s)) _terminate(ERRNO_SEND)
 
-#define RECV(f,b,s) if(0 > recv_bytes(f,b,s)) _terminate(ERRNO_RECV)
+#define RECV(f, b, s) \
+  if (0 > recv_bytes(f, b, s)) _terminate(ERRNO_RECV)
 
-#define FAIL_BAIL_RET(e) if (SUCCESS != (ret = e)) return ret;
-#define NEG_BAIL_RET(e) if (0 > (ret = e)) return ret
-#define MALLOC_OK(p) if (NULL == p) _terminate(ERRNO_ALLOC)
+#define FAIL_BAIL_RET(e) \
+  if (SUCCESS != (ret = e)) return ret;
+#define NEG_BAIL_RET(e) \
+  if (0 > (ret = e)) return ret
+#define MALLOC_OK(p) \
+  if (NULL == p) _terminate(ERRNO_ALLOC)
 
 #endif

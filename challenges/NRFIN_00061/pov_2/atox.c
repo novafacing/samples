@@ -18,24 +18,23 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-unsigned char atox(char *buf)
-{
-	unsigned char sixteens, ones, value;
+ */
+unsigned char atox(char *buf) {
+  unsigned char sixteens, ones, value;
 
-	if(buf[2] > 47 && buf[2] < 58) {
-		sixteens = (buf[2]-48)*16;
-	} else if (buf[2] > 64 && buf[2] < 71) {
-		sixteens = (buf[2]-55)*16;
-	}
+  if (buf[2] > 47 && buf[2] < 58) {
+    sixteens = (buf[2] - 48) * 16;
+  } else if (buf[2] > 64 && buf[2] < 71) {
+    sixteens = (buf[2] - 55) * 16;
+  }
 
-	if(buf[3] > 47 && buf[3] < 58) {
-		ones = (buf[3]-48);
-	} else if (buf[3] > 64 && buf[3] < 71) {
-		ones = (buf[3]-55);
-	}
+  if (buf[3] > 47 && buf[3] < 58) {
+    ones = (buf[3] - 48);
+  } else if (buf[3] > 64 && buf[3] < 71) {
+    ones = (buf[3] - 55);
+  }
 
-	value = sixteens + ones;
+  value = sixteens + ones;
 
-	return value;
+  return value;
 }

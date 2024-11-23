@@ -21,26 +21,22 @@
  *
  */
 #include <stdlib.h>
+
 #include "common.h"
 #include "rng.h"
 
-static int system_init(rng_t *rng)
-{
-    rng->priv = NULL;
-    return SUCCESS;
+static int system_init(rng_t *rng) {
+  rng->priv = NULL;
+  return SUCCESS;
 }
 
-static int system_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt)
-{
-    size_t bytes;
-    if (random(out, cnt, &bytes) != 0 || bytes != cnt)
-        return FAILURE;
-    return SUCCESS;
+static int system_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt) {
+  size_t bytes;
+  if (random(out, cnt, &bytes) != 0 || bytes != cnt) return FAILURE;
+  return SUCCESS;
 }
 
-const rng_def_t system_rng = {
-    .name = "System",
-    .id = RNG_SYSTEM,
-    .init = system_init,
-    .get_bytes = system_get_bytes
-};
+const rng_def_t system_rng = {.name = "System",
+                              .id = RNG_SYSTEM,
+                              .init = system_init,
+                              .get_bytes = system_get_bytes};

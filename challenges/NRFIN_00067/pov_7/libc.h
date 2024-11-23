@@ -18,12 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H 1
 
 #define DEBUG 1
- 
+
 #define ERRNO_ALLOC -7
 #define ERRNO_SEND -9
 #define ERRNO_RECV -11
@@ -40,7 +40,6 @@
 // #include "recv_bytes.h"
 // #include "xxprintf.h"
 
-
 // #define FLAG_PAGE 0x4347C000
 
 // #define SEND(f,b,s) if(s != send_bytes(f,b,s)) _terminate(ERRNO_SEND)
@@ -53,8 +52,8 @@
 
 // #ifdef DEBUG
 // #define DBG(args...) \
-//  	fdprintf(STDERR, '%', '\0', "[CB1] %S:%U @ %S | ", __FILE__, __LINE__, __func__); \
-//  	fdprintf(STDERR, '%', '\0', args);
+//  	fdprintf(STDERR, '%', '\0', "[CB1] %S:%U @ %S | ", __FILE__, __LINE__,
+//  __func__); \ 	fdprintf(STDERR, '%', '\0', args);
 // // #define err(args...) \
 // // 	fprintf(stderr, "[E] %s:%d @ %s | ", __FILE__, __LINE__, __func__);\
 // // 	fprintf(stderr, args);\

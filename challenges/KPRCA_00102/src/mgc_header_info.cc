@@ -22,113 +22,98 @@
  */
 
 #include "mgc_header_info.h"
+
 #include "print.h"
 
-namespace MgcHeaderInfo
-{
+namespace MgcHeaderInfo {
 
-bool Synced(mgc_frame *mframe)
-{
-    return ((0xFF & mframe->raw_header[0]) == 0xFF && (0xF0 & mframe->raw_header[1]) == 0xF0);
+bool Synced(mgc_frame *mframe) {
+  return ((0xFF & mframe->raw_header[0]) == 0xFF &&
+          (0xF0 & mframe->raw_header[1]) == 0xF0);
 }
 
-bool SongV1(mgc_frame *mframe)
-{
-    return (0x08 & mframe->raw_header[1]);
-}
+bool SongV1(mgc_frame *mframe) { return (0x08 & mframe->raw_header[1]); }
 
-int Layer(mgc_frame *mframe)
-{
-    return (0x06 & mframe->raw_header[1]) >> 1;
-}
+int Layer(mgc_frame *mframe) { return (0x06 & mframe->raw_header[1]) >> 1; }
 
-int Bitrate(mgc_frame *mframe)
-{
-    unsigned char rate_idx = (0xF0 & mframe->raw_header[2]) >> 4;
-    switch (rate_idx)
-    {
+int Bitrate(mgc_frame *mframe) {
+  unsigned char rate_idx = (0xF0 & mframe->raw_header[2]) >> 4;
+  switch (rate_idx) {
     case 0x1:
-        return 320000;
+      return 320000;
     case 0x2:
-        return 256000;
+      return 256000;
     case 0x3:
-        return 224000;
+      return 224000;
     case 0x4:
-        return 192000;
+      return 192000;
     case 0x5:
-        return 160000;
+      return 160000;
     case 0x6:
-        return 128000;
+      return 128000;
     case 0x7:
-        return 112000;
+      return 112000;
     case 0x8:
-        return 96000;
+      return 96000;
     case 0x9:
-        return 80000;
+      return 80000;
     case 0xA:
-        return 64000;
+      return 64000;
     case 0xB:
-        return 56000;
+      return 56000;
     case 0xC:
-        return 48000;
+      return 48000;
     case 0xD:
-        return 40000;
+      return 40000;
     case 0xE:
-        return 32000;
-    }
+      return 32000;
+  }
 
-    return 0;
+  return 0;
 }
 
-int Freq(mgc_frame *mframe)
-{
-    unsigned char freq_idx = mframe->raw_header[2];
-    switch (((freq_idx & 0xC) >> 2))
-    {
+int Freq(mgc_frame *mframe) {
+  unsigned char freq_idx = mframe->raw_header[2];
+  switch (((freq_idx & 0xC) >> 2)) {
     case 0x0:
-        return 44100;
+      return 44100;
     case 0x1:
-        return 48000;
+      return 48000;
     case 0x2:
-        return 32000;
-    }
+      return 32000;
+  }
 
 #ifdef PATCHED_1
-    return 0;
+  return 0;
 #else
-    return freq_idx;
+  return freq_idx;
 #endif
-
 }
 
-unsigned short SamplesPerFrame(mgc_frame *mframe)
-{
-    int spf_idx = Layer(mframe);
-    switch (spf_idx)
-    {
+unsigned short SamplesPerFrame(mgc_frame *mframe) {
+  int spf_idx = Layer(mframe);
+  switch (spf_idx) {
     case 0x1:
-        return 384;
+      return 384;
     case 0x2:
-        return 1152;
+      return 1152;
     case 0x3:
-        return 1152;
-    }
-    return 0;
+      return 1152;
+  }
+  return 0;
 }
 
-unsigned short NumAdditionalFrames(mgc_frame *mframe)
-{
-    return mframe->num_frames_left;
+unsigned short NumAdditionalFrames(mgc_frame *mframe) {
+  return mframe->num_frames_left;
 }
 
-unsigned int CalcFrameSize(mgc_frame *mframe)
-{
-    if(!mframe || !Freq(mframe))
-        return 0;
+unsigned int CalcFrameSize(mgc_frame *mframe) {
+  if (!mframe || !Freq(mframe)) return 0;
 
-    unsigned int unpadded_size = ((SamplesPerFrame(mframe) / 8 * Bitrate(mframe)) / Freq(mframe));
-    return (unpadded_size % 4 == 0) ? unpadded_size : unpadded_size + (4 - (unpadded_size % 4));
+  unsigned int unpadded_size =
+      ((SamplesPerFrame(mframe) / 8 * Bitrate(mframe)) / Freq(mframe));
+  return (unpadded_size % 4 == 0) ? unpadded_size
+                                  : unpadded_size + (4 - (unpadded_size % 4));
 }
 
-}
-
+}  // namespace MgcHeaderInfo

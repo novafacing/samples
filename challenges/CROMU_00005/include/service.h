@@ -29,17 +29,15 @@ THE SOFTWARE.
 #define HEIGHT 8
 
 // Defines a single location on the 8x8 board
-typedef struct Location
-{
-	int x;
-	int y;
+typedef struct Location {
+  int x;
+  int y;
 } Location;
 
 // Defines a move: source and destination locations
-typedef struct Move
-{
-	Location src;
-	Location dst;
+typedef struct Move {
+  Location src;
+  Location dst;
 } Move;
 
 void initboard(void);
@@ -69,8 +67,8 @@ int parseUserInput(Move*);
 #define BLACK_PIECE 0
 #define WHITE_PIECE 1
 
-#define BLACK_TEAM	0
-#define WHITE_TEAM  1
+#define BLACK_TEAM 0
+#define WHITE_TEAM 1
 
 #define PROMPT_WHITE "WHITE: "
 #define PROMPT_BLACK "BLACK: "
@@ -87,4 +85,3 @@ int parseUserInput(Move*);
 
 #define COLLISION 0
 #define NO_COLLISION 1
-

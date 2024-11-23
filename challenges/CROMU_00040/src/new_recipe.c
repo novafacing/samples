@@ -25,104 +25,81 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
 #define BUFF_SIZE 200
 
 int new_recipe(Recipe_Type **book) {
+  Recipe_Type *recipe;
+  Recipe_Type *previous;
 
-Recipe_Type *recipe;
-Recipe_Type *previous;
+  char buffer[BUFF_SIZE];
+  size_t size;
 
-char buffer[BUFF_SIZE];
-size_t size;
+  previous = 0;
 
-	previous = 0;
+  if (*book == 0) {
+    *book = malloc(sizeof(Recipe_Type));
 
-	if (*book == 0) {
+    if (*book == 0) {
+      printf("Failed to allocate memory\n");
+      _terminate(-1);
+    }
 
-		*book = malloc(sizeof(Recipe_Type));
+    recipe = *book;
+  } else {
+    recipe = *book;
 
-		if (*book==0) {
+    while (recipe->next != 0) recipe = recipe->next;
 
-			printf("Failed to allocate memory\n");
-			_terminate(-1);
+    recipe->next = malloc(sizeof(Recipe_Type));
 
-		}
+    if (recipe->next == 0) {
+      printf("Failed to allocate memory\n");
+      _terminate(-1);
+    }
 
-		recipe = *book;
-	}
-	else {
+    previous = recipe;
+    recipe = recipe->next;
+  }
 
-		recipe = *book;
+  recipe->Tagged = 0;
+  recipe->next = 0;
 
-		while(recipe->next != 0) 
-			recipe = recipe->next;
+  printf("Enter Title: ");
 
-		recipe->next = malloc(sizeof(Recipe_Type));
+  size = getline(buffer, sizeof(buffer));
 
-		if (recipe->next == 0) {
+  if (size <= 1) {
+    if (recipe == *book) {
+      *book = 0;
+    }
 
-			printf("Failed to allocate memory\n");
-			_terminate(-1);
+    free(recipe);
 
-		}
+    if (previous) previous->next = 0;
 
-		previous = recipe;
-		recipe = recipe->next;
-	}
+    return (-1);
+  } else {
+    strncpy(recipe->Title, buffer, BUFF_SIZE);
+  }
 
-	recipe->Tagged = 0;
-	recipe->next = 0;
+  if (get_ingredients(recipe) == 0) {
+    if (*book == recipe) {
+      *book = 0;
+    }
 
-	printf("Enter Title: ");
+    free(recipe);
 
-	size=getline(buffer, sizeof(buffer));
+    if (previous) previous->next = 0;
 
-	if (size <=1) {
+    return (-1);
+  }
 
-		if (recipe == *book) {
+  // instructions can be left blank as some recipes are just ingredients
+  get_instructions(recipe);
 
-			*book = 0;
-		}
-
-		free(recipe);
-
-		if (previous)
-			previous->next = 0;
-
-		return (-1);
-	}
-	else {
-
-		strncpy(recipe->Title, buffer, BUFF_SIZE);
-
-	}
-
-	if (get_ingredients(recipe) == 0) {
-
-		if (*book == recipe) {
-
-			*book = 0;
-		}
-
-		free(recipe);
-
-		if (previous) 
-			previous->next = 0;
-
-		return (-1);
-
-	}
-
-	// instructions can be left blank as some recipes are just ingredients
-	get_instructions(recipe);
-
-
-	return(0);
-
-
+  return (0);
 }
-
-

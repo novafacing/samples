@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 #include "scramble.h"
+
 #include "scramble_gen.h"
 
 #define TARGET 21
@@ -34,9 +35,7 @@ THE SOFTWARE.
 uint8 scramble_steps = 0;
 scramble_item state;
 
-uint8 scramble_done() {
-  return scramble_steps >= PHASE_COUNT;
-}
+uint8 scramble_done() { return scramble_steps >= PHASE_COUNT; }
 
 void scramble_add(uint16 payload) {
   scramble_item current;
@@ -47,32 +46,32 @@ void scramble_add(uint16 payload) {
   }
 
   switch (scramble_steps) {
-  case 0:
-    state = phase_0(current, state);
-    break;
-  case 1:
-    state = phase_1(state, current);
-    break;
-  case 2:
-    state = phase_2(current, state);
-    break;
-  case 3:
-    state = phase_3(state, current);
-    break;
-  case 4:
-    state = phase_4(current, state);
-    break;
-  case 5:
-    state = phase_5(state, current);
-    break;
-  case 6:
-    state = phase_6(current, state);
-    break;
-  case 7:
-    state = phase_7(state, current);
-    break;
-  default:
-    _terminate(-1);
+    case 0:
+      state = phase_0(current, state);
+      break;
+    case 1:
+      state = phase_1(state, current);
+      break;
+    case 2:
+      state = phase_2(current, state);
+      break;
+    case 3:
+      state = phase_3(state, current);
+      break;
+    case 4:
+      state = phase_4(current, state);
+      break;
+    case 5:
+      state = phase_5(state, current);
+      break;
+    case 6:
+      state = phase_6(current, state);
+      break;
+    case 7:
+      state = phase_7(state, current);
+      break;
+    default:
+      _terminate(-1);
   }
 
   state.i &= TARGET_MASK;
@@ -80,9 +79,7 @@ void scramble_add(uint16 payload) {
   scramble_steps++;
 }
 
-uint8 scramble_okay() {
-  return (state.i & TARGET_MASK) == TARGET;
-}
+uint8 scramble_okay() { return (state.i & TARGET_MASK) == TARGET; }
 
 #ifdef REVERSER
 #include "stdlib.h"
@@ -97,10 +94,10 @@ int main() {
     found = 0;
 
     for (uint32 j = 0; j <= UINT16_MAX; j++) {
-        current.i = j >> STATE_BITS;
-        mst.i = j & TARGET_MASK;
+      current.i = j >> STATE_BITS;
+      mst.i = j & TARGET_MASK;
 
-        switch (i) {
+      switch (i) {
         case 0:
           mst = phase_0(current, mst);
           break;
@@ -127,17 +124,17 @@ int main() {
           break;
         default:
           _terminate(-1);
-        }
+      }
 
-        mst.i &= TARGET_MASK;
-        printf("\r@x", mst.i);
+      mst.i &= TARGET_MASK;
+      printf("\r@x", mst.i);
 
-        if (mst.i == desired) {
-          printf("\rinput @x instate @x\n", current.i, j & TARGET_MASK);
-          found = 1;
-          desired = j & TARGET_MASK;
-          break;
-        }
+      if (mst.i == desired) {
+        printf("\rinput @x instate @x\n", current.i, j & TARGET_MASK);
+        found = 1;
+        desired = j & TARGET_MASK;
+        break;
+      }
     }
 
     if (!found) {

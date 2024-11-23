@@ -25,76 +25,61 @@ THE SOFTWARE.
 */
 #include <libcgc.h>
 #include <stdlib.h>
-#include "exception_handler.h"
+
 #include "command_handler.h"
 #include "database.h"
+#include "exception_handler.h"
 #include "io.h"
 
 // Maximum number of characters in the command buffer
-#define COMMAND_BUFFER_MAX      (512)
+#define COMMAND_BUFFER_MAX (512)
 
+void run_parser(void) {
+  uint8_t done = 0;
+  uint8_t commandBuffer[COMMAND_BUFFER_MAX + 1];
+  int32_t iRetVal;
+  tUserState userState;
 
-void run_parser( void )
-{
-    uint8_t done = 0;
-    uint8_t commandBuffer[COMMAND_BUFFER_MAX+1];
-    int32_t iRetVal;
-    tUserState userState;
+  init_user(&userState);
 
-    init_user( &userState );
+  do {
+    printf("> ");
 
-    do
-    {
-        printf( "> " );
+    iRetVal = readLine(STDIN, (char *)commandBuffer, COMMAND_BUFFER_MAX);
 
-        iRetVal = readLine( STDIN, (char *)commandBuffer, COMMAND_BUFFER_MAX );
+    if (iRetVal == -1) {
+      printf("Connection failed. Exiting.\n");
+      done = 1;
+    } else {
+      // Pares command, NULL terminated
+      parse_command(commandBuffer, &userState);
+    }
 
-        if ( iRetVal == -1 )
-        {
-            printf( "Connection failed. Exiting.\n" );
-            done = 1;
-        }
-        else
-        {
-            // Pares command, NULL terminated
-            parse_command( commandBuffer, &userState );
-        }
-
-    } while ( !done );
+  } while (!done);
 }
 
-void test( void )
-{
-    // Tests exception handler subroutines
-    //
-    printf( "Enter test function\n" );
-    TRY
-    {
-        THROW(1);
-    }
-    CATCH( 1 )
-    {
-        printf( "Got 1\n" );
-        THROW( 1 );
-    }
-    FINALLY
-    {
-        printf( "Blah\n" );
-    }
-    ETRY
-    printf( "Exit test function\n" );
+void test(void) {
+  // Tests exception handler subroutines
+  //
+  printf("Enter test function\n");
+  TRY { THROW(1); }
+  CATCH(1) {
+    printf("Got 1\n");
+    THROW(1);
+  }
+  FINALLY { printf("Blah\n"); }
+  ETRY printf("Exit test function\n");
 }
 
-int main(void)
-{
-    // Initialize exception handler
-    init_exception_handler();
+int main(void) {
+  // Initialize exception handler
+  init_exception_handler();
 
-    // Initialize the database
-    init_database();
+  // Initialize the database
+  init_database();
 
-    // Run the main command line parser
-    run_parser();
+  // Run the main command line parser
+  run_parser();
 
-    return 0;
+  return 0;
 }

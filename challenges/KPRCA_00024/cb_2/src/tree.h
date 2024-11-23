@@ -1,10 +1,10 @@
 typedef struct node {
-    struct node *left, *right;
-    unsigned int level;
-    unsigned char *key;
-    size_t key_length;
-    unsigned char *data;
-    size_t data_length;
+  struct node *left, *right;
+  unsigned int level;
+  unsigned char *key;
+  size_t key_length;
+  unsigned char *data;
+  size_t data_length;
 } node_t;
 
 node_t *tree_lookup(node_t **T, unsigned char *key, size_t key_length);

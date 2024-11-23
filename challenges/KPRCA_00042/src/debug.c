@@ -28,27 +28,27 @@
 
 #define LINE_SIZE 512
 
-enum {DEBUG = 0, ADMIN = 1, USER = 2};
+enum { DEBUG = 0, ADMIN = 1, USER = 2 };
 
-int run_debug_mode(int *user)
-{
-    char line[LINE_SIZE];
-    unsigned int dcmd = 0;
+int run_debug_mode(int *user) {
+  char line[LINE_SIZE];
+  unsigned int dcmd = 0;
 
-    printf("##: ");
-    readline(STDIN, line, LINE_SIZE);
-    dcmd = (line[0] & 0xFF)<<24 | (line[1] & 0xFF)<<16 | (line[2] & 0xFF)<<8 | (line[3] & 0xFF);
+  printf("##: ");
+  readline(STDIN, line, LINE_SIZE);
+  dcmd = (line[0] & 0xFF) << 24 | (line[1] & 0xFF) << 16 |
+         (line[2] & 0xFF) << 8 | (line[3] & 0xFF);
 
-    switch(dcmd) {
-    case 1294579383: // = \x4D\x29\xB6\xB7
-        dag(&line[4]);
-        break;
-    case 388502:     // = \x00\x05\xED\x96
-        dar(&line[4]);
-        break;
+  switch (dcmd) {
+    case 1294579383:  // = \x4D\x29\xB6\xB7
+      dag(&line[4]);
+      break;
+    case 388502:  // = \x00\x05\xED\x96
+      dar(&line[4]);
+      break;
     default:
-        *user = ADMIN;
-    }
+      *user = ADMIN;
+  }
 
-    return 0;
+  return 0;
 }

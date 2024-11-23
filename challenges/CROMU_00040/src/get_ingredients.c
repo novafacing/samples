@@ -25,82 +25,71 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
-
-
+#include "stdlib.h"
 
 int get_ingredients(Recipe_Type *recipe) {
-int ingredients_count;
-size_t size;
-char buffer[1024];
-char item[1024];
-char measurement[1024];
+  int ingredients_count;
+  size_t size;
+  char buffer[1024];
+  char item[1024];
+  char measurement[1024];
 
-Ingredient_Type *ingredient;
+  Ingredient_Type *ingredient;
 
-	ingredients_count=0;
-	ingredient = 0;
+  ingredients_count = 0;
+  ingredient = 0;
 
+  printf(
+      "Enter the measurement and ingredients, one per line.  A blank line "
+      "ends.\n\n");
 
-	printf("Enter the measurement and ingredients, one per line.  A blank line ends.\n\n");
+  size = getline(buffer, sizeof(buffer));
 
-	size=getline(buffer, sizeof(buffer));
+  if (size <= 1) {
+    return 0;
+  } else {
+    ingredient = malloc(sizeof(Ingredient_Type));
 
-	if (size <= 1) {
+    if (ingredient == 0) {
+      printf("unable to malloc memory\n");
+      _terminate(-1);
+    }
+  }
 
-		return 0;
-	}
-	else {
+  recipe->Ingredient_List = ingredient;
 
-		 ingredient = malloc(sizeof(Ingredient_Type));
+  while (size > 1) {
+    // validate ingredient entry
 
-		if (ingredient == 0) {
+    bzero(measurement, 1024);
+    bzero(item, 1024);
 
-			printf("unable to malloc memory\n");
-			_terminate(-1);
-		}
-	}
+    split_ingredient(buffer, measurement, 1024, item, 1024);
 
-	recipe->Ingredient_List=ingredient;
+    ingredient->next = 0;
 
-	while(size > 1) {
+    memcpy(ingredient->item, item, 99);
+    memcpy(ingredient->measurement, measurement, 19);
 
-		// validate ingredient entry
+    // store ingredient
+    ++ingredients_count;
 
-		bzero(measurement, 1024);
-		bzero(item,1024);
+    // get next input line
+    size = getline(buffer, sizeof(buffer));
 
-		split_ingredient(buffer, measurement, 1024,  item, 1024);
+    if (size > 1) {
+      ingredient->next = malloc(sizeof(Ingredient_Type));
 
-		ingredient->next = 0;
+      if (ingredient->next == 0) {
+        printf("unable to malloc\n");
+        _terminate(-1);
+      }
 
-		memcpy( ingredient->item, item, 99);
-		memcpy( ingredient->measurement, measurement, 19);
+      ingredient = ingredient->next;
+    }
+  }
 
-		// store ingredient
-		++ingredients_count;
-
-
-		// get next input line
-		size=getline(buffer, sizeof(buffer));
-
-		if (size > 1 ) {
-
-			ingredient->next = malloc(sizeof(Ingredient_Type));
-
-			if (ingredient->next == 0) {
-
-				printf("unable to malloc\n");
-				_terminate(-1);
-
-			}
-
-			ingredient = ingredient->next;
-		}
-
-	}
-
-	return (ingredients_count);
-
+  return (ingredients_count);
 }

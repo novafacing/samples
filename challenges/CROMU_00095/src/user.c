@@ -27,13 +27,11 @@ THE SOFTWARE.
 
 user allUsers[MAX_USERS];
 
-void GenerateUsers()
-{
+void GenerateUsers() {
   // Populate the user table with information
 }
 
-uint32_t LookupUser(uint8_t *username, uint8_t *password)
-{
+uint32_t LookupUser(uint8_t *username, uint8_t *password) {
   // Check if username is valid
   return USER_GUEST;
 }

@@ -44,4 +44,3 @@ void pretty_print_tokens(struct token *tokens, size_t n);
 void pretty_print_ast(struct ast *ast);
 
 #endif /* PRETTYPRINTER_H_ */
-

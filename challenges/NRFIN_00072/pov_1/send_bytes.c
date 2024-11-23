@@ -18,33 +18,34 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "errno.h"
+ */
 #include "send_bytes.h"
 
+#include <libcgc.h>
+
+#include "errno.h"
+
 int send_bytes(int fd, const char *buf, unsigned int size) {
+  if ((NULL == buf) || (0 == size)) {
+    return ERRNO_SEND;
+  }
 
-	if ((NULL == buf) || (0 == size)) {
-		return ERRNO_SEND;
-	}
+  size_t bytes_sent_iter = 0;
+  unsigned int bytes_sent_total = 0;
+  const char *p_buf = buf;
 
-	size_t bytes_sent_iter = 0;
-	unsigned int bytes_sent_total = 0;
-	const char *p_buf = buf;
+  while (bytes_sent_total < size) {
+    if (0 != (transmit(fd, p_buf, size - bytes_sent_total, &bytes_sent_iter))) {
+      return ERRNO_SEND;
+    }
 
-	while (bytes_sent_total < size) {
-        if (0 != (transmit(fd, p_buf, size - bytes_sent_total, &bytes_sent_iter))) {
-        	return ERRNO_SEND;
-        }
+    if (0 == bytes_sent_iter) {
+      break;
+    }
 
-        if (0 == bytes_sent_iter) {
-        	break;
-        }
+    bytes_sent_total += bytes_sent_iter;
+    p_buf += bytes_sent_iter;
+  }
 
-        bytes_sent_total += bytes_sent_iter;
-        p_buf += bytes_sent_iter;
-	}
-
-	return bytes_sent_total;
+  return bytes_sent_total;
 }

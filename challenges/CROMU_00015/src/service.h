@@ -29,6 +29,7 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
+
 #include "string.h"
 
 #define COUNTRYMAX 30
@@ -46,114 +47,115 @@ THE SOFTWARE.
 #define CITYBORDERMAX 10
 
 typedef enum element {
-	planet = 0,
-	name,
-	period,
-	orbitspeed,
-	aphelion,
-	perihelion,
-	radius,
-	eradius,
-	mass,
-	gravity,
-	population,
-	country,
-	capitol,
-	language,
-	border,
-	territory,
-	established,
-	founder,
-	county,
-	seat,
-	area,
-	density,
-	city,
-	mayor,
-	url,
-	error
-} element, *pelement;
+  planet = 0,
+  name,
+  period,
+  orbitspeed,
+  aphelion,
+  perihelion,
+  radius,
+  eradius,
+  mass,
+  gravity,
+  population,
+  country,
+  capitol,
+  language,
+  border,
+  territory,
+  established,
+  founder,
+  county,
+  seat,
+  area,
+  density,
+  city,
+  mayor,
+  url,
+  error
+} element,
+    *pelement;
 
 typedef struct Border {
-	double latStart;
-	double lngStart;
-	double latEnd;
-	double lngEnd;
+  double latStart;
+  double lngStart;
+  double latEnd;
+  double lngEnd;
 } Border, *pBorder;
 
 typedef struct City {
-	char name[20];
-	char mayor[30];
+  char name[20];
+  char mayor[30];
 
-	char url[30];
-	int population;
+  char url[30];
+  int population;
 
-	int border_count;
-	pBorder borders[CITYBORDERMAX];
-	
+  int border_count;
+  pBorder borders[CITYBORDERMAX];
+
 } City, *pCity;
 
 typedef struct County {
-	char name[20];
-	char seat[20];
-	
-	int population;
-	double area;
-	double density;
+  char name[20];
+  char seat[20];
 
-	int city_count;
-	pCity cities[ COUNTYCITYMAX ];
+  int population;
+  double area;
+  double density;
 
-	int border_count;
-	pBorder borders[ COUNTYBORDERMAX ];
+  int city_count;
+  pCity cities[COUNTYCITYMAX];
+
+  int border_count;
+  pBorder borders[COUNTYBORDERMAX];
 
 } County, *pCounty;
 
 typedef struct Territory {
-	char name[20];
-	char founder[30];
+  char name[20];
+  char founder[30];
 
-	int population;
-	int established;
+  int population;
+  int established;
 
-	int border_count;
-	pBorder borders[TERRITORYBORDERMAX];
-	
-	int county_count;
-	pCounty counties[TERRITORYCOUNTYMAX];
+  int border_count;
+  pBorder borders[TERRITORYBORDERMAX];
+
+  int county_count;
+  pCounty counties[TERRITORYCOUNTYMAX];
 
 } Territory, *pTerritory;
 
 typedef struct Country {
-	char name[20];
-	char capitol[20];
+  char name[20];
+  char capitol[20];
 
-	int population;
+  int population;
 
-	int language_count;
-	char *languages[COUNTRYLANGUAGEMAX];
+  int language_count;
+  char *languages[COUNTRYLANGUAGEMAX];
 
-	int border_count;
-	pBorder borders[COUNTRYBORDERMAX];
+  int border_count;
+  pBorder borders[COUNTRYBORDERMAX];
 
-	int territory_count;
-	pTerritory territories[COUNTRYTERRITORYMAX];
+  int territory_count;
+  pTerritory territories[COUNTRYTERRITORYMAX];
 } Country, *pCountry;
 
 typedef struct Planet {
-	char name[20];
-	double period;
-	double orbitspeed;
-	double aphelion;
-	double perihelion;
-	double radius;
-	double eradius;
-	double mass;
-	double gravity;
-	int population;
+  char name[20];
+  double period;
+  double orbitspeed;
+  double aphelion;
+  double perihelion;
+  double radius;
+  double eradius;
+  double mass;
+  double gravity;
+  int population;
 
-	int country_count;
-	pCountry countries[COUNTRYMAX];
+  int country_count;
+  pCountry countries[COUNTRYMAX];
 } Planet, *pPlanet;
 
 #endif

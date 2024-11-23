@@ -24,18 +24,28 @@ THE SOFTWARE.
 
 */
 
+#include "packet_analysis.h"
 
 #include <libcgc.h>
-#include "service.h"
-#include "packet_analysis.h"
-#include "io.h"
 
-enum authorities {SELF, LAW_ENFORCEMENT, UNIVERSITY, EMPLOYER, NETWORK_PROVIDER, NUM_AUTHORITIES};
-char *authority_names[NUM_AUTHORITIES] = {"Self", "Law Enforcement", "University", "Employer", "Network Provider"};
-enum physical_types {WIRE, RADIO, RAW, NUM_PHYSICAL_TYPES};
+#include "io.h"
+#include "service.h"
+
+enum authorities {
+  SELF,
+  LAW_ENFORCEMENT,
+  UNIVERSITY,
+  EMPLOYER,
+  NETWORK_PROVIDER,
+  NUM_AUTHORITIES
+};
+char *authority_names[NUM_AUTHORITIES] = {
+    "Self", "Law Enforcement", "University", "Employer", "Network Provider"};
+enum physical_types { WIRE, RADIO, RAW, NUM_PHYSICAL_TYPES };
 char *physical_type_names[NUM_PHYSICAL_TYPES] = {"Wire", "Radio", "Raw"};
 char *physical_wire_speeds[4] = {"1,000", "10,000", "100,000", "1,000,000"};
-char *debug_type_names[6] = {"PING", "PONG", "TRACEROUTE", "QUERY", "CONNECT", "REPLY"};
+char *debug_type_names[6] = {"PING",  "PONG",    "TRACEROUTE",
+                             "QUERY", "CONNECT", "REPLY"};
 
 void DisplayFormatted(SystemState *state, int layer, char *format, ...) {
   if (state->display_flags & layer) {
@@ -47,7 +57,7 @@ void DisplayFormatted(SystemState *state, int layer, char *format, ...) {
 }
 
 void TransmitOptionHeader(OptionHeader *header) {
-  switch(header->type) {
+  switch (header->type) {
     case OPTION_TYPE_STRING: {
 #ifdef PATCHED
       TransmitBytes(header->value, strlen(header->value));
@@ -60,7 +70,8 @@ void TransmitOptionHeader(OptionHeader *header) {
     case OPTION_TYPE_LOCATION: {
       // lat\x00long or address
       if (count_strings(header->value) == 2) {
-        TransmitFormattedBytes("GPS Coordinates: +s Latitude, +s Longitude\n", header->value, next_string(header->value));
+        TransmitFormattedBytes("GPS Coordinates: +s Latitude, +s Longitude\n",
+                               header->value, next_string(header->value));
       } else {
         TransmitFormattedBytes("Address: +s\n", header->value);
       }
@@ -69,7 +80,8 @@ void TransmitOptionHeader(OptionHeader *header) {
     case OPTION_TYPE_AUTHORITY: {
       int authority = atoi(header->value);
       if ((authority < NUM_AUTHORITIES) && (authority >= 0)) {
-        TransmitFormattedBytes("Capturing Authority: +s\n", authority_names[authority]);
+        TransmitFormattedBytes("Capturing Authority: +s\n",
+                               authority_names[authority]);
       } else {
         TransmitFormattedBytes("Capturing Authority Unknown\n");
       }
@@ -93,7 +105,8 @@ void TransmitOptionHeader(OptionHeader *header) {
       if (modified == 1) {
         TransmitFormattedBytes("This content has been modified\n");
       } else {
-        TransmitFormattedBytes("This content has not been modified from the original\n");
+        TransmitFormattedBytes(
+            "This content has not been modified from the original\n");
       }
       break;
     }
@@ -113,13 +126,17 @@ void DisplayStatistics(SystemState *state) {
   TransmitFormattedBytes("\tTotal Packets: +d\n", state->stats->num_packets);
   TransmitFormattedBytes("\tStart Time: +x\n", state->stats->start_time);
   TransmitFormattedBytes("\tEnd Time: +x\n", state->stats->end_time);
-  TransmitFormattedBytes("\tLargest Packet: +d\n", state->stats->largest_packet);
-  TransmitFormattedBytes("\tSmallest Packet: +d\n", state->stats->smallest_packet);
-  TransmitFormattedBytes("\tNumber of malformed packets: +d\n", state->stats->num_malformed);
-  TransmitFormattedBytes("\tNumber of packets shown +d\n", state->stats->num_packets_shown);
+  TransmitFormattedBytes("\tLargest Packet: +d\n",
+                         state->stats->largest_packet);
+  TransmitFormattedBytes("\tSmallest Packet: +d\n",
+                         state->stats->smallest_packet);
+  TransmitFormattedBytes("\tNumber of malformed packets: +d\n",
+                         state->stats->num_malformed);
+  TransmitFormattedBytes("\tNumber of packets shown +d\n",
+                         state->stats->num_packets_shown);
   TransmitFormattedBytes("Option Headers:\n");
   OptionHeader *header = state->stats->option_headers;
-  while(header != NULL) {
+  while (header != NULL) {
     TransmitOptionHeader(header);
     header = header->next;
   }
@@ -136,7 +153,8 @@ int FilterMatch(PacketFilter *filter, Packet *packet) {
     return 0;
   }
   for (int i = 0; i < filter->size; i++) {
-    if ((packet->data[i] & filter->mask[i]) != (filter->content[i] & filter->mask[i])) {
+    if ((packet->data[i] & filter->mask[i]) !=
+        (filter->content[i] & filter->mask[i])) {
       return 0;
     }
   }
@@ -144,10 +162,11 @@ int FilterMatch(PacketFilter *filter, Packet *packet) {
 }
 
 // Check all filters for a match
-void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match, int *positive_match) {
+void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match,
+                       int *positive_match) {
   int pos = 0;
   int neg = 0;
-  for (int i=0; i < state->num_filters; i++) {
+  for (int i = 0; i < state->num_filters; i++) {
     PacketFilter *filter = state->filters[i];
     if (FilterMatch(filter, packet) == 1) {
       if (filter->type == FILTER_TYPE_INCLUDE) {
@@ -163,7 +182,7 @@ void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match, 
 
 uint32_t CalculateChecksum(uint8_t *data, uint16_t size) {
   uint32_t checksum = 0;
-  for (int i=0; i< size; i++) {
+  for (int i = 0; i < size; i++) {
     checksum += data[i];
   }
   return checksum;
@@ -176,7 +195,8 @@ uint32_t CalculateChecksum(uint8_t *data, uint16_t size) {
 int AnalyzePhysicalLayer(SystemState *state, Packet *packet) {
   int length = *(int *)(packet->data + 8);
   if (length > packet->size) {
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Packet Length: +x (+x)\n", length, packet->size);
+    DisplayFormatted(state, DISPLAY_PHYSICAL,
+                     "Invalid Packet Length: +x (+x)\n", length, packet->size);
     return -1;
   }
   if (length < 14) {
@@ -190,10 +210,12 @@ int AnalyzePhysicalLayer(SystemState *state, Packet *packet) {
     DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Physical Type\n");
     return -1;
   }
-  DisplayFormatted(state, DISPLAY_PHYSICAL, "Physical Type: +s\n", physical_type_names[type]);
+  DisplayFormatted(state, DISPLAY_PHYSICAL, "Physical Type: +s\n",
+                   physical_type_names[type]);
   if (type == WIRE) {
     if (length < 20) {
-      DisplayFormatted(state, DISPLAY_PHYSICAL, "Packet too short: +d\n", length);
+      DisplayFormatted(state, DISPLAY_PHYSICAL, "Packet too short: +d\n",
+                       length);
       return -1;
     }
     uint16_t wirespeed = (*(uint16_t *)(packet->data + 14)) - 1;
@@ -201,25 +223,35 @@ int AnalyzePhysicalLayer(SystemState *state, Packet *packet) {
       DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Wire speed\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Wire Speed: +s\n", physical_wire_speeds[wirespeed]);
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Wire Speed: +s\n",
+                     physical_wire_speeds[wirespeed]);
     uint32_t checksum = (*(uint32_t *)(packet->data + 16));
     packet->data += 20;
     packet->size -= 20;
     if (CalculateChecksum(packet->data, packet->size) != checksum) {
-      DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Physical Layer Checksum: got +x, expected +x\n", checksum, CalculateChecksum(packet->data, packet->size));
+      DisplayFormatted(state, DISPLAY_PHYSICAL,
+                       "Invalid Physical Layer Checksum: got +x, expected +x\n",
+                       checksum, CalculateChecksum(packet->data, packet->size));
       return -1;
     }
   } else if (type == RADIO) {
     if (length < 42) {
-      DisplayFormatted(state, DISPLAY_PHYSICAL, "Packet too short: +d\n", length);
+      DisplayFormatted(state, DISPLAY_PHYSICAL, "Packet too short: +d\n",
+                       length);
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Source Address: +x\n", *(int *)(packet->data + 14));
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Destination Address: +x\n", *(int *)(packet->data + 18));
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Transmit strength: +u\n", *(uint32_t *)(packet->data + 22));
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Receive strength: +u\n", *(uint32_t *)(packet->data + 26));
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "Frequency: +d\n", *(uint32_t  *)(packet->data + 30));
-    DisplayFormatted(state, DISPLAY_PHYSICAL, "SNR: +u\n", *(uint32_t  *)(packet->data + 34)); 
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Source Address: +x\n",
+                     *(int *)(packet->data + 14));
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Destination Address: +x\n",
+                     *(int *)(packet->data + 18));
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Transmit strength: +u\n",
+                     *(uint32_t *)(packet->data + 22));
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Receive strength: +u\n",
+                     *(uint32_t *)(packet->data + 26));
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Frequency: +d\n",
+                     *(uint32_t *)(packet->data + 30));
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "SNR: +u\n",
+                     *(uint32_t *)(packet->data + 34));
     // Checksum intentionally not verified
     packet->data += 42;
     packet->size -= 42;
@@ -229,7 +261,7 @@ int AnalyzePhysicalLayer(SystemState *state, Packet *packet) {
     }
     return -1;
   } else {
-     DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Physical Type\n", type);
+    DisplayFormatted(state, DISPLAY_PHYSICAL, "Invalid Physical Type\n", type);
     return -1;
   }
   // Verify ECC
@@ -251,13 +283,18 @@ int AnalyzeTransportLayer(SystemState *state, Packet *packet) {
     if (packet->size < 22) {
       DisplayFormatted(state, DISPLAY_TRANSPORT, "Transport Layer too short\n");
       return -1;
-    }   
+    }
     DisplayFormatted(state, DISPLAY_TRANSPORT, "Transport Type: STREAM\n");
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Stream number: +u\n", *(int *)(packet->data + 4));
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Sequence number: +u\n", *(int *)(packet->data + 8));
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Window: +d\n", *(uint16_t *)(packet->data + 12));
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Acknowledgment: +x\n", *(int *)(packet->data + 14));
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Length: +d\n", *(int *)(packet->data + 18));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Stream number: +u\n",
+                     *(int *)(packet->data + 4));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Sequence number: +u\n",
+                     *(int *)(packet->data + 8));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Window: +d\n",
+                     *(uint16_t *)(packet->data + 12));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Acknowledgment: +x\n",
+                     *(int *)(packet->data + 14));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Length: +d\n",
+                     *(int *)(packet->data + 18));
     packet->data += 22;
     packet->size -= 22;
   } else if (type == 2) {
@@ -267,13 +304,14 @@ int AnalyzeTransportLayer(SystemState *state, Packet *packet) {
       return -1;
     }
     DisplayFormatted(state, DISPLAY_TRANSPORT, "Transport Type: MESSAGE\n");
-    DisplayFormatted(state, DISPLAY_TRANSPORT, "Length: +d\n", *(int *)(packet->data + 4));
+    DisplayFormatted(state, DISPLAY_TRANSPORT, "Length: +d\n",
+                     *(int *)(packet->data + 4));
     packet->data += 8;
     packet->size -= 8;
   } else {
     DisplayFormatted(state, DISPLAY_TRANSPORT, "Invalid Transport Type\n");
     return -1;
-  } 
+  }
   return 0;
 }
 
@@ -293,8 +331,10 @@ int AnalyzeNetworkLayer(SystemState *state, Packet *packet) {
       DisplayFormatted(state, DISPLAY_NETWORK, "Network layer too short\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n", *(int *)(packet->data + 6));
-    DisplayFormatted(state, DISPLAY_NETWORK, "Destination Address: +x\n", *(int *)(packet->data + 10));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n",
+                     *(int *)(packet->data + 6));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Destination Address: +x\n",
+                     *(int *)(packet->data + 10));
     packet->data += 14;
     packet->size -= 14;
   } else if (network_type == 2) {
@@ -303,7 +343,8 @@ int AnalyzeNetworkLayer(SystemState *state, Packet *packet) {
       DisplayFormatted(state, DISPLAY_NETWORK, "Network layer too short\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n", *(int *)(packet->data + 6));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n",
+                     *(int *)(packet->data + 6));
     packet->data += 10;
     packet->size -= 10;
   } else if (network_type == 3) {
@@ -317,11 +358,16 @@ int AnalyzeNetworkLayer(SystemState *state, Packet *packet) {
       DisplayFormatted(state, DISPLAY_NETWORK, "Invalid network debug type\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_NETWORK, "Network debug type: +s\n", debug_type_names[debug_type]);
-    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n",  *(uint32_t *)(packet->data + 8)); 
-    DisplayFormatted(state, DISPLAY_NETWORK, "Destination Address: +x\n",*(uint32_t *)(packet->data + 12));
-    DisplayFormatted(state, DISPLAY_NETWORK, "Hop Count: +u\n", *(uint16_t *)(packet->data + 16));
-    DisplayFormatted(state, DISPLAY_NETWORK, "Timestamp: +u\n", *(uint32_t *)(packet->data + 18));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Network debug type: +s\n",
+                     debug_type_names[debug_type]);
+    DisplayFormatted(state, DISPLAY_NETWORK, "Source Address: +x\n",
+                     *(uint32_t *)(packet->data + 8));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Destination Address: +x\n",
+                     *(uint32_t *)(packet->data + 12));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Hop Count: +u\n",
+                     *(uint16_t *)(packet->data + 16));
+    DisplayFormatted(state, DISPLAY_NETWORK, "Timestamp: +u\n",
+                     *(uint32_t *)(packet->data + 18));
     packet->data += 22;
     packet->size -= 22;
   } else {
@@ -337,29 +383,38 @@ int AnalyzeNetworkLayer(SystemState *state, Packet *packet) {
 // returns -1 for bad packet
 int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
   if (packet->size < 6) {
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+    DisplayFormatted(state, DISPLAY_APPLICATION,
+                     "Application layer too short\n");
     return -1;
   }
   uint32_t application_length = *(uint32_t *)(packet->data);
   uint16_t application_type = *(uint16_t *)(packet->data + 4);
   if (application_type == 1) {
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Application type: Audio Stream\n");
+    DisplayFormatted(state, DISPLAY_APPLICATION,
+                     "Application type: Audio Stream\n");
     if (packet->size < 12) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Encoding type: +u\n", *(uint16_t *)(packet->data + 6));
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Bit rate: +u\n", *(uint32_t *)(packet->data + 8));
+    DisplayFormatted(state, DISPLAY_APPLICATION, "Encoding type: +u\n",
+                     *(uint16_t *)(packet->data + 6));
+    DisplayFormatted(state, DISPLAY_APPLICATION, "Bit rate: +u\n",
+                     *(uint32_t *)(packet->data + 8));
     packet->data += 12;
     packet->size -= 12;
   } else if (application_type == 2) {
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Application type: Video Stream\n");
+    DisplayFormatted(state, DISPLAY_APPLICATION,
+                     "Application type: Video Stream\n");
     if (packet->size < 14) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
-    DisplayFormatted(state, DISPLAY_APPLICATION, "X Resolution: +u\n", *(uint16_t *)(packet->data + 8));
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Y Resolution: +u\n", *(uint16_t *)(packet->data + 10));
+    DisplayFormatted(state, DISPLAY_APPLICATION, "X Resolution: +u\n",
+                     *(uint16_t *)(packet->data + 8));
+    DisplayFormatted(state, DISPLAY_APPLICATION, "Y Resolution: +u\n",
+                     *(uint16_t *)(packet->data + 10));
     DisplayFormatted(state, DISPLAY_APPLICATION, "Video Option Headers: \n");
     uint16_t num_options = *(uint16_t *)(packet->data + 12);
     packet->data += 14;
@@ -371,7 +426,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
       packet->data++;
       packet->size--;
       if (length > packet->size) {
-        DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+        DisplayFormatted(state, DISPLAY_APPLICATION,
+                         "Application layer too short\n");
         return -1;
       }
       memcpy(buffer, (char *)packet->data, length);
@@ -383,7 +439,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
   } else if (application_type == 3) {
     DisplayFormatted(state, DISPLAY_APPLICATION, "Application type: File\n");
     if (packet->size < 70) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     char namebuf[33];
@@ -400,16 +457,18 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
     packet->size -= 6;
 
     if (packet->size == 0) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     uint8_t length = *(uint8_t *)packet->data;
     packet->data++;
     packet->size--;
     if (packet->size < length) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
-    } 
+    }
     char buffer[256];
     bzero(buffer, sizeof(buffer));
     memcpy(buffer, (char *)packet->data, length);
@@ -418,36 +477,40 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
     packet->size -= length;
 
     if (packet->size == 0) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     length = *(uint8_t *)packet->data;
     packet->data++;
     packet->size--;
-    #ifdef PATCHED
+#ifdef PATCHED
     if (packet->size < length) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
-    } 
-    #endif 
+    }
+#endif
     bzero(buffer, sizeof(buffer));
     memcpy(buffer, (char *)packet->data, length);
     DisplayFormatted(state, DISPLAY_APPLICATION, "To: +s\n", buffer);
     packet->data += length;
     packet->size -= length;
     if (packet->size == 0) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     length = *(uint8_t *)packet->data;
     packet->data++;
     packet->size--;
-    #ifdef PATCHED
+#ifdef PATCHED
     if (packet->size < length) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
-    } 
-    #endif 
+    }
+#endif
     bzero(buffer, sizeof(buffer));
     memcpy(buffer, (char *)packet->data, length);
     DisplayFormatted(state, DISPLAY_APPLICATION, "Subject: +s\n", buffer);
@@ -457,7 +520,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
   } else if (application_type == 5) {
     DisplayFormatted(state, DISPLAY_APPLICATION, "Application type: Webpage\n");
     if (packet->size < 8) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     packet->data += 6;
@@ -471,7 +535,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
       return -1;
     }
     if (url_length > packet->size) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     if (allocate(url_length + 1, 0, (void **)&url) != 0) {
@@ -484,7 +549,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
     packet->size -= url_length;
     deallocate(url, url_length + 1);
     if (packet->size < 2) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
 
@@ -497,7 +563,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
       return -1;
     }
     if (header_length > packet->size) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     if (allocate(header_length + 1, 0, (void **)&header) != 0) {
@@ -510,7 +577,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
     packet->size -= header_length;
     deallocate(header, header_length + 1);
     if (packet->size < 2) {
-      DisplayFormatted(state, DISPLAY_APPLICATION, "Application layer too short\n");
+      DisplayFormatted(state, DISPLAY_APPLICATION,
+                       "Application layer too short\n");
       return -1;
     }
     uint16_t content_length = *(uint16_t *)(packet->data);
@@ -522,7 +590,8 @@ int AnalyzeApplicationLayer(SystemState *state, Packet *packet) {
     }
 
   } else {
-    DisplayFormatted(state, DISPLAY_APPLICATION, "Unsupported application type\n");
+    DisplayFormatted(state, DISPLAY_APPLICATION,
+                     "Unsupported application type\n");
     return -1;
   }
 
@@ -547,11 +616,10 @@ int AnalyzePacket(SystemState *state, Packet *packet) {
   }
   // If positive filters exist, but don't match, don't show packet
   if ((state->stats->num_positive_filters > 0) && (positive_match == 0)) {
-
     TransmitBytes("skip\n", 5);
-   return -1;
-  } 
-  // Otherwise, show packet 
+    return -1;
+  }
+  // Otherwise, show packet
   state->stats->num_packets_shown++;
 
   if (AnalyzePhysicalLayer(state, packet) == 0) {

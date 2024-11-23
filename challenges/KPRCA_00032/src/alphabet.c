@@ -21,26 +21,21 @@
  *
  */
 
-#include <ctype.h>
-#include <string.h>
 #include "alphabet.h"
 
-void ftab_init1(freqtab_t *ftab)
-{
-    memset(ftab, 0, sizeof(freqtab_t));
+#include <ctype.h>
+#include <string.h>
+
+void ftab_init1(freqtab_t *ftab) { memset(ftab, 0, sizeof(freqtab_t)); }
+
+void ftab_init(freqtab_t *ftab, const char *word) {
+  ftab_init1(ftab);
+  ftab_add(ftab, word);
 }
 
-void ftab_init(freqtab_t *ftab, const char *word)
-{
-    ftab_init1(ftab);
-    ftab_add(ftab, word);
-}
+void ftab_add(freqtab_t *ftab, const char *word) {
+  unsigned int i;
 
-void ftab_add(freqtab_t *ftab, const char *word)
-{
-    unsigned int i;
-
-    for (i = 0; word[i] != '\0'; i++)
-        if (isalpha(word[i]))
-            ftab->freq[toupper(word[i]) - ALPHABET_START]++;
+  for (i = 0; word[i] != '\0'; i++)
+    if (isalpha(word[i])) ftab->freq[toupper(word[i]) - ALPHABET_START]++;
 }

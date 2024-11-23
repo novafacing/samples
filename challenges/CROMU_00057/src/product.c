@@ -25,321 +25,261 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
+#include "commands.h"
+#include "malloc.h"
+#include "output_strings.h"
 #include "service.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
-#include "commands.h"
-#include "output_strings.h"
-#include "malloc.h"
 
 char *obf_strings(char *input_string);
 
-int create_product( productDefType **database, void *command_data ) {
+int create_product(productDefType **database, void *command_data) {
+  newProductMessageType *msg;
+  productDefType *newProduct;
 
-newProductMessageType *msg;
-productDefType *newProduct;
+  msg = (newProductMessageType *)command_data;
 
-	msg = (newProductMessageType *)command_data;
+  // special case if this is the first product
+  if (*database == 0) {
+    *database = calloc(sizeof(productDefType));
 
-	// special case if this is the first product
-	if (*database == 0) {
+    if (*database == 0) _terminate(-1);
 
-		*database = calloc(sizeof(productDefType));
+    newProduct = *database;
 
-		if (*database == 0)
-			_terminate(-1);
+  } else {
+    newProduct = *database;
 
-		newProduct = *database;
+    // add this new product to the end of the list
+    while (newProduct->ID != msg->ID && newProduct->next != 0)
+      newProduct = newProduct->next;
 
-	}
-	else {
+    // if this ID is already in the database, fail
+    if (newProduct->ID == msg->ID) return (-1);
 
-		newProduct = *database;
+    // otherwise add this new product to the end of the list
+    newProduct->next = (productDefType *)calloc(sizeof(productDefType));
 
-		// add this new product to the end of the list
-		while(newProduct->ID != msg->ID && newProduct->next != 0)
-			newProduct = newProduct->next;
+    if (newProduct->next == 0) _terminate(-1);
 
-		// if this ID is already in the database, fail 
-		if (newProduct->ID == msg->ID)
-			return(-1);
+    newProduct = newProduct->next;
+  }
 
-		// otherwise add this new product to the end of the list
-		newProduct->next = (productDefType *)calloc(sizeof(productDefType));
+  newProduct->next = 0;
+  newProduct->ID = msg->ID;
+  newProduct->productBacklog = 0;
+  newProduct->sprintList = 0;
 
-		if (newProduct->next == 0)
-			_terminate(-1);
+  // allocate memory for the title
+  newProduct->title = calloc(strlen((char *)&msg->title) + 1);
 
+  if (newProduct->title == 0) _terminate(-1);
 
-		newProduct = newProduct->next;
-	}
+  strncpy(newProduct->title, (char *)&msg->title, strlen(&msg->title));
 
-	newProduct->next = 0;
-	newProduct->ID = msg->ID;
-	newProduct->productBacklog = 0;
-	newProduct->sprintList = 0;
-
-	// allocate memory for the title
-	newProduct->title = calloc(strlen((char *)&msg->title)+1);
-
-	if (newProduct->title == 0)
-		_terminate(-1);
-
-
-	strncpy(newProduct->title, (char *)&msg->title, strlen(&msg->title));
-
-	return 0;
+  return 0;
 }
 
+int delete_product(productDefType **database, messageIDType *message) {
+  productDefType *lastProduct, *tmpProduct;
+  sprintEntryType *sprintPtr, *tmpSprintPtr;
+  backlogItemType *PBIPtr, *tmpPBIPtr;
 
+  // nothing to delete here, move along
+  if (*database == 0) {
+    return (-1);
+  }
 
-int delete_product( productDefType **database, messageIDType *message ) {
+  // is the matching entry the head of the linked list?
+  if ((*database)->ID == message->ID) {
+    tmpProduct = *database;
+    *database = (*database)->next;
 
+    // if there's a title, free that memory
+    if (tmpProduct->title) free(tmpProduct->title);
 
-productDefType *lastProduct, *tmpProduct;
-sprintEntryType *sprintPtr, *tmpSprintPtr;
-backlogItemType *PBIPtr, *tmpPBIPtr;
+    // now free the Sprint list
+    sprintPtr = tmpProduct->sprintList;
 
+    while (sprintPtr != 0) {
+      PBIPtr = sprintPtr->sprintBacklogList;
 
-	// nothing to delete here, move along
-	if (*database == 0)  {
+      // first free the backlog items tied to this Sprint
+      while (PBIPtr != 0) {
+        if (PBIPtr->description != 0) free(PBIPtr->description);
 
-		return(-1);
-	}
+        tmpPBIPtr = PBIPtr;
+        PBIPtr = PBIPtr->next;
 
-	// is the matching entry the head of the linked list?
-	if ((*database)->ID == message->ID) {
+        free(tmpPBIPtr);
+      }
 
-		tmpProduct = *database;
-		*database = (*database)->next;
+      // free the memory for the sprint title
+      if (sprintPtr->title != 0) free(sprintPtr->title);
 
-		// if there's a title, free that memory
-		if (tmpProduct->title)
-			free(tmpProduct->title);
+      // now free the sprint memory itself
+      tmpSprintPtr = sprintPtr;
 
-		// now free the Sprint list
-		sprintPtr = tmpProduct->sprintList;
+      sprintPtr = sprintPtr->next;
 
-		while (sprintPtr!= 0) {
+      free(tmpSprintPtr);
+    }
 
-			PBIPtr = sprintPtr->sprintBacklogList;
+    // now free the PBI list
+    PBIPtr = tmpProduct->productBacklog;
 
-			// first free the backlog items tied to this Sprint
-			while (PBIPtr != 0) {
+    while (PBIPtr != 0) {
+      if (PBIPtr->description != 0) free(PBIPtr->description);
 
-				if (PBIPtr->description != 0)
-					free(PBIPtr->description);
+      tmpPBIPtr = PBIPtr;
+      PBIPtr = PBIPtr->next;
 
-				tmpPBIPtr = PBIPtr;
-				PBIPtr = PBIPtr->next;
+      free(tmpPBIPtr);
+    }
 
-				free(tmpPBIPtr);
-			}
+    // now free the final object
+    free(tmpProduct);
 
-			// free the memory for the sprint title
-			if (sprintPtr->title != 0)
-				free(sprintPtr->title);
+    return (0);
+  }
 
+  // the entry to delete wasn't the head, so find it in the list
+  lastProduct = *database;
+  tmpProduct = (*database)->next;
 
-			// now free the sprint memory itself
-			tmpSprintPtr = sprintPtr;
+  while (tmpProduct != 0 && tmpProduct->ID != message->ID) {
+    lastProduct = tmpProduct;
+    tmpProduct = tmpProduct->next;
+  }
 
-			sprintPtr = sprintPtr->next;
+  // it wasn't found by the end of the list was reached
+  if (tmpProduct == 0) {
+    return (-1);
+  }
 
-			free(tmpSprintPtr);
+  // link around the entry to be deleted
+  lastProduct->next = tmpProduct->next;
 
-		}
+  // free the title memory
+  if (tmpProduct->title) free(tmpProduct->title);
 
-		// now free the PBI list
-		PBIPtr = tmpProduct->productBacklog;
+  // now free the PBI
+  PBIPtr = tmpProduct->productBacklog;
 
-		while (PBIPtr != 0) {
+  while (PBIPtr != 0) {
+    tmpPBIPtr = PBIPtr;
 
+    if (PBIPtr->description != 0) free(PBIPtr->description);
 
-			if (PBIPtr->description != 0)
-				free(PBIPtr->description);
+    PBIPtr = PBIPtr->next;
 
-			tmpPBIPtr = PBIPtr;
-			PBIPtr = PBIPtr->next;
+    free(tmpPBIPtr);
+  }
 
-			free(tmpPBIPtr);
+  // now free the Sprints
+  sprintPtr = tmpProduct->sprintList;
 
-		}
+  while (sprintPtr != 0) {
+    PBIPtr = sprintPtr->sprintBacklogList;
 
-		// now free the final object
-		free(tmpProduct);
+    // first free the backlog items tied to this Sprint
+    while (PBIPtr != 0) {
+      if (PBIPtr->description != 0) free(PBIPtr->description);
 
-		return(0);
+      tmpPBIPtr = PBIPtr;
+      PBIPtr = PBIPtr->next;
 
-	}
+      free(tmpPBIPtr);
+    }
 
-	// the entry to delete wasn't the head, so find it in the list
-	lastProduct = *database;
-	tmpProduct = (*database)->next;
+    // free the memory for the sprint title
+    if (sprintPtr->title != 0) free(sprintPtr->title);
 
+    // now free the sprint memory itself
+    tmpSprintPtr = sprintPtr;
 
-	while (tmpProduct != 0 && tmpProduct->ID != message->ID  ) {
+    sprintPtr = sprintPtr->next;
 
-		lastProduct = tmpProduct;
-		tmpProduct = tmpProduct->next;
-	}
+    free(tmpSprintPtr);
+  }
 
-	// it wasn't found by the end of the list was reached
-	if (tmpProduct == 0 ) {
+  free(tmpProduct);
 
-		return(-1);
-	}
-
-	// link around the entry to be deleted
-	lastProduct->next = tmpProduct->next;
-
-	// free the title memory
-	if (tmpProduct->title)
-		free(tmpProduct->title);
-
-
-	// now free the PBI
-	PBIPtr = tmpProduct->productBacklog;
-
-	while (PBIPtr != 0) {
-
-		tmpPBIPtr = PBIPtr;
-
-		if (PBIPtr->description != 0)
-			free(PBIPtr->description);
-
-		PBIPtr = PBIPtr->next;
-
-		free(tmpPBIPtr);
-
-	}
-
-	// now free the Sprints
-	sprintPtr = tmpProduct->sprintList;
-
-	while (sprintPtr!= 0) {
-
-		PBIPtr = sprintPtr->sprintBacklogList;
-
-		// first free the backlog items tied to this Sprint
-		while (PBIPtr != 0) {
-
-			if (PBIPtr->description != 0)
-				free(PBIPtr->description);
-
-			tmpPBIPtr = PBIPtr;
-			PBIPtr = PBIPtr->next;
-
-			free(tmpPBIPtr);
-		}
-
-		// free the memory for the sprint title
-		if (sprintPtr->title != 0)
-			free(sprintPtr->title);
-
-
-		// now free the sprint memory itself
-		tmpSprintPtr = sprintPtr;
-
-		sprintPtr = sprintPtr->next;
-
-		free(tmpSprintPtr);
-
-	}
-
-	free(tmpProduct);
-
-	return 0;
+  return 0;
 }
 
-int list_all_products( productDefType *database) {
+int list_all_products(productDefType *database) {
+  if (database == 0) return (-1);
 
+  while (database != 0) {
+    printf(obf_strings(List_Products), database->title);
 
-	if (database == 0)
-		return (-1);
+    database = database->next;
+  }
+  printf("\n");
 
-	while (database != 0 ) {
-
-
-		printf(obf_strings(List_Products), database->title);
-
-		database = database->next;
-
-	}
-	printf("\n");
-
-	return 0;
-
+  return 0;
 }
 
+int list_product(productDefType *database, messageIDType *message) {
+  sprintEntryType *sprintPtr;
+  backlogItemType *PBIPtr;
 
-int list_product( productDefType *database, messageIDType *message) {
+  if (message->ID == 0) {
+    list_all_products(database);
+    return 0;
+  }
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
+  while (database != 0 && database->ID != message->ID)
+    database = database->next;
 
+  if (database == 0) {
+    return (-1);
+  }
 
-	if (message->ID == 0) {
+  printf("\n");
+  printf(obf_strings(Prod_Title), database->title);
+  printf(obf_strings(Prod_ID), database->ID);
+  printf("\n");
 
-		list_all_products(database);
-		return 0;
+  PBIPtr = database->productBacklog;
 
-	}
+  printf(obf_strings(Prod_Backlog));
+  printf(obf_strings(Prod_Backlog2));
 
-	while(database != 0 && database->ID != message->ID )
-		database = database->next;
+  while (PBIPtr != 0) {
+    // printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points,
+    // PBIPtr->description);
+    printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points);
+    PBIPtr = PBIPtr->next;
+  }
 
-	if (database == 0) {
+  printf("\n");
 
-		return(-1);
-	}
+  sprintPtr = database->sprintList;
+  printf(obf_strings(Sprints_Title));
 
-	printf("\n");
-	printf(obf_strings(Prod_Title), database->title);
-	printf(obf_strings(Prod_ID), database->ID);
-	printf("\n");
+  while (sprintPtr != 0) {
+    printf(obf_strings(Sprint_Entry), sprintPtr->ID, sprintPtr->title);
 
-	PBIPtr = database->productBacklog;
+    PBIPtr = sprintPtr->sprintBacklogList;
 
-	printf(obf_strings(Prod_Backlog));
-	printf(obf_strings(Prod_Backlog2));
-	
-	while (PBIPtr != 0) {
+    while (PBIPtr != 0) {
+      // printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points,
+      // PBIPtr->status, PBIPtr->description);
+      printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points,
+             PBIPtr->status);
 
-		// printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points, PBIPtr->description);
-		printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points);
-		PBIPtr = PBIPtr->next;
-	}
+      PBIPtr = PBIPtr->next;
+    }
 
-	printf("\n");
+    printf("\n");
+    sprintPtr = sprintPtr->next;
+  }
 
-	sprintPtr = database->sprintList;
-	printf(obf_strings(Sprints_Title));
-
-	while (sprintPtr != 0) {
-
-		printf(obf_strings(Sprint_Entry), sprintPtr->ID, sprintPtr->title);
-
-		PBIPtr = sprintPtr->sprintBacklogList;
-
-		while (PBIPtr != 0) {
-			// printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status, PBIPtr->description);
-			printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status);
-
-			PBIPtr = PBIPtr->next;
-		}
-
-		printf("\n");
-		sprintPtr = sprintPtr->next;
-
-	}
-
-	printf("\n");
-	return(0);
-
+  printf("\n");
+  return (0);
 }
-
-
-
-

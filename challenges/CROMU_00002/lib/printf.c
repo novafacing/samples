@@ -24,244 +24,205 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <mymath.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 // 5 digits of precision
-#define F32_PRECISION       0.00001
+#define F32_PRECISION 0.00001
 
-int putc( int c )
-{
-    size_t tx_count;
+int putc(int c) {
+  size_t tx_count;
 
-    if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
-        _terminate(2);
+  if (transmit(STDOUT, &c, 1, &tx_count) != 0) _terminate(2);
 
-    return c;
+  return c;
 }
 
-void int_to_str( int val, char *buf )
-{
-    char temp_buf[32];
-    char *c = temp_buf;
-    int count = 0;
+void int_to_str(int val, char *buf) {
+  char temp_buf[32];
+  char *c = temp_buf;
+  int count = 0;
 
-    if ( buf == NULL )
-        return;
+  if (buf == NULL) return;
 
-    if ( val < 0 )
-    {
-        *buf = '-';
-        buf++;
+  if (val < 0) {
+    *buf = '-';
+    buf++;
 
-        val *= -1;
-    }
+    val *= -1;
+  }
 
-    do
-    {
-        *c = (val % 10) + '0';
-        val /= 10;
+  do {
+    *c = (val % 10) + '0';
+    val /= 10;
 
-        c++;
-        count++;
-    } while ( val != 0 );
+    c++;
+    count++;
+  } while (val != 0);
 
-    while ( count-- > 0 )
-    {
-        c--;
-        *buf = *c;
-        buf++;
-    }
+  while (count-- > 0) {
+    c--;
+    *buf = *c;
+    buf++;
+  }
 
-    *buf = '\0';
+  *buf = '\0';
 }
 
-void float_to_str( double val, char *buf )
-{
-    if ( buf == NULL )
-        return;
+void float_to_str(double val, char *buf) {
+  if (buf == NULL) return;
 
-    if ( isnan( val ) )
-    {
-        strcpy( buf, "nan" );
-    }
-    else if ( isinf( val ) )
-    {
-        strcpy( buf, "inf" );
-    }
-    else if ( val == 0.0 )
-    {
-        strcpy( buf, "0.00000" );
-    }
+  if (isnan(val)) {
+    strcpy(buf, "nan");
+  } else if (isinf(val)) {
+    strcpy(buf, "inf");
+  } else if (val == 0.0) {
+    strcpy(buf, "0.00000");
+  } else {
+    int digit;
+    int m;
+    int fraction_digit;
+    int in_fraction;
+    int neg = 0;
+    char *c = buf;
+
+    if (val > 0.0)
+      val = val + (F32_PRECISION * 0.5);
     else
-    {
-        int digit;
-        int m;
-        int fraction_digit;
-        int in_fraction;
-        int neg = 0;
-        char *c = buf;
+      val = val - (F32_PRECISION * 0.5);
 
-        if ( val > 0.0 )
-            val = val + (F32_PRECISION * 0.5);
-        else
-            val = val - (F32_PRECISION * 0.5);
+    // Negative numbers
+    if (val < 0.0) {
+      neg = 1;
+      *(c++) = '-';
+      val = -val;
+    }
 
-        // Negative numbers
-        if ( val < 0.0 )
-        {
-            neg = 1;
-            *(c++) = '-';
-            val = -val;
-        }
+    if (isnan(val)) {
+      strcpy(buf, "nan");
+      return;
+    } else if (isinf(val)) {
+      strcpy(buf, "inf");
+      return;
+    } else if (fabs(val) < F32_PRECISION) {
+      strcpy(buf, "0.00000");
+      return;
+    } else if (val > 10e9) {
+      strcpy(buf, "fmax");
+      return;
+    }
 
-        if ( isnan( val ) )
-        {
-            strcpy( buf, "nan" );
-            return;
-        }
-        else if ( isinf( val ) )
-        {
-            strcpy( buf, "inf" );
-            return;
-        }
-        else if ( fabs(val) < F32_PRECISION )
-        {
-            strcpy( buf, "0.00000" );
-            return;
-        }
-        else if ( val > 10e9 )
-        {
-            strcpy( buf, "fmax" );
-            return;
-        }
+    // Calculate magnitude
+    m = log10(val);
 
-        // Calculate magnitude
-        m = log10( val );
+    if (m < 1.0) m = 0;
 
-        if ( m < 1.0 )
-            m = 0;
+    fraction_digit = 0;
+    in_fraction = 0;
 
+    while (m >= -5) {
+      double weight = pow(10.0, m);
+      if (weight > 0 && !isinf(weight)) {
+        digit = floor(val / weight);
+        val -= (digit * weight);
+
+        *(c++) = '0' + digit;
+
+        if (in_fraction) fraction_digit++;
+      }
+
+      if (m == 0 && val > 0.0) {
+        *(c++) = '.';
+        in_fraction = 1;
         fraction_digit = 0;
-        in_fraction = 0;
+      }
 
-        while( m >= -5 )
-        {
-            double weight = pow( 10.0, m );
-            if ( weight > 0 && !isinf(weight) )
-            {
-                digit = floor( val / weight );
-                val -= (digit * weight);
-
-                *(c++) = '0' + digit;
-
-                if ( in_fraction )
-                    fraction_digit++;
-            }
-
-            if ( m == 0 && val > 0.0 )
-            {
-                *(c++) = '.';
-                in_fraction = 1;
-                fraction_digit = 0;
-            }
-
-            m--;
-        }
-
-        *c = '\0';
-    }
-}
-
-int vprintf( const char *fmt, va_list arg )
-{
-    int character_count = 0;
-    char temp_buf[64];
-
-    if ( fmt == NULL )
-        return -1;
-
-    while ( *fmt )
-    {
-        if ( *fmt == '@' )
-        {
-            fmt++;
-
-            // We don't handle any special formatting
-            switch ( *fmt )
-            {
-            case '@':
-                putc( '@' );
-                break;
-
-            case 'd':
-                // Integer
-                {
-                    int int_arg = va_arg( arg, int );
-                    char *c;
-
-                    int_to_str( int_arg, temp_buf );
-
-                    c = temp_buf;
-                    while ( *c )
-                    {
-                        putc( *c );
-                        character_count++;
-                        c++;
-                    }
-                }
-                break;
-
-            case 'f':
-                // Float
-                {
-                    double float_arg = va_arg( arg, double );
-                    char *c;
-
-                    float_to_str( float_arg, temp_buf );
-
-                    c = temp_buf;
-                    while ( *c )
-                    {
-                        putc( *c );
-                        character_count++;
-                        c++;
-                    }
-                }
-                break;
-
-            case '\0':
-                return -1;
-
-            default:
-                // Unknown
-                return -1;
-            }
-
-            fmt++;
-        }
-        else
-        {
-            putc( *fmt );
-            fmt++;
-
-            character_count++;
-        }
+      m--;
     }
 
-    return (character_count);
+    *c = '\0';
+  }
 }
 
-int printf( const char *fmt, ... )
-{
-    va_list arg;
-    int done;
+int vprintf(const char *fmt, va_list arg) {
+  int character_count = 0;
+  char temp_buf[64];
 
-    va_start( arg, fmt );
-    done = vprintf( fmt, arg );
-    va_end( arg );
+  if (fmt == NULL) return -1;
 
-    return done;
+  while (*fmt) {
+    if (*fmt == '@') {
+      fmt++;
+
+      // We don't handle any special formatting
+      switch (*fmt) {
+        case '@':
+          putc('@');
+          break;
+
+        case 'd':
+          // Integer
+          {
+            int int_arg = va_arg(arg, int);
+            char *c;
+
+            int_to_str(int_arg, temp_buf);
+
+            c = temp_buf;
+            while (*c) {
+              putc(*c);
+              character_count++;
+              c++;
+            }
+          }
+          break;
+
+        case 'f':
+          // Float
+          {
+            double float_arg = va_arg(arg, double);
+            char *c;
+
+            float_to_str(float_arg, temp_buf);
+
+            c = temp_buf;
+            while (*c) {
+              putc(*c);
+              character_count++;
+              c++;
+            }
+          }
+          break;
+
+        case '\0':
+          return -1;
+
+        default:
+          // Unknown
+          return -1;
+      }
+
+      fmt++;
+    } else {
+      putc(*fmt);
+      fmt++;
+
+      character_count++;
+    }
+  }
+
+  return (character_count);
+}
+
+int printf(const char *fmt, ...) {
+  va_list arg;
+  int done;
+
+  va_start(arg, fmt);
+  done = vprintf(fmt, arg);
+  va_end(arg);
+
+  return done;
 }

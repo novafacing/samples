@@ -24,20 +24,21 @@ THE SOFTWARE.
 
 */
 
-#include "isopropyl.h"
-#include "churn.h"
 #include "handler.h"
+
+#include "churn.h"
+#include "isopropyl.h"
 #include "messages.h"
 
 #define ECHO_MAX_LEN 80
 
-HANDLER(seed){
+HANDLER(seed) {
   churn_item* replacement = (churn_item*)(extract_seed_req(frame));
   churn_initialize(replacement);
   send_empty_frame(SEED_RESP_ID);
 }
 
-HANDLER(rand){
+HANDLER(rand) {
   size_t byte_count = *(size_t*)(extract_rand_req(frame));
   uint8* buf;
 
@@ -54,7 +55,7 @@ HANDLER(rand){
   template.length = byte_count;
 
   protocol_frame* payload = allocate_frame(template);
-  payload->value = (void*) buf;
+  payload->value = (void*)buf;
 
   send_frame(payload);
 
@@ -62,7 +63,7 @@ HANDLER(rand){
   deallocate(buf, byte_count);
 }
 
-HANDLER(guess){
+HANDLER(guess) {
   uint64 guess = *(uint64*)(extract_guess_req(frame));
   uint64 actual = churn_rand_uint64();
 
@@ -71,7 +72,7 @@ HANDLER(guess){
   send_empty_frame(GUESS_RESP_ID);
 }
 
-HANDLER(echo){
+HANDLER(echo) {
   char buf[ECHO_MAX_LEN + 2];
   void* meh;
   protocol_frame* payload;
@@ -87,7 +88,7 @@ HANDLER(echo){
 #endif
 
   size_t i = 0;
-  while(1) {
+  while (1) {
     buf[i] = data[i];
     if (0 == data[i]) break;
 #ifdef PATCHED
@@ -101,7 +102,7 @@ HANDLER(echo){
 
   payload = allocate_frame(template);
   meh = payload->value;
-  payload->value = (void*) &buf;
+  payload->value = (void*)&buf;
 
   send_frame(payload);
   payload->value = meh;

@@ -18,18 +18,22 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef LIBC_H
 #define LIBC_H
 
 #include <libcgc.h>
-#include <stdint.h>
 #include <prng.h>
+#include <stdint.h>
 
 #define MAGICWORD "Please? Thanks? Sorry?"
-#define MEMERR "Have you ever heard of the old robot saying, 'DOES NOT COMPUTE'?"
-#define RNDERR "Ten. Three. Twelve. Three again. Fifteen. Negative eight. Twenty seven. Ninety one. Hey, zero!"
-#define COOKIEFAIL "You know what really cheers me up? Baking a tray of sugar cookies."
+#define MEMERR \
+  "Have you ever heard of the old robot saying, 'DOES NOT COMPUTE'?"
+#define RNDERR                                                               \
+  "Ten. Three. Twelve. Three again. Fifteen. Negative eight. Twenty seven. " \
+  "Ninety one. Hey, zero!"
+#define COOKIEFAIL \
+  "You know what really cheers me up? Baking a tray of sugar cookies."
 
 /**
  * Gets size of struct member
@@ -38,7 +42,7 @@
  * @param m Member to check
  * @return Size of structure
  */
-#define MEMBERSIZE(t,m) sizeof(((t*)0)->m)
+#define MEMBERSIZE(t, m) sizeof(((t *)0)->m)
 
 /**
  * Sends a buffer and terminates on failure.
@@ -47,7 +51,8 @@
  * @param b Buffer
  * @return Number of bytes sent
  */
-#define SSEND(s,b) if(sendall(STDOUT,b,s)<0)  _terminate(3);
+#define SSEND(s, b) \
+  if (sendall(STDOUT, b, s) < 0) _terminate(3);
 
 /**
  * Sends a buffer+newline and terminates on failure.
@@ -56,7 +61,8 @@
  * @param b Buffer
  * @return Number of bytes sent
  */
-#define SSENDL(s,b) if(sendline(STDOUT,b,s)<0) _terminate(6);
+#define SSENDL(s, b) \
+  if (sendline(STDOUT, b, s) < 0) _terminate(6);
 
 /**
  * Sends a buffer+newline and terminates on failure.
@@ -64,7 +70,7 @@
  * @param b Buffer
  * @return Number of bytes sent
  */
-#define LOG(b) SSENDL(sizeof(b)-1,b);
+#define LOG(b) SSENDL(sizeof(b) - 1, b);
 
 /**
  * Sends an error message and terminates.
@@ -72,17 +78,23 @@
  * @param b Buffer
  * @param c Error code
  */
-#define TERM(b,c)  LOG(b); _terminate(c);
+#define TERM(b, c) \
+  LOG(b);          \
+  _terminate(c);
 
 /**
- * Receives a newline terminated string into buffer, and replaces newline with NULL
- * Terminates on error
+ * Receives a newline terminated string into buffer, and replaces newline with
+ * NULL Terminates on error
  *
  * @param s Size of the buffer
  * @param b Buffer
  * @return Data in buffer
  */
-#define SRECV(s,b) if(recvline(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(2);}
+#define SRECV(s, b)                           \
+  if (recvline(STDIN, b, s) < 0) {            \
+    SSENDL(sizeof(MAGICWORD) - 1, MAGICWORD); \
+    _terminate(2);                            \
+  }
 
 /**
  * Receives bytes into buffer
@@ -92,7 +104,11 @@
  * @param b Buffer
  * @return Data in buffer
  */
-#define RECV(s,b) if(recv(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(4);}
+#define RECV(s, b)                            \
+  if (recv(STDIN, b, s) < 0) {                \
+    SSENDL(sizeof(MAGICWORD) - 1, MAGICWORD); \
+    _terminate(4);                            \
+  }
 
 /**
  * Read in data from stdin to fixed size type
@@ -100,18 +116,22 @@
  * @param s buffer to read into
  * @return 0 on success, 1 on failure
  */
-#define READDATA(s) (sizeof(s) == recv(STDIN,(char *)&s,sizeof(s)) ? 0 : 1)
+#define READDATA(s) (sizeof(s) == recv(STDIN, (char *)&s, sizeof(s)) ? 0 : 1)
 
 /**
  * Thin wrapper to allocate
  * Terminates on error
  *
  * @param x Is executable
- * @param a Location to store address 
+ * @param a Location to store address
  * @param s Size of allocation
  * @return Address in a
  */
-#define ALLOC(x,a,s) if(allocate(s,x,a)!=0){ SSENDL(sizeof(MEMERR)-1,MEMERR); _terminate(9);}
+#define ALLOC(x, a, s)                  \
+  if (allocate(s, x, a) != 0) {         \
+    SSENDL(sizeof(MEMERR) - 1, MEMERR); \
+    _terminate(9);                      \
+  }
 
 /**
  * Thin wrapper to deallocate
@@ -120,7 +140,11 @@
  * @param a Address to deallocate
  * @param s Size of allocation
  */
-#define DEALLOC(a,s) if(deallocate(a,s)!=0){ SSENDL(sizeof(MEMERR)-1,MEMERR); _terminate(18);}
+#define DEALLOC(a, s)                   \
+  if (deallocate(a, s) != 0) {          \
+    SSENDL(sizeof(MEMERR) - 1, MEMERR); \
+    _terminate(18);                     \
+  }
 
 /**
  * Thin wrapper to rand, our random replacement
@@ -131,24 +155,25 @@
  * @param r Location to store number of bytes read
  * @return Random data in b
  */
-#define RAND(b,s,r) if (rand(b,s,r)){ SSENDL(sizeof(RNDERR)-1,RNDERR); _terminate(19);}
+#define RAND(b, s, r)                   \
+  if (rand(b, s, r)) {                  \
+    SSENDL(sizeof(RNDERR) - 1, RNDERR); \
+    _terminate(19);                     \
+  }
 
 #define STACKPROTECTINIT extern uint32_t __cookie;
-#define STACKPROTECTADD  uint32_t __wat = __cookie;
-#define STACKPROTECTCHK  if ( (__wat = __wat ^ __cookie) != 0 ) __stack_cookie_fail();
+#define STACKPROTECTADD uint32_t __wat = __cookie;
+#define STACKPROTECTCHK \
+  if ((__wat = __wat ^ __cookie) != 0) __stack_cookie_fail();
 
 #define DEBUG 1
 #ifdef DEBUG
-#define debug(s) sendall(2,s,strlen(s))
+#define debug(s) sendall(2, s, strlen(s))
 #else
 #define debug(args...)
 #endif
 
-typedef enum {
-    YOLO,
-    SHEAP,
-    SSHEAP
-} heaptype;
+typedef enum { YOLO, SHEAP, SSHEAP } heaptype;
 
 extern uint32_t __hcookie[3];
 
@@ -157,10 +182,10 @@ extern uint32_t __hcookie[3];
 typedef struct heap_chunk heap_chunk_t;
 
 struct heap_chunk {
-    uint32_t cookie;
-    heap_chunk_t *prev;
-    heap_chunk_t *next;
-    uint32_t size;
+  uint32_t cookie;
+  heap_chunk_t *prev;
+  heap_chunk_t *next;
+  uint32_t size;
 };
 
 /**
@@ -168,10 +193,10 @@ struct heap_chunk {
  *
  * @param buf Buffer to store response
  * @param s Size of response buffer
- * @param prompt Prompt to send 
+ * @param prompt Prompt to send
  * @return Response data in buf
  */
-void promptc(char *buf, uint16_t  size, char *prompt);
+void promptc(char *buf, uint16_t size, char *prompt);
 
 /**
  * Convert unsigned integer to string
@@ -181,7 +206,7 @@ void promptc(char *buf, uint16_t  size, char *prompt);
  * @param i Integer to convert
  * @return Ascii-representation of i in str_buf
  */
-int uint2str(char* str_buf, int buf_size, uint32_t i);
+int uint2str(char *str_buf, int buf_size, uint32_t i);
 
 /**
  * Convert signed integer to string
@@ -191,7 +216,7 @@ int uint2str(char* str_buf, int buf_size, uint32_t i);
  * @param i Integer to convert
  * @return Ascii-representation of i in str_buf
  */
-int int2str(char* str_buf, int buf_size, int i);
+int int2str(char *str_buf, int buf_size, int i);
 
 /**
  * Convert string to signed integer
@@ -199,7 +224,7 @@ int int2str(char* str_buf, int buf_size, int i);
  * @param str_buf Source buffer
  * @return integer
  */
-uint32_t str2uint(const char* str_buf);
+uint32_t str2uint(const char *str_buf);
 
 /**
  * Send bytes from buffer to file descriptor
@@ -239,7 +264,7 @@ int recvline(int fd, char *buf, size_t size);
  * @param size Number of bytes to receive
  * @return Number of bytes received, -1 on error
  */
-int recv(int fd, char *buf, size_t size); 
+int recv(int fd, char *buf, size_t size);
 
 /**
  * Copy a string
@@ -267,7 +292,7 @@ size_t strncpy(char *s1, char *s2, size_t n);
  * @param s2 String to be concatenated
  * @return s1
  */
-char * strcat(char *s1, char *s2);
+char *strcat(char *s1, char *s2);
 
 /**
  * Find length of string
@@ -312,7 +337,7 @@ int startswith(char *s1, char *s2);
  * @param n Number of times to copy character
  * @return dst
  */
-void * memset(void *dst, char c, size_t n); 
+void *memset(void *dst, char c, size_t n);
 
 /**
  * Copy bytes from one buffer to another
@@ -322,7 +347,7 @@ void * memset(void *dst, char c, size_t n);
  * @param n Number of bytes to copy
  * @return dst
  */
-void * memcpy(void *dst, void *src, size_t n); 
+void *memcpy(void *dst, void *src, size_t n);
 
 /**
  * Convert byte to hex character string
@@ -331,7 +356,7 @@ void * memcpy(void *dst, void *src, size_t n);
  * @param h Destination hex string
  * @return h
  */
-char * b2hex(uint8_t b, char *h);
+char *b2hex(uint8_t b, char *h);
 
 /**
  * Locate character in string
@@ -340,7 +365,7 @@ char * b2hex(uint8_t b, char *h);
  * @param h Character to find
  * @return Pointer to character in string, or NULL
  */
-char * strchr(char *str, char c); 
+char *strchr(char *str, char c);
 
 /**
  * Sleep process
@@ -357,13 +382,13 @@ void sleep(int s);
  * @param n Number of bytes to compare
  * @return -1 if not equal, 0 if equal
  */
-int memcmp(void *a, void *b, size_t n); 
+int memcmp(void *a, void *b, size_t n);
 
 /**
  * Allocate a buffer on simple heap
  *
  * @param size Size of buffer to allocate
- * @return Pointer to newly allocated buffer 
+ * @return Pointer to newly allocated buffer
  */
 void *nmalloc(size_t size);
 
@@ -371,7 +396,7 @@ void *nmalloc(size_t size);
  * Allocate a buffer on secure heap
  *
  * @param size Size of buffer to allocate
- * @return Pointer to newly allocated buffer 
+ * @return Pointer to newly allocated buffer
  */
 void *smalloc(size_t size);
 
@@ -379,7 +404,7 @@ void *smalloc(size_t size);
  * Allocate a buffer on super secure heap
  *
  * @param size Size of buffer to allocate
- * @return Pointer to newly allocated buffer 
+ * @return Pointer to newly allocated buffer
  */
 void *ssmalloc(size_t size);
 
@@ -415,7 +440,7 @@ void free(void *p);
  * Allocate a buffer on heap
  *
  * @param size Size of buffer to allocate
- * @return Pointer to newly allocated buffer 
+ * @return Pointer to newly allocated buffer
  */
 void *malloc(size_t size);
 
@@ -423,9 +448,9 @@ void *malloc(size_t size);
  * Allocate a zeroed buffer on heap
  *
  * @param size Size of buffer to allocate
- * @return Pointer to newly allocated buffer 
+ * @return Pointer to newly allocated buffer
  */
-void *calloc(size_t size); 
+void *calloc(size_t size);
 
 /**
  * Configure the heap type to use
@@ -438,53 +463,52 @@ void setheap(uint32_t type);
  * Initialize stack cookie
  *
  */
-void __stack_cookie_init(); 
+void __stack_cookie_init();
 
 /**
  * Check stack cookie
  *
  */
-void __stack_cookie_fail(); 
+void __stack_cookie_fail();
 
 /**
  * Check heap cookie
  *
  */
-void __heap_cookie_fail(); 
+void __heap_cookie_fail();
 
 /**
  * Check heap cookie if enabled, return next chunk.
  * Terminates on error
  *
- * @param a current heap_chunk_t 
+ * @param a current heap_chunk_t
  * @param type heap type
  * @return a->next if safe, terminate if not
  */
-inline heap_chunk_t* __attribute__((always_inline)) HNEXT(heap_chunk_t *a, 
-        heaptype type) {
-    if (type && a->cookie != __hcookie[type])  __heap_cookie_fail();
-    return a->next;
+inline heap_chunk_t *__attribute__((always_inline)) HNEXT(heap_chunk_t *a,
+                                                          heaptype type) {
+  if (type && a->cookie != __hcookie[type]) __heap_cookie_fail();
+  return a->next;
 }
 
 /**
  * Check heap cookie if enabled, return next chunk.
  * Terminates on error
  *
- * @param a current heap_chunk_t 
+ * @param a current heap_chunk_t
  * @param type heap type
  * @return a->next if safe, terminate if not
  */
-inline heap_chunk_t* __attribute__((always_inline)) HPREV(heap_chunk_t *a, 
-        heaptype type) {
-    if (type && a->cookie != __hcookie[type])  __heap_cookie_fail();
-    return a->prev;
+inline heap_chunk_t *__attribute__((always_inline)) HPREV(heap_chunk_t *a,
+                                                          heaptype type) {
+  if (type && a->cookie != __hcookie[type]) __heap_cookie_fail();
+  return a->prev;
 }
 
 /**
  * Validate that heap is walkable in all directions
  * Terminates on error
- * 
- */ 
+ *
+ */
 void checkheap();
 #endif
-

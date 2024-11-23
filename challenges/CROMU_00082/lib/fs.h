@@ -39,23 +39,23 @@ THE SOFTWARE.
 #define MAX_PASSWD_LEN (32)
 
 typedef struct _inode {
-        char *Filename;
-        char *Owner;
-        uint8_t Mode;
-        uint32_t FileSize;
-        unsigned char *Data;
+  char *Filename;
+  char *Owner;
+  uint8_t Mode;
+  uint32_t FileSize;
+  unsigned char *Data;
 } Inode, *pInode;
 
 typedef struct _fs {
-        uint32_t MaxSize;
-        uint32_t MaxFiles;
-        pInode *Inodes;
+  uint32_t MaxSize;
+  uint32_t MaxFiles;
+  pInode *Inodes;
 } Filesystem, *pFilesystem;
 
 typedef struct _file {
-	pInode Inode;
-	uint8_t Mode;
-	uint32_t CurrPosition;
+  pInode Inode;
+  uint8_t Mode;
+  uint32_t CurrPosition;
 } FILE;
 
 char *FsError(void);
@@ -79,4 +79,4 @@ uint8_t CheckPasswd(char *Username, char *Password);
 uint8_t UserExists(char *Username);
 char *fgets(char *buf, uint32_t size, FILE *fp);
 
-#endif // __FS_H__
+#endif  // __FS_H__

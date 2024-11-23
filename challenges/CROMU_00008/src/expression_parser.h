@@ -28,52 +28,43 @@ THE SOFTWARE.
 
 #include "database.h"
 
-#define PARSER_EXCEPTION_INVALID_TOKEN          1
-#define PARSER_EXCEPTION_SYNTAX_ERROR           2
-#define PARSER_EXCEPTION_OVERFLOW               3
+#define PARSER_EXCEPTION_INVALID_TOKEN 1
+#define PARSER_EXCEPTION_SYNTAX_ERROR 2
+#define PARSER_EXCEPTION_OVERFLOW 3
 
-typedef enum
-{
-    SYM_OPEN_PARAN,
-    SYM_CLOSE_PARAN,
-    SYM_EQUAL,
-    SYM_NOT_EQUAL,
-    SYM_LESS_THAN,
-    SYM_GREATER_THAN,
-    SYM_AND,
-    SYM_OR,
-    SYM_LASTNAME,
-    SYM_FIRSTNAME,
-    SYM_USERNAME,
-    SYM_BIRTHDATE,
-    SYM_NOTFOUND,
-    SYM_END
+typedef enum {
+  SYM_OPEN_PARAN,
+  SYM_CLOSE_PARAN,
+  SYM_EQUAL,
+  SYM_NOT_EQUAL,
+  SYM_LESS_THAN,
+  SYM_GREATER_THAN,
+  SYM_AND,
+  SYM_OR,
+  SYM_LASTNAME,
+  SYM_FIRSTNAME,
+  SYM_USERNAME,
+  SYM_BIRTHDATE,
+  SYM_NOTFOUND,
+  SYM_END
 } eParserSymbol;
 
-typedef enum
-{
-    ITEM_TYPE_SYMBOL,
-    ITEM_TYPE_RESULT,
-    ITEM_TYPE_EMPTY
-} eItemType;
+typedef enum { ITEM_TYPE_SYMBOL, ITEM_TYPE_RESULT, ITEM_TYPE_EMPTY } eItemType;
 
-typedef struct _PARSER_SYMBOL_TABLE
-{
-    char *text;
-    eParserSymbol symbol;
+typedef struct _PARSER_SYMBOL_TABLE {
+  char *text;
+  eParserSymbol symbol;
 } tParserSymbolTable;
 
-typedef struct _RESULT_ITEM_STACK
-{
-    eItemType type;
-    union
-    {
-        eParserSymbol symbol;
-        uint8_t result_list[MAX_DDAP_RECORDS];
-    } data;
-    uint8_t result_list_size;
+typedef struct _RESULT_ITEM_STACK {
+  eItemType type;
+  union {
+    eParserSymbol symbol;
+    uint8_t result_list[MAX_DDAP_RECORDS];
+  } data;
+  uint8_t result_list_size;
 } tItemStack;
 
-void parse_search_expression( char *pszTemp );
+void parse_search_expression(char *pszTemp);
 
-#endif // EXPRESSION_PARSER_H__
+#endif  // EXPRESSION_PARSER_H__

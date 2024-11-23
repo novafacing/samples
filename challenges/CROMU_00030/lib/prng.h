@@ -33,8 +33,8 @@ void sprng(uint64_t seed);
 uint64_t prng();
 uint32_t random_in_range(uint32_t min, uint32_t max);
 
-// Coefficients chosen from "An Experimental Exploration of 
-// Marsaglia's Xorshift Generators, Scrambled" by Sebastiano Vigna. 
+// Coefficients chosen from "An Experimental Exploration of
+// Marsaglia's Xorshift Generators, Scrambled" by Sebastiano Vigna.
 #define COEFFICIENT_A_64 12
 #define COEFFICIENT_B_64 25
 #define COEFFICIENT_C_64 27
@@ -43,9 +43,9 @@ uint32_t random_in_range(uint32_t min, uint32_t max);
 #define COEFFICIENT_B_1024 13
 #define COEFFICIENT_C_1024 46
 
-// Multipliers chosen from "Tables of Linear Congruetial Generators of 
-// Different Sizes and Good Lattice Structure" by Pierre L'Ecuyer. 
+// Multipliers chosen from "Tables of Linear Congruetial Generators of
+// Different Sizes and Good Lattice Structure" by Pierre L'Ecuyer.
 #define MULTIPLIER_1024 1865811235122147685LL
-#define MULTIPLIER_64	1803442709493370165LL
+#define MULTIPLIER_64 1803442709493370165LL
 
-#endif // PRNG_H
+#endif  // PRNG_H

@@ -1,21 +1,21 @@
 #ifndef DICT_H_
 #define DICT_H_
 
-typedef void (*record_free_t) (void *);
+typedef void (*record_free_t)(void *);
 
 typedef struct _record_t {
-    struct _record_t *next, *prev;
-    struct _record_t *tbl_next, *tbl_prev;
-    char *name;
+  struct _record_t *next, *prev;
+  struct _record_t *tbl_next, *tbl_prev;
+  char *name;
 } _record_t;
 
 typedef struct {
-    record_free_t free_fn;
-    _record_t *head;
-    _record_t **tbl;
+  record_free_t free_fn;
+  _record_t *head;
+  _record_t **tbl;
 
-    unsigned int count;
-    unsigned int length;
+  unsigned int count;
+  unsigned int length;
 } dict_t;
 
 int dict_init(dict_t *dict, record_free_t);

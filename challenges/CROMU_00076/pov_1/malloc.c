@@ -25,248 +25,237 @@ THE SOFTWARE.
 */
 
 #include <malloc.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct meta {
-	size_t length;
-	struct meta *next;
-	struct meta *prev;
+  size_t length;
+  struct meta *next;
+  struct meta *prev;
 } meta, *pmeta;
 
-#define BUCKET( size )	(size > 1016 ? 0 : size / 8 )
+#define BUCKET(size) (size > 1016 ? 0 : size / 8)
 
 /// Each bucket is the head of a singly linked list
 ///  The size for the bucket can be calculated via index*8
 ///  However, the freelist bucket 0 also uses the prev pointer
 pmeta lookaside[128] = {NULL};
 
-void link( pmeta linkme )
-{
-	pmeta walker = lookaside[0];
+void link(pmeta linkme) {
+  pmeta walker = lookaside[0];
 
-	if ( linkme == NULL ) {
-		return;
-	}
+  if (linkme == NULL) {
+    return;
+  }
 
-	/// Handle the case where this is <= 1016
-	if ( linkme->length <= 1016 ) {
-		linkme->next = lookaside[ BUCKET( linkme->length ) ];
-		lookaside[ BUCKET( linkme->length ) ] = linkme;
-		return;
-	}
+  /// Handle the case where this is <= 1016
+  if (linkme->length <= 1016) {
+    linkme->next = lookaside[BUCKET(linkme->length)];
+    lookaside[BUCKET(linkme->length)] = linkme;
+    return;
+  }
 
-	while ( walker ) {
-		if ( walker->next == NULL ) {
-			walker->next = linkme;
-			linkme->prev = walker;
-			linkme->next = NULL;
-			return;
-		} else if ( linkme->length < walker->next->length ) {
-			linkme->next = walker->next;
-			linkme->prev = walker;
-			walker->next->prev = linkme;
-			walker->next = linkme;
-			return;
-		} else {
-			walker = walker->next;
-		}
-	}
+  while (walker) {
+    if (walker->next == NULL) {
+      walker->next = linkme;
+      linkme->prev = walker;
+      linkme->next = NULL;
+      return;
+    } else if (linkme->length < walker->next->length) {
+      linkme->next = walker->next;
+      linkme->prev = walker;
+      walker->next->prev = linkme;
+      walker->next = linkme;
+      return;
+    } else {
+      walker = walker->next;
+    }
+  }
 
-	return;
+  return;
 }
 
-void add_freelist_block( size_t length )
-{
-	pmeta block = NULL;
-	pmeta walker = NULL;
+void add_freelist_block(size_t length) {
+  pmeta block = NULL;
+  pmeta walker = NULL;
 
-	/// Round to the nearest page
+  /// Round to the nearest page
 
-	/// Account for the 4 byte length field
-	length += 4;
+  /// Account for the 4 byte length field
+  length += 4;
 
-	length = (length + 4095 ) & 0xfffff000;
+  length = (length + 4095) & 0xfffff000;
 
-	if ( allocate( length, 0, (void**)&block) != 0 ) {
-		_terminate(-1);
-	}
+  if (allocate(length, 0, (void **)&block) != 0) {
+    _terminate(-1);
+  }
 
-	bzero( block, length );
+  bzero(block, length);
 
-	block->length = length-4;
-	
-	if ( lookaside[0] == NULL ) {
-		lookaside[0] = block;
-		return;
-	}
+  block->length = length - 4;
 
-	link( block );
+  if (lookaside[0] == NULL) {
+    lookaside[0] = block;
+    return;
+  }
 
-	return;
+  link(block);
+
+  return;
 }
 
-void free( void *block )
-{
-	pmeta nb = NULL;
+void free(void *block) {
+  pmeta nb = NULL;
 
-	if ( block ) {
-		nb = (pmeta) (( (char*)block) - 4);
-		link(nb);
-	}
+  if (block) {
+    nb = (pmeta)(((char *)block) - 4);
+    link(nb);
+  }
 
-	return;
+  return;
 }
 
-void init_freelist( void )
-{
-	pmeta zero_block = NULL;
-	pmeta base_block = NULL;
+void init_freelist(void) {
+  pmeta zero_block = NULL;
+  pmeta base_block = NULL;
 
-	if ( allocate(4096, 0, (void**)&lookaside) != 0 ) {
-		_terminate(-1);
-	}
+  if (allocate(4096, 0, (void **)&lookaside) != 0) {
+    _terminate(-1);
+  }
 
-	bzero( lookaside[0], 4096);
+  bzero(lookaside[0], 4096);
 
-	zero_block = lookaside[0];
-	base_block = zero_block + 1;
+  zero_block = lookaside[0];
+  base_block = zero_block + 1;
 
-	/// Keep a zero length head on the freelist for
-	///	ease of organization
-	zero_block->length = 0;
-	zero_block->next = base_block;
-	zero_block->prev = NULL;
+  /// Keep a zero length head on the freelist for
+  ///	ease of organization
+  zero_block->length = 0;
+  zero_block->next = base_block;
+  zero_block->prev = NULL;
 
-	base_block->length = 4096 - sizeof(meta) - 4;
-	base_block->prev = zero_block;
-	base_block->next = NULL;
+  base_block->length = 4096 - sizeof(meta) - 4;
+  base_block->prev = zero_block;
+  base_block->next = NULL;
 
-
-	return;
+  return;
 }
 
-void unlink( pmeta block )
-{
-	if ( block == NULL ) {
-		return;
-	}
+void unlink(pmeta block) {
+  if (block == NULL) {
+    return;
+  }
 
-	if ( block->prev != NULL ) {
-		block->prev->next = block->next;
-	}
+  if (block->prev != NULL) {
+    block->prev->next = block->next;
+  }
 
-	if ( block->next != NULL ) {
-		block->next->prev = block->prev;
-	}
+  if (block->next != NULL) {
+    block->next->prev = block->prev;
+  }
 
-	return;
+  return;
 }
 
-void *freelist_alloc( size_t length )
-{
-	pmeta walker = NULL;
-	pmeta newone = NULL;
+void *freelist_alloc(size_t length) {
+  pmeta walker = NULL;
+  pmeta newone = NULL;
 
-	/// If there isn't a block on the free list then initialize one
-	/// This should only be the case on the first allocation request
-	if ( lookaside[0] == NULL ) {
-		init_freelist();
-	}
+  /// If there isn't a block on the free list then initialize one
+  /// This should only be the case on the first allocation request
+  if (lookaside[0] == NULL) {
+    init_freelist();
+  }
 
-	walker = (pmeta)lookaside[0];
+  walker = (pmeta)lookaside[0];
 
-	// Walk while looking for the smallest useable
-	while ( walker ) {
-		if ( walker->length < length ) {
-			walker = walker->next;
-		} else {
-			break;
-		}
-	}
+  // Walk while looking for the smallest useable
+  while (walker) {
+    if (walker->length < length) {
+      walker = walker->next;
+    } else {
+      break;
+    }
+  }
 
-	if ( walker == NULL ) {
-		add_freelist_block( length );
-		return freelist_alloc(length);
-	} else {
+  if (walker == NULL) {
+    add_freelist_block(length);
+    return freelist_alloc(length);
+  } else {
+    unlink(walker);
 
-		unlink(walker);
+    /// If the block is less than the size needed for at
+    ///	least an 8 byte block then return the whole thing
+    ///	That means sizeof(meta) prev and next total 8 bytes
+    ///	bytes on the lookaside list
+    if (walker->length - length < sizeof(meta)) {
+      /// Skip the 4 byte length
+      return ((char *)walker) + 4;
+    }
 
-		/// If the block is less than the size needed for at
-		///	least an 8 byte block then return the whole thing
-		///	That means sizeof(meta) prev and next total 8 bytes
-		///	bytes on the lookaside list
-		if ( walker->length - length < sizeof(meta) ) {
-			/// Skip the 4 byte length
-			return ((char*)walker) + 4;
-		}
+    /// Break the chunk off
+    newone = (pmeta)(((char *)walker) + 4 + length);
+    newone->length = walker->length - (length + 4);
 
-		/// Break the chunk off
-		newone = (pmeta) ( ((char*)walker) + 4 + length );
-		newone->length = walker->length - (length+4);
+    walker->length = length;
 
-		walker->length = length;
+    link(newone);
 
-		link(newone);
+    return ((char *)walker) + 4;
+  }
 
-		return ((char*)walker) + 4;
-	}
-
-	return NULL;
+  return NULL;
 }
 
+void *calloc(size_t length) {
+  void *out = malloc(length);
 
-void *calloc( size_t length )
-{
-	void *out = malloc( length );
+  if (!out) {
+    return out;
+  }
 
-	if ( !out ) {
-		return out;
-	}
+  length = (length + 7) & 0xfffffff8;
 
-	length = (length+7) & 0xfffffff8;
+  bzero(out, length);
 
-	bzero( out, length);
-
-	return out;
+  return out;
 }
 
-void *malloc( size_t length )
-{
-	int bucket = 0;
-	pmeta outb = NULL;
-	
-	// The minimum size for a valid request is 8 bytes
-	if ( length < 8 ) {
-		length = 8;
-	}
+void *malloc(size_t length) {
+  int bucket = 0;
+  pmeta outb = NULL;
 
-	// Round up to nearest 8
-	length = (length+7) & 0xfffffff8;
+  // The minimum size for a valid request is 8 bytes
+  if (length < 8) {
+    length = 8;
+  }
 
-	bucket = BUCKET(length);
+  // Round up to nearest 8
+  length = (length + 7) & 0xfffffff8;
 
-	if ( bucket == 0 ) {
-		return freelist_alloc( length );
-	} else {
-		while ( bucket < 128 ) {
-			if ( lookaside[ bucket] != NULL ) {
-				break;
-			}
+  bucket = BUCKET(length);
 
-			bucket++;
-		}
-	}
+  if (bucket == 0) {
+    return freelist_alloc(length);
+  } else {
+    while (bucket < 128) {
+      if (lookaside[bucket] != NULL) {
+        break;
+      }
 
-	if ( bucket == 128 ) {
-		return freelist_alloc( length );
-	} else {
-		outb = lookaside[ bucket ];
-		lookaside[bucket] = outb->next;
+      bucket++;
+    }
+  }
 
-		return ( (char*)outb ) + 4;
-	}
+  if (bucket == 128) {
+    return freelist_alloc(length);
+  } else {
+    outb = lookaside[bucket];
+    lookaside[bucket] = outb->next;
 
-	return NULL;
+    return ((char *)outb) + 4;
+  }
+
+  return NULL;
 }

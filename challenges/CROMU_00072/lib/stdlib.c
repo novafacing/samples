@@ -23,137 +23,111 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <stdlib.h>
-#include <stdint.h>
 #include <ctype.h>
-
 #include <prng.h>
+#include <stdint.h>
+#include <stdlib.h>
 
-int rand( void )
-{
-	return (random_in_range( 0, RAND_MAX-1 ));
+int rand(void) { return (random_in_range(0, RAND_MAX - 1)); }
+
+void srand(unsigned int seed) { seed_prng(seed); }
+
+int atoi(const char *pStr) {
+  int value = 0;
+  int negative = 0;
+
+  while (isspace(*pStr)) pStr++;
+
+  if (*pStr == '\0') return 0;
+
+  if (*pStr == '-') {
+    negative = 1;
+    pStr++;
+  }
+
+  // Read in string
+  while (isdigit(*pStr)) value = (value * 10) + (*pStr++ - '0');
+
+  if (negative)
+    return (-value);
+  else
+    return value;
 }
 
-void srand( unsigned int seed )
-{
-	seed_prng( seed );
+double atof(char *pStr) {
+  double whole;
+  double fraction = 0.0;
+  char *pWhole = pStr;
+  char *pFraction;
+
+  // find the decimal point
+  pFraction = pStr;
+  while (*pFraction != '\0') {
+    if (*pFraction == '.') {
+      *pFraction = '\0';
+      pFraction++;
+      break;
+    }
+    pFraction++;
+  }
+
+  // convert the whole part
+  whole = atoi(pWhole);
+
+  // convert the fractional part
+  if (*pFraction != '\0') {
+    fraction = atoi(pFraction);
+    while (pFraction != '\0' && isdigit(*pFraction)) {
+      fraction /= 10.0;
+      pFraction++;
+    }
+  }
+
+  return (whole + fraction);
 }
 
-int atoi( const char *pStr )
-{
-	int value = 0;
-	int negative = 0;
+char *strcpy(char *pDest, const char *pSrc) {
+  char *pDestReturn = pDest;
 
-	while ( isspace( *pStr ) )
-		pStr++;
+  while (*pSrc != '\0') *pDest++ = *pSrc++;
 
-	if ( *pStr == '\0' )
-		return 0;
+  *pDest = '\0';
 
-	if ( *pStr == '-' )
-	{
-		negative = 1;
-		pStr++;
-	}
-
-	// Read in string
-	while ( isdigit( *pStr ) )
-		value = (value * 10) + (*pStr++ - '0');
-
-	if ( negative )
-		return (-value);
-	else
-		return value;	
+  return (pDestReturn);
 }
 
-double atof( char *pStr )
-{
-	double whole;
-	double fraction = 0.0;
-	char *pWhole = pStr;
-	char *pFraction;
-	
-	// find the decimal point
-	pFraction = pStr;
-	while ( *pFraction != '\0' ) 
-	{
-		if (*pFraction == '.')
-		{
-			*pFraction = '\0';
-			pFraction++;
-			break;
-		}
-		pFraction++;
-	}
-	
-	// convert the whole part
-	whole = atoi(pWhole);
+char *strncpy(char *pDest, const char *pSrc, size_t maxlen) {
+  size_t n;
 
-	// convert the fractional part
-	if (*pFraction != '\0') {
-		fraction = atoi(pFraction);
-		while ( pFraction != '\0' && isdigit( *pFraction ) ) {
-			fraction /= 10.0;
-			pFraction++;
-		}
-	}
+  for (n = 0; n < maxlen; n++) {
+    if (pSrc[n] == '\0') break;
 
-	return ( whole + fraction );
-	
-}
-	
+    pDest[n] = pSrc[n];
+  }
 
-char *strcpy( char *pDest, const char *pSrc )
-{
-	char *pDestReturn = pDest;
+  for (; n < maxlen; n++) pDest[n] = '\0';
 
-	while ( *pSrc != '\0' )
-		*pDest++ = *pSrc++;
-
-	*pDest = '\0'; 
-
-	return (pDestReturn);
+  return (pDest);
 }
 
-char *strncpy( char *pDest, const char *pSrc, size_t maxlen )
-{
-	size_t n;
+void *memcpy(void *pDest, const void *pSource, size_t nbytes) {
+  void *pDestReturn = pDest;
 
-	for ( n = 0; n < maxlen; n++ )
-	{
-		if ( pSrc[n] == '\0' )
-			break;
+  while (nbytes >= 4) {
+    *((uint32_t *)pDest) = *((uint32_t *)pSource);
 
-		pDest[n] = pSrc[n];
-	}
+    pDest += 4;
+    pSource += 4;
+    nbytes -= 4;
+  }
 
-	for ( ; n < maxlen; n++ )
-		pDest[n] = '\0';
+  while (nbytes > 0) {
+    *((uint8_t *)pDest) = *((uint8_t *)pSource);
 
-	return (pDest);
-}
+    pDest++;
+    pSource++;
+    nbytes--;
+  }
 
-void *memcpy( void *pDest, const void *pSource, size_t nbytes )
-{
-	void *pDestReturn = pDest;
-
-	while ( nbytes >= 4 )
-	{
-		*((uint32_t*)pDest) = *((uint32_t*)pSource);
-
-		pDest += 4;
-		pSource += 4;
-		nbytes-=4;		
-	}
-
-	while ( nbytes > 0 )
-	{
-		*((uint8_t*)pDest) = *((uint8_t*)pSource);
-
-		pDest++;
-		pSource++;
-		nbytes--;
-	}
-
-	return (pDestReturn);
+  return (pDestReturn);
 }

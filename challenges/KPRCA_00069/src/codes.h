@@ -27,6 +27,6 @@
 #define PIXELW 4
 #define PIXELH 120
 
-enum {ERROR = -1, OK = 0, BAD_FMT = 1};
+enum { ERROR = -1, OK = 0, BAD_FMT = 1 };
 
 #endif

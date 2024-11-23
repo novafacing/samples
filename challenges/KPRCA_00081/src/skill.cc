@@ -21,22 +21,19 @@
  *
  */
 
+#include "skill.h"
+
 #include <cstdio.h>
 #include <cstdlib.h>
 #include <cstring.h>
 
-#include "skill.h"
-
-CSkill::CSkill(const char* name, CRequirement::Type counter, int price) : m_counter(counter), m_price(price)
-{
-    m_name = strndup(name, k_maxNameLength);
+CSkill::CSkill(const char* name, CRequirement::Type counter, int price)
+    : m_counter(counter), m_price(price) {
+  m_name = strndup(name, k_maxNameLength);
 }
 
-CSkill::~CSkill()
-{
-}
+CSkill::~CSkill() {}
 
-bool CSkill::IsCounter(CRequirement::Type type)
-{
-    return (type & m_counter) == m_counter;
+bool CSkill::IsCounter(CRequirement::Type type) {
+  return (type & m_counter) == m_counter;
 }

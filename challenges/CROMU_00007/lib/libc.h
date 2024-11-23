@@ -37,5 +37,4 @@ void itoa(char *str, int i);
 void memcpy(char *dst, char *src, size_t size);
 void memset(char *dst, char c, size_t size);
 
-
-#endif // LIBC_H
+#endif  // LIBC_H

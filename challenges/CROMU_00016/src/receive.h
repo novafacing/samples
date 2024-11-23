@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 */
 
-#define MAX_SPEED 4*1024*1024
+#define MAX_SPEED 4 * 1024 * 1024
 
 int InitReceive(void);
 int RX(void);

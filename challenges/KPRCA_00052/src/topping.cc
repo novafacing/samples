@@ -22,23 +22,16 @@
  */
 #include "topping.h"
 
-extern "C"
-{
-    #include <string.h>
+extern "C" {
+#include <string.h>
 };
 
-Topping::~Topping()
-{
+Topping::~Topping() {}
+
+bool Topping::operator==(const Topping &rhs) const {
+  return (strcasecmp(name, rhs.name) == 0);
 }
 
-bool Topping::operator==(const Topping &rhs) const
-{
-    return (strcasecmp(name, rhs.name) == 0);
+bool Topping::operator!=(const Topping &rhs) const {
+  return (strcasecmp(name, rhs.name) != 0);
 }
-
-
-bool Topping::operator!=(const Topping &rhs) const
-{
-    return (strcasecmp(name, rhs.name) != 0);
-}
-

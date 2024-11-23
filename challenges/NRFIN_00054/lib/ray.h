@@ -26,7 +26,7 @@
 #include "vector.h"
 
 struct ray {
-    struct vector origin, direction;
+  struct vector origin, direction;
 };
 
 /**
@@ -39,4 +39,3 @@ struct ray {
 struct ray make_ray(struct vector origin, struct vector direction);
 
 #endif /* RAY_H_ */
-

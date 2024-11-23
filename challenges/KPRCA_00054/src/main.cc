@@ -22,10 +22,10 @@
  */
 
 extern "C" {
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "readuntil.h"
 };
@@ -40,8 +40,7 @@ FileManager *fileMan;
 
 void call_inits(void);
 
-void init_commands()
-{
+void init_commands() {
   /* Create commands */
   cmdMan = new CommandManager(fileMan);
   ListCmd *list = new ListCmd();
@@ -74,29 +73,24 @@ void init_commands()
   cmdMan->InstallCommand(help);
 }
 
-char** parse_args(char *s, int *argc)
-{
+char **parse_args(char *s, int *argc) {
   char **argv = 0, *p;
   int i = 0;
   *argc = 0;
 
-  if (!s && *s)
-    return 0;
+  if (!s && *s) return 0;
   p = s;
-  while (*p)
-  {
+  while (*p) {
     while (isspace(*p)) p++;
     if (!*p) break;
     while (*p && !isspace(*p)) p++;
     (*argc)++;
   }
-  if (*argc > 0)
-  {
+  if (*argc > 0) {
     p = s;
-    argv = (char **) calloc((*argc + 1), sizeof(char *));
+    argv = (char **)calloc((*argc + 1), sizeof(char *));
     while (isspace(*p)) p++;
-    while (*p)
-    {
+    while (*p) {
       argv[i] = p;
       while (*p && !isspace(*p)) p++;
       if (!*p) break;
@@ -109,8 +103,7 @@ char** parse_args(char *s, int *argc)
   return argv;
 }
 
-int main()
-{
+int main() {
   int argc;
   char buf[2048], **argv = 0;
   fileMan = new FileManager();
@@ -119,14 +112,11 @@ int main()
   call_inits();
   init_commands();
 
-  while (1)
-  {
+  while (1) {
     printf("$ ");
-    if (read_until(STDIN, buf, sizeof(buf), '\n') < 0)
-      return -1;
+    if (read_until(STDIN, buf, sizeof(buf), '\n') < 0) return -1;
     argv = parse_args(buf, &argc);
-    if (argc)
-    {
+    if (argc) {
       if (cmdMan->ExecuteCommand(argv[0], --argc, &argv[1]) < 0)
         printf("Unknown command [%s]\n", argv[0]);
       free(argv);

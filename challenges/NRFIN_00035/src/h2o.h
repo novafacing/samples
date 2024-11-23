@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef H2O_H
 #define H2O_H 1
@@ -27,8 +26,8 @@
 #include <stdint.h>
 
 struct h2o {
-	uint8_t H2O[3]; // 0x48 == 'H', 0x48 == 'H', 0x4F == 'O'
-	uint8_t unk; // make struct into even mult of 4 bytes
+  uint8_t H2O[3];  // 0x48 == 'H', 0x48 == 'H', 0x4F == 'O'
+  uint8_t unk;     // make struct into even mult of 4 bytes
 };
 
 /**
@@ -46,4 +45,3 @@ struct h2o *create_h2o();
 void destroy_h2o(struct h2o *h);
 
 #endif
- 

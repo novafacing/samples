@@ -27,11 +27,12 @@ THE SOFTWARE.
 #ifndef SHAPES_H_DEFINED
 #define SHAPES_H_DEFINED
 
-int request_volume(); // give user dimensions of shape, ask for volume
-int request_3d_dim_vol(); // give user some dimensions of shape and volume, ask for remaining dimensions
+int request_volume();      // give user dimensions of shape, ask for volume
+int request_3d_dim_vol();  // give user some dimensions of shape and volume, ask
+                           // for remaining dimensions
 int request_perimeter();
 int request_2d_peri_dim();
 int request_area();
 int request_2d_area_dim();
 
-#endif //SHAPES_H_DEFINED
+#endif  // SHAPES_H_DEFINED

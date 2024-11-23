@@ -29,59 +29,55 @@ struct ast_node;
 struct token;
 
 enum ast_node_type {
-    AST_CONSTANT,
-    AST_VARIABLE,
-    AST_BINARY_OPERATOR,
-    AST_UNARY_OPERATOR,
-    AST_PARENTHESIS
+  AST_CONSTANT,
+  AST_VARIABLE,
+  AST_BINARY_OPERATOR,
+  AST_UNARY_OPERATOR,
+  AST_PARENTHESIS
 };
 
 enum binary_op_type {
-    BIN_ASSIGNMENT,
-    BIN_ADD,
-    BIN_SUBTRACT,
-    BIN_MULTIPLY,
-    BIN_DIVIDE
+  BIN_ASSIGNMENT,
+  BIN_ADD,
+  BIN_SUBTRACT,
+  BIN_MULTIPLY,
+  BIN_DIVIDE
 };
 
 struct binary_op {
-    enum binary_op_type type;
-    struct ast_node *lhs, *rhs;
+  enum binary_op_type type;
+  struct ast_node *lhs, *rhs;
 };
 
-enum unary_op_type {
-    UN_NEGATE,
-    UN_ADDRESS_OF,
-    UN_DEREFERENCE
-};
+enum unary_op_type { UN_NEGATE, UN_ADDRESS_OF, UN_DEREFERENCE };
 
 struct unary_op {
-    enum unary_op_type type;
-    struct ast_node *n;
+  enum unary_op_type type;
+  struct ast_node *n;
 };
 
 struct ast_node {
-    struct ast_node *next;
-    enum ast_node_type type;
-    union {
-        struct token *token;
-        char variable[4];
-        int constant;
-        struct binary_op bin_op;
-        struct unary_op un_op;
-    } expr;
+  struct ast_node *next;
+  enum ast_node_type type;
+  union {
+    struct token *token;
+    char variable[4];
+    int constant;
+    struct binary_op bin_op;
+    struct unary_op un_op;
+  } expr;
 };
 
 struct ast {
-    struct pool pool;
-    struct ast_node *expr;
+  struct pool pool;
+  struct ast_node *expr;
 };
 
 /**
  * Parse a buffer of tokens into an AST.
  *
  * @param tokens The tokens to parse
- * @param n The number of tokens in the buffer 
+ * @param n The number of tokens in the buffer
  * @param out Pointer to the AST to parse into
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
@@ -95,4 +91,3 @@ int parse(struct token *tokens, size_t n, struct ast *out);
 void ast_destroy(struct ast *ast);
 
 #endif /* PARSER_H_ */
-

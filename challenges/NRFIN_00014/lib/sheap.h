@@ -18,15 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
- 
+ */
+
 #include <libcgc.h>
+
 #include "libc.h"
 #include "ll.h"
 #ifndef SHEAP_H
 #define SHEAP_H
 
-void * malloc(size_t s);
+void *malloc(size_t s);
 void free(void *p);
 void malloc_init();
 #endif

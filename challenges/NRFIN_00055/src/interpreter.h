@@ -37,4 +37,3 @@ struct namespace;
 int eval(struct ast *ast, struct namespace *ns, struct variable *result);
 
 #endif /* INTERPRETER_H_ */
-

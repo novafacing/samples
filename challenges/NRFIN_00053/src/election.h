@@ -18,13 +18,13 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef CITIZEN_H
 #define CITIZEN_H 1
 
-#include "list.h"
 #include "hash_table.h"
+#include "list.h"
 
 #define TERM '\x00'
 #define DELIM '\n'
@@ -32,66 +32,66 @@
 #define MAX_SIZE 980
 
 typedef enum {
-	E_MGR 	= 1,
-	VOTER 	= 2,
-	NO_AUTH = 4,
+  E_MGR = 1,
+  VOTER = 2,
+  NO_AUTH = 4,
 } auth_t;
 
 typedef enum {
-	INIT 	= 1,
-    NEW 	= 2,
-    OPEN 	= 4,
-    CLOSED 	= 8,
+  INIT = 1,
+  NEW = 2,
+  OPEN = 4,
+  CLOSED = 8,
 } e_states;
 
 struct e_conf {
-	void 		  *authd_user;		// pointer to currently logged in/authorized user
-	unsigned int  e_mgr_id; 		// ID of election manager
-	unsigned int  next_voter_id;	// ID to assign to next new voter
-	unsigned int  next_candidate_id;// ID to assing to next new candidate
-	unsigned char num_winners;		// number of winners desired
-	unsigned char max_candidates;	// max number of candidates
-	unsigned char write_in_ok;		// allow write-in candidates?
-	unsigned char bogus;			// pad to 4 bytes, maybe use later?
+  void *authd_user;            // pointer to currently logged in/authorized user
+  unsigned int e_mgr_id;       // ID of election manager
+  unsigned int next_voter_id;  // ID to assign to next new voter
+  unsigned int next_candidate_id;  // ID to assing to next new candidate
+  unsigned char num_winners;       // number of winners desired
+  unsigned char max_candidates;    // max number of candidates
+  unsigned char write_in_ok;       // allow write-in candidates?
+  unsigned char bogus;             // pad to 4 bytes, maybe use later?
 };
 typedef struct {
-    unsigned int id;
-    char f_name[NAME_FIELD_SZ];
-    char l_name[NAME_FIELD_SZ];
+  unsigned int id;
+  char f_name[NAME_FIELD_SZ];
+  char l_name[NAME_FIELD_SZ];
 } person_t;
 
 typedef struct {
-	person_t person;
-    unsigned char (*validate)(void *);
-    unsigned int auth_key;
+  person_t person;
+  unsigned char (*validate)(void *);
+  unsigned int auth_key;
 } e_mgr_t;
 
 typedef struct {
-	person_t person;
-    unsigned char (*validate)(void *);
-    unsigned int vote_id;
+  person_t person;
+  unsigned char (*validate)(void *);
+  unsigned int vote_id;
 } voter_t;
 
 typedef struct {
-	person_t person;
-    unsigned char (*validate)(void *);
+  person_t person;
+  unsigned char (*validate)(void *);
 } candidate_t;
 
 typedef struct {
-    unsigned int id;
-    voter_t v;  		// include full voter and candidate to create perm record
-    candidate_t c;
-    unsigned char (*validate)(void *);
+  unsigned int id;
+  voter_t v;  // include full voter and candidate to create perm record
+  candidate_t c;
+  unsigned char (*validate)(void *);
 } vote_t;
 
 typedef struct {
-    e_states state;
-    char e_name[NAME_FIELD_SZ];
-    struct list *candidates;
-    ht_t *voters;
-    ht_t *votes;
-    struct e_conf conf;
-    e_mgr_t *manager;
+  e_states state;
+  char e_name[NAME_FIELD_SZ];
+  struct list *candidates;
+  ht_t *voters;
+  ht_t *votes;
+  struct e_conf conf;
+  e_mgr_t *manager;
 } election_t;
 
 /**
@@ -120,6 +120,6 @@ void init_election(void);
  * @param choice 	pointer to uint which will store value chosen by user
  * @return number of bytes stored into choice if success, ERRNO_CONV on failure.
  */
-int get_choice(unsigned int * choice);
+int get_choice(unsigned int *choice);
 
 #endif

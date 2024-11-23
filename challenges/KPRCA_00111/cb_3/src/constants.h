@@ -26,11 +26,11 @@
 #define F_WRITE 1
 
 #ifndef DEBUG
-  #define EOT_C '\x04'
-  #define EOT_S "\x04"
+#define EOT_C '\x04'
+#define EOT_S "\x04"
 #else
-  #define EOT_C '\n'
-  #define EOT_S "\n"
+#define EOT_C '\n'
+#define EOT_S "\n"
 #endif
 
 #define USERNAME_MAX 32

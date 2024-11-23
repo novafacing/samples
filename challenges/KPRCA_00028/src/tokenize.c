@@ -20,45 +20,38 @@
  * THE SOFTWARE.
  *
  */
-#include <libcgc.h>
+#include "tokenize.h"
 
 #include <ctype.h>
+#include <libcgc.h>
 #include <string.h>
-
-#include "tokenize.h"
 
 DEF_LIST_APPEND(tok, char *);
 
-static int ok_for_sym(char c)
-{
+static int ok_for_sym(char c) {
   if (c == '(' || c == ')' || isspace(c))
     return 0;
   else
     return 1;
 }
 
-tok_list *tokenize(char *expr)
-{
+tok_list *tokenize(char *expr) {
   size_t len = strlen(expr);
   size_t i = 0;
 
   tok_list *l = malloc(sizeof(tok_list));
-  if (l == NULL)
-    return NULL;
+  if (l == NULL) return NULL;
   l->value = "START";
 
   while (i < len) {
-    while (isspace(expr[i]))
-      i++;
+    while (isspace(expr[i])) i++;
 
     if (expr[i] == '(' || expr[i] == ')') {
       char *v = malloc(2);
-      if (v == NULL)
-        return NULL;
+      if (v == NULL) return NULL;
       v[0] = expr[i];
       v[1] = '\0';
-      if (tok_list_append(l, v) < 0)
-        return NULL;
+      if (tok_list_append(l, v) < 0) return NULL;
       i++;
       continue;
     }
@@ -66,19 +59,15 @@ tok_list *tokenize(char *expr)
     if (isalnum(expr[i])) {
       size_t start = i;
 
-      while (isalnum(expr[i]) && i < len)
-        i++;
+      while (isalnum(expr[i]) && i < len) i++;
 
-      if (i < start)
-        return NULL;
+      if (i < start) return NULL;
 
       char *v = malloc(i - start + 1);
-      if (v == NULL)
-        return NULL;
+      if (v == NULL) return NULL;
       strncpy(v, expr + start, i - start);
-      if (tok_list_append(l, v) < 0)
-        return NULL;
-    } else{
+      if (tok_list_append(l, v) < 0) return NULL;
+    } else {
       return NULL;
     }
   }

@@ -30,26 +30,25 @@ THE SOFTWARE.
 typedef unsigned long time_t;
 
 typedef struct {
+  unsigned int month;  // 1-12
+  unsigned int day;    // 1-31
+  unsigned int year;   // 1970 - X
+  unsigned int hour;   // 0-23
+  unsigned int min;    // 0-59
+  unsigned int sec;    // 0-59
+  unsigned int doy;    // 0-366
 
-	unsigned int month;  // 1-12
-	unsigned int day;    // 1-31
-	unsigned int year;   // 1970 - X
-	unsigned int hour;   // 0-23
-	unsigned int min;    // 0-59
-	unsigned int sec;    // 0-59
-	unsigned int doy;    // 0-366
+} datetime_struct_type;
 
-}  datetime_struct_type;
-
-
-// from a string formatted MM/DD/YYYY HH:MM:SS in buff, fill out the datetime_struct and return a time_t value
+// from a string formatted MM/DD/YYYY HH:MM:SS in buff, fill out the
+// datetime_struct and return a time_t value
 time_t str2datetime(char *buff, datetime_struct_type *);
 
 time_t datetime2time_t(datetime_struct_type *);
 
 int time_t2datetime(time_t, datetime_struct_type *);
 
-void print_time_t (time_t);
+void print_time_t(time_t);
 
 void print_datetime(datetime_struct_type *tm);
 
@@ -64,10 +63,6 @@ unsigned int leap_year(unsigned int year);
 // returns the day of the year.  1-366 ( 365 for non leap years)
 unsigned int doy(unsigned year, unsigned month, unsigned day);
 
-int print_date (time_t);
-
-
-
-
+int print_date(time_t);
 
 #endif

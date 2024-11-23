@@ -25,97 +25,81 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CCommandHandler::CCommandHandler()
-    : m_cmdCount( 0 )
-{
-    memset( m_cmdTable, 0, sizeof(tCommandTableEntry) * MAX_COMMAND_ENTRIES );
+CCommandHandler::CCommandHandler() : m_cmdCount(0) {
+  memset(m_cmdTable, 0, sizeof(tCommandTableEntry) * MAX_COMMAND_ENTRIES);
 }
 
-CCommandHandler::~CCommandHandler()
-{
+CCommandHandler::~CCommandHandler() {}
 
+bool CCommandHandler::RegisterCommand(const char *pszCommand,
+                                      const char *pszDescription,
+                                      tCmdFunction pFunc) {
+  if (m_cmdCount == MAX_COMMAND_ENTRIES) return (false);
+
+  if (!pszCommand) return (false);
+
+  if (!pFunc) return (false);
+
+  strncpy(m_cmdTable[m_cmdCount].szCommand, pszCommand, MAX_COMMAND_LENGTH);
+  strncpy(m_cmdTable[m_cmdCount].szDescription, pszDescription,
+          MAX_DESCRIPTION_LENGTH);
+
+  m_cmdTable[m_cmdCount].pCmdFunc = pFunc;
+
+  // Update command table count
+  m_cmdCount++;
+
+  return (true);
 }
 
-bool CCommandHandler::RegisterCommand( const char *pszCommand, const char *pszDescription, tCmdFunction pFunc )
-{
-    if ( m_cmdCount == MAX_COMMAND_ENTRIES )
-        return (false);
+tCmdFunction CCommandHandler::GetCommandFunction(const char *pszCommand) {
+  for (uint32_t i = 0; i < m_cmdCount; i++) {
+    if (stricmp(m_cmdTable[i].szCommand, pszCommand) == 0)
+      return (m_cmdTable[i].pCmdFunc);
+  }
 
-    if ( !pszCommand )
-        return (false);
-
-    if ( !pFunc )
-        return (false);
-
-    strncpy( m_cmdTable[m_cmdCount].szCommand, pszCommand, MAX_COMMAND_LENGTH );
-    strncpy( m_cmdTable[m_cmdCount].szDescription, pszDescription, MAX_DESCRIPTION_LENGTH );
-
-    m_cmdTable[m_cmdCount].pCmdFunc = pFunc;
-
-    // Update command table count
-    m_cmdCount++;
-
-    return (true);
+  return (NULL);
 }
 
-tCmdFunction CCommandHandler::GetCommandFunction( const char *pszCommand )
-{
-    for ( uint32_t i = 0; i < m_cmdCount; i++ )
-    {
-        if ( stricmp( m_cmdTable[i].szCommand, pszCommand ) == 0 )
-            return (m_cmdTable[i].pCmdFunc);
+void CCommandHandler::Run(void) {
+  char szLine[1024];
+
+  for (;;) {
+    // Prompt
+    printf(": ");
+
+    // Get command line
+    getline(szLine, 1024);
+
+    char *szToken = strtok(szLine, " ");
+
+    if (szToken == NULL) {
+      printf("Unknown command.\n");
+      continue;
     }
 
-    return (NULL);
+    if (stricmp(szToken, "exit") == 0) break;
+
+    if (stricmp(szToken, "?") == 0) {
+      ListCommands();
+      continue;
+    }
+
+    // Search for appropriate command
+    tCmdFunction pCmdFunc = GetCommandFunction(szToken);
+
+    if (pCmdFunc == NULL) {
+      printf("Unknown command.\n");
+      continue;
+    }
+
+    (*pCmdFunc)(strtok(NULL, ""));
+  }
 }
 
-void CCommandHandler::Run( void )
-{
-    char szLine[1024];
-
-    for (;;)
-    {
-        // Prompt
-        printf( ": " );
-
-        // Get command line
-        getline( szLine, 1024 );
-
-        char *szToken = strtok( szLine, " " );
-
-        if ( szToken == NULL )
-        {
-            printf( "Unknown command.\n" );
-            continue;
-        }
-
-        if ( stricmp( szToken, "exit" ) == 0 )
-            break;
-
-        if ( stricmp( szToken, "?" ) == 0 )
-        {
-            ListCommands();
-            continue;
-        }
-
-        // Search for appropriate command
-        tCmdFunction pCmdFunc = GetCommandFunction( szToken );
-
-        if ( pCmdFunc == NULL )
-        {
-            printf( "Unknown command.\n" );
-            continue;
-        }
-
-        (*pCmdFunc)( strtok( NULL, "" ) );
-    }
-}
-
-void CCommandHandler::ListCommands( void )
-{
-    printf( "Available commands:\n" );
-    for ( uint32_t i = 0; i < m_cmdCount; i++ )
-    {
-        printf( "@s - @s\n", m_cmdTable[i].szCommand, m_cmdTable[i].szDescription );
-    }
+void CCommandHandler::ListCommands(void) {
+  printf("Available commands:\n");
+  for (uint32_t i = 0; i < m_cmdCount; i++) {
+    printf("@s - @s\n", m_cmdTable[i].szCommand, m_cmdTable[i].szDescription);
+  }
 }

@@ -38,7 +38,8 @@ THE SOFTWARE.
 //
 
 uint8_t ClosestMatch(uint8_t type, int16_t val);
-void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len);
+void Compress(t3DCPixel **px_list, uint8_t *compressed_data,
+              uint16_t *data_len);
 void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len);
 void WriteOut(t3DCPixel **px_list, uint8_t *data, uint16_t data_len);
 

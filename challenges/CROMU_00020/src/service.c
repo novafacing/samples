@@ -25,13 +25,13 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "libc.h"
 
-#include "isopropyl.h"
-#include "messages.h"
-#include "protocol.h"
 #include "churn.h"
 #include "handler.h"
+#include "isopropyl.h"
+#include "libc.h"
+#include "messages.h"
+#include "protocol.h"
 
 const int gauntlet_count = 32;
 
@@ -46,7 +46,7 @@ int main(void) {
   seed();
   gauntlet();
 
-  while(1) {
+  while (1) {
     operate();
   }
 
@@ -71,21 +71,21 @@ void operate() {
   transmit(STDERR, ".", 1, NULL);
   protocol_frame* frame = receive_frame();
 
-  switch(frame->type) {
-  case SEED_REQ_ID:
-    handle_seed(frame);
-    break;
-  case RAND_REQ_ID:
-    handle_rand(frame);
-    break;
-  case GUESS_REQ_ID:
-    handle_guess(frame);
-    break;
-  case ECHO_REQ_ID:
-    handle_echo(frame);
-    break;
-  default:
-    _terminate(-1);
+  switch (frame->type) {
+    case SEED_REQ_ID:
+      handle_seed(frame);
+      break;
+    case RAND_REQ_ID:
+      handle_rand(frame);
+      break;
+    case GUESS_REQ_ID:
+      handle_guess(frame);
+      break;
+    case ECHO_REQ_ID:
+      handle_echo(frame);
+      break;
+    default:
+      _terminate(-1);
   }
 
   free_frame(frame);

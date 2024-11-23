@@ -18,20 +18,20 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SYSLOG_H
 #define SYSLOG_H 1
 
 // syslog priorities
-#define LOG_DEBUG 7		// debug-level message
-#define LOG_INFO 6		// informational message
-#define LOG_NOTICE 5	// normal, but interesting condition
-#define LOG_WARNING 4	// warning condition
-#define LOG_ERROR 3		// error condition
-#define LOG_CRITICAL 2	// critical condition
-#define LOG_ALERT 1		// immediate action required
-#define LOG_EMERGENCY 0 // system is unusable
+#define LOG_DEBUG 7      // debug-level message
+#define LOG_INFO 6       // informational message
+#define LOG_NOTICE 5     // normal, but interesting condition
+#define LOG_WARNING 4    // warning condition
+#define LOG_ERROR 3      // error condition
+#define LOG_CRITICAL 2   // critical condition
+#define LOG_ALERT 1      // immediate action required
+#define LOG_EMERGENCY 0  // system is unusable
 #define LOGLEVEL LOG_INFO
 
 /**

@@ -26,64 +26,53 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
+int receive_bytes(unsigned char *buffer, size_t count) {
+  size_t total;
+  size_t rxbytes;
 
-int receive_bytes (unsigned char *buffer, size_t count) 
-{
-size_t total;
-size_t rxbytes;
+  total = 0;
 
-    total = 0;
+  while (total < count) {
+    rxbytes = 0;
 
-    while(total < count)  {
+    if (receive(STDIN, buffer + total, count - total, &rxbytes) == 0) {
+      if (rxbytes == 0) return (-1);
 
-        rxbytes = 0;
+      total += rxbytes;
 
-        if (receive(STDIN, buffer+total, count-total, &rxbytes)==0 ) {
-		if ( rxbytes == 0 )
-			return (-1);
-
-            total += rxbytes;
-
-        }
-        else {
-
-            return(-1);
-        }
-
-
+    } else {
+      return (-1);
     }
+  }
 
-return 0;
-
+  return 0;
 }
 
+size_t receive_until(unsigned char *buffer, unsigned char delim, size_t limit) {
+  size_t len = 0;
+  size_t rx = 0;
+  char c = 0;
 
-size_t receive_until( unsigned char *buffer, unsigned char delim, size_t limit )
-{
-    size_t len = 0;
-    size_t rx = 0;
-    char c = 0;
+  while (len < limit) {
+    buffer[len] = 0;
 
-    while( len < limit ) {
-        buffer[len] = 0;
-
-        if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
-            len = 0;
-            goto end;
-        }
-
-	if (rx == 0) {
-		len = 0;
-		goto end;
-	}
-
-        if ( c == delim ) {
-            goto end;
-        }
-
-        buffer[len] = c;
-        len++;
+    if (receive(STDIN, &c, 1, &rx) != 0) {
+      len = 0;
+      goto end;
     }
+
+    if (rx == 0) {
+      len = 0;
+      goto end;
+    }
+
+    if (c == delim) {
+      goto end;
+    }
+
+    buffer[len] = c;
+    len++;
+  }
 end:
-    return len;
+  return len;
 }

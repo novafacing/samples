@@ -26,36 +26,35 @@ THE SOFTWARE.
 #ifndef __USER_MANAGER_H__
 #define __USER_MANAGER_H__
 
-class CUserManager
-{
-public:
-    static const uint32_t MAX_USERNAME_LENGTH = 12;
-    static const uint32_t MAX_PASSWORD_LENGTH = 12;
+class CUserManager {
+ public:
+  static const uint32_t MAX_USERNAME_LENGTH = 12;
+  static const uint32_t MAX_PASSWORD_LENGTH = 12;
 
-public:
-    CUserManager();
-    ~CUserManager();
+ public:
+  CUserManager();
+  ~CUserManager();
 
-    void Run( void );
+  void Run(void);
 
-private:
-    bool RunCreateUser( void );
-    bool RunUserLogin( void );
-    bool RunAdminLogin( void );
+ private:
+  bool RunCreateUser(void);
+  bool RunUserLogin(void);
+  bool RunAdminLogin(void);
 
-    void DoAdminListUsers( void );
-    void DoAdminDeleteUser( void );
-    void DoAdminChangePassword( void );
+  void DoAdminListUsers(void);
+  void DoAdminDeleteUser(void);
+  void DoAdminChangePassword(void);
 
-    void DoUserSendMessage( CUserEntry *pUser );
-    void DoUserReadMessages( CUserEntry *pUser );
-    void DoUserListMessages( CUserEntry *pUser );
-    void DoUserDeleteMessage( CUserEntry *pUser );
-    void DoUserChangePassword( CUserEntry *pUser );
+  void DoUserSendMessage(CUserEntry *pUser);
+  void DoUserReadMessages(CUserEntry *pUser);
+  void DoUserListMessages(CUserEntry *pUser);
+  void DoUserDeleteMessage(CUserEntry *pUser);
+  void DoUserChangePassword(CUserEntry *pUser);
 
-private:
-    String m_sAdminPassword;
-    CUserDatabase m_userDB;
+ private:
+  String m_sAdminPassword;
+  CUserDatabase m_userDB;
 };
 
-#endif // __USER_MANAGER_H__
+#endif  // __USER_MANAGER_H__

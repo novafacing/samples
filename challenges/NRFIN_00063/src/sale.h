@@ -18,11 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SALE_H
 #define SALE_H 1
 
-float __attribute__((regparm(2))) (*onsale_fn[101])(unsigned int model_num, float cost);
+float __attribute__((regparm(2))) (*onsale_fn[101])(unsigned int model_num,
+                                                    float cost);
 
 #endif

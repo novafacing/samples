@@ -27,37 +27,39 @@ THE SOFTWARE.
 #define __DATABASE_H__
 
 #include <stdint.h>
+
 #include "date.h"
 
-#define MAX_STRING_LENGTH       (128)
-#define MAX_DDAP_RECORDS        (64)
+#define MAX_STRING_LENGTH (128)
+#define MAX_DDAP_RECORDS (64)
 
-#define BAD_RECORD_ERROR        (0xFFFFFFFF)
+#define BAD_RECORD_ERROR (0xFFFFFFFF)
 
-typedef struct __DDAP_RECORD_ENTRY
-{
-    uint32_t index;
-    char szFirstName[MAX_STRING_LENGTH+1];
-    char szLastName[MAX_STRING_LENGTH+1];
-    char szUserName[MAX_STRING_LENGTH+1];
-    tDateTime birthDate;
+typedef struct __DDAP_RECORD_ENTRY {
+  uint32_t index;
+  char szFirstName[MAX_STRING_LENGTH + 1];
+  char szLastName[MAX_STRING_LENGTH + 1];
+  char szUserName[MAX_STRING_LENGTH + 1];
+  tDateTime birthDate;
 } tDDAPRecord;
 
-#define GET_DB_YEAR( year ) ( year + 1900 )
+#define GET_DB_YEAR(year) (year + 1900)
 
-void init_database( void );
+void init_database(void);
 
-uint32_t db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate );
-uint32_t db_update_record( uint32_t index, char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate );
-uint32_t db_remove_record( uint32_t index );
-uint32_t db_get_record_count( void );
+uint32_t db_add_record(char *pszUserName, char *pszFirstName, char *pszLastName,
+                       tDateTime birthDate);
+uint32_t db_update_record(uint32_t index, char *pszUserName, char *pszFirstName,
+                          char *pszLastName, tDateTime birthDate);
+uint32_t db_remove_record(uint32_t index);
+uint32_t db_get_record_count(void);
 
-tDDAPRecord *db_search_first_name( char *pszFirstName );
-tDDAPRecord *db_search_last_name( char *pszLastName );
-tDDAPRecord *db_search_index( uint32_t index );
-tDDAPRecord *db_search_user_name( char *pszUserName );
-tDDAPRecord *db_search_birth_date( tDateTime date  );
+tDDAPRecord *db_search_first_name(char *pszFirstName);
+tDDAPRecord *db_search_last_name(char *pszLastName);
+tDDAPRecord *db_search_index(uint32_t index);
+tDDAPRecord *db_search_user_name(char *pszUserName);
+tDDAPRecord *db_search_birth_date(tDateTime date);
 
-void print_record_helper( tDDAPRecord * );
+void print_record_helper(tDDAPRecord *);
 
-#endif // __DATABASE_H__
+#endif  // __DATABASE_H__

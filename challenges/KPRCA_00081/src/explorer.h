@@ -25,36 +25,35 @@
 
 #include "skill.h"
 
-class CExplorer
-{
-    public:
-        CExplorer(const char *name);
-        ~CExplorer() {};
+class CExplorer {
+ public:
+  CExplorer(const char* name);
+  ~CExplorer() {};
 
-        const char* GetName() { return m_name; }
-        int GetLevel() { return m_level; }
-        int GetExp() { return m_exp; }
-        int GetNextExp();
-        bool GainExp(int exp);
-        void ReplaceSkill(CSkill* skill, int idx);
-        CRequirement::Type GetCounters();
-        bool IsAvail() { return m_avail; }
-        bool IsHired() { return m_hired; }
-        void SetHired(bool flag) { m_hired = flag; }
-        void SetAvail(bool flag) { m_avail = flag; }
-        CSkill** GetSkills() { return m_skills; }
-        virtual void ChangeName(const char *name);
-        static const int k_maxNameLength = 16;
+  const char* GetName() { return m_name; }
+  int GetLevel() { return m_level; }
+  int GetExp() { return m_exp; }
+  int GetNextExp();
+  bool GainExp(int exp);
+  void ReplaceSkill(CSkill* skill, int idx);
+  CRequirement::Type GetCounters();
+  bool IsAvail() { return m_avail; }
+  bool IsHired() { return m_hired; }
+  void SetHired(bool flag) { m_hired = flag; }
+  void SetAvail(bool flag) { m_avail = flag; }
+  CSkill** GetSkills() { return m_skills; }
+  virtual void ChangeName(const char* name);
+  static const int k_maxNameLength = 16;
 
-    private:
-        static const int k_maxLevel = 100;
-        static const int k_baseExp = 1000;
-        constexpr static const double k_nextExpMultiplier = 1.15;
+ private:
+  static const int k_maxLevel = 100;
+  static const int k_baseExp = 1000;
+  constexpr static const double k_nextExpMultiplier = 1.15;
 
-        int m_exp;
-        int m_level;
-        CSkill* m_skills[2];
-        char m_name[k_maxNameLength + 1];
-        bool m_avail;
-        bool m_hired;
+  int m_exp;
+  int m_level;
+  CSkill* m_skills[2];
+  char m_name[k_maxNameLength + 1];
+  bool m_avail;
+  bool m_hired;
 };

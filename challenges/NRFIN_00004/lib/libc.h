@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H
@@ -28,10 +28,9 @@ int sendline(int fd, const char *buf, size_t size);
 int recvline(int fd, char *buf, size_t size);
 size_t strcpy(char *s1, char *s2);
 size_t strncpy(char *s1, char *s2, size_t n);
-char * strcat(char *s1, char *s2);
+char *strcat(char *s1, char *s2);
 size_t strlen(char *s);
 int streq(char *s1, char *s2);
 int startswith(char *s1, char *s2);
 
 #endif
-

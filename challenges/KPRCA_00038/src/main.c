@@ -21,26 +21,22 @@
  *
  */
 #include <stdlib.h>
+
 #include "interp.h"
 #include "io.h"
 #include "lex.h"
 
-int main()
-{
-    io_t io;
-    program_t p;
+int main() {
+  io_t io;
+  program_t p;
 
-    io_init_fd(&io, STDIN);
-    program_init(&p, &io);
-    if (program_parse(&p))
-    {
-        if (!program_run(&p, &io))
-            printf("RUNTIME ERROR\n");
-    }
-    else
-    {
-        printf("PARSE ERROR\n");
-    }
+  io_init_fd(&io, STDIN);
+  program_init(&p, &io);
+  if (program_parse(&p)) {
+    if (!program_run(&p, &io)) printf("RUNTIME ERROR\n");
+  } else {
+    printf("PARSE ERROR\n");
+  }
 
-    return 0;
+  return 0;
 }

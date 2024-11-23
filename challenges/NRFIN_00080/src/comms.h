@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef COMMS_H
 #define COMMS_H 1
@@ -29,24 +29,24 @@
 
 typedef struct session Session;
 struct session {
-	struct {
-		char key[12];
-		char username[12];
-		char password[12];  
-	} PACKED login;
-	struct {
-		char cmd[8];
-		uint16_t bytes;
-		char *data;
-	} PACKED request;
-	Session *next;
+  struct {
+    char key[12];
+    char username[12];
+    char password[12];
+  } PACKED login;
+  struct {
+    char cmd[8];
+    uint16_t bytes;
+    char *data;
+  } PACKED request;
+  Session *next;
 } PACKED;
 
 typedef struct response Response;
 struct response {
-	char session_key[12];
-	char answer[128];		// answer to command, if there is one
-	char result[8];			// success/fail of request.
+  char session_key[12];
+  char answer[128];  // answer to command, if there is one
+  char result[8];    // success/fail of request.
 } PACKED;
 
 Session *session_get_by_username(Session *s_list, Session *s);

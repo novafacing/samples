@@ -23,60 +23,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-extern "C"
-{
-#include <stdlib.h>
+extern "C" {
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 }
 
 #include "response.h"
 
+CResponse::CResponse() : m_responseLen(0) {}
 
-CResponse::CResponse( )
-	: m_responseLen( 0 )
-{
+CResponse::~CResponse() {}
 
+uint16_t CResponse::AddResponse(uint8_t *pData, uint16_t dataLen) {
+  if (pData == NULL || dataLen == 0) return 0;
+
+  m_responseList.AddLast(new CResponseElement(pData, dataLen));
+
+  m_responseLen += dataLen;
+
+  return (dataLen);
 }
 
-CResponse::~CResponse( )
-{
+uint16_t CResponse::GetResponseData(uint8_t *pDest, uint16_t destLen) {
+  uint16_t pos = 0;
 
+  if (pDest == NULL) return (0);
+
+  if (destLen < GetResponseLength()) return (0);
+
+  for (CResponseElement *pCur = m_responseList.GetFirst(); pCur;
+       pCur = m_responseList.GetNext(pCur)) {
+    memcpy(pDest + pos, pCur->GetData(), pCur->GetDataLength());
+    pos += pCur->GetDataLength();
+  }
+
+  return (pos);
 }
 
-uint16_t CResponse::AddResponse( uint8_t *pData, uint16_t dataLen )
-{
-	if ( pData == NULL || dataLen == 0 )
-		return 0;
-
-	m_responseList.AddLast( new CResponseElement( pData, dataLen ) );
-
-	m_responseLen += dataLen;
-
-	return (dataLen);
-}
-
-uint16_t CResponse::GetResponseData( uint8_t *pDest, uint16_t destLen )
-{
-	uint16_t pos = 0;
-
-	if ( pDest == NULL )
-		return (0);
-
-	if ( destLen < GetResponseLength() )
-		return (0);
-
-	for ( CResponseElement *pCur = m_responseList.GetFirst(); pCur; pCur = m_responseList.GetNext( pCur ) )
-	{
-		memcpy( pDest+pos, pCur->GetData(), pCur->GetDataLength() );
-		pos += pCur->GetDataLength();
-	}
-
-	return (pos);
-}
-
-void CResponse::ClearResponse( void )
-{
-	m_responseList.DeleteAll();
-	m_responseLen = 0;
+void CResponse::ClearResponse(void) {
+  m_responseList.DeleteAll();
+  m_responseLen = 0;
 }

@@ -21,16 +21,14 @@
  *
  */
 
-static const char *sentences[] = {
-  "the dog is dumb",
-  "the dog is smart",
-  "the dog is a smart cat",
-  "the dog is a smart cat",
-  "the cat is fat",
-  "the cat is slow",
-  "the cat is a dumb dog",
-  "the cat is a slow dog",
-  "the horse is a runner",
-  "the horse is a walker",
-  NULL
-};
+static const char *sentences[] = {"the dog is dumb",
+                                  "the dog is smart",
+                                  "the dog is a smart cat",
+                                  "the dog is a smart cat",
+                                  "the cat is fat",
+                                  "the cat is slow",
+                                  "the cat is a dumb dog",
+                                  "the cat is a slow dog",
+                                  "the horse is a runner",
+                                  "the horse is a walker",
+                                  NULL};

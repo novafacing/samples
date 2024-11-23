@@ -22,26 +22,21 @@
  */
 #pragma once
 
-#include <cstdlib.h>
 #include <cstdint.h>
+#include <cstdlib.h>
 
 #include "assert.h"
 
-static inline void *safe_calloc(unsigned int count, unsigned int size)
-{
-    unsigned int result = count * size;
-    if ((result / count) != size)
-        die("detected overflow");
-    void *mem = calloc(count, size);
-    if (mem == nullptr)
-        die("out of memory");
-    return mem;
+static inline void *safe_calloc(unsigned int count, unsigned int size) {
+  unsigned int result = count * size;
+  if ((result / count) != size) die("detected overflow");
+  void *mem = calloc(count, size);
+  if (mem == nullptr) die("out of memory");
+  return mem;
 }
 
-static inline void *safe_malloc(unsigned int size)
-{
-    void *mem = malloc(size);
-    if (mem == nullptr)
-        die("out of memory");
-    return mem;
+static inline void *safe_malloc(unsigned int size) {
+  void *mem = malloc(size);
+  if (mem == nullptr) die("out of memory");
+  return mem;
 }

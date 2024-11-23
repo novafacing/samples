@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef INT2STR_H
 #define INT2STR_H 1
@@ -35,6 +35,5 @@
  * @return 0, -1 on error
  */
 int int2str(char *str_buf, size_t buf_size, int32_t i);
-
 
 #endif

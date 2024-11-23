@@ -20,113 +20,95 @@
  * THE SOFTWARE.
  *
  */
+#include "department.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "department.h"
 #include "course.h"
 #include "ptrlist.h"
 
 static ptrlist_t *g_all_depts = NULL;
 
-ptrlist_t *find_dept_courses_by_num(char *name, short course_num)
-{
-    if (!name)
-        return NULL;
+ptrlist_t *find_dept_courses_by_num(char *name, short course_num) {
+  if (!name) return NULL;
 
-    department_t *dept = get_department(name);
-    if (!dept)
-        return NULL;
+  department_t *dept = get_department(name);
+  if (!dept) return NULL;
 
-    int i = 0;
-    course_t *iter;
-    ptrlist_t *courses = create_ptrlist();
-    for (i = 0; i < dept->courses_available->length; i++) {
-        iter = get_item(course_t, dept->courses_available, i);
-        if (course_num == iter->course_num)
-            add_item(courses, iter);
-    }
+  int i = 0;
+  course_t *iter;
+  ptrlist_t *courses = create_ptrlist();
+  for (i = 0; i < dept->courses_available->length; i++) {
+    iter = get_item(course_t, dept->courses_available, i);
+    if (course_num == iter->course_num) add_item(courses, iter);
+  }
 
-    return courses;
+  return courses;
 }
 
-void add_department(department_t *dept)
-{
-    if (!dept)
-        return;
+void add_department(department_t *dept) {
+  if (!dept) return;
 
-    if (!g_all_depts)
-        g_all_depts = create_ptrlist();
+  if (!g_all_depts) g_all_depts = create_ptrlist();
 
-    add_item(g_all_depts, dept);
+  add_item(g_all_depts, dept);
 }
 
-department_t *create_department(char *name)
-{
-    if (!name)
-        return NULL;
+department_t *create_department(char *name) {
+  if (!name) return NULL;
 
-    department_t *dept = malloc(sizeof(department_t));
-    if (!dept)
-        return NULL;
+  department_t *dept = malloc(sizeof(department_t));
+  if (!dept) return NULL;
 
-    dept->name = strdup(name);
-    dept->courses_available = create_ptrlist();
-    add_department(dept);
+  dept->name = strdup(name);
+  dept->courses_available = create_ptrlist();
+  add_department(dept);
 
-    return dept;
+  return dept;
 }
 
-void add_course_to_department(department_t *dept, course_t *course)
-{
-    if(!dept || !course)
-        return;
+void add_course_to_department(department_t *dept, course_t *course) {
+  if (!dept || !course) return;
 
-    add_item(dept->courses_available, course);
+  add_item(dept->courses_available, course);
 }
 
-department_t *get_department(char *name)
-{
-    if (!name || !g_all_depts)
-        return NULL;
+department_t *get_department(char *name) {
+  if (!name || !g_all_depts) return NULL;
 
-    int i = 0;
-    department_t *iter;
-    for (i = 0; i < g_all_depts->length; i++) {
-        iter = get_item(department_t, g_all_depts, i);
-        if (strcasecmp(iter->name, name) == 0)
-            return iter;
-    }
+  int i = 0;
+  department_t *iter;
+  for (i = 0; i < g_all_depts->length; i++) {
+    iter = get_item(department_t, g_all_depts, i);
+    if (strcasecmp(iter->name, name) == 0) return iter;
+  }
 
-    return NULL;
+  return NULL;
 }
 
-void list_departments()
-{
-    if (!g_all_depts)
-        return;
+void list_departments() {
+  if (!g_all_depts) return;
 
-    int i = 0;
-    department_t *iter;
-    printf("--All Departments--\n");
-    for (i = 0; i < g_all_depts->length; i++) {
-        iter = get_item(department_t, g_all_depts, i);
-        printf("%s\n", iter->name);
-    }
+  int i = 0;
+  department_t *iter;
+  printf("--All Departments--\n");
+  for (i = 0; i < g_all_depts->length; i++) {
+    iter = get_item(department_t, g_all_depts, i);
+    printf("%s\n", iter->name);
+  }
 }
 
-void list_dept_courses(department_t *dept)
-{
-    if (!dept)
-        return;
+void list_dept_courses(department_t *dept) {
+  if (!dept) return;
 
-    int i;
-    course_t *iter;
-    printf("--Department Availability--\n");
-    print_course_banner();
-    for (i = 0; i < dept->courses_available->length; i++) {
-        printf("#%d|", i+1);
-        iter = get_item(course_t, dept->courses_available, i);
-        iter->print_course(iter);
-    }
+  int i;
+  course_t *iter;
+  printf("--Department Availability--\n");
+  print_course_banner();
+  for (i = 0; i < dept->courses_available->length; i++) {
+    printf("#%d|", i + 1);
+    iter = get_item(course_t, dept->courses_available, i);
+    iter->print_course(iter);
+  }
 }

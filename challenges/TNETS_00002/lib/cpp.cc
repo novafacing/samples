@@ -29,35 +29,23 @@
  */
 
 extern "C" {
-#include "libcgc.h"
 #include "cgc_libc.h"
 #include "cgc_malloc.h"
+#include "libcgc.h"
 };
 
 extern void terminate(int);
 
 extern "C" void __cxa_pure_virtual() {
-	printf("pure as yellow snow...\n");
-	terminate(1);
+  printf("pure as yellow snow...\n");
+  terminate(1);
 }
 
 /* new, new[], delete, delete[] */
-void *
-operator new(unsigned int sz) {
-	return malloc(sz);
-}
+void *operator new(unsigned int sz) { return malloc(sz); }
 
-void *
-operator new[](unsigned int sz) {
-	return ::operator new(sz);
-}
+void *operator new[](unsigned int sz) { return ::operator new(sz); }
 
-void
-operator delete(void *v) {
-	free(v);
-}
+void operator delete(void *v) { free(v); }
 
-void
-operator delete[](void *v) {
-	return ::operator delete(v);
-}
+void operator delete[](void *v) { return ::operator delete(v); }

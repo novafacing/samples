@@ -18,54 +18,52 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "libc.h"
-#include "vm.h"
-#include "stack.h"
+ */
 #include "service.h"
 
+#include <libcgc.h>
+
+#include "libc.h"
+#include "stack.h"
+#include "vm.h"
+
 int main(void) {
-	Stack programStack ={-1, 0, 0, NULL};
+  Stack programStack = {-1, 0, 0, NULL};
 
-	while(1) {
-		char buf[1024] ={0};
-		int bytes_read =0;
-		int arg_pos =0;
+  while (1) {
+    char buf[1024] = {0};
+    int bytes_read = 0;
+    int arg_pos = 0;
 
-		bytes_read = recvline(STDIN, buf, sizeof(buf)-1);
-		if (bytes_read <= 0)
-			_terminate(1);
+    bytes_read = recvline(STDIN, buf, sizeof(buf) - 1);
+    if (bytes_read <= 0) _terminate(1);
 
-		if(programStack.numElements <= 0)
-				initStack(&programStack, MAX_PROGRAM_STACK_SIZE, sizeof(Program *));
+    if (programStack.numElements <= 0)
+      initStack(&programStack, MAX_PROGRAM_STACK_SIZE, sizeof(Program *));
 
-		if((arg_pos = parseCmd(NEW_PROGRAM_CMD_STR, buf))  > 0) {
-			Program* program = NULL;
+    if ((arg_pos = parseCmd(NEW_PROGRAM_CMD_STR, buf)) > 0) {
+      Program *program = NULL;
 
-			initProgram(&program, STDIN);
-			if(program != NULL)
-				pushElement(&programStack, &program);
-		} else if((arg_pos = parseCmd(EXECUTE_PROGRAM_CMD_STR, buf))  > 0) {
-			int program_num;
-			int ret;
+      initProgram(&program, STDIN);
+      if (program != NULL) pushElement(&programStack, &program);
+    } else if ((arg_pos = parseCmd(EXECUTE_PROGRAM_CMD_STR, buf)) > 0) {
+      int program_num;
+      int ret;
 
-			program_num = strn2int(buf+arg_pos, 10);
+      program_num = strn2int(buf + arg_pos, 10);
 #ifdef PATCHED
-		if(program_num > programStack.top || program_num < 0) {
-#else		
-			if(program_num > programStack.top) {
+      if (program_num > programStack.top || program_num < 0) {
+#else
+      if (program_num > programStack.top) {
 #endif
-				ret = transmit_all(STDOUT, INVALID_PROGRAM_STR, sizeof(TOO_MANY_LINES_STR));
-				if (ret != 0)
-    				_terminate(13);
-    		} else {
-
-				Program **program_ptr;
-				program_ptr = programStack.elements+(program_num*sizeof(Program *));
-				executeProgram(*program_ptr);
-			}
-		}
-	}
-
+        ret = transmit_all(STDOUT, INVALID_PROGRAM_STR,
+                           sizeof(TOO_MANY_LINES_STR));
+        if (ret != 0) _terminate(13);
+      } else {
+        Program **program_ptr;
+        program_ptr = programStack.elements + (program_num * sizeof(Program *));
+        executeProgram(*program_ptr);
+      }
+    }
+  }
 }

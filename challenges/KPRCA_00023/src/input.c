@@ -21,20 +21,18 @@
  *
  */
 
-#include <libcgc.h>
 #include "input.h"
 
-static int splitat(int fd, char *buf, size_t max, char delim)
-{
+#include <libcgc.h>
+
+static int splitat(int fd, char *buf, size_t max, char delim) {
   int ret;
   size_t rx, i = 0;
   while (i < max - 1) {
     ret = receive(STDIN, buf + i, 1, &rx);
-    if (ret != 0 && rx == 0)
-      return -1;
+    if (ret != 0 && rx == 0) return -1;
 
-    if (*(buf + i) == delim)
-        break;
+    if (*(buf + i) == delim) break;
 
     i++;
   }
@@ -43,8 +41,7 @@ static int splitat(int fd, char *buf, size_t max, char delim)
   return i;
 };
 
-int read_line(char *buf)
-{
+int read_line(char *buf) {
   int ret;
   while (1) {
     ret = splitat(STDIN, buf, LINE_SIZE, '\n');

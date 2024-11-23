@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #define NUMERAL 0
 #define UPPER_ALPHA 1
 #define LOWER_ALPHA 2
@@ -71,106 +71,110 @@
 #define DOC_ID_STRING "Document ID: "
 
 typedef struct {
-	char* name;
-	void* children;
-	void* next;
+  char* name;
+  void* children;
+  void* next;
 } Object;
 
 typedef struct {
-	char* (*body)(void *macros, Object* object);
-	void* next;
-	char* name;
+  char* (*body)(void* macros, Object* object);
+  void* next;
+  char* name;
 } Macro;
 
-char* FourByFourTable_Macro = "<document>\n"
-							  "<macro>\n"
-							  "<4x4Table>\n"
-							  "<table>\n"
-							  "<rows>\n"
-							  "4\n"
-							  "</rows>\n"
-							  "<fields>\n"
-							  "4\n"
-   							  "</fields>\n"
-							  "</table>\n"
-							  "</4x4Table>\n"
-							  "</macro>\n"
-							  "</document>\n";
+char* FourByFourTable_Macro =
+    "<document>\n"
+    "<macro>\n"
+    "<4x4Table>\n"
+    "<table>\n"
+    "<rows>\n"
+    "4\n"
+    "</rows>\n"
+    "<fields>\n"
+    "4\n"
+    "</fields>\n"
+    "</table>\n"
+    "</4x4Table>\n"
+    "</macro>\n"
+    "</document>\n";
 
-char* FiveByFiveTable_Macro = "<document>\n"
-							  "<macro>\n"
-							  "<5x5Table>\n"
-							  "<table>\n"
-							  "<rows>\n"
-							  "5\n"
-							  "</rows>\n"
-							  "<fields>\n"
-							  "5\n"
-   							  "</fields>\n"
-							  "</table>\n"
-							  "</5x5Table>\n"
-							  "</macro>\n"
-							  "</document>\n";
+char* FiveByFiveTable_Macro =
+    "<document>\n"
+    "<macro>\n"
+    "<5x5Table>\n"
+    "<table>\n"
+    "<rows>\n"
+    "5\n"
+    "</rows>\n"
+    "<fields>\n"
+    "5\n"
+    "</fields>\n"
+    "</table>\n"
+    "</5x5Table>\n"
+    "</macro>\n"
+    "</document>\n";
 
-char* AlphanumericOutline_Macro = "<document>\n"
-							      "<macro>\n"
-							      "<Outline>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "roman\n"
-							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "ALPHA\n"
-							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "numeral\n"
-							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "alpha\n"
-							      "</type>\n"
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</element>\n"					
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</Outline>\n"
-							      "</macro>\n"
-							      "</document>\n";
+char* AlphanumericOutline_Macro =
+    "<document>\n"
+    "<macro>\n"
+    "<Outline>\n"
+    "<list>\n"
+    "<type>\n"
+    "roman\n"
+    "</type>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    "ALPHA\n"
+    "</type>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    "numeral\n"
+    "</type>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    "alpha\n"
+    "</type>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</Outline>\n"
+    "</macro>\n"
+    "</document>\n";
 
-char* BulletedOutline_Macro = "<document>\n"
-							      "<macro>\n"
-							      "<Bulleted>\n"
-							      "<list>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "-\n"
-							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      ">\n"
-							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
-							      "<type>\n"
-							      "+\n"
-							      "</type>\n"
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</element>\n"					
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</Bulleted>\n"
-							      "</macro>\n"
-							      "</document>\n";
+char* BulletedOutline_Macro =
+    "<document>\n"
+    "<macro>\n"
+    "<Bulleted>\n"
+    "<list>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    "-\n"
+    "</type>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    ">\n"
+    "</type>\n"
+    "<element>\n"
+    "<list>\n"
+    "<type>\n"
+    "+\n"
+    "</type>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</element>\n"
+    "</list>\n"
+    "</Bulleted>\n"
+    "</macro>\n"
+    "</document>\n";

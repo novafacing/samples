@@ -23,10 +23,10 @@
 #ifndef MODEM_H_
 #define MODEM_H_
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
-typedef void (*modem_rx_cb_t) (const uint8_t *data, size_t count);
+typedef void (*modem_rx_cb_t)(const uint8_t *data, size_t count);
 
 void modem_init();
 void modem_output(uint8_t *data, size_t count);

@@ -18,24 +18,24 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 struct results {
-    unsigned int hash;
+  unsigned int hash;
 
-    unsigned short chars;
-    unsigned short words;
-    unsigned short sentences;
-    unsigned short paragraphs;
+  unsigned short chars;
+  unsigned short words;
+  unsigned short sentences;
+  unsigned short paragraphs;
 
-    unsigned short printable;
-    unsigned short non_printable;
+  unsigned short printable;
+  unsigned short non_printable;
 
-    unsigned short letters;
-    unsigned short numbers;
-    unsigned short symbols;
+  unsigned short letters;
+  unsigned short numbers;
+  unsigned short symbols;
 
-    unsigned short session_id;
+  unsigned short session_id;
 };
 
 /**
@@ -48,10 +48,10 @@ struct results {
  */
 int process(const char *input, const char term, struct results *r);
 
-
 int compute_char_type(const char *input, const char term, struct results *r);
 
-void compute_grammar_components(const char *input, const char term, struct results *r);
+void compute_grammar_components(const char *input, const char term,
+                                struct results *r);
 
 void compute_hash(const char *input, const char term, struct results *r);
 

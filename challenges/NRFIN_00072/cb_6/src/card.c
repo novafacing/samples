@@ -18,30 +18,28 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include "libc.h"
-#include "malloc.h"
+ */
 #include "card.h"
 
-#define MAX_CARD_VALUE  10
-#define MIN_CARD_VALUE  2
+#include "libc.h"
+#include "malloc.h"
+
+#define MAX_CARD_VALUE 10
+#define MIN_CARD_VALUE 2
 
 Card *create_card_having_value(unsigned char value) {
-	Card *c = malloc(sizeof(Card));
-	MALLOC_OK(c);
-	c->value = value;
+  Card *c = malloc(sizeof(Card));
+  MALLOC_OK(c);
+  c->value = value;
 
-	return NULL;
+  return NULL;
 }
 
-void destroy_card(Card *card) {
-	free(card);
-}
+void destroy_card(Card *card) { free(card); }
 
 unsigned char is_valid_value(unsigned char value) {
-	if ((MIN_CARD_VALUE > value) || (MAX_CARD_VALUE < value)) {
-		return FALSE;
-	}
-	return TRUE;
+  if ((MIN_CARD_VALUE > value) || (MAX_CARD_VALUE < value)) {
+    return FALSE;
+  }
+  return TRUE;
 }
-

@@ -25,17 +25,17 @@
 #include "hashmap.h"
 #include "string.h"
 
-class Attribute
-{
-public:
-    Attribute(const String *name);
-    ~Attribute();
-    void set(String *value);
-    inline const String *get() { return d_value; }
-    inline const String *name() { return d_name; }
-private:
-    const String *d_name;
-    String *d_value;
+class Attribute {
+ public:
+  Attribute(const String *name);
+  ~Attribute();
+  void set(String *value);
+  inline const String *get() { return d_value; }
+  inline const String *name() { return d_name; }
+
+ private:
+  const String *d_name;
+  String *d_value;
 };
 
 typedef HashMap<const String *, Attribute *, InternedComparator> AttributeMap;

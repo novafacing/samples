@@ -32,24 +32,15 @@
 #include "rpnval.h"
 
 struct operand {
-    rpnval val;
-    struct list_node list;
+  rpnval val;
+  struct list_node list;
 };
 
 struct rpncalc_state {
-    struct list stack;
+  struct list stack;
 };
 
-enum rpncalc_op_type {
-    PUSH,
-    POP,
-    CLEAR,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    INV
-};
+enum rpncalc_op_type { PUSH, POP, CLEAR, ADD, SUB, MUL, DIV, INV };
 
 void rpncalc_init(struct rpncalc_state *state);
 void rpncalc_destroy(struct rpncalc_state *state);
@@ -57,4 +48,3 @@ void rpncalc_destroy(struct rpncalc_state *state);
 int perform_rpncalc_op(struct rpncalc_state *state, enum rpncalc_op_type type);
 
 #endif /* RPNCALC_H_ */
-

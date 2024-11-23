@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef SERVICE_H
 #define SERVICE_H
@@ -31,9 +31,10 @@ byte_t *buf_scratch = NULL;
 
 // If we significantly change the size of the CB, this will need revisiting.
 #define TEXT_BGN (byte_t *)0x08048000
-#define TEXT_END (byte_t *)0x08146000 // We don't want leeway here.
+#define TEXT_END (byte_t *)0x08146000  // We don't want leeway here.
 #define DATA_BGN (byte_t *)0x08146000
-#define DATA_END (byte_t *)0x0815b000+0x10000 // We can have some leeway here.
+#define DATA_END \
+  (byte_t *)0x0815b000 + 0x10000  // We can have some leeway here.
 #define FLAG_PAGE_BGN (byte_t *)0x4347C000
 #define FLAG_PAGE_END (byte_t *)(FLAG_PAGE_BGN + SZ_PAGE)
 
@@ -42,52 +43,37 @@ byte_t *buf_scratch = NULL;
 #define MAGIC_PTR_BEFORE 0xDEADBEEF
 #define MAGIC_PTR_AFTER 0xAAAAAAAA
 
-
-// We force these enums to be int via last assignment to INT_MAX, so their size 
+// We force these enums to be int via last assignment to INT_MAX, so their size
 // is not ambiguous.
-typedef enum {
-	S_REQ,
-	S_RESP,
-	S_ERROR,
-	S_EXIT,
-	S_LAST = INT_MAX
-} status_t;
+typedef enum { S_REQ, S_RESP, S_ERROR, S_EXIT, S_LAST = INT_MAX } status_t;
 
 typedef enum {
-	X_NORMAL,
-	X_SCRATCH,
-	X_STATIC,
-	X_PREV,
-	X_LAST = INT_MAX
+  X_NORMAL,
+  X_SCRATCH,
+  X_STATIC,
+  X_PREV,
+  X_LAST = INT_MAX
 } access_t;
 
-typedef enum {
-	A_READ,
-	A_WRITE,
-	A_LAST = INT_MAX
-} action_t;
+typedef enum { A_READ, A_WRITE, A_LAST = INT_MAX } action_t;
 
-typedef enum {
-	OP2_IMM,
-	OP2_MEM,
-	OP2_LAST = INT_MAX
-} op2type_t;
+typedef enum { OP2_IMM, OP2_MEM, OP2_LAST = INT_MAX } op2type_t;
 
 typedef struct __attribute__((packed)) {
-	action_t action; // 4
-	op2type_t op2type; // 8
-	uint32_t dst; // 12
-	uint32_t src; // 16
+  action_t action;    // 4
+  op2type_t op2type;  // 8
+  uint32_t dst;       // 12
+  uint32_t src;       // 16
 } instruction_t;
 
 typedef struct __attribute__((packed)) {
-	status_t status; // 4
-	// The sequence number.  Used for correlating requests & responses.
-	uint32_t seq; // 8
-	// Access type (NORMAL, STATIC, SCRATCH)
-	access_t type; // 12
-	// Operation
-	instruction_t inst; // 12 + 16 = 28
+  status_t status;  // 4
+  // The sequence number.  Used for correlating requests & responses.
+  uint32_t seq;  // 8
+  // Access type (NORMAL, STATIC, SCRATCH)
+  access_t type;  // 12
+  // Operation
+  instruction_t inst;  // 12 + 16 = 28
 } packet_t;
 
 // NOTE: originally were going to recv packets in groups of 10, changed mind.
@@ -96,7 +82,7 @@ byte_t rx_buf[BUF_RX_SZ];
 byte_t *rx_buf_cursor;
 
 /**
- * Verify whether requested operation falls within acceptable boundaries.  
+ * Verify whether requested operation falls within acceptable boundaries.
  * Assume R/Ws are 4B (sizeof(size_t)) long and prevent offcut accesses as well.
  *
  * @param loc Where we've been requested to R/W.
@@ -175,10 +161,8 @@ int init(void);
  */
 int main(void);
 
-
-// We will clobber one of these during exploitation.  
+// We will clobber one of these during exploitation.
 // Make it easy to find by bookending with known values.
 int (*volatile func_ptr[3])(packet_t *req, packet_t *resp);
-
 
 #endif

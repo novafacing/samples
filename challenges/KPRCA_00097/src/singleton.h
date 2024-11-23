@@ -23,16 +23,14 @@
 #pragma once
 
 template <typename T>
-class Singleton
-{
-public:
-    static void _create();
-    static inline T &get()
-    {
-        if (d_instance == nullptr)
-            _create();
-        return *d_instance;
-    }
-private:
-    static T *d_instance;
+class Singleton {
+ public:
+  static void _create();
+  static inline T &get() {
+    if (d_instance == nullptr) _create();
+    return *d_instance;
+  }
+
+ private:
+  static T *d_instance;
 };

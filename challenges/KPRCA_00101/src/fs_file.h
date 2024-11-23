@@ -24,23 +24,20 @@
 #ifndef FS_FILE_H_
 #define FS_FILE_H_
 
-#include "cluster.h"
 #include "array.h"
-
+#include "cluster.h"
 
 #pragma pack(push, 1)
-struct fs_file
-{
-    unsigned char name[11];
-    unsigned char attrib;
-    unsigned char reserved[12];
-    unsigned int starting_cluster;
-    unsigned int size;
+struct fs_file {
+  unsigned char name[11];
+  unsigned char attrib;
+  unsigned char reserved[12];
+  unsigned int starting_cluster;
+  unsigned int size;
 };
 #pragma pack(push, 1)
 
-namespace CgFsFile
-{
+namespace CgFsFile {
 
 bool FreeEntry(const fs_file *file_metadata);
 bool SkipEntry(const fs_file *file_metadata);
@@ -50,9 +47,10 @@ bool IsFile(const fs_file *file_metadata);
 bool IsSystemFile(const fs_file *file_metadata);
 bool IsHiddenFile(const fs_file *file_metadata);
 bool IsArchive(const fs_file *file_metadata);
-bool NameEquals(const fs_file *file_metadata, const char *filename, unsigned int name_len);
+bool NameEquals(const fs_file *file_metadata, const char *filename,
+                unsigned int name_len);
 void DeleteMetadataEntry(fs_file *file_metadata);
 
-};
+};  // namespace CgFsFile
 
 #endif

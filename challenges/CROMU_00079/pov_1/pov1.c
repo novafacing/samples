@@ -24,10 +24,10 @@ THE SOFTWARE.
 
 */
 
-
 #include <libpov.h>
-#include "types.h"
+
 #include "protocol.h"
+#include "types.h"
 
 unsigned char t2buf[4];
 type2_vals t2_vals;
@@ -47,42 +47,39 @@ unsigned char atoi(unsigned char* buf, uint16 len) {
 int main(void) {
   type2_negotiate(&t2_vals);
   protocol_consume_str();
-  
+
   transmit(STDERR, "1", 1, NULL);
   protocol_send_str("FIND ord('x', 0 - 29881 * 65536 + 74513) FROM x");
   transmit(STDERR, "\n", 1, NULL);
   protocol_with_recv_string(^(uint16 len, char* str) {
-      unsigned char* ustr = (unsigned char*)str;
-      t2buf[0] = atoi(ustr, len);
-    });
-  
+    unsigned char* ustr = (unsigned char*)str;
+    t2buf[0] = atoi(ustr, len);
+  });
+
   transmit(STDERR, "2", 1, NULL);
   protocol_send_str("FIND ord('x', 0 - 29881 * 65536 + 73378) FROM x");
   transmit(STDERR, "\n", 1, NULL);
   protocol_with_recv_string(^(uint16 len, char* str) {
-      unsigned char* ustr = (unsigned char*)str;
-      t2buf[1] = atoi(ustr, len);
-    });
+    unsigned char* ustr = (unsigned char*)str;
+    t2buf[1] = atoi(ustr, len);
+  });
 
   transmit(STDERR, "3", 1, NULL);
   protocol_send_str("FIND ord('x', 0 - 29881 * 65536 + 72243) FROM x");
   transmit(STDERR, "\n", 1, NULL);
   protocol_with_recv_string(^(uint16 len, char* str) {
-      unsigned char* ustr = (unsigned char*)str;
-      t2buf[2] = atoi(ustr, len);
-    });
+    unsigned char* ustr = (unsigned char*)str;
+    t2buf[2] = atoi(ustr, len);
+  });
 
   transmit(STDERR, "4", 1, NULL);
   protocol_send_str("FIND ord('x', 0 - 29881 * 65536 + 78292) FROM x");
   transmit(STDERR, "\n", 1, NULL);
   protocol_with_recv_string(^(uint16 len, char* str) {
-      unsigned char* ustr = (unsigned char*)str;
-      t2buf[3] = atoi(ustr, len);
-    });
+    unsigned char* ustr = (unsigned char*)str;
+    t2buf[3] = atoi(ustr, len);
+  });
 
-  const unsigned char* t2buf_addr = (unsigned char*) &t2buf;
+  const unsigned char* t2buf_addr = (unsigned char*)&t2buf;
   type2_submit(t2buf_addr, 4);
 }
-
-
-

@@ -20,16 +20,18 @@
  * THE SOFTWARE.
  *
  */
-#include <cstdio.h>
 #include "client_backend.h"
+
+#include <cstdio.h>
+
 #include "array_wrapper.h"
-#include "user.h"
-#include "debug_brc.h"
 #include "brc_token.h"
+#include "debug_brc.h"
+#include "user.h"
 
 #define MAX_ARRAY_SIZE 256
 
-#define ADMIN_NAME {13, 23, 44, 28, 112, 37, 155, 14 }
+#define ADMIN_NAME {13, 23, 44, 28, 112, 37, 155, 14}
 
 namespace {
 
@@ -37,71 +39,69 @@ ArrayWrapper<User *> CachedUsers(MAX_ARRAY_SIZE);
 const int *g_secret;
 
 User *FindUser(const char *name, unsigned short length, int *idx) {
-    for (int i = 0; i < CachedUsers.length(); i++) {
-        User *user = CachedUsers.Get(i);
-        if (user->CompareName(name, length)) {
-            *idx = i;
-            return user;
-        }
+  for (int i = 0; i < CachedUsers.length(); i++) {
+    User *user = CachedUsers.Get(i);
+    if (user->CompareName(name, length)) {
+      *idx = i;
+      return user;
     }
+  }
 
-    *idx = -1;
-    return (User *)NULL;
+  *idx = -1;
+  return (User *)NULL;
 }
 
-}
+}  // namespace
 
 namespace Backend {
 
 void InitDataStores(int secret_page_i) {
-    g_secret = (const int *)secret_page_i;
+  g_secret = (const int *)secret_page_i;
 }
 
 bool CheckIfUserExists(const char *name, unsigned short length) {
-    int idx = 0;
-    return (FindUser(name, length, &idx) != (User *)NULL);
+  int idx = 0;
+  return (FindUser(name, length, &idx) != (User *)NULL);
 }
 
 bool AddUser(User *user) {
-    if (!CheckIfUserExists(user->name(), user->name_length())) {
-        return CachedUsers.Append(user);
-    }
-    return false;
+  if (!CheckIfUserExists(user->name(), user->name_length())) {
+    return CachedUsers.Append(user);
+  }
+  return false;
 }
 
-bool DeleteUser(User **pcur_user, const char *pass, unsigned short pass_length) {
-    int idx = -1;
-    User *cur_user = *pcur_user;
-    User *user = FindUser(cur_user->name(), cur_user->name_length(), &idx);
-    if (!user || idx == -1)
-        return false;
+bool DeleteUser(User **pcur_user, const char *pass,
+                unsigned short pass_length) {
+  int idx = -1;
+  User *cur_user = *pcur_user;
+  User *user = FindUser(cur_user->name(), cur_user->name_length(), &idx);
+  if (!user || idx == -1) return false;
 
-    if (!user->VerifyPass(pass, pass_length))
-        return false;
+  if (!user->VerifyPass(pass, pass_length)) return false;
 
-    CachedUsers.Remove(idx, &user->Delete);
-    delete user;
-    *pcur_user = (User *)NULL;
-    return true;
+  CachedUsers.Remove(idx, &user->Delete);
+  delete user;
+  *pcur_user = (User *)NULL;
+  return true;
 }
 
+bool VerifyPassword(User *cur_user, const char *pass,
+                    unsigned short pass_length) {
+  if (!cur_user || !pass || !pass_length) return false;
 
-bool VerifyPassword(User *cur_user, const char *pass, unsigned short pass_length) {
-    if (!cur_user || !pass || !pass_length)
-        return false;
-
-    return cur_user->VerifyPass(pass, pass_length);
+  return cur_user->VerifyPass(pass, pass_length);
 }
 
 void DebugPrintUsers() {
-    PRINTF("**Debug print all users**\n");
-    for (int i = 0; i < CachedUsers.length(); i++) {
-        User *user = CachedUsers.Get(i);
-        PRINTF("Cached User %d\n", i+1);
-        print_byte_array(user->name(), user->name_length());
-        PRINTF("-- User's Password\n");
-        print_byte_array(user->pass(), user->pass_length());
-    }
+  PRINTF("**Debug print all users**\n");
+  for (int i = 0; i < CachedUsers.length(); i++) {
+    User *user = CachedUsers.Get(i);
+    PRINTF("Cached User %d\n", i + 1);
+    print_byte_array(user->name(), user->name_length());
+    PRINTF("-- User's Password\n");
+    print_byte_array(user->pass(), user->pass_length());
+  }
 }
 
-}
+}  // namespace Backend

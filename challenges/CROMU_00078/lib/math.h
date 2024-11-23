@@ -26,12 +26,12 @@ THE SOFTWARE.
 #ifndef __MATH_H__
 #define __MATH_H__
 
-double round( double val );
-double floor( double val );
+double round(double val);
+double floor(double val);
 
-#define isnan( val )  __builtin_isnan( val )
-#define isinf( val )  __builtin_isinf( val )
+#define isnan(val) __builtin_isnan(val)
+#define isinf(val) __builtin_isinf(val)
 
 #define M_PI 3.14159265358979323846
 
-#endif // __MATH_H__
+#endif  // __MATH_H__

@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
+
 #include "bitstream.h"
 #include "parseCVF.h"
 

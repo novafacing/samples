@@ -29,53 +29,45 @@ THE SOFTWARE.
 
 #define MAGIC_PAGE 0x4347c000
 
-
-extern "C"
-{
-	#include "stdio.h"
-	#include <stdlib.h>
+extern "C" {
+#include "stdio.h"
+#include <stdlib.h>
 }
 
 //
 // Possible commands the CRS can send to this program
 //  Must match original poller
 //
-enum 
-{
-	POWER_ON_OFF = 1,
-	TEMP_SET = 2,
-	SENSOR_ADD = 3,
-	SENSOR_REMOVE = 4,
-	SENSOR_SMOKE = 5,
-	PROGRAM_UPDATE = 6,
-	PROGRAM_SEND = 7,
-	STATUS_SEND = 8,
-	SIMULATE = 9,
-	FIRMWARE_CHECK = 10,
-	END = 0xff
+enum {
+  POWER_ON_OFF = 1,
+  TEMP_SET = 2,
+  SENSOR_ADD = 3,
+  SENSOR_REMOVE = 4,
+  SENSOR_SMOKE = 5,
+  PROGRAM_UPDATE = 6,
+  PROGRAM_SEND = 7,
+  STATUS_SEND = 8,
+  SIMULATE = 9,
+  FIRMWARE_CHECK = 10,
+  END = 0xff
 };
 
 //
 // Possible errors to send CRS
 //  Must match original poller
 //
-enum errorCodes { 
+enum errorCodes {
 
-	NO_ERROR = 0x0,
-	ERROR_TEMP_RANGE = 0x1,
-	ERROR_TIME_VALUE = 0x2,
-	ERROR_NO_SENSOR = 0x3,
-	ERROR_BAD_PROGRAM = 0x4,
-	ERROR_BAD_COMMAND = 0x5,
-	ERROR_BAD_ID = 0x6,
-	ERROR_ID_INUSE = 0x7,
-	ERROR_SENSORS_FULL = 0x8
+  NO_ERROR = 0x0,
+  ERROR_TEMP_RANGE = 0x1,
+  ERROR_TIME_VALUE = 0x2,
+  ERROR_NO_SENSOR = 0x3,
+  ERROR_BAD_PROGRAM = 0x4,
+  ERROR_BAD_COMMAND = 0x5,
+  ERROR_BAD_ID = 0x6,
+  ERROR_ID_INUSE = 0x7,
+  ERROR_SENSORS_FULL = 0x8
 
 };
-
-
-
-
-
 
 #endif

@@ -24,12 +24,9 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-enum __attribute__ ((__packed__)) type_t {
-  T_REQUEST,
-  T_RESPONSE
-};
+enum __attribute__((__packed__)) type_t { T_REQUEST, T_RESPONSE };
 
-enum __attribute__ ((__packed__)) cmd_t {
+enum __attribute__((__packed__)) cmd_t {
   CMD_REGISTER,
   CMD_LOGIN,
   CMD_LIST,
@@ -47,8 +44,8 @@ typedef struct packet {
   char *body;
 } packet_t;
 
-packet_t* parse_packet(int fd);
-packet_t* new_packet(enum type_t, enum cmd_t);
+packet_t *parse_packet(int fd);
+packet_t *new_packet(enum type_t, enum cmd_t);
 void free_packet(packet_t *);
 
 unsigned short calc_checksum(packet_t *);

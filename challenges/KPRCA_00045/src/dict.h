@@ -24,7 +24,7 @@
 #ifndef DICT_H
 #define DICT_H
 
-#define TABLE_SIZE  256
+#define TABLE_SIZE 256
 
 typedef struct dict {
   char *name;
@@ -32,9 +32,9 @@ typedef struct dict {
   struct dict *next;
 } dict_t;
 
-dict_t** dict_new();
-void* dict_find(dict_t **dict, const char *name);
+dict_t **dict_new();
+void *dict_find(dict_t **dict, const char *name);
 void dict_insert(dict_t **dict, const char *name, void *value);
-void* dict_remove(dict_t **dict, const char *name);
+void *dict_remove(dict_t **dict, const char *name);
 
 #endif

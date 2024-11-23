@@ -19,7 +19,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
@@ -33,30 +33,30 @@ typedef unsigned char uint8_t;
 #define ERRNO_ALLOC 505
 
 typedef struct node {
-	void * data;
-	struct node *next;
-	struct node *prev;
+  void *data;
+  struct node *next;
+  struct node *prev;
 } node_t;
 // doubly-linked list
 // int node_contains(struct node * nd, const void * value) {}
 //  -- should return 0 when node nd contains value, 1 when not.
-typedef int(*node_contains_f)(node_t *, void *);
+typedef int (*node_contains_f)(node_t *, void *);
 
 typedef struct list {
-	node_t *head;
-	node_t *tail;
-	uint32_t count;
-	node_contains_f node_contains_impl;
+  node_t *head;
+  node_t *tail;
+  uint32_t count;
+  node_contains_f node_contains_impl;
 } list_t;
 
 // List related
-list_t * list_create(node_contains_f node_contains_impl);
-int list_push(list_t *lst, node_t *nd, void * value);
-node_t * list_find(list_t *lst, void * value);
-node_t * list_remove(list_t *lst, void * value);
+list_t *list_create(node_contains_f node_contains_impl);
+int list_push(list_t *lst, node_t *nd, void *value);
+node_t *list_find(list_t *lst, void *value);
+node_t *list_remove(list_t *lst, void *value);
 
 // Node related
-node_t * node_create(void * data);
+node_t *node_create(void *data);
 int node_destroy(node_t *nd);
 
 // I/O
@@ -68,6 +68,5 @@ unsigned int read_all(int fd, char *buf, unsigned int size);
 // stdlib
 size_t strlen(const char *str);
 void *memset(void *dst, int c, unsigned int n);
-
 
 #endif

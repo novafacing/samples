@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __service_h__
 #define __service_h__
 
-
 #define FAIL 0
 #define SUCCESS 1
 

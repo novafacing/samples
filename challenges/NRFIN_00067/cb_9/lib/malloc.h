@@ -18,11 +18,11 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 #ifndef MALLOC_H
 #define MALLOC_H 1
 
-#include <libcgc.h> 
+#include <libcgc.h>
 
 #define PAGE_SZ 4096
 
@@ -30,11 +30,10 @@
  * A relatively simple malloc implementation.
  *
  * @param size Number of bytes of space desired
- * @return VA of allocated space, 
+ * @return VA of allocated space,
  *   or NULL if size is 0 or there is an error allocating more space.
  */
 void *malloc(size_t size);
-
 
 /**
  * Free allocated memory

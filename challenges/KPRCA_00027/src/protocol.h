@@ -25,14 +25,15 @@
 #define PROTOCOL_H
 
 #include <libcgc.h>
+
 #include "permit.h"
 
-enum __attribute__ ((__packed__)) result_t {
+enum __attribute__((__packed__)) result_t {
   RES_OK = 0x00,
   RES_ERROR = 0x10,
 };
 
-enum __attribute__ ((__packed__)) cmd_t {
+enum __attribute__((__packed__)) cmd_t {
   CMD_AUTH,
   CMD_NEW_PERMIT,
   CMD_NEW_PERMIT_RING,

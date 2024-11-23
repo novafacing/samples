@@ -29,24 +29,25 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
-#include "string.h"
-#include "service.h"
-#include "helper.h"
-#include "genericParsers.h"
-#include "countryParsers.h"
 
-void initPlanet( pPlanet pl);
-int planetMenu( pPlanet pl );
-void freePlanet( pPlanet pl );
-void printPlanetInfo( pPlanet pl);
-pPlanet planetTopLevel( pstring str);
-double extractPeriod( pstring str );
-double extractOrbitSpeed( pstring str );
-double extractAphelion( pstring str );
-double extractPerihelion( pstring str );
-double extractRadius( pstring str );
-double extractERadius( pstring str );
-double extractMass( pstring str );
-double extractGravity( pstring str );
+#include "countryParsers.h"
+#include "genericParsers.h"
+#include "helper.h"
+#include "service.h"
+#include "string.h"
+
+void initPlanet(pPlanet pl);
+int planetMenu(pPlanet pl);
+void freePlanet(pPlanet pl);
+void printPlanetInfo(pPlanet pl);
+pPlanet planetTopLevel(pstring str);
+double extractPeriod(pstring str);
+double extractOrbitSpeed(pstring str);
+double extractAphelion(pstring str);
+double extractPerihelion(pstring str);
+double extractRadius(pstring str);
+double extractERadius(pstring str);
+double extractMass(pstring str);
+double extractGravity(pstring str);
 
 #endif

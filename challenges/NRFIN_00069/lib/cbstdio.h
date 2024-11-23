@@ -18,29 +18,28 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 typedef __builtin_va_list va_list;
-#define va_start(al, lp)  __builtin_va_start(al, lp)
-#define va_end(al)          __builtin_va_end(al)
-#define va_arg(al, t)    __builtin_va_arg(al, t)
-
+#define va_start(al, lp) __builtin_va_start(al, lp)
+#define va_end(al) __builtin_va_end(al)
+#define va_arg(al, t) __builtin_va_arg(al, t)
 
 /**
-* Store a formatted string into a buffer
-*
-* NOTES: sprintf initializes the va_list and then calls vsprintf
-*
-* FORMAT: By using '!', the next variable will be converted depending on the 
-*          character that follows and in the string. The following conversions
-*          are supported:
-*         'X' - string
-*         'U' - unsigned integer value
-*         'H' - unsigned hexadecimal value
-* 
-* @param buffer Destination to store the string
-* @param fmt The format of the string to store
-* @param ... The list of arguments
-* @return The number of characters stored in the buffer, or
-*          a negative value if there was an error
-*/
-int sprintf(char *buf, const char* fmt, ...);
+ * Store a formatted string into a buffer
+ *
+ * NOTES: sprintf initializes the va_list and then calls vsprintf
+ *
+ * FORMAT: By using '!', the next variable will be converted depending on the
+ *          character that follows and in the string. The following conversions
+ *          are supported:
+ *         'X' - string
+ *         'U' - unsigned integer value
+ *         'H' - unsigned hexadecimal value
+ *
+ * @param buffer Destination to store the string
+ * @param fmt The format of the string to store
+ * @param ... The list of arguments
+ * @return The number of characters stored in the buffer, or
+ *          a negative value if there was an error
+ */
+int sprintf(char* buf, const char* fmt, ...);

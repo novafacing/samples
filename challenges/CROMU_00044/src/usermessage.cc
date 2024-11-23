@@ -25,13 +25,7 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CUserMessage::CUserMessage( const String &sFrom, const String &sMessage )
-    : CDoubleItemLink( ), m_sFrom( sFrom ), m_sMessage( sMessage )
-{
+CUserMessage::CUserMessage(const String &sFrom, const String &sMessage)
+    : CDoubleItemLink(), m_sFrom(sFrom), m_sMessage(sMessage) {}
 
-}
-
-CUserMessage::~CUserMessage( )
-{
-
-}
+CUserMessage::~CUserMessage() {}

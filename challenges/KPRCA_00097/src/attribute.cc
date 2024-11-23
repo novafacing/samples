@@ -22,20 +22,15 @@
  */
 #include "attribute.h"
 
-Attribute::Attribute(const String *name)
-    : d_name(name), d_value(nullptr)
-{
+Attribute::Attribute(const String *name) : d_name(name), d_value(nullptr) {}
+
+Attribute::~Attribute() {
+  if (d_value != nullptr) d_value->destroy();
+  ;
 }
 
-Attribute::~Attribute()
-{
-    if (d_value != nullptr)
-        d_value->destroy();;
-}
-
-void Attribute::set(String *value)
-{
-    if (d_value != nullptr)
-        d_value->destroy();;
-    d_value = value;
+void Attribute::set(String *value) {
+  if (d_value != nullptr) d_value->destroy();
+  ;
+  d_value = value;
 }

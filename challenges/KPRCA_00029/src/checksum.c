@@ -23,21 +23,19 @@
 /*
  * 8-bit checksum
  */
+#include "checksum.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 
 #include "buffer.h"
-#include "checksum.h"
 
-uint8_t checksum8(buffer_t *input, size_t n, uint8_t seed)
-{
-    size_t i;
-    for (i = 0; i < n; i++)
-    {
-        unsigned int feedback = seed & 0x80;
-        seed = (seed << 1) | buffer_read_bit(input);
-        if (feedback)
-            seed ^= 0x97;
-    }
-    return seed;
+uint8_t checksum8(buffer_t *input, size_t n, uint8_t seed) {
+  size_t i;
+  for (i = 0; i < n; i++) {
+    unsigned int feedback = seed & 0x80;
+    seed = (seed << 1) | buffer_read_bit(input);
+    if (feedback) seed ^= 0x97;
+  }
+  return seed;
 }

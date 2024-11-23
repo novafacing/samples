@@ -25,25 +25,33 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "service.h"
+#include "stdlib.h"
 
-char *gps_tags[] = { "GPSVersionID", "GPSLatyitudeRef", "GPSLatitude", "GPSLongitudeRef", "GPSLongitude", "GPSAltitudeRef", 
-					"GPSAltitude", "GPSTimeStamp", "GPSSatellites", "GPSStatus", "GPSMeasureMode", "GPSDOP", "GPSSpeedRef", 
-					"GPSSpeed", "GPSTrackRef", "GPSTrack", "GPSImgDirectionRef", "GPSImgDirection", "GPSMapDatum", 
-					"GPSDestLatitudeRef", "GPSDestLatitude", "GPSDestLongitudeRef", "GPSDestLongitude", "GPSDestBearingRef", 
-					"GPSDestBearing", "GPSDestDistanceRef", "GPSDestDistance", "GPSProcessingMethod", "GPSAreaInformation", 
-					"GPSDateStamp", "GPSDifferential" };
-
+char *gps_tags[] = {"GPSVersionID",       "GPSLatyitudeRef",
+                    "GPSLatitude",        "GPSLongitudeRef",
+                    "GPSLongitude",       "GPSAltitudeRef",
+                    "GPSAltitude",        "GPSTimeStamp",
+                    "GPSSatellites",      "GPSStatus",
+                    "GPSMeasureMode",     "GPSDOP",
+                    "GPSSpeedRef",        "GPSSpeed",
+                    "GPSTrackRef",        "GPSTrack",
+                    "GPSImgDirectionRef", "GPSImgDirection",
+                    "GPSMapDatum",        "GPSDestLatitudeRef",
+                    "GPSDestLatitude",    "GPSDestLongitudeRef",
+                    "GPSDestLongitude",   "GPSDestBearingRef",
+                    "GPSDestBearing",     "GPSDestDistanceRef",
+                    "GPSDestDistance",    "GPSProcessingMethod",
+                    "GPSAreaInformation", "GPSDateStamp",
+                    "GPSDifferential"};
 
 void print_gps_tag_text(unsigned short tag) {
-
-	if (tag >= 0 && tag <31)
+  if (tag >= 0 && tag < 31)
 #ifdef PATCHED
-	if ( strlen( gps_tags[tag]) > 2048 ) {
-		gps_tags[tag][2048] = '\x00';
-	}
+    if (strlen(gps_tags[tag]) > 2048) {
+      gps_tags[tag][2048] = '\x00';
+    }
 #endif
-		printf("@s", gps_tags[tag]);
-
+  printf("@s", gps_tags[tag]);
 }

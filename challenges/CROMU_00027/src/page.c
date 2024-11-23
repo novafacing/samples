@@ -23,11 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include "page.h"
+
 #include <libcgc.h>
-#include "stdlib.h"
+
 #include "error.h"
 #include "malloc.h"
-#include "page.h"
+#include "stdlib.h"
 
 int AddPageVar(PageVar *varlist, char *cmd) {
   char *name = strchr(cmd, ':') + 1;
@@ -36,8 +38,8 @@ int AddPageVar(PageVar *varlist, char *cmd) {
   if (value - name > sizeof(varlist->name)) {
     // Invalid name length
     return -1;
-  } 
-  PageVar *pagevar = GetPageVar(varlist, name, value -1);
+  }
+  PageVar *pagevar = GetPageVar(varlist, name, value - 1);
   if (pagevar != NULL) {
     // Special case, variable already exists
     if (pagevar->value != NULL) {
@@ -54,11 +56,11 @@ int AddPageVar(PageVar *varlist, char *cmd) {
     pagevar = pagevar->next;
   }
   memcpy(pagevar->name, name, value - 1 - name);
-  #ifdef PATCHED
+#ifdef PATCHED
   if (end - value <= 0) {
     return -1;
   }
-  #endif 
+#endif
   pagevar->value = calloc(end - value + 1, 1);
   VerifyPointerOrTerminate(pagevar->value, "PageVar->value");
   memcpy(pagevar->value, value, end - value);
@@ -91,7 +93,7 @@ void DestroyVarList(PageVar *varlist) {
 }
 
 // Processes user supplied variable definitions and then serves the requested
-// page using those variables. 
+// page using those variables.
 // Variable definitions are in the same syntax as those scripted in a page
 // eg. [var:name:value][var:name2:value2]
 int InteractWithPage(char *page, int page_size, char *override_data) {
@@ -99,18 +101,22 @@ int InteractWithPage(char *page, int page_size, char *override_data) {
   if (override_data == NULL) {
     return ServePageWithOverride(page, page_size, NULL);
   }
-#endif 
+#endif
   PageVar *override_list = calloc(sizeof(PageVar), 1);
   VerifyPointerOrTerminate(override_list, "Override_list initialization");
   // Process override variable definitions
-  while(*override_data != '\0' && *override_data != ']') {
+  while (*override_data != '\0' && *override_data != ']') {
     // Check for start of var definition
-    if (*override_data != '[') { break; }
+    if (*override_data != '[') {
+      break;
+    }
     // Process var definition
     AddPageVar(override_list, override_data);
     // Locate end of var definition
     char *end_of_var = strchr(override_data, ']');
-    if (end_of_var == NULL) { break; }
+    if (end_of_var == NULL) {
+      break;
+    }
     // Step over var definition
     override_data = end_of_var + 1;
   }
@@ -156,14 +162,15 @@ void OutputStr(char *s) {
   if (strlen(s) > 80) {
     printf("@s\n", s);
   } else {
-    memcpy(&line[line_length],s, strlen(s));
+    memcpy(&line[line_length], s, strlen(s));
     line_length += strlen(s);
   }
-} 
+}
 
 // Serves a page by interpreting command codes, processing script commands,
-// and handling variable substitution. Any variables provided in the override_list
-// will take precedence over variables of the same name defined in the page. 
+// and handling variable substitution. Any variables provided in the
+// override_list will take precedence over variables of the same name defined in
+// the page.
 int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
   // Initialize varlist
   PageVar *varlist = calloc(sizeof(PageVar), 1);
@@ -171,20 +178,20 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
   in_a_box = 0;
   memset(line, '\0', sizeof(line));
   line_length = 0;
-  
-  #ifdef PATCHED
+
+#ifdef PATCHED
   if (page == NULL) {
     goto error;
   }
-  #endif
+#endif
 
-  while ((*page != '\0')&&(page < page + page_size)) {
+  while ((*page != '\0') && (page < page + page_size)) {
     if (*page == '~') {
       // Command character, process command
       page++;
       switch (*page) {
         case 't': {
-          for (int i=0; i<4; i++) {
+          for (int i = 0; i < 4; i++) {
             OutputChar(' ');
           }
           break;
@@ -248,7 +255,7 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
         }
         printf("\n");
         page += 4;
-      } 
+      }
     } else if (*page == ']') {
       page++;
       if (in_a_box) {
@@ -264,7 +271,9 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
     } else if (*page == '#') {
       // Variable substitution
       char *end = ++page;
-      while (*end != '\0' && *end != '#') { end++; }
+      while (*end != '\0' && *end != '#') {
+        end++;
+      }
       if (*end != '#') {
         goto error;
       }
@@ -301,7 +310,3 @@ error:
   DestroyVarList(override_list);
   return -1;
 }
-
-
-
-

@@ -18,7 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef MAIL_H
 #define MAIL_H 1
@@ -27,11 +27,11 @@
 #define MAX_BODY_LEN 256
 
 // struct for piece of mail
-typedef struct __attribute__((packed))  {
-	unsigned short sender;
-	unsigned short recipient;
-	char subject[MAX_SUBJ_LEN];
-	char body[MAX_BODY_LEN];
+typedef struct __attribute__((packed)) {
+  unsigned short sender;
+  unsigned short recipient;
+  char subject[MAX_SUBJ_LEN];
+  char body[MAX_BODY_LEN];
 } mail_t;
 
 /**
@@ -52,6 +52,5 @@ short process_cmd(void);
  * @param status_code  The 2 status code bytes to send.
  */
 void send_status(char *status_code);
-
 
 #endif

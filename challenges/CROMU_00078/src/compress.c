@@ -32,14 +32,10 @@ THE SOFTWARE.
 //    R  R  R  G  G  B  B  B
 //
 
-enum {
-  R,
-  G,
-  B
-};
+enum { R, G, B };
 
-int red_blue[8]  = { 0x00, 0x20, 0x40, 0x60, 0xA0, 0xC0, 0xE0, 0xFF };
-int green[4]     = { 0x00, 0x60, 0xB0, 0xFF };
+int red_blue[8] = {0x00, 0x20, 0x40, 0x60, 0xA0, 0xC0, 0xE0, 0xFF};
+int green[4] = {0x00, 0x60, 0xB0, 0xFF};
 
 uint8_t ClosestMatch(uint8_t type, int16_t val) {
   uint8_t close_diff = 0xff;
@@ -49,7 +45,7 @@ uint8_t ClosestMatch(uint8_t type, int16_t val) {
 
   int i;
 
-  for(i = 0; i < max_idx; i++) {
+  for (i = 0; i < max_idx; i++) {
     if (type == R || type == B)
       temp_diff = ABS((int)(val - red_blue[i]));
     else
@@ -62,10 +58,10 @@ uint8_t ClosestMatch(uint8_t type, int16_t val) {
   }
 
   return close_idx;
-
 }
 
-void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len) {
+void Compress(t3DCPixel **px_list, uint8_t *compressed_data,
+              uint16_t *data_len) {
   if (px_list == NULL) {
     return;
   }
@@ -74,7 +70,7 @@ void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len)
   uint8_t coord = 0;
 
   t3DCPixel *px = NULL;
-  uint16_t count = MAX_PIXELS * 7; // (x, y, z, color)
+  uint16_t count = MAX_PIXELS * 7;  // (x, y, z, color)
   uint16_t i = 0;
   int p_idx = 0;
 
@@ -90,16 +86,16 @@ void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len)
     // blue
     color += (ClosestMatch(B, px->b) << 0);
 
-    memcpy(compressed_data+i, &px->x, sizeof(int16_t));
+    memcpy(compressed_data + i, &px->x, sizeof(int16_t));
     i += sizeof(int16_t);
 
-    memcpy(compressed_data+i, &px->y, sizeof(int16_t));
+    memcpy(compressed_data + i, &px->y, sizeof(int16_t));
     i += sizeof(int16_t);
 
-    memcpy(compressed_data+i, &px->z, sizeof(int16_t));
+    memcpy(compressed_data + i, &px->z, sizeof(int16_t));
     i += sizeof(int16_t);
 
-    memcpy(compressed_data+i, &color, 1);
+    memcpy(compressed_data + i, &color, 1);
     i++;
   }
 
@@ -108,25 +104,24 @@ void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len)
   return;
 }
 
-
 void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len) {
   uint32_t in_offset = 0;
   uint32_t out_offset = 0;
 
   int p_idx = 0;
   uint8_t color;
-  uint8_t r,g,b;
+  uint8_t r, g, b;
 
   while (in_offset < *data_len) {
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
+    memcpy(out_data + out_offset, in_data + in_offset, sizeof(int16_t));
     out_offset += sizeof(int16_t);
     in_offset += sizeof(int16_t);
 
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
+    memcpy(out_data + out_offset, in_data + in_offset, sizeof(int16_t));
     out_offset += sizeof(int16_t);
     in_offset += sizeof(int16_t);
 
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
+    memcpy(out_data + out_offset, in_data + in_offset, sizeof(int16_t));
     out_offset += sizeof(int16_t);
     in_offset += sizeof(int16_t);
 
@@ -146,7 +141,6 @@ void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len) {
     out_data[out_offset++] = red_blue[b];
 
     out_data[out_offset++] = 0xff;
-
   }
 
   memcpy(data_len, &out_offset, 2);
@@ -170,17 +164,15 @@ void WriteOut(t3DCPixel **px_list, uint8_t *data, uint16_t data_len) {
 
     offset += 6;
 
-    memcpy(&tmp->r, data+offset, 1);
+    memcpy(&tmp->r, data + offset, 1);
     offset++;
-    memcpy(&tmp->g, data+offset, 1);
+    memcpy(&tmp->g, data + offset, 1);
     offset++;
-    memcpy(&tmp->b, data+offset, 1);
+    memcpy(&tmp->b, data + offset, 1);
     offset++;
     tmp->a = 0xff;
     offset++;
 
     i++;
-
   }
-
 }

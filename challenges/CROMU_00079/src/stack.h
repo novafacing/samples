@@ -25,8 +25,8 @@ THE SOFTWARE.
 */
 
 #pragma once
-#include "lexer.h"
 #include "compiler.h"
+#include "lexer.h"
 #include "types.h"
 
 typedef enum stack_elem_type_enum {

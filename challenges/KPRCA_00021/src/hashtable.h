@@ -24,7 +24,7 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-typedef void (free_value_fn) (void *e);
+typedef void(free_value_fn)(void *e);
 
 typedef struct entry {
   char *key;
@@ -41,9 +41,9 @@ typedef struct htbl {
   free_value_fn *free_value;
 } htbl_t;
 
-htbl_t* htbl_create(int size, free_value_fn *fptr);
+htbl_t *htbl_create(int size, free_value_fn *fptr);
 int htbl_put(htbl_t *tab, char *key, void *val);
-void* htbl_get(htbl_t *tab, char *key);
+void *htbl_get(htbl_t *tab, char *key);
 void htbl_destroy(htbl_t *tab);
 
 #endif

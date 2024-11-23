@@ -23,9 +23,8 @@
 
 #include "random.h"
 
-int randint(int min, int max)
-{
-    static unsigned long long seed = 1;
-    seed *= 3249286849523012805ULL;
-    return (int) ((unsigned int)seed % (max - min)) + min;
+int randint(int min, int max) {
+  static unsigned long long seed = 1;
+  seed *= 3249286849523012805ULL;
+  return (int)((unsigned int)seed % (max - min)) + min;
 }

@@ -18,16 +18,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #define MAX_TRL_PKT_SIZE 48
 #define MAX_TRL_BUF_SIZE 12
 
 /**
- * Process a Turing Regulated Overflow Location Over Local Output Layer Obviously packet
- * This is where the vulnerability exists
+ * Process a Turing Regulated Overflow Location Over Local Output Layer
+ * Obviously packet This is where the vulnerability exists
  *
  * @param **payload Pointer to payload pointer
  * @param *size Pointer to payload size
  */
-void process_trolololo(uint8_t **payload, int *size); 
+void process_trolololo(uint8_t **payload, int *size);

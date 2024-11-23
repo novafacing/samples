@@ -24,7 +24,7 @@
 #define VECTOR_H_
 
 struct vector {
-    double x, y, z;
+  double x, y, z;
 };
 
 /**
@@ -116,4 +116,3 @@ struct vector vector_cross(struct vector a, struct vector b);
 double vector_dot(struct vector a, struct vector b);
 
 #endif /* VECTOR_H_ */
-

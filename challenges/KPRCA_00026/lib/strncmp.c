@@ -23,20 +23,18 @@
  *
  */
 
-#include <wrapper.h>
 #include <libcgc.h>
 #include <stdlib.h>
+#include <wrapper.h>
 
-int strncmp(const char *s1, const char *s2, size_t n)
-{
-    if (n-- == 0)
-      return 0;
+int strncmp(const char *s1, const char *s2, size_t n) {
+  if (n-- == 0) return 0;
 
-    while (n-- && *s1 && *s2)
-      if (*s1 != *s2)
-        break;
-      else
-        s1++, s2++;
+  while (n-- && *s1 && *s2)
+    if (*s1 != *s2)
+      break;
+    else
+      s1++, s2++;
 
-    return *s2 - *s1;
+  return *s2 - *s1;
 }

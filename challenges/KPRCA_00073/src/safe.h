@@ -30,10 +30,11 @@
 #endif
 
 #include <stdio.h>
-#define die(_msg) ({ \
-  fprintf(stderr, "%s", "FATAL: " _msg "\n"); \
-  _terminate(1); \
-})
+#define die(_msg)                               \
+  ({                                            \
+    fprintf(stderr, "%s", "FATAL: " _msg "\n"); \
+    _terminate(1);                              \
+  })
 
 void* xcalloc(size_t count, size_t size);
 

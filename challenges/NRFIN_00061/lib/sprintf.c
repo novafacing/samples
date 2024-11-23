@@ -18,162 +18,154 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include "cbstring.h"
+ */
 #include "cbstdio.h"
+#include "cbstring.h"
 
-static char* digits = "0123456789ABCDEF";
+static char *digits = "0123456789ABCDEF";
 /*F*************************/
 
-int
-b16_2w(buf, num)
+int b16_2w(buf, num)
 
-char *buf;				/* buffer to hold the hex string */
-unsigned int num;		/* the 1-byte value to convert */
+char *buf;        /* buffer to hold the hex string */
+unsigned int num; /* the 1-byte value to convert */
 /*
-* PURPOSE : Convert a 1-byte value into a 4 character string and store it in a buffer
-*
-* RETURN : The length of the number string
-*
-*F*/
+ * PURPOSE : Convert a 1-byte value into a 4 character string and store it in a
+ *buffer
+ *
+ * RETURN : The length of the number string
+ *
+ *F*/
 {
-	char tmp[2];
-	bzero(tmp, 0);
+  char tmp[2];
+  bzero(tmp, 0);
 
-	if (num > 0xff) {
-		buf[0] = '|';
-		buf[1] = 'B';
-		buf[2] = 'A';
-		buf[3] = 'D';
-		buf[4] = '|';
+  if (num > 0xff) {
+    buf[0] = '|';
+    buf[1] = 'B';
+    buf[2] = 'A';
+    buf[3] = 'D';
+    buf[4] = '|';
 
-		return 5;
-	}
+    return 5;
+  }
 
-	buf[0] = '0';
-	buf[1] = 'x';
+  buf[0] = '0';
+  buf[1] = 'x';
 
-	if (num == 0) {
-		buf[2] = '0';
-		buf[3] = '0';
-		return 4;
-	} else {
-		buf[3] = digits[num % 16];
-		num = num / 16;
-		buf[2] = digits[num % 16];
+  if (num == 0) {
+    buf[2] = '0';
+    buf[3] = '0';
+    return 4;
+  } else {
+    buf[3] = digits[num % 16];
+    num = num / 16;
+    buf[2] = digits[num % 16];
 
-		return 4;
-
-	}
-	return 0;
+    return 4;
+  }
+  return 0;
 }
 
 /*F*************************/
 
-int
-b10_uint(buf, num)
+int b10_uint(buf, num)
 
-char *buf;				/* buffer to hold the number string */
-unsigned int num;		/* the number to convert */
+char *buf;        /* buffer to hold the number string */
+unsigned int num; /* the number to convert */
 /*
-* PURPOSE : Convert a number into a string and store it in a buffer
-*
-* RETURN : The length of the number string
-*
-*F*/
+ * PURPOSE : Convert a number into a string and store it in a buffer
+ *
+ * RETURN : The length of the number string
+ *
+ *F*/
 {
-	char tmp[12];
-	bzero(tmp, 12);
+  char tmp[12];
+  bzero(tmp, 12);
 
-	if (num == 0) {
-		buf[0] = '0';
-		return 1;
-	} else {
-		int i, size;
-		for(i=0; i<10 && num!=0; i++) {
-			tmp[i] = digits[num % 10];
-			num = num / 10;
-		}
-		size = i;
+  if (num == 0) {
+    buf[0] = '0';
+    return 1;
+  } else {
+    int i, size;
+    for (i = 0; i < 10 && num != 0; i++) {
+      tmp[i] = digits[num % 10];
+      num = num / 10;
+    }
+    size = i;
 
-		for(i=size; i > 0; i--) {
-			buf[i-1] = tmp[size-i];
-		}
+    for (i = size; i > 0; i--) {
+      buf[i - 1] = tmp[size - i];
+    }
 
-		return size;
-
-	}
-	return 0;
+    return size;
+  }
+  return 0;
 }
 
 /*F*************************/
 
-int
-vsprintf(buf, fmt, args)
+int vsprintf(buf, fmt, args)
 
-char *buf;				/* buffer to hold formatted string */
-const char *fmt;        /* format of string */
-va_list args;			/* list of arguments */
+char *buf;       /* buffer to hold formatted string */
+const char *fmt; /* format of string */
+va_list args;    /* list of arguments */
 
 /*
-* PURPOSE : Store a formatted string into a buffer
-*
-* RETURN : The number of characters stored in the buffer, or
-*          a negative value if there was an error
-*
-*F*/
+ * PURPOSE : Store a formatted string into a buffer
+ *
+ * RETURN : The number of characters stored in the buffer, or
+ *          a negative value if there was an error
+ *
+ *F*/
 {
-	char *x;
-	unsigned int u;
-	unsigned char h;
-	int len;
-	char *str;
-	str = buf;
-	int c, d, i;
-	for(c = 0, d=0; fmt[c]; c++) {
-		if(fmt[c] != '!') {
-			str[d++] = fmt[c];
-			continue;
-		}
+  char *x;
+  unsigned int u;
+  unsigned char h;
+  int len;
+  char *str;
+  str = buf;
+  int c, d, i;
+  for (c = 0, d = 0; fmt[c]; c++) {
+    if (fmt[c] != '!') {
+      str[d++] = fmt[c];
+      continue;
+    }
 
-		c++;
+    c++;
 
-		// Type
-		switch(fmt[c]) {
-			case 'X': 			// null-terminated string
-				x = va_arg(args, char *);
-				if (!x) x = "|BAD|";
-				len = strlen(x);
-				for(i = len; i > 0; i--) 
-					str[d++] = x[len-i];
-				continue; 
-			
-			case 'U':			// unsigned int
-				u = va_arg(args, unsigned int);
-				len = b10_uint(&str[d], u);
-				d+=len;
-				continue;
+    // Type
+    switch (fmt[c]) {
+      case 'X':  // null-terminated string
+        x = va_arg(args, char *);
+        if (!x) x = "|BAD|";
+        len = strlen(x);
+        for (i = len; i > 0; i--) str[d++] = x[len - i];
+        continue;
 
-			case 'H': 			// unsigned char
-				h = va_arg(args, unsigned int);
-				len = b16_2w(&str[d], h);
-				d+=len;
-				continue;
+      case 'U':  // unsigned int
+        u = va_arg(args, unsigned int);
+        len = b10_uint(&str[d], u);
+        d += len;
+        continue;
 
-		}
-	}
+      case 'H':  // unsigned char
+        h = va_arg(args, unsigned int);
+        len = b16_2w(&str[d], h);
+        d += len;
+        continue;
+    }
+  }
 
-	return d;
+  return d;
 }
 
-int
-sprintf(char *buf, const char* fmt, ...)
-{
-	int n;
-	va_list ap;
+int sprintf(char *buf, const char *fmt, ...) {
+  int n;
+  va_list ap;
 
-	va_start(ap, fmt);
-	n = vsprintf (buf, fmt, ap);
-	va_end(ap);
-	return (n);
+  va_start(ap, fmt);
+  n = vsprintf(buf, fmt, ap);
+  va_end(ap);
+  return (n);
 }

@@ -23,18 +23,16 @@
  *
  */
 
-#include <wrapper.h>
-#include <libcgc.h>
 #include <ctype.h>
+#include <libcgc.h>
 #include <stdlib.h>
+#include <wrapper.h>
 
-int strncasecmp(const char *s1, const char *s2, size_t n)
-{
+int strncasecmp(const char *s1, const char *s2, size_t n) {
   unsigned char *_s1 = (unsigned char *)s1;
   unsigned char *_s2 = (unsigned char *)s2;
 
-  if (n-- == 0)
-    return 0;
+  if (n-- == 0) return 0;
 
   while (n && *_s1 && *_s2)
     if (!(*_s1 == *_s2 || tolower(*_s1) == tolower(*_s2)))

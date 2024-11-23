@@ -18,16 +18,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 /**
-* Set all bytes in buffer to zero
-* 
-* @param buf The buffer to zeroize
-* @param num The number of bytes to set to zero
-*
-* @return None
-*/
+ * Set all bytes in buffer to zero
+ *
+ * @param buf The buffer to zeroize
+ * @param num The number of bytes to set to zero
+ *
+ * @return None
+ */
 void bzero(char* buf, unsigned int num);
-

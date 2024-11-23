@@ -25,28 +25,27 @@
 #define COMMAND_MANAGER_H
 
 extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
+#include <stdlib.h>
+#include <string.h>
 };
 
 #include "command.h"
 #include "file_manager.h"
 #include "llist.h"
 
-class CommandManager
-{
-  protected:
-    List<Command *> *commands;
-    FileManager *fm;
+class CommandManager {
+ protected:
+  List<Command *> *commands;
+  FileManager *fm;
 
-  public:
-    CommandManager(FileManager *fm);
-    ~CommandManager();
+ public:
+  CommandManager(FileManager *fm);
+  ~CommandManager();
 
-    List<Command *>* GetCommands();
-    void InstallCommand(Command *cmd);
-    void UninstallCommand(const char* name);
-    int ExecuteCommand(const char* name, int argc, char** argv);
+  List<Command *> *GetCommands();
+  void InstallCommand(Command *cmd);
+  void UninstallCommand(const char *name);
+  int ExecuteCommand(const char *name, int argc, char **argv);
 };
 
 #endif

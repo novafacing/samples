@@ -18,34 +18,34 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-#include <libcgc.h>
-#include "errno.h"
+ */
 #include "recv_bytes.h"
 
+#include <libcgc.h>
+
+#include "errno.h"
+
 int recv_bytes(int fd, char *buf, unsigned int size) {
+  if ((NULL == buf) || (0 == size)) {
+    return ERRNO_RECV;
+  }
 
-	if ((NULL == buf) || (0 == size)) {
-		return ERRNO_RECV;
-	}
+  size_t bytes_read_iter = 0;
+  unsigned int bytes_read_total = 0;
+  char *p_buf = buf;
 
-	size_t bytes_read_iter = 0;
-	unsigned int bytes_read_total = 0;
-	char *p_buf = buf;
+  while (bytes_read_iter < size) {
+    if (0 != (receive(fd, p_buf, size - bytes_read_total, &bytes_read_iter))) {
+      return ERRNO_RECV;
+    }
 
-	while (bytes_read_iter < size) {
-		if (0 != (receive(fd, p_buf, size - bytes_read_total, &bytes_read_iter))) {
-			return ERRNO_RECV;
-		}
+    if (0 == bytes_read_iter) {
+      break;
+    }
 
-		if (0 == bytes_read_iter) {
-			break;
-		}
+    bytes_read_total += bytes_read_iter;
+    p_buf += bytes_read_iter;
+  }
 
-		bytes_read_total += bytes_read_iter;
-		p_buf += bytes_read_iter;
-	}
-
-
-	return bytes_read_total;
+  return bytes_read_total;
 }

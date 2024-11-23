@@ -26,38 +26,29 @@
 
 uint32_t g_support_id = 1;
 
-Support::Support(uint32_t contact_info, PRIORITY max_priority)
-{
-    support_id_ = g_support_id++;
-    contact_info_ = contact_info;
-    max_priority_ = max_priority;
+Support::Support(uint32_t contact_info, PRIORITY max_priority) {
+  support_id_ = g_support_id++;
+  contact_info_ = contact_info;
+  max_priority_ = max_priority;
 }
 
-bool Support::AssignTicket(Ticket *ticket)
-{
-    if (!ticket)
-        return false;
+bool Support::AssignTicket(Ticket *ticket) {
+  if (!ticket) return false;
 
-    ticket_ = ticket;
-    return true;
+  ticket_ = ticket;
+  return true;
 }
 
-bool Support::UpdateTicket(STATUS status)
-{
-    if (!ticket_)
-        return false;
+bool Support::UpdateTicket(STATUS status) {
+  if (!ticket_) return false;
 
-    ticket_->UpdateStatus(status);
-    return true;
+  ticket_->UpdateStatus(status);
+  return true;
 }
 
-Ticket *Support::CurrentTicket()
-{
-    return ticket_;
-}
+Ticket *Support::CurrentTicket() { return ticket_; }
 
-void Support::Display(void)
-{
+void Support::Display(void) {
   printf("%d" EOL, id());
   if (CurrentTicket())
     printf("%d" EOL, CurrentTicket()->id());
@@ -67,30 +58,19 @@ void Support::Display(void)
   printf("%d" EOL, max_priority());
 }
 
-Ticket *Support::RemoveTicket()
-{
-    Ticket *ticket = nullptr;
-    if (ticket_)
-    {
-        ticket = ticket_;
-        ticket_->prev = this;
-        ticket_ = nullptr;
-    }
+Ticket *Support::RemoveTicket() {
+  Ticket *ticket = nullptr;
+  if (ticket_) {
+    ticket = ticket_;
+    ticket_->prev = this;
+    ticket_ = nullptr;
+  }
 
-    return ticket;
+  return ticket;
 }
 
-uint32_t Support::id()
-{
-    return support_id_;
-}
+uint32_t Support::id() { return support_id_; }
 
-uint32_t Support::contact_info()
-{
-    return contact_info_;
-}
+uint32_t Support::contact_info() { return contact_info_; }
 
-PRIORITY Support::max_priority()
-{
-    return max_priority_;
-}
+PRIORITY Support::max_priority() { return max_priority_; }

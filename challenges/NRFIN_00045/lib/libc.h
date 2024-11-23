@@ -18,13 +18,12 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #ifndef LIBC_H
 #define LIBC_H
 #include <libcgc.h>
 typedef unsigned int uint32_t;
-
 
 /**
  * Send all characters in buffer
@@ -33,7 +32,7 @@ typedef unsigned int uint32_t;
  * @param len Length of buffer
  * @return OK on error, errno on failure
  */
-int send_all(char * buf, size_t len);
+int send_all(char *buf, size_t len);
 
 /**
  * Copy between buffers
@@ -78,7 +77,7 @@ int recv_all(const size_t size, void *buf);
  * @param s String
  * @return Length of string, maximum 65535
  */
-size_t strlen(char * s);
+size_t strlen(char *s);
 
 /**
  * Clear buffer

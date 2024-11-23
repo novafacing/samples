@@ -28,63 +28,65 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-#define DEBUG_BASEBAND			(0)
+#define DEBUG_BASEBAND (0)
 
 // CDR stands for Clock Data Recovery
-#define CDR_STATE_NODATA		(0)
-#define CDR_STATE_PREAMBLE		(1)
-#define CDR_STATE_LOCK			(2)
+#define CDR_STATE_NODATA (0)
+#define CDR_STATE_PREAMBLE (1)
+#define CDR_STATE_LOCK (2)
 
-#define PACKET_STATE_NODATA		(0)
-#define PACKET_STATE_SYNCWORD		(1)
-#define PACKET_STATE_HEADER		(2)
-#define PACKET_STATE_DATA		(3)
-#define PACKET_STATE_CRC		(4)
+#define PACKET_STATE_NODATA (0)
+#define PACKET_STATE_SYNCWORD (1)
+#define PACKET_STATE_HEADER (2)
+#define PACKET_STATE_DATA (3)
+#define PACKET_STATE_CRC (4)
 
-// Number of preamble bits to receive before locking on the preamble (should start CDR)
-#define PREAMBLE_LOCK_COUNT		(15)
+// Number of preamble bits to receive before locking on the preamble (should
+// start CDR)
+#define PREAMBLE_LOCK_COUNT (15)
 
-#define BIT_SYNC_WORD			0xCFA3
+#define BIT_SYNC_WORD 0xCFA3
 
-typedef struct
-{
-	uint8_t cdrState;	// Clock Data Recovery state
+typedef struct {
+  uint8_t cdrState;  // Clock Data Recovery state
 
-	uint8_t lastBitValue;	// The last bit value received (0 or 1)
+  uint8_t lastBitValue;  // The last bit value received (0 or 1)
 
-	double samplesPerClock;	// Number of samples per clock
-	double clocksForNextSymbol;	// Number of clock cycles until sampling next symbol	
-	uint32_t symbolsSinceLastTransition;	// Number of samples since last transition	
-	uint32_t sampleCounter;	// Number of samples recorded between different symbols
-	uint32_t preambleCounter;	// Number of preamble bits received
+  double samplesPerClock;  // Number of samples per clock
+  double
+      clocksForNextSymbol;  // Number of clock cycles until sampling next symbol
+  uint32_t
+      symbolsSinceLastTransition;  // Number of samples since last transition
+  uint32_t
+      sampleCounter;  // Number of samples recorded between different symbols
+  uint32_t preambleCounter;  // Number of preamble bits received
 } tCDRState;
 
-typedef struct
-{
-	uint8_t packetState;	// Packet receiver state machine
+typedef struct {
+  uint8_t packetState;  // Packet receiver state machine
 
-	uint8_t lastPreambleBit;// Last bit received for preamble before sync word
-	uint8_t syncBitPos;	// Position in the sync word	
-	
-	uint8_t packetDataLen; 		// Length of the packet data
-	uint8_t packetDataBytePos;	// Current position in the receiving packet data
-	uint8_t packetDataBitPos;	// Current bit position in the receiving packet data
-	uint8_t packetData[256];	// Packet data as being received
+  uint8_t lastPreambleBit;  // Last bit received for preamble before sync word
+  uint8_t syncBitPos;       // Position in the sync word
 
-	uint16_t packetCRC;		// Received packet CRC
+  uint8_t packetDataLen;      // Length of the packet data
+  uint8_t packetDataBytePos;  // Current position in the receiving packet data
+  uint8_t
+      packetDataBitPos;     // Current bit position in the receiving packet data
+  uint8_t packetData[256];  // Packet data as being received
+
+  uint16_t packetCRC;  // Received packet CRC
 } tPacketState;
 
-typedef struct
-{
-	tCDRState cdrState;
-	tPacketState packetState;
+typedef struct {
+  tCDRState cdrState;
+  tPacketState packetState;
 } tBasebandState;
 
-void init_baseband( tBasebandState *pState );
-void reset_baseband_state( tBasebandState *pState );
+void init_baseband(tBasebandState *pState);
+void reset_baseband_state(tBasebandState *pState);
 
-void run_cdr( tBasebandState *pState, uint8_t sample_in );
-void process_sample( tBasebandState *pCurState, uint8_t symbol_in ); 
-void do_sample( tBasebandState *pState, uint8_t symbol_in );
+void run_cdr(tBasebandState *pState, uint8_t sample_in);
+void process_sample(tBasebandState *pCurState, uint8_t symbol_in);
+void do_sample(tBasebandState *pState, uint8_t symbol_in);
 
-#endif // __BASEBAND_H__
+#endif  // __BASEBAND_H__

@@ -2,15 +2,15 @@
 #define FILETYPE_H_
 
 extern "C" {
-#include<string.h>
+#include <string.h>
 };
 
-enum ftype {BADFILE=0, ASCIIART, PICTURE, PJEG, ICON };
+enum ftype { BADFILE = 0, ASCIIART, PICTURE, PJEG, ICON };
 
 struct filetype {
-    const ftype type;
-    const char *extension;
-    unsigned int magic;
+  const ftype type;
+  const char *extension;
+  unsigned int magic;
 };
 
 const filetype *get_filetype_m(unsigned int magic);

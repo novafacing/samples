@@ -25,80 +25,77 @@ THE SOFTWARE.
 
 pfile root = NULL;
 
-void service_loop( void )
-{
-	int command = 0;
-    pfile nf = NULL;
-    
-    /// Create the root file
-    root = init_file();
-    
-    if ( root == NULL ) {
-        printf("[ERROR] Failed to create the root node\n");
-        return;
+void service_loop(void) {
+  int command = 0;
+  pfile nf = NULL;
+
+  /// Create the root file
+  root = init_file();
+
+  if (root == NULL) {
+    printf("[ERROR] Failed to create the root node\n");
+    return;
+  }
+
+  set_type(root, DIR);
+  set_name(root, "/");
+
+  while (1) {
+    if (recv((char*)&command, 4) != 4) {
+      // Failed to receive send error
+      printf("[ERROR] Receive failed\n");
+      return;
     }
-    
-    set_type( root, DIR );
-    set_name( root, "/");
-    
-	while (1) {
-		if ( recv( (char*)&command, 4 ) != 4 ) {
-			// Failed to receive send error
-			printf("[ERROR] Receive failed\n");
-            return;
-		}
 
-		switch ( command ) {
-			/// SEND
-			case 0x444e4553:
-				if ( handle_send( ) == 0 ) {
-                    continue;
-                }
-                
-				break;
-            /// NDIR
-            case 0x5249444e:
-                if ( handle_ndir( ) == 0 ) {
-                    continue;
-                }
-                
-                break;
-            /// RECV
-			case 0x56434552:
-                if ( handle_recv() == 0 ) {
-                    continue;
-                }
-                
-				break;
-            /// STOP
-            case 0x504f5453:
-                printf("[INFO] Terminating\n");
-                _terminate(0);
-                break;
-            /// PRNT
-			case 0x544e5250:
-                printf("[INFO] Listing files\n");
-                
-                handle_prnt( root, "" );
-                
-				break;
-            /// REPO
-            case 0x4f504552:
-                handle_repo( );
-                break;
-			default:
-				printf("[ERROR] Invalid command: $x\n", command);
-				break;
-		};
-	}
+    switch (command) {
+      /// SEND
+      case 0x444e4553:
+        if (handle_send() == 0) {
+          continue;
+        }
 
-	return;
+        break;
+      /// NDIR
+      case 0x5249444e:
+        if (handle_ndir() == 0) {
+          continue;
+        }
+
+        break;
+        /// RECV
+      case 0x56434552:
+        if (handle_recv() == 0) {
+          continue;
+        }
+
+        break;
+      /// STOP
+      case 0x504f5453:
+        printf("[INFO] Terminating\n");
+        _terminate(0);
+        break;
+        /// PRNT
+      case 0x544e5250:
+        printf("[INFO] Listing files\n");
+
+        handle_prnt(root, "");
+
+        break;
+      /// REPO
+      case 0x4f504552:
+        handle_repo();
+        break;
+      default:
+        printf("[ERROR] Invalid command: $x\n", command);
+        break;
+    };
+  }
+
+  return;
 }
 
+int main(void) {
+  service_loop();
 
-int main(void)
-{
-	service_loop();
-
-    return 0;
+  return 0;
 }

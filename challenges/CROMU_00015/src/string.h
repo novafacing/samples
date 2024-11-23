@@ -34,30 +34,30 @@ THE SOFTWARE.
  * Structure to maintain the buffer and index
  **/
 typedef struct string {
-        /// Pointer to the data
-        char *buffer;
+  /// Pointer to the data
+  char *buffer;
 
-        /// Total length of the string
-        int maxlength;
+  /// Total length of the string
+  int maxlength;
 
-        /// Current index being examined
-        int index;
+  /// Current index being examined
+  int index;
 } string, *pstring;
 
-void freeString(pstring str );
-int skipAlpha( pstring str );
-int incChar( pstring st );
-pstring initString( char *data );
-int skipWhiteSpace( pstring st );
-int atChar( pstring st, char c );
-int skipTo( pstring st, char c );
-int skipLength( pstring st, int count );
-int skipToNonAlphaNum( pstring str );
-int skipToNonAlphaNumSpace( pstring str );
-char *copyData( pstring str, int start, int end );
-int skipFloat( pstring str );
-int skipInt( pstring str );
-int getIndex( pstring str, int *outIndex );
-int skipUrl( pstring str );
+void freeString(pstring str);
+int skipAlpha(pstring str);
+int incChar(pstring st);
+pstring initString(char *data);
+int skipWhiteSpace(pstring st);
+int atChar(pstring st, char c);
+int skipTo(pstring st, char c);
+int skipLength(pstring st, int count);
+int skipToNonAlphaNum(pstring str);
+int skipToNonAlphaNumSpace(pstring str);
+char *copyData(pstring str, int start, int end);
+int skipFloat(pstring str);
+int skipInt(pstring str);
+int getIndex(pstring str, int *outIndex);
+int skipUrl(pstring str);
 
 #endif

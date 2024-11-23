@@ -30,24 +30,25 @@ THE SOFTWARE.
 
 #define MAX_NODES (255)
 typedef struct _node {
-	uint32_t InSPT;
-	struct _node *PrevSPT;
-	struct _node *Next;
-	uint32_t Name;
-	uint32_t Distance;
+  uint32_t InSPT;
+  struct _node *PrevSPT;
+  struct _node *Next;
+  uint32_t Name;
+  uint32_t Distance;
 } Node, *pNode;
 
 #define MAX_EDGES (2000)
 typedef struct _edge {
-	struct _edge *Next;
-	struct _edge *Prev;
-	pNode NodeA;
-	pNode NodeZ;
-	uint32_t Weight;
+  struct _edge *Next;
+  struct _edge *Prev;
+  pNode NodeA;
+  pNode NodeZ;
+  uint32_t Weight;
 } Edge, *pEdge;
 
-//uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint32_t *NodeCount);
-uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *NodeCount);
+// uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName,
+// uint32_t *NodeCount);
+uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName,
+                  uint8_t *NodeCount);
 
-
-#endif // #ifndef GRAPH_H
+#endif  // #ifndef GRAPH_H

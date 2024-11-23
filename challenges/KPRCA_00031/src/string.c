@@ -21,30 +21,28 @@
  *
  */
 
+#include "string.h"
+
 #include <libcgc.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "common.h"
 #include "error.h"
-#include "string.h"
 
-string *new_string(char *d)
-{
+string *new_string(char *d) {
   string *s = calloc(1, sizeof(string));
-  if (!s)
-    error(EALLOC);
+  if (!s) error(EALLOC);
 
   s->d = calloc(1, DEFAULT_S_SZ);
-  if (!s->d)
-    error(EALLOC);
+  if (!s->d) error(EALLOC);
   s->cap = DEFAULT_S_SZ;
 
   if (d) {
 #ifdef PATCHED
     size_t nz = (strlen(d) + 1) * 2;
     s->d = realloc(s->d, nz);
-    if (!s->d)
-      error(EALLOC);
+    if (!s->d) error(EALLOC);
     s->d[nz] = '\0';
     s->cap = nz;
 #endif
@@ -54,58 +52,47 @@ string *new_string(char *d)
   return s;
 }
 
-int set_string(string *s, char *d)
-{
-  if (!d || !s)
-    return -1;
+int set_string(string *s, char *d) {
+  if (!d || !s) return -1;
 
   memset(s->d, '\0', s->cap);
 
   if (strlen(d) + 1 > s->cap) {
     s->cap = (strlen(d) + strlen(s->d) + 1) * 2;
     s->d = realloc(s->d, s->cap);
-    if (!s->d)
-      error(EALLOC);
+    if (!s->d) error(EALLOC);
   }
 
   strncpy(s->d, d, s->cap);
   return 0;
 }
 
-int append_string(string *s, const char *d)
-{
-  if (!d || !s)
-    return -1;
+int append_string(string *s, const char *d) {
+  if (!d || !s) return -1;
 
   if (strlen(d) + strlen(s->d) + 1 > s->cap) {
     s->cap = (strlen(d) + strlen(s->d) + 1) * 2;
     s->d = realloc(s->d, s->cap);
-    if (!s->d)
-      error(EALLOC);
+    if (!s->d) error(EALLOC);
   }
 
   strcat(s->d, d);
   return 0;
 }
 
-int contains_string(string *s, const char *sub)
-{
-  if (!s || !sub)
-    return 0;
+int contains_string(string *s, const char *sub) {
+  if (!s || !sub) return 0;
 
   const char *s1 = s->d;
   const char *s2 = sub;
   size_t sub_len = strlen(sub);
   size_t dom_len = strlen(s->d);
 
-  if (dom_len < sub_len)
-    return 0;
+  if (dom_len < sub_len) return 0;
 
-  if (dom_len == 0 || sub_len == 0)
-    return (dom_len == sub_len) && (*s1 == *s2);
+  if (dom_len == 0 || sub_len == 0) return (dom_len == sub_len) && (*s1 == *s2);
 
-  if (dom_len == sub_len)
-    return strcmp((char *)s1, s2) == 0;
+  if (dom_len == sub_len) return strcmp((char *)s1, s2) == 0;
 
   while (*s1) {
     s2 = sub;
@@ -113,8 +100,7 @@ int contains_string(string *s, const char *sub)
     const char *s3 = s1;
     size_t matched = 0;
 
-    while (matched < sub_len && matched < dom_len && *s2++ == *s3++)
-      matched++;
+    while (matched < sub_len && matched < dom_len && *s2++ == *s3++) matched++;
 
     if (matched == sub_len)
       return 1;
@@ -125,11 +111,8 @@ int contains_string(string *s, const char *sub)
   return 0;
 }
 
-void free_string(string *s)
-{
-  if (!s)
-    return;
+void free_string(string *s) {
+  if (!s) return;
 
-  if (s->d)
-    free(s->d);
+  if (s->d) free(s->d);
 }

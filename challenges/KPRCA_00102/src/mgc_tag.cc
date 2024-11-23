@@ -23,9 +23,8 @@
 
 #include "mgc_tag.h"
 
-unsigned int mgc_tag::header_size()
-{
-    return (sizeof(header) + sizeof(title) + sizeof(artist) + sizeof(album) + sizeof(year) +
-            sizeof(comment) + sizeof(has_track) + sizeof(track_number) + sizeof(unused));
+unsigned int mgc_tag::header_size() {
+  return (sizeof(header) + sizeof(title) + sizeof(artist) + sizeof(album) +
+          sizeof(year) + sizeof(comment) + sizeof(has_track) +
+          sizeof(track_number) + sizeof(unused));
 }
-

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef USER_H
 #define USER_H
 #include <libcgc.h>
+
 #include "stdint.h"
 
 void Login(void);

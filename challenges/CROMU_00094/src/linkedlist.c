@@ -23,18 +23,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#include <libcgc.h>
-#include "malloc.h"
-#include "stdio.h"
 #include "linkedlist.h"
 
+#include <libcgc.h>
+
+#include "malloc.h"
+#include "stdio.h"
 
 linkedList *NewList(int type) {
   linkedList *list = calloc(sizeof(linkedList));
   list->type = type;
   return list;
 }
-
 
 int AddToList(linkedList *list, void *object, int type) {
   if (list == NULL) {
@@ -62,48 +62,39 @@ int AddToList(linkedList *list, void *object, int type) {
   return 1;
 }
 
-
-int RemoveFromList(linkedList *list, void *object) 
-{
-  if (list == NULL) 
-  {
+int RemoveFromList(linkedList *list, void *object) {
+  if (list == NULL) {
     return -1;
   }
-  if (object == NULL) 
-  {
+  if (object == NULL) {
     return -1;
   }
-  if (list->root->object == object) 
-  {
-    link *toDelete = list->root ;
+  if (list->root->object == object) {
+    link *toDelete = list->root;
     list->root = list->root->next;
     list->root->prev = NULL;
     free(toDelete);
     return 1;
   }
-  link *prev= list->root;
+  link *prev = list->root;
   link *this = list->root->next;
-  while (this != NULL && this->object != object) 
-  {
+  while (this != NULL && this->object != object) {
     prev = this;
     this = this->next;
   }
-  if (this != NULL) 
-  {
+  if (this != NULL) {
     link *toDelete = this;
     prev->next = this->next;
-    if (prev->next != NULL) 
-    {
+    if (prev->next != NULL) {
       prev->next->prev = prev;
     }
     return 1;
-  } 
+  }
   return -1;
 }
 
 void DumpList(linkedList *list) {
-  if (list == NULL)
-  {
+  if (list == NULL) {
     printf("Empty List\n");
     return;
   }

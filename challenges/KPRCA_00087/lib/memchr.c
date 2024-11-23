@@ -22,12 +22,10 @@
  */
 #include <string.h>
 
-void *memchr(const void *s, int c, size_t n)
-{
-    const unsigned char *buf = s;
-    size_t i;
-    for (i = 0; i < n; i++)
-        if (buf[i] == c)
-            return (void *)&buf[i];
-    return NULL;
+void *memchr(const void *s, int c, size_t n) {
+  const unsigned char *buf = s;
+  size_t i;
+  for (i = 0; i < n; i++)
+    if (buf[i] == c) return (void *)&buf[i];
+  return NULL;
 }

@@ -24,82 +24,66 @@ THE SOFTWARE.
 
 */
 
-#include <libcgc.h>
-#include "stdlib.h"
 #include "deck.h"
-#include "prng.h"
 
+#include <libcgc.h>
+
+#include "prng.h"
+#include "stdlib.h"
 
 // Shuffle the deck using the Knuth shuffle agorithm with array initialization
-void shuffle(standard_deck *deck)
-{
-	for (int i=0; i<SIZE_OF_DECK; i++)
-	{
-		int j = random_in_range(0, i);
-		deck->deck[i] = deck->deck[j];
-		// Initialize array with the numbers 1 to 52
-		deck->deck[j] = (char)(i + 1); 
-	}
-	deck->top = 0;
+void shuffle(standard_deck *deck) {
+  for (int i = 0; i < SIZE_OF_DECK; i++) {
+    int j = random_in_range(0, i);
+    deck->deck[i] = deck->deck[j];
+    // Initialize array with the numbers 1 to 52
+    deck->deck[j] = (char)(i + 1);
+  }
+  deck->top = 0;
 }
 
 // Print the face value of each card in the deck (2D, AH, etc)
-void print_deck(standard_deck *deck)
-{
-	printf("deck: ");
-	for (int i=0; i< SIZE_OF_DECK; i++)
-	{
-		printf("@s ", card_names[deck->deck[i]]);
-	}
-	printf("\ntop: @d\n", deck->top);
-} 
+void print_deck(standard_deck *deck) {
+  printf("deck: ");
+  for (int i = 0; i < SIZE_OF_DECK; i++) {
+    printf("@s ", card_names[deck->deck[i]]);
+  }
+  printf("\ntop: @d\n", deck->top);
+}
 
 // Print the face value of each card in the hand
-void print_hand(char *hand, size_t size)
-{
-	for (int i=0; i<size; i++)
-	{
-		if ((hand[i] > 0) && (hand[i] < SIZE_OF_DECK + 1))
-		{
-			printf("@s ", card_names[hand[i]]);
-		}
-	}
-	printf("\n");
+void print_hand(char *hand, size_t size) {
+  for (int i = 0; i < size; i++) {
+    if ((hand[i] > 0) && (hand[i] < SIZE_OF_DECK + 1)) {
+      printf("@s ", card_names[hand[i]]);
+    }
+  }
+  printf("\n");
 }
 
 // Draw a card from the deck.
 // Returns the numeric representation of the card drawn (1 to 52)
-char draw(standard_deck *deck)
-{
-	if (is_empty(deck))
-	{
-		printf("Error: Drawing from an empty deck!\n");
-		_terminate(1);
-	}
-	else
-	{
-		deck->top += 1;
-		return deck->deck[deck->top - 1];
-	}
-
+char draw(standard_deck *deck) {
+  if (is_empty(deck)) {
+    printf("Error: Drawing from an empty deck!\n");
+    _terminate(1);
+  } else {
+    deck->top += 1;
+    return deck->deck[deck->top - 1];
+  }
 }
 
-int is_empty(standard_deck *deck)
-{
-	return (deck->top >= SIZE_OF_DECK);
-}
+int is_empty(standard_deck *deck) { return (deck->top >= SIZE_OF_DECK); }
 
-int get_suit(char card)
-{
-	if ((card <= 0) || (card > SIZE_OF_DECK + 1))
-		return 0;
-	else if (card < 14)
-		return DIAMONDS;
-	else if (card < 27)
-		return SPADES;
-	else if (card < 40)
-		return HEARTS;
-	else
-		return CLUBS;
+int get_suit(char card) {
+  if ((card <= 0) || (card > SIZE_OF_DECK + 1))
+    return 0;
+  else if (card < 14)
+    return DIAMONDS;
+  else if (card < 27)
+    return SPADES;
+  else if (card < 40)
+    return HEARTS;
+  else
+    return CLUBS;
 }
-

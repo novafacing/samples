@@ -18,8 +18,7 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+ */
 
 #ifndef MEMCMP_H
 #define MEMCMP_H 1
@@ -28,7 +27,7 @@
  * Check to see if the first N bytes of buf1 match those of buf2.
  *
  * @param buf1 	First buffer
- * @param buf2 	Second buffer 
+ * @param buf2 	Second buffer
  * @param n 	Number of bytes to compare.
  * @return 0 if equal, 1 if buf1 > buf2, -1 if buf1 < buf2.
  */

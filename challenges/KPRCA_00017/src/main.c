@@ -21,11 +21,11 @@
  *
  */
 
+#include <ctype.h>
 #include <libcgc.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #define ERROR 9
 #define NEW_CHALLENGE 0
@@ -36,43 +36,35 @@ static int total = 0;
 static int win = 0;
 
 /* random.sample(open('/usr/share/dict/words', 'r').read().split('\n'), 20) */
-static char* words[] = {
-  "leonite", "drawdown", "conuzor", "franklin", "married",
-  "excircle", "solidness", "aneuria", "constablery", "infractible",
-  "speedingly", "scantlinged", "presphenoid", "diphyozooid", "twistiways",
-  "didrachma", "fa", "gyte", "emblazonry", "insulize"
-};
+static char *words[] = {
+    "leonite",    "drawdown",    "conuzor",     "franklin",    "married",
+    "excircle",   "solidness",   "aneuria",     "constablery", "infractible",
+    "speedingly", "scantlinged", "presphenoid", "diphyozooid", "twistiways",
+    "didrachma",  "fa",          "gyte",        "emblazonry",  "insulize"};
 
 typedef struct hackman_state {
-  void (*quit_handler) (void);
-  void (*new_challenge_handler) (struct hackman_state *);
+  void (*quit_handler)(void);
+  void (*new_challenge_handler)(struct hackman_state *);
   char word[20];
   char progress[20];
   unsigned int num_tries;
 } hackman_state_t;
 
-int read_until(int fd, char *buf, size_t len, char delim)
-{
+int read_until(int fd, char *buf, size_t len, char delim) {
   size_t i;
   char *c = buf;
-  for (i = 0; i < len; ++i)
-  {
+  for (i = 0; i < len; ++i) {
     size_t rx;
-    if (receive(fd, c, 1, &rx) != 0 || rx == 0)
-      break;
-    if (*(c++) == delim)
-      break;
+    if (receive(fd, c, 1, &rx) != 0 || rx == 0) break;
+    if (*(c++) == delim) break;
   }
-  *(c-1) = '\0';
+  *(c - 1) = '\0';
   return c - buf;
 }
 
-char parse_input(char *buf)
-{
-  if (read_until(STDIN, buf, 128, '\n') > 0)
-  {
-    switch (buf[0])
-    {
+char parse_input(char *buf) {
+  if (read_until(STDIN, buf, 128, '\n') > 0) {
+    switch (buf[0]) {
       case '+':
         return NEW_CHALLENGE;
         break;
@@ -83,27 +75,21 @@ char parse_input(char *buf)
         return RESET;
         break;
       default:
-        if (isalpha(buf[0]))
-          return tolower(buf[0]);
+        if (isalpha(buf[0])) return tolower(buf[0]);
         break;
     }
-  }
-  else
+  } else
     exit(0);
   return ERROR;
 }
 
-
-void banner()
-{
+void banner() {
   char msg[2048];
   int i, j, cnt = 0;
   memset(msg, 0, sizeof(msg));
 
-  for (j = 0; j < 2; ++j)
-  {
-    for (i = 0; i < 33; ++i)
-    {
+  for (j = 0; j < 2; ++j) {
+    for (i = 0; i < 33; ++i) {
       if (i % 2)
         msg[cnt++] = '-';
       else
@@ -115,10 +101,8 @@ void banner()
   strcpy(&msg[cnt], "     Sh41l w3 p14y a g4m3?\n");
   cnt += 27;
 
-  for (j = 0; j < 2; ++j)
-  {
-    for (i = 0; i < 33; ++i)
-    {
+  for (j = 0; j < 2; ++j) {
+    for (i = 0; i < 33; ++i) {
       if (i % 2)
         msg[cnt++] = '-';
       else
@@ -130,37 +114,32 @@ void banner()
   fdprintf(STDOUT, "%s\n", msg);
 }
 
-void record_winner()
-{
+void record_winner() {
   char comment[2048];
   fdprintf(STDOUT, "###### Good Work! ######\n");
   fdprintf(STDOUT, "# Leave your comment!! #\n");
   fdprintf(STDOUT, "########################\n");
   fdprintf(STDOUT, "Comment: ");
-  if (read_until(STDIN, comment, sizeof(comment), '\n') > 0)
-  {
+  if (read_until(STDIN, comment, sizeof(comment), '\n') > 0) {
     comment[2047] = '\0';
     fdprintf(STDOUT, "You wrote: %s\n", comment);
-  }
-  else
+  } else
     exit(0);
   total++;
 }
 
-void new_challenge(hackman_state_t *h_state)
-{
+void new_challenge(hackman_state_t *h_state) {
   unsigned short lfsr;
   unsigned int num;
   char buf[32];
   fdprintf(STDOUT, "\n@ @ @ @ @  New Challenge  @ @ @ @ @\n");
   fdprintf(STDOUT, "Seed? ");
-  if (read_until(STDIN, buf, sizeof(buf), '\n') <= 0)
-    exit(0);
+  if (read_until(STDIN, buf, sizeof(buf), '\n') <= 0) exit(0);
   num = strtoul(buf, NULL, 10);
-  /* only 1 round of lfsr with user-derived state. supposed to be easy to predict */
+  /* only 1 round of lfsr with user-derived state. supposed to be easy to
+   * predict */
   lfsr = ((num & 0x00FF0000) >> 16) | ((num & 0x000000FF) << 8);
-  if (lfsr == 0)
-    lfsr = 0xACE1u;
+  if (lfsr == 0) lfsr = 0xACE1u;
   num = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
   num = (lfsr >> 1) | (num << 15);
 
@@ -171,14 +150,14 @@ void new_challenge(hackman_state_t *h_state)
   h_state->num_tries = 0;
 }
 
-void quit_game()
-{
-    fdprintf(STDOUT, "\n * * * * Thank you for playing! You've won %d times! * * * *\n", total);
-    exit(0);
+void quit_game() {
+  fdprintf(STDOUT,
+           "\n * * * * Thank you for playing! You've won %d times! * * * *\n",
+           total);
+  exit(0);
 }
 
-void play_game()
-{
+void play_game() {
 #if PATCHED
   hackman_state_t h_state = {0};
 #else
@@ -187,22 +166,18 @@ void play_game()
   char buf[128];
   int i, found, error;
 
-  while (1)
-  {
+  while (1) {
     error = 0;
-    if (win || strlen(h_state.word) == 0)
-      goto new_chal;
+    if (win || strlen(h_state.word) == 0) goto new_chal;
     fdprintf(STDOUT, "[[[ Your challenge: %s ]]]\n", h_state.progress);
     fdprintf(STDOUT, "Guess a letter: ");
 
-    switch (parse_input(buf))
-    {
+    switch (parse_input(buf)) {
       case NEW_CHALLENGE:
-new_chal:
+      new_chal:
         if (h_state.new_challenge_handler == NULL)
           h_state.new_challenge_handler = new_challenge;
-        if (h_state.quit_handler == NULL)
-          h_state.quit_handler = quit_game;
+        if (h_state.quit_handler == NULL) h_state.quit_handler = quit_game;
         h_state.new_challenge_handler(&h_state);
         win = 0;
         continue;
@@ -214,8 +189,7 @@ new_chal:
         continue;
         break;
       case QUIT:
-        if (h_state.quit_handler == NULL)
-          h_state.quit_handler = quit_game;
+        if (h_state.quit_handler == NULL) h_state.quit_handler = quit_game;
         h_state.quit_handler();
         break;
       case ERROR:
@@ -226,27 +200,22 @@ new_chal:
         break;
     }
 
-    if (!error)
-    {
+    if (!error) {
       found = 0;
-      for (i = 0; i < strlen(h_state.word); ++i)
-      {
-        if (buf[0] == h_state.word[i])
-        {
+      for (i = 0; i < strlen(h_state.word); ++i) {
+        if (buf[0] == h_state.word[i]) {
           h_state.progress[i] = buf[0];
           found = 1;
         }
       }
 
-      if (found)
-      {
+      if (found) {
         found = 0;
         for (i = 0; i < strlen(h_state.progress); ++i)
-          if (h_state.progress[i] == '_')
-            found = 1;
-        if (!found)
-        {
-          fdprintf(STDOUT, ">>> You got it!! \"%s\" (%d tries) <<<\n", h_state.word, h_state.num_tries);
+          if (h_state.progress[i] == '_') found = 1;
+        if (!found) {
+          fdprintf(STDOUT, ">>> You got it!! \"%s\" (%d tries) <<<\n",
+                   h_state.word, h_state.num_tries);
           win = 1;
           break;
         }
@@ -255,13 +224,11 @@ new_chal:
   }
 }
 
-int main()
-{
+int main() {
   char buf[128];
   fdprintf(STDOUT, "\nWelcome to HackMan v13.37\n\n");
 
-  while (1)
-  {
+  while (1) {
     if (win)
       record_winner();
     else

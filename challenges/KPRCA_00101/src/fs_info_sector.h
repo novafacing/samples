@@ -25,16 +25,15 @@
 #define FS_INFO_SECTOR_H_
 
 #pragma pack(push, 1)
-struct fs_info_sector
-{
-    unsigned char signature[4];
-    unsigned char reserved[480];
-    unsigned char signature2[4];
-    unsigned int num_free_clusters;
-    unsigned int most_recent_cluster_alloc;
-    unsigned char reserved2[12];
+struct fs_info_sector {
+  unsigned char signature[4];
+  unsigned char reserved[480];
+  unsigned char signature2[4];
+  unsigned int num_free_clusters;
+  unsigned int most_recent_cluster_alloc;
+  unsigned char reserved2[12];
 
-    unsigned char end_signature[4];
+  unsigned char end_signature[4];
 };
 #pragma pack(pop)
 

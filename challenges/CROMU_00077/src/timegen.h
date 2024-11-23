@@ -26,29 +26,28 @@ THE SOFTWARE.
 #ifndef __TIMEGEN_H__
 #define __TIMEGEN_H__
 
-#define START_UNIX_TIMESTAMP	(1452975638)
-#define GENERATOR_ROUNDS	(20)
+#define START_UNIX_TIMESTAMP (1452975638)
+#define GENERATOR_ROUNDS (20)
 
 // Unix Timestamp generator, utilizes magic page data
-class CTimeGen
-{
-public:
-	CTimeGen( uint32_t *pGeneratorSource, uint32_t generatorSize );
-	~CTimeGen( );
+class CTimeGen {
+ public:
+  CTimeGen(uint32_t *pGeneratorSource, uint32_t generatorSize);
+  ~CTimeGen();
 
-	uint32_t GetUnixTimestamp( void );
+  uint32_t GetUnixTimestamp(void);
 
-private:
-	uint32_t GetGeneratorMix( void );
+ private:
+  uint32_t GetGeneratorMix(void);
 
-private:
-	uint32_t *m_pGeneratorSource;
-	uint32_t m_generatorSize;
+ private:
+  uint32_t *m_pGeneratorSource;
+  uint32_t m_generatorSize;
 
-	uint32_t m_lastPos;
+  uint32_t m_lastPos;
 
-	uint32_t m_lastTimestamp;
-	uint32_t m_lastMix;
+  uint32_t m_lastTimestamp;
+  uint32_t m_lastMix;
 };
 
-#endif // __TIME_GEN_H__
+#endif  // __TIME_GEN_H__

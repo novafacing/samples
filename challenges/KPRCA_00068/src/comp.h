@@ -23,22 +23,16 @@
 #pragma once
 #include "audiotrack.h"
 
-enum
-{
-    COMPRESSION_32,
-    COMPRESSION_4,
-    COMPRESSION_8
-};
+enum { COMPRESSION_32, COMPRESSION_4, COMPRESSION_8 };
 
-class Compression
-{
-public:
-    virtual ~Compression();
+class Compression {
+ public:
+  virtual ~Compression();
 
-    virtual unsigned int getId() const = 0;
-    virtual unsigned int getMaxBufferSize(const AudioTrack &track) const = 0;
-    virtual void compress(const AudioTrack &track, uint8_t *dest) const = 0;
-    virtual void decompress(AudioTrack &track, uint8_t *src) const = 0;
+  virtual unsigned int getId() const = 0;
+  virtual unsigned int getMaxBufferSize(const AudioTrack &track) const = 0;
+  virtual void compress(const AudioTrack &track, uint8_t *dest) const = 0;
+  virtual void decompress(AudioTrack &track, uint8_t *src) const = 0;
 
-    static Compression *fromId(unsigned int id);
+  static Compression *fromId(unsigned int id);
 };

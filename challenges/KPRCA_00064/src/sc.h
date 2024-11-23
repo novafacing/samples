@@ -24,31 +24,31 @@
 #ifndef SC_H
 #define SC_H
 
-#define MAX_DATA_SIZE   4096
-#define BLOCK_SIZE      512
+#define MAX_DATA_SIZE 4096
+#define BLOCK_SIZE 512
 
 typedef struct bit_io {
-    unsigned char *data;
-    unsigned int didx;
-    unsigned int bidx;
+  unsigned char *data;
+  unsigned int didx;
+  unsigned int bidx;
 } bio_t;
 
-bio_t* bit_new(unsigned char *data);
+bio_t *bit_new(unsigned char *data);
 unsigned char bit_read(bio_t *bio, size_t n);
 void bit_write(bio_t *bio, unsigned char data, size_t n);
 
 typedef struct sc_obj {
-    unsigned char order[95];
-    unsigned char *data;
-    size_t data_len;
-    int (*cmp) (unsigned char *, unsigned char *, unsigned char *, size_t);
+  unsigned char order[95];
+  unsigned char *data;
+  size_t data_len;
+  int (*cmp)(unsigned char *, unsigned char *, unsigned char *, size_t);
 } sc_obj_t;
 
-sc_obj_t* sc_new(unsigned char *key);
+sc_obj_t *sc_new(unsigned char *key);
 int sc_scompress(sc_obj_t *sc, unsigned char **out, size_t *outlen);
 int sc_sdecompress(sc_obj_t *sc, unsigned char **out, size_t *outlen);
 int sc_set_data(sc_obj_t *sc, unsigned char *data, size_t data_len);
-unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen);
-unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen);
+unsigned char *sc_bwt(sc_obj_t *sc, int op, size_t *outlen);
+unsigned char *sc_mtf(sc_obj_t *sc, int op, size_t *outlen);
 
 #endif
