@@ -2,8 +2,10 @@ POLLS_RELEASE_SEED= 1375240554
 POLLS_TESTING_SEED= -1042426167
 AUTHOR_ID  = CROMU
 SERVICE_ID = 00027
-CFLAGS     = -O0 -g -Werror -Wno-overlength-strings -Wno-packed
+CFLAGS     = -O0 -g -Werror -Wno-overlength-strings -Wno-packed -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
+LIB_IFLAGS = -Iinclude
+IFLAGS     = -Iinclude
 
 POLLS_RELEASE_COUNT = 300
 POLLS_TESTING_COUNT = 700
-include /usr/share/cb-testing/cgc-cb.mk
+include ../../make/challenge.mk

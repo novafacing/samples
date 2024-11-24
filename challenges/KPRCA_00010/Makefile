@@ -1,7 +1,7 @@
 POLLS_TESTING_SEED= 1532070282
 AUTHOR_ID  = KPRCA
 SERVICE_ID = 00010
-CFLAGS     = -O0 -g -Wall
+CFLAGS     = -O0 -g -Wno-int-conversion
 POLLS_RELEASE_SEED = 947695443
 
-include /usr/share/cb-testing/cgc-cb.mk
+include ../../make/challenge.mk

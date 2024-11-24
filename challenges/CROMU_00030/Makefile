@@ -3,5 +3,6 @@ POLLS_TESTING_SEED= -1848714694
 AUTHOR_ID  = CROMU
 SERVICE_ID = 00030
 CFLAGS     = -O0 -g -Werror -Wno-overlength-strings -Wno-packed
+IFLAGS     = -Iinclude
 
-include /usr/share/cb-testing/cgc-cb.mk
+include ../../make/challenge.mk
