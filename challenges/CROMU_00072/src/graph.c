@@ -45,7 +45,7 @@ uint32_t NumEdges = 0;
 pNode FindMinDistanceNode(void) {
   pNode n;
   pNode MinDistanceNode = NULL;
-  uint32_t MinDistance = SIZE_MAX;
+  size_t MinDistance = SIZE_MAX;
 
   n = Nodes;
   while (n) {

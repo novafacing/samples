@@ -1,5 +1,6 @@
 #ifndef STACK_H_
 #define STACK_H_
+#include <libcgc.h>
 
 typedef struct stack stack_t;
 struct stack {

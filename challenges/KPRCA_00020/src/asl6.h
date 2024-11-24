@@ -23,6 +23,7 @@
 
 #ifndef __ASL6_H__
 #define __ASL6_H__
+#include <stdint.h>
 
 #define DEFAULT_SUB_CAP 2
 #define PRIM_MASK 0x20

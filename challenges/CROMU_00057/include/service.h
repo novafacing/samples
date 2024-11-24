@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #ifndef SERVICE_H
 #define SERVICE_H
+#include <libcgc.h>
 
 #define INITIALIZATION_DATA 0x4347C000
 #define INIT_DATA_LEN 4096

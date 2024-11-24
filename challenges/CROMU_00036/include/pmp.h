@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef PMP_H
 #define PMP_H
+#include "canvas.h"
 
 #pragma pack(push, 1)
 typedef struct PMP_Header_s {

@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include <libcgc.h>
+#include <stdint.h>
 ssize_t read_until(char *, char *, size_t);
 int32_t StoreTemp(double *, uint32_t, uint32_t, uint32_t, char *);
 int8_t read_temps(double *grid);

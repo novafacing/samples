@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include "stdint.h"
 
 #define RAND_MAX 2147483647
-#define FLAG_PAGE 0x4347c800
 
 void srand(void);
 uint32_t rand(void);

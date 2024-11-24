@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 int receive_until(char *dest, size_t length, char end, size_t *bytes_read);
 size_t strlen(char *buf);

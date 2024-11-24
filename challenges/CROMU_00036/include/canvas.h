@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef CANVAS_H
 #define CANVAS_H
+#include <stdint.h>
 
 #define CANVAS_MAX_LAYERS 6
 #define CANVAS_MAX_COLORS 20

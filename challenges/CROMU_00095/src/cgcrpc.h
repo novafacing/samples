@@ -25,6 +25,8 @@ THE SOFTWARE.
 */
 #ifndef CGCRPC_H
 #define CGCRPC_H
+#include <libcgc.h>
+#include <stdint.h>
 
 #define CGCRPC_SUCCESS 0
 #define CGCRPC_FAILURE -1

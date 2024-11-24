@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef SCREEN_H
 #define SCREEN_H
+#include <stdint.h>
 
 void EraseToEOL(void);
 void EraseLine(uint8_t StartingX);

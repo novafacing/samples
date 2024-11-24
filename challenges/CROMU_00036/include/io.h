@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef IO_H
 #define IO_H
+#include <libcgc.h>
 
 int SendAll(const void *buffer, size_t length);
 int ReceiveAll(void *buffer, size_t length);

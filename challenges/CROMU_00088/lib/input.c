@@ -57,7 +57,7 @@ int receive_bytes(char *buffer, size_t count) {
 // incoming buffer is limit+1 in size
 size_t receive_until(char *buffer, char delim, size_t limit) {
   const int maxLen = 512;
-  static char circ_buffer[maxLen];
+  static char circ_buffer[512];
   static int head = 0;
   static int end = 0;
   int maxRead;

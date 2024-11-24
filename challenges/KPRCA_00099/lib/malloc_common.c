@@ -31,7 +31,6 @@
 #define DBG_ASSERT(x) \
   do {                \
   } while (0)
-#define PAGE_SIZE (4096)
 
 #if 0
 /* XXX replace with cgc allocate */

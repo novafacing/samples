@@ -1,5 +1,6 @@
 #ifndef ACCELIO_H_
 #define ACCELIO_H_
+#include <libcgc.h>
 
 #define TRIM_FRONT 1
 #define TRIM_BACK 2

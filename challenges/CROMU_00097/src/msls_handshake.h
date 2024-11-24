@@ -25,6 +25,9 @@ THE SOFTWARE.
 */
 #ifndef MSLS_HANDSHAKE_H
 #define MSLS_HANDSHAKE_H
+#include <stdint.h>
+
+#include "msls.h"
 
 #define COOKIE_BASE1 MAGIC_PAGE
 #define COOKIE_BASE2 (MAGIC_PAGE + 128 * 4)

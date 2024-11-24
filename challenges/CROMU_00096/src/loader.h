@@ -25,6 +25,9 @@ THE SOFTWARE.
 */
 #ifndef LOADER_H
 #define LOADER_H
+#include <stdint.h>
+
+#include "filesystem.h"
 
 #define EXECUTABLE_FILE_MAGIC 0xC67CC76C
 

@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef SLS_H
 #define SLS_H
+#include <stdint.h>
 
 typedef struct SLSMessage_s {
   uint16_t length;

@@ -2,6 +2,7 @@
 
 #ifndef USB_H_
 #define USB_H_
+#include <stdint.h>
 
 #define VERSION_CODE 0x0111
 

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef SERVICE_H
 #define SERVICE_H
 #include <libcgc.h>
+#include <stdint.h>
 
 // Request
 typedef struct _request {

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef IO_H
 #define IO_H
 #include <libcgc.h>
+#include <stdint.h>
 
 // command
 #define CMD_SEND_NODES (1)

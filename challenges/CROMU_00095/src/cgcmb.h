@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define CGCMB_H
 
 #include "fs.h"
+#include "transport.h"
 
 #define CGCMB_MAGIC 0xC47C4D42
 

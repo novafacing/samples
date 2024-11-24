@@ -125,7 +125,7 @@ typedef struct {
 typedef struct {
   directoryEntryType *currentFile;
   unsigned int dirEntryNum;
-  enum fileTypes;
+  enum fileTypes fileType;
   char filespec[MAX_FILENAME_LEN];
 
 } findFileHandleType;

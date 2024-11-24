@@ -34,7 +34,7 @@ typedef struct _node {
   struct _node *PrevSPT;
   struct _node *Next;
   uint32_t Name;
-  uint32_t Distance;
+  size_t Distance;
 } Node, *pNode;
 
 #define MAX_EDGES (2000)

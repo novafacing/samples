@@ -25,6 +25,9 @@ THE SOFTWARE.
 */
 #ifndef MSLS_APPLICATION_H
 #define MSLS_APPLICATION_H
+#include <stdint.h>
+
+#include "sls.h"
 
 #define APPLICATION_TYPE_LIST_BOARD 0xa0
 #define APPLICATION_TYPE_POST_MESSAGE 0xa1

@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define POKER_H
 
 #include "casino.h"
+#include "deck.h"
 
 static const int poker_value[SIZE_OF_DECK + 1] = {
     0,                               // Placeholder for non-card

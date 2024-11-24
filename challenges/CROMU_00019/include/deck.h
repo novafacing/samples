@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #ifndef DECK_H
 #define DECK_H
+#include <libcgc.h>
 
 #define SIZE_OF_DECK 52
 

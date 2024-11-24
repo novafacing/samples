@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef STDLIB_H
 #define STDLIB_H
+#include <libcgc.h>
 
 typedef unsigned char uint8_t;
 typedef unsigned short int uint16_t;

@@ -26,6 +26,8 @@ THE SOFTWARE.
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <stdint.h>
+
 enum CommandType {
   NO_COMMAND,
   REQUEST,

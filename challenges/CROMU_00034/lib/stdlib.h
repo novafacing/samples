@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
+#include <libcgc.h>
 
 #define INUSE_FLAG 1
 #define FREE_FLAG 2

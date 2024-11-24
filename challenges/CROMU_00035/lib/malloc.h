@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef __MALLOC_H__
 #define __MALLOC_H__
+#include <libcgc.h>
 
 // In our case the lower 2-bits of the alloc_size are flags
 // we enforce minimum allocation sizes of 4-bytes which frees

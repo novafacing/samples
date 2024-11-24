@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 int receive_all(char *buf, int length);
 int receive_all_fd(int fd, char *buf, int length);

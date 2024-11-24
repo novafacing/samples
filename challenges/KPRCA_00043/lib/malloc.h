@@ -25,7 +25,7 @@
 
 #ifndef MALLOC_COMMON_H
 #define MALLOC_COMMON_H
-
+#include <libcgc.h>
 #include <stdint.h>
 
 #define NUM_FREE_LISTS 32

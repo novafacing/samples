@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef TRANSPORT_H
 #define TRANSPORT_H
+#include <stdint.h>
 
 #define MAX_TRANSPORT_SIZE 1024 * 4
 

@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef CSTRING_H
 #define CSTRING_H
+#include <stdint.h>
 
 typedef struct cString_s {
   uint16_t length;

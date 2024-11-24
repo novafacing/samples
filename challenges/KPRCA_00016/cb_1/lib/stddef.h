@@ -1,8 +1,6 @@
 #ifndef STDDEF_H_
 #define STDDEF_H_
 
-#define PAGE_SIZE 4096
-
 typedef long int ptrdiff_t;
 
 #ifndef _LIBCGC_H

@@ -25,7 +25,7 @@ THE SOFTWARE.
 */
 #ifndef __IO_H__
 #define __IO_H__
-
+#include <libcgc.h>
 #include <stdint.h>
 
 int readLine(int fd, char *buffer, size_t maxLen);

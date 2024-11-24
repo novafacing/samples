@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
+#include <stdint.h>
 
 #define MAX_FILENAME 64
 

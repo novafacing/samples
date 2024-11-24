@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef MENU_H
 #define MENU_H
+#include <stdint.h>
 
 uint8_t PrintMenu(void);
 void PrintSystemBanner(void);

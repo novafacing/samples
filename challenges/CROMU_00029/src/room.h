@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include <libcgc.h>
+#include <stdint.h>
 
 // 15 x 15 x 15 * sizeof(double)
 #define MAX_MALLOC (27000)

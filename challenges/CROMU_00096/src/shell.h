@@ -25,6 +25,10 @@ THE SOFTWARE.
 */
 #ifndef SHELL_H
 #define SHELL_H
+#include <stdint.h>
+
+#include "filesystem.h"
+#include "loader.h"
 
 #define DELIM '\n'
 

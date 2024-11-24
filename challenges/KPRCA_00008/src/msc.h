@@ -1,5 +1,7 @@
 #ifndef MSC_H_
 #define MSC_H_
+#include <libcgc.h>
+#include <stdint.h>
 
 typedef struct {
   uint32_t magic;

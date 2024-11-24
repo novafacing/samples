@@ -25,7 +25,7 @@
 
 #ifndef MALLOC_COMMON_H
 #define MALLOC_COMMON_H
-
+#include <libcgc.h>
 #include <mutex.h>
 #include <stdint.h>
 

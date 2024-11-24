@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef NETSTUFF_H
 #define NETSTUFF_H
+#include <stdint.h>
 
 #define NETSTUFF_PATH_CHAR 0xd0     // Used like a forward slash /
 #define NETSTUFF_DIR_CHAR 0xd1      // Used like a dot .

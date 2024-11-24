@@ -1,5 +1,6 @@
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 size_t strlen(const char *str);
 char *strcpy(char *dst, const char *src);

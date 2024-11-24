@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #ifndef SIM_H
 #define SIM_H
+#include <stdint.h>
 
 #define HOURS_PER_SIM_STEP (1)
 uint8_t RunSimStep(void);

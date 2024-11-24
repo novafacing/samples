@@ -14,8 +14,6 @@ typedef unsigned long long int uint64_t;
 typedef int intptr_t;
 typedef unsigned int uintptr_t;
 
-#define __INT64_C(c) c##LL
-#define __UINT64_C(c) c##ULL
 /* Limits of integral types.  */
 
 /* Minimum of signed integral types.  */

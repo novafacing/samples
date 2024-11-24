@@ -1,5 +1,6 @@
 #ifndef ACCEL_H_
 #define ACCEL_H_
+#include <libcgc.h>
 
 int init_sheet();
 char *show_cell(char *cell_id, int is_repr, char *val_str, size_t size);
