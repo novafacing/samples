@@ -178,7 +178,6 @@ typedef enum { YOLO, SHEAP, SSHEAP } heaptype;
 extern uint32_t __hcookie[3];
 
 #define PAGE_SIZE 4096
-#define FLAG_PAGE 0x4347C000
 typedef struct heap_chunk heap_chunk_t;
 
 struct heap_chunk {

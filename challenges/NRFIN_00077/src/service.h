@@ -31,8 +31,6 @@
 
 #define WRONG_PASSWORD_MESSAGE "Wrong password! Try again.\n"
 
-#define FLAG_PAGE 0x4347C000
-
 #define ALL_MESSAGES "ALL"
 
 #define MAX_NUM_SIZE 12

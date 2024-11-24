@@ -36,8 +36,6 @@
 
 // #define DEBUG 1
 
-#define FLAG_PAGE 0x4347C000
-
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE -1
 #define MALLOC_OK(p)           \

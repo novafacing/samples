@@ -35,10 +35,6 @@
 
 #define HASH_PRIME_SIZE 32
 
-#ifndef FLAG_PAGE
-#define FLAG_PAGE 0x4347C000
-#endif
-
 static const unsigned int ht_prime_list[HASH_PRIME_SIZE] = {
     2ul,          3ul,         11ul,        23ul,        53ul,
     97ul,         193ul,       389ul,       769ul,       1543ul,

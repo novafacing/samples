@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef LIBC_H
 #define LIBC_H
 
-#define FLAG_PAGE 0x4347c000
-
 int receive_all(char *buf, int length);
 int receive_all_fd(int fd, char *buf, int length);
 int send_all(char *buf, int length);

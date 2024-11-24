@@ -26,7 +26,6 @@
 #define FALSE 0
 #define SWITCH_ERROR 42
 
-#define FLAG_PAGE 0x4347C000
 #define SEND_SZ 32
 
 typedef struct {

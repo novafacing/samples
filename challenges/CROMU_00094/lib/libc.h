@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef LIBC_H
 #define LIBC_H
 
-#define FLAG_PAGE 0x4347c000
-
 void InitializeRandomness();
 
 char *GenerateRandomString(int length);

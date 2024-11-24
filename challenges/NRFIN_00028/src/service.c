@@ -27,8 +27,6 @@
 #include "libc.h"
 #include "trusted.h"
 
-#define FLAG_PAGE 0x4347C000
-
 char *responses[] = {
     "It's all just electrons.",
     "TOO MANY SECRETS",

@@ -66,8 +66,6 @@
 
 #define MAX_NAME_SIZE 8
 
-#define FLAG_PAGE 0x4347C000
-
 #define DOC_ID_STRING "Document ID: "
 
 typedef struct {

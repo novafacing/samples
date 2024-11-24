@@ -33,7 +33,6 @@
 
 // #define DEBUG 1
 
-#define FLAG_PAGE 0x4347C000
 #define READ_FD STDIN
 
 #endif
