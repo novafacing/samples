@@ -2,14 +2,27 @@
 #define _LIBCGC_H
 
 #ifndef _NO_STD_DEFS
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+#define NULL ((void *)0)
+#define EBADF 1
+#define EFAULT 2
+#define EINVAL 3
+#define ENOMEM 4
+#define ENOSYS 5
+#define EPIPE 6
+
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED
 
 #if defined(__LP64__) || defined(_LP64)
 typedef unsigned long size_t;
+typedef long ssize_t;
 #define STD_SIZE_T unsigned long
 #else
 typedef unsigned int size_t;
+typedef int ssize_t;
 #define STD_SIZE_T unsigned int
 #endif
 
