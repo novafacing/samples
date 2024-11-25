@@ -29,6 +29,8 @@
 #include "rle.h"
 #include "service.h"
 
+video *vhead;
+
 #define NOSUCHVID "I hate this hacker crap!"
 #define VIDEXISTS "It's a UNIX system, I know this!"
 #define GOODBYE "God help us, we're in the hands of engineers..."

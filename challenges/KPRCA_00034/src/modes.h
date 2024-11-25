@@ -1,5 +1,6 @@
 #ifndef MODES_H_
 #define MODES_H_
+#include <stdint.h>
 
 #include "codes.h"
 

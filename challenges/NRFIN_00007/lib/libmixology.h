@@ -42,7 +42,7 @@ typedef struct command {
 const static int MAX_NEW_CMPND_SZ = 128;
 
 typedef struct mixed_compound {
-  char compound_name[MAX_NEW_CMPND_SZ];
+  char compound_name[128];
   unsigned int moles;
 
 } mixed_compound_t;
@@ -60,7 +60,7 @@ const static int PAGE_SZ = 25;
 const static size_t PREPSAMPLESZ = 1000;
 const static size_t SAMPLESZ = 25;
 
-static char last_compound[MAX_NEW_CMPND_SZ];
+static char last_compound[128];
 unsigned int get_npages();
 
 int transmit_compound_list(unsigned int from, unsigned int to);
@@ -84,7 +84,7 @@ int list_cmd(char *args);
 int prep_cmd(char *args);
 int quit_cmd(char *args);
 
-static command_t commands[NUM_CMDS] = {
+static command_t commands[4] = {
     {MAX_MIX_N, "MIX", &mix_cmd},
     {512, "LIST", &list_cmd},
     {MAX_MIX_N, "PREP", &prep_cmd},

@@ -20,9 +20,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #ifndef LIBC_H
-#define LIBC_H 1
-
+#define LIBC_H
 #include <errno.h>
+#include <libcgc.h> 1
 #include <stdint.h>
 
 #include "memset.h"

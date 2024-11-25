@@ -23,6 +23,7 @@
 
 #ifndef USER_H
 #define USER_H
+#include <libcgc.h>
 
 #include "error.h"
 

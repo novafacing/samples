@@ -1,5 +1,6 @@
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 // DEBUG
 // #define DEBUG 1

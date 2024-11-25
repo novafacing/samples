@@ -22,6 +22,7 @@
 
 #ifndef SERVICE_H
 #define SERVICE_H
+#include <libcgc.h>
 
 // Messages
 #define INITMSG "Welcome to Tick-A-Tack.\n"

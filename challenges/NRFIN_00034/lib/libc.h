@@ -26,14 +26,12 @@
  */
 
 #ifndef LIBC_H_
-#define LIBC_H_
+#define LIBC_H
 
 #include <libcgc.h>
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE -1
-
-#define PAGE_SIZE (1 << 12)
 
 /**
  * Return the lesser of a and b

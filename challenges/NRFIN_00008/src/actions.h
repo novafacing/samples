@@ -39,7 +39,7 @@ typedef struct video {
   bool can_delete;
 } video;
 
-video *vhead;
+extern video *vhead;
 
 static video *get_video_by_name(char *);
 void list(char *);

@@ -384,8 +384,8 @@ int is_in_turn_list(psList turnList, proad thisRoad) {
     if (thisRouteList->thisRoad == thisRoad) {
       return 1;
     }
-    thisRouteList = (prouteList)((unsigned)turnList->listRoot->data +
-                                 (unsigned int)(sizeof(routeList) * (i)));
+    thisRouteList = (prouteList)((uintptr_t)turnList->listRoot->data +
+                                 (uintptr_t)(sizeof(routeList) * (i)));
     i++;
   }
   return 0;
@@ -417,9 +417,9 @@ prouteList push_to_turn_list(pmap thisMap, psList turnList, proad thisRoad,
   }
 #endif
   thisRouteList =
-      (prouteList)((unsigned)turnList->listRoot->data +
-                   (unsigned int)(sizeof(routeList) *
-                                  (unsigned int)(turnList->listRoot->count)));
+      (prouteList)((uintptr_t)turnList->listRoot->data +
+                   (uintptr_t)(sizeof(routeList) *
+                               (uintptr_t)(turnList->listRoot->count)));
   bzero(thisRouteList, sizeof(routeList));
   thisRouteList->thisRoad = thisRoad;
   thisRouteList->parent = parent;
@@ -471,8 +471,8 @@ psList get_route(pmap thisMap, psList turnList, proad targetRoad,
       // end while(curIntersection != NULL)
     }
     curRouteListCount++;
-    curRouteList = (prouteList)((unsigned int)curRouteList +
-                                (unsigned int)(sizeof(routeList)));
+    curRouteList =
+        (prouteList)((uintptr_t)curRouteList + (uintptr_t)(sizeof(routeList)));
   }
   return NULL;
 }

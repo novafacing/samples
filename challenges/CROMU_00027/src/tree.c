@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "tree.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "error.h"
 #include "malloc.h"
@@ -145,32 +146,27 @@ void WalkTree(TreeNode *nodein) {
   int index = 0;
   int what = 0xfe;
   TreeNode *node = nodein;
-
   printf("@s\n", node);
-
   if (node->child) {
     node_stack[index++] = node->child;
-    node_stack[index++] = (TreeNode *)(indent + 1);
+    // Use intptr_t to safely store integer as pointer
+    node_stack[index++] = (TreeNode *)(uintptr_t)(indent + 1);
   }
-
   while (index > 0) {
-    // Pop node
-    indent = (int)node_stack[--index];
+    // Pop node and cast back from pointer to integer safely
+    indent = (int)(uintptr_t)node_stack[--index];
     node = node_stack[--index];
-
     for (int i = 0; i < indent; i++) {
       printf("    ");
     }
     printf("@s\n", node);
-
     if (node->peer) {
       node_stack[index++] = node->peer;
-      node_stack[index++] = (TreeNode *)indent;
+      node_stack[index++] = (TreeNode *)(uintptr_t)indent;
     }
-
     if (node->child) {
       node_stack[index++] = node->child;
-      node_stack[index++] = (TreeNode *)(indent + 1);
+      node_stack[index++] = (TreeNode *)(uintptr_t)(indent + 1);
     }
   }
 }

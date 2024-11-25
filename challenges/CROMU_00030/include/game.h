@@ -57,7 +57,7 @@ typedef struct {
   int top_element;  // how many pieces in this stack (-1 because zero counting)?
 } Game_Stack;
 
-Game_Stack game_stack;
+extern Game_Stack game_stack;
 
 // stores
 extern char current_max_road_len;

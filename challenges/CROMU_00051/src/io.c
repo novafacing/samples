@@ -32,8 +32,6 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "string.h"
 
-environment ENV;
-
 uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
   size_t total_len = 0;
   size_t rx_bytes;

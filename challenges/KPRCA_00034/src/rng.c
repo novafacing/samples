@@ -24,8 +24,8 @@
 
 #include "common.h"
 
-const rng_def_t system_rng;
-const rng_def_t lcg_rng;
+extern const rng_def_t system_rng;
+extern const rng_def_t lcg_rng;
 
 static const rng_def_t *rngs[] = {
     [RNG_SYSTEM] = &system_rng, [RNG_LCG] = &lcg_rng};

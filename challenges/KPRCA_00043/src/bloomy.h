@@ -23,7 +23,7 @@
 
 #ifndef BLOOMY_H
 #define BLOOMY_H
-
+#include <libcgc.h>
 #include <stdint.h>
 
 typedef uint32_t (*hash_t)(const char *, size_t);

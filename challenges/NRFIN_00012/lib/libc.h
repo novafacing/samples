@@ -21,7 +21,6 @@
  */
 #ifndef LIBC_H
 #define LIBC_H
-
 #include <libcgc.h>
 #include <stdint.h>
 

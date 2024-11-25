@@ -54,4 +54,5 @@ uint8_t HandleDump(Command *pCmd);
 uint8_t HandlePrint(Command *pCmd);
 void PrependCommandHistory(char *buf);
 
+extern environment ENV;
 #endif

@@ -493,7 +493,8 @@ void free(void *ptr) {
 
   chunkHeader = (heap_header *)(((char *)ptr) - sizeof(heap_header));
   chunkHeader->flags = FREE_FLAG;
-  blockHead = (heap_block_header *)((int)&ptr & 0xfffff000);
+
+  blockHead = (heap_block_header *)((uintptr_t)ptr & 0xfffff000);
   blockHead->remaining_size += chunkHeader->size;
   return;
 }

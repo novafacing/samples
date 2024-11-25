@@ -22,6 +22,7 @@
 
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 typedef unsigned char uint8_t;  // NRFIN_00001
 #define MAX_WIDTH 16

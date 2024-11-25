@@ -27,6 +27,8 @@ THE SOFTWARE.
 
 #include "math_lib.h"
 
+Game_Stack game_stack;
+
 char current_max_road_len = 0;
 
 int getNextPieceNum() {

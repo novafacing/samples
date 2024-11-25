@@ -23,6 +23,7 @@
 
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 #define MAGICWORD "You didn't say the magic word."
 #define MEMERR "Clever girl."

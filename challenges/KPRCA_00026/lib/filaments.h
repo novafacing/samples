@@ -42,6 +42,14 @@ void filaments_init();
 void filaments_new(start_func_t func, void *userdata);
 void filaments_yield();
 fib_t *filaments_current();
+int __filaments_transmit(int fd, const void *buf, size_t count,
+                         size_t *tx_bytes);
+int __filaments_receive(int fd, void *buf, size_t count, size_t *rx_bytes);
+int __filaments_fdwait(int nfds, fd_set *readfds, fd_set *writefds,
+                       const struct timeval *timeout, int *readyfds);
+int __filaments_allocate(size_t length, int is_X, void **addr);
+int __filaments_deallocate(void *addr, size_t length);
+int __filaments_random(void *buf, size_t count, size_t *rnd_bytes);
 void filaments_switch(fib_t *new_fib);
 
 #endif /* FILAMENTS */

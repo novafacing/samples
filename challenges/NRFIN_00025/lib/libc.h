@@ -22,7 +22,6 @@
 
 #ifndef LIBC_H
 #define LIBC_H
-
 #include <libcgc.h>
 
 #define SUCCESS 0

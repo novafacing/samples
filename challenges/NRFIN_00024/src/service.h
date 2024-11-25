@@ -22,6 +22,7 @@
 
 #ifndef SERVICE_H
 #define SERVICE_H
+#include <stdint.h>
 
 #define LMSERR "ROFL FALAFELS!"
 #define MAX_LMS_SIZE 256

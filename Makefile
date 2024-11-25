@@ -14,6 +14,6 @@ $(CHALLENGES): $(LIBCGC)
 
 clean:
 	$(MAKE) -C $(LIBCGC) clean
-	$(MAKE) -C $(CHALLENGES) clean
+	$(MAKE) -C $(CHALLENGES) clean LIBCGC_INC_DIR="$(LIBCGC_INC_DIR)" LIBCGC_LIB="$(LIBCGC_LIB)"
 
 .PHONY: all clean $(LIBCGC) $(CHALLENGES)

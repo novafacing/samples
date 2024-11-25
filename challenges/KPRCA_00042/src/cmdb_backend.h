@@ -1,5 +1,6 @@
 #ifndef CMDB_BACKEND_H_
 #define CMDB_BACKEND_H_
+#include <libcgc.h>
 
 typedef struct {
   char *name;

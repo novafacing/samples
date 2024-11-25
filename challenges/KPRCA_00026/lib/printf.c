@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "filaments.h"
+
 #define OUTPUT_BYTE(x)                     \
   do {                                     \
     size_t bytes;                          \

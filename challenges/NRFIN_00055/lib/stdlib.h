@@ -55,7 +55,6 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 /** The page size for this architecture, uses 4K pages */
-#define PAGE_SIZE (1 << 12)
 
 #ifndef va_start
 typedef __builtin_va_list va_list;

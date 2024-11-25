@@ -6,6 +6,7 @@
 #include "charter.h"
 #include "data.h"
 #include "libc.h"
+#include "types.h"
 
 uint32* sparkles = NULL;
 uint32 sparkle_count = 0;

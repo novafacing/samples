@@ -22,6 +22,7 @@
 
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 
 int sendall(int fd, const char *buf, size_t size);
 int sendline(int fd, const char *buf, size_t size);

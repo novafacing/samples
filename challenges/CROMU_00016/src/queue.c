@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "queue.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "input.h"
 #include "stdlib.h"
@@ -324,9 +325,9 @@ int DestroyRingBuffer(unsigned char queue) {
       if (p == iface.ifqueue[queue]->ring_buffer) {
         break;
       }
-    } while ((((unsigned int)p & 0xFFFFF000) ==
-              ((unsigned int)p->next & 0xFFFFF000)) &&
-             p != page_top);
+    } while (
+        (((uintptr_t)p & 0xFFFFF000) == ((uintptr_t)p->next & 0xFFFFF000)) &&
+        p != page_top);
 
     // get pointer to next page if it's not the top of the ring
     // buffer which has already been free'd

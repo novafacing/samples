@@ -26,7 +26,8 @@
  */
 
 #ifndef LIBC_H_
-#define LIBC_H_
+#define LIBC_H
+#include <libcgc.h>
 
 /**
  * Return the greater of the two parameters.

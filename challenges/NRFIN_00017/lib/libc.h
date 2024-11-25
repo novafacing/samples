@@ -28,6 +28,7 @@ in sample CB's and scored events.
 
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
+#include <libcgc.h>
 
 // libc libs for public release and scored events
 

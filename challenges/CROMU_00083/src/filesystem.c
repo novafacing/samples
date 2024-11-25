@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "filesystem.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "malloc.h"
 #include "stdio.h"
@@ -557,7 +558,7 @@ int readMemoryFile(fileHandleType fh, char *buffer, unsigned int size,
   unsigned int copySize;
 
   struct memoryFileInfo {
-    unsigned int address;
+    uintptr_t address;
     unsigned int size;
     char accessType;
 
@@ -605,7 +606,7 @@ int writeMemoryFile(fileHandleType fh, char *buffer, unsigned int size) {
   unsigned int copySize;
 
   struct memoryFileInfo {
-    unsigned int address;
+    uintptr_t address;
     unsigned int size;
     char accessType;
 
@@ -755,7 +756,7 @@ int deleteFile(fileHandleType fh, securityIdType securityID) {
   int retval;
 
   struct memoryFileInfo {
-    unsigned int address;
+    uintptr_t address;
     unsigned int size;
     char accessType;
 

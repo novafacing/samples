@@ -23,6 +23,7 @@
  *
  */
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -208,7 +209,7 @@ error:
 }
 
 static int _consumer_fd(void *arg, const char *buf, size_t n) {
-  return writeall((int)arg, buf, n);
+  return writeall((intptr_t)arg, buf, n);
 }
 
 static int _consumer_string(void *arg, const char *buf, size_t n) {
@@ -235,7 +236,7 @@ static int _consumer_string_checked(void *arg, const char *buf, size_t n) {
   return (int)n;
 }
 
-int fdprintf(int fd, const char *fmt, ...) {
+int fdprintf(intptr_t fd, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   int ret = _printf(_consumer_fd, (void *)fd, fmt, ap);

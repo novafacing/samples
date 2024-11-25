@@ -22,7 +22,6 @@
 
 #ifndef LIBC_H
 #define LIBC_H
-
 #include <libcgc.h>
 
 #include "fixups.h"
@@ -69,6 +68,6 @@ int recvline(int fd, char *buf, size_t size);
   if (o != 0) _terminate(ERRNO_ALLOC);
 #define QUIT() _terminate(SUCCESS);
 
-UINT8 *ptr_credits;
+extern UINT8 *ptr_credits;
 
 #endif

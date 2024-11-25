@@ -14,8 +14,10 @@ struct state {
   state_t *end_state;
 };
 
+void init_trex();
 void init_regex();
 void clear_regex();
+void clear_trex();
 state_t *create_state(unsigned char input);
 state_t *op_concat(state_t *s1, state_t *s2);
 state_t *op_union(state_t *s1, state_t *s2);

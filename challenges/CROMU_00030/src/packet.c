@@ -29,6 +29,27 @@ THE SOFTWARE.
 #include "game.h"
 #include "math_lib.h"
 
+int seed_crypt;
+
+int seed_length;
+
+Enc_Chal enc_chal;
+
+// these count for DATA packets only
+int current_packet_count_recvd;  // last incoming packet number
+int current_packet_count_sent;   // last outgoing packet number
+
+// tracks which game connection this is
+// connections survive for 9 data packets, then need to be reestablished
+// incremented each time a new association is made
+int last_connection_number;
+int current_connection_number;
+
+// what type of encryption are we currently using?
+int current_encryption;
+int encryption_confirmed;  // set to TRUE after AUTHCHALRESP is correctly
+                           // received
+
 // reads user-sent string and saves it into a Packet struct
 int populate_packet(Packet *pkt, char *data, int len) {
   if (len != sizeof(Packet)) {

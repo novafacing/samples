@@ -21,6 +21,7 @@
  */
 #ifndef CABLEGRINDPROTOS_H
 #define CABLEGRINDPROTOS_H
+#include <stdint.h>
 void process_rachiometersuprachoroid(uint8_t **, int *);
 void process_photonephographPima(uint8_t **, int *);
 void process_decimosextountractarian(uint8_t **, int *);

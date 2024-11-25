@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "service.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "admin.h"
 #include "jlib.h"
@@ -57,7 +58,7 @@ void PrintLoggedInMenu(void) {
 
 void BusyWork(void) {
   char array[4096];
-  int addr = (int)(&PrintLoggedOutMenu) & 0xfffff000;
+  intptr_t addr = (intptr_t)(&PrintLoggedOutMenu) & 0xfffff000;
   int i = 20;
 
   while (i--) {

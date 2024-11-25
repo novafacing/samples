@@ -33,7 +33,7 @@
 #include "student.h"
 
 static const int LINE_SIZE = 1024;
-static char line[LINE_SIZE];
+static char line[1024];
 
 int yes_no_input() {
   printf("1 - Yes\n");

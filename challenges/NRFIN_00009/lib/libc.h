@@ -1,5 +1,6 @@
 #ifndef LIBC_H
 #define LIBC_H
+#include <libcgc.h>
 typedef unsigned char uint8_t;  // NRFIN_00001
 
 extern int transmit_all(int fd, const char* buf,

@@ -22,6 +22,7 @@
 
 #ifndef EXAMINE_H
 #define EXAMINE_H 1
+#include <libc.h>
 
 uint8_t is_electrical_panel_overloaded();
 uint8_t is_breaker_overloaded(uint32_t breaker_id);

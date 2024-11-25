@@ -122,9 +122,6 @@ typedef struct _superblock {
   inode *inode_pages[MAX_INODE_PAGES];
 } superblock;
 
-// global pointer to our filesystem
-superblock fs;
-
 // free blocks
 #define MAX_FREE_PAGES 256
 #define MAX_FS_SIZE PAGE_SIZE *MAX_FREE_PAGES
@@ -133,7 +130,6 @@ typedef struct _free_t {
   uint8_t in_use;
   block *page;
 } free_t;
-free_t free_list[MAX_FREE_PAGES];
 
 // directory
 #define MAX_DIR_INODES 128

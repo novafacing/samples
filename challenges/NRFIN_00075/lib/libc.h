@@ -21,7 +21,8 @@
  */
 
 #ifndef LIBC_H
-#define LIBC_H 1
+#define LIBC_H
+#include <libcgc.h> 1
 
 /*
  This libc implementation is based on NRFIN CQE libc code plus some new code.
@@ -36,8 +37,6 @@
 #define EXIT_FAILURE -1
 #define MALLOC_OK(p) \
   if (NULL == p) _terminate(ERRNO_ALLOC)
-
-#define PAGE_SIZE (1 << 12)
 
 /**
  * If e doesn't return SUCCESS, return ret;

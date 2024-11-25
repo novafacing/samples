@@ -22,6 +22,7 @@
  */
 #ifndef BITMAP_H_
 #define BITMAP_H_
+#include "barcode.h"
 
 #pragma pack(push, 1)
 typedef struct {

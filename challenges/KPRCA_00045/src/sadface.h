@@ -23,6 +23,7 @@
 
 #ifndef SADFACE_H
 #define SADFACE_H
+#include <libcgc.h>
 
 #include "dict.h"
 

@@ -27,17 +27,17 @@ THE SOFTWARE.
 #include "asan.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "stdlib.h"
 #include "string.h"
 
 int validatePtr(void *ptr) {
   int validated = 0;
-  if ((unsigned int)ptr > STACKBASE &&
-      (unsigned int)ptr < STACKBASE + STACKSIZE)
+  if ((uintptr_t)ptr > STACKBASE && (uintptr_t)ptr < STACKBASE + STACKSIZE)
     validated = 1;
-  if ((unsigned int)ptr > PROGRAMBASE &&
-      (unsigned int)ptr < PROGRAMBASE + PROGRAMSIZE)
+  if ((uintptr_t)ptr > PROGRAMBASE &&
+      (uintptr_t)ptr < PROGRAMBASE + PROGRAMSIZE)
     validated = 1;
   if (validated == 0) {
     puts("Invalid pointer detected!");
@@ -51,8 +51,8 @@ void validateRet() {
 
   retAddr = __builtin_return_address(1);
 
-  if ((unsigned int)retAddr < PROGRAMBASE ||
-      (unsigned int)retAddr > PROGRAMBASE + PROGRAMSIZE) {
+  if ((uintptr_t)retAddr < PROGRAMBASE ||
+      (uintptr_t)retAddr > PROGRAMBASE + PROGRAMSIZE) {
     // only allowed to ret to an address within the main module.
     puts("***** STACK SMASHING DETECTED! *****");
     _terminate(-1);

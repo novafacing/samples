@@ -1,7 +1,7 @@
 #ifndef MUTEX_H_
 #define MUTEX_H_
 
-#include <filaments.h>
+#include "filaments.h"
 
 typedef struct {
   unsigned int locked;

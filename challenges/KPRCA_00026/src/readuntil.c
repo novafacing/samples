@@ -22,6 +22,8 @@
  */
 #include "readuntil.h"
 
+#include "filaments.h"
+
 int read_until(int fd, char *buf, size_t len, char delim) {
   size_t i;
   char *c = buf;

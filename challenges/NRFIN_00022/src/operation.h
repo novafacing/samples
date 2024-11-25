@@ -22,6 +22,7 @@
 
 #ifndef OPERATION_H
 #define OPERATION_H 1
+#include <libc.h>
 
 #define ALLOC(sz, p)                            \
   if (SUCCESS != allocate(sz, 0, (void **)p)) { \

@@ -26,6 +26,7 @@
 // this is only used when debugging.
 #ifndef E_LIBC_H
 #define E_LIBC_H
+#include <libcgc.h>
 
 // size_t strlen(const char *str);
 // char *strcpy(char *dst, const char *src);

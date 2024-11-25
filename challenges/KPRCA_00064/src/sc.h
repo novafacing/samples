@@ -23,6 +23,7 @@
 
 #ifndef SC_H
 #define SC_H
+#include <libcgc.h>
 
 #define MAX_DATA_SIZE 4096
 #define BLOCK_SIZE 512

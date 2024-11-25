@@ -458,8 +458,8 @@ void show_route(pmap thisMap, psList turnList) {
     return;
   }
   prouteList thisRouteList =
-      (prouteList)((unsigned int)thisList->listRoot->data +
-                   (unsigned int)(thisList->listRoot->count - 1) *
+      (prouteList)((uintptr_t)thisList->listRoot->data +
+                   (uintptr_t)(thisList->listRoot->count - 1) *
                        sizeof(routeList));
   prouteList nextRouteList = thisRouteList->parent;
   printf("Starting on @s.\n", thisRouteList->thisRoad->name);

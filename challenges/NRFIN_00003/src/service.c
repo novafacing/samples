@@ -22,6 +22,15 @@
 
 #include "service.h"
 
+UINT8 num_files;
+fileentry *files;
+char buf_recv[RECV_BUF_SZ];
+char *ptr_uri_tip;
+char *ptr_uri_gimme;
+char *ptr_uri_smore;
+char *ptr_uri_mooch;
+char *ptr_uri_auth;
+
 // Copy the URI from the recv buffer into a verb-specific buffer.
 // Vulnerability resides here.
 int copy_uri(char *buf_verb) {

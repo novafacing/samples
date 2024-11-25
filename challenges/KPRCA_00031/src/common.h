@@ -23,6 +23,7 @@
 
 #ifndef __COMMON__H
 #define __COMMON__H
+#include <libcgc.h>
 
 #define HASH unsigned long long
 #define DATA void *

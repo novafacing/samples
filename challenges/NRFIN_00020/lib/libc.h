@@ -23,6 +23,7 @@
 
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
+#include <libcgc.h>
 
 typedef signed char int8_t;
 typedef signed int int32_t;

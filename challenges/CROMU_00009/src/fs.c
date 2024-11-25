@@ -30,6 +30,9 @@ THE SOFTWARE.
 #include "stdint.h"
 #include "stdlib.h"
 
+free_t free_list[MAX_FREE_PAGES];
+superblock fs;
+
 /*
    Initialize the file system for the given fs_size
  */

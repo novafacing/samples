@@ -21,7 +21,8 @@
  */
 
 #ifndef LIBC_H
-#define LIBC_H 1
+#define LIBC_H
+#include <libcgc.h> 1
 
 /*
  This libc implementation is based on NRFIN CQE libc code plus some new code.
@@ -42,8 +43,6 @@
       _terminate(ERRNO_ALLOC); \
     }                          \
   } while (0);
-
-#define PAGE_SIZE (1 << 12)
 
 #define RECV(buf, sz)                      \
   do {                                     \

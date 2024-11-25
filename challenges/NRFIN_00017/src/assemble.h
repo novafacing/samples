@@ -22,6 +22,9 @@
 
 #ifndef ASSEMBLE_H
 #define ASSEMBLE_H 1
+#include <libc.h>
+
+#include "components.h"
 
 /*
  * When an object is created that has receptacles, this struct is used to

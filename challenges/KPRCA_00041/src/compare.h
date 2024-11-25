@@ -1,5 +1,6 @@
 #ifndef COMPARE_H_
 #define COMPARE_H_
+#include <libcgc.h>
 
 #include "hash.h"
 #include "sfile.h"

@@ -22,7 +22,6 @@
 
 #ifndef LIBC_H
 #define LIBC_H
-
 #include <libcgc.h>
 #include <stdint.h>
 
@@ -47,7 +46,6 @@ typedef __builtin_va_list va_list;
 #define WRITEFAIL 133
 
 #define INT_MAX 0x7fffffff
-#define PAGE_SIZE 4096
 
 #define EXIT_FAILURE (-1)
 #define EXIT_SUCCESS (0)

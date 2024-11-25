@@ -32,13 +32,13 @@ LIB_INCLUDE := $(patsubst $(INC_DIR)/%.h,$(BUILD_INC_DIR)/%.h,$(INC))
 
 # Build configuration
 LIB_IFLAGS  += -nostdinc -I$(LIB_DIR) -I$(LIBCGC_INC_DIR)
-LIB_CFLAGS  += -fPIC -fno-builtin
+LIB_CFLAGS  += -fPIC -fno-builtin -Wno-error=unused-but-set-variable
 LIB_LDFLAGS += -lm $(LIBCGC_LIB)
-LIB_WFLAGS  +=
+LIB_WFLAGS  += -Wno-error=pointer-compare
 IFLAGS      += -nostdinc -I$(LIB_DIR) -I$(SRC_DIR) -I$(LIBCGC_INC_DIR)
 CFLAGS      += -fno-builtin
 LDFLAGS     += -lm $(LIBCGC_LIB)
-WFLAGS      +=
+WFLAGS      += -Wno-error=pointer-compare
 
 # Build the targets
 all: build
@@ -60,7 +60,7 @@ $(BIN): $(BIN_OBJ) $(STATIC_LIB)
 
 # Build library objects from C files
 $(BUILD_OBJ_LIB_DIR)/%.o: $(LIB_DIR)/%.c
-	$(CC) -c -o $@ $< $(LIB_CFLAGS) $(LIB_IFLAGS) $(LIB_WFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(LIB_CFLAGS) $(LIB_IFLAGS) $(LIB_WFLAGS)
 
 # Build binary objects from C files
 $(BUILD_OBJ_SRC_DIR)/%.o: $(SRC_DIR)/%.c

@@ -23,6 +23,7 @@
 
 #ifndef __STRING__H
 #define __STRING__H
+#include <libcgc.h>
 
 #define DEFAULT_S_SZ 128
 

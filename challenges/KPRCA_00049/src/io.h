@@ -23,6 +23,7 @@
 
 #ifndef __IO_H
 #define __IO_H
+#include <libcgc.h>
 
 #define CLIENT_TO_SERVER_IN 3
 #define CLIENT_TO_SERVER_OUT 4

@@ -23,6 +23,8 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H 1
 
+#include <libc.h>
+
 typedef enum {
   INCANDESCENT_M5_100BULB = 5,
   LED_C6_150BULB = 6,

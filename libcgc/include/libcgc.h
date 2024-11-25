@@ -16,7 +16,7 @@
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED
 
-#if defined(__LP64__) || defined(_LP64)
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64)
 typedef unsigned long size_t;
 typedef long ssize_t;
 #define STD_SIZE_T unsigned long

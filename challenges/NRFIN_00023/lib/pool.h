@@ -27,11 +27,11 @@
 
 #ifndef POOL_H_
 #define POOL_H_
+#include <libcgc.h>
 
 #include "list.h"
 
 typedef unsigned long uintptr_t;
-#define PAGE_SIZE (1 << 12)
 
 struct freeblk;
 

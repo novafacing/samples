@@ -22,6 +22,8 @@
 
 #ifndef SERVICE_H
 #define SERVICE_H
+#include <libcgc.h>
+#include <stdint.h>
 
 #define SEGERR "Only the sigs deal in absolutes."
 #define SEGKEY "My voice is my passport."

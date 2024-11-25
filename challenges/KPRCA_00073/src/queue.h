@@ -22,6 +22,7 @@
  */
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
+#include <libcgc.h>
 typedef struct queue queue;
 struct queue {
   size_t Capacity;

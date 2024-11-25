@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "service.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "stdlib.h"
 
@@ -98,7 +99,7 @@ int main(void) {
     // now read and discard the rest of the SAP0 header
     xif_data = malloc(segment_size - sizeof(segment_size));
 
-    if ((int)xif_data == 0) {
+    if ((intptr_t)xif_data == 0) {
       printf("Unable to allocate memory\n");
       _terminate(-1);
     }
@@ -152,7 +153,7 @@ int main(void) {
 
   xif_data = malloc(segment_size);
 
-  if ((int)xif_data == 0) {
+  if ((intptr_t)xif_data == 0) {
     printf("Unable to allocate memory\n");
     _terminate(-1);
   }

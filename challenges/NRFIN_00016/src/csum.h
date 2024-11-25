@@ -22,6 +22,8 @@
 
 #ifndef CSUM_H
 #define CSUM_H
+#include <libcgc.h>
+
 #include "stdint.h"
 uint64_t additive(uint8_t *data, uint32_t s);
 uint64_t addxoradd(uint8_t *data, uint32_t s);

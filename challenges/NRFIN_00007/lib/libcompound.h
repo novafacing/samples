@@ -30,7 +30,7 @@ typedef struct chem_formula {
   double mole;
 } chem_formula_t;
 
-static chem_formula_t chem_formulas[N_FORMULAS] = {
+static chem_formula_t chem_formulas[3000] = {
     {"[CH2-].CN1C2=C(C=CC3=C2C(=NC(=C)C3=C)[O-])[N-]C1=N.[Rb+].[Y]",
      0.688187645035},
     {"(C)N(CC(=O)OC)C(=O)C=CC1=CC=CC(=C1)C#N", 1.98716677345},

@@ -406,8 +406,8 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
   int value = 0;
   char ch;
   int arg_count = 0;
-  int width_value;
-  int prec_value;
+  intptr_t width_value;
+  intptr_t prec_value;
   int field_arg;
   int length;
   char **args = (char **)ap;
@@ -585,7 +585,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             width_arg = arg_count++;
             format--;
           }
-          width_value = (int)args[width_arg];
+          width_value = (intptr_t)args[width_arg];
         } else if (isdigit(ch)) {
           width_value = 0;
           while (isdigit(ch)) {
@@ -619,7 +619,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               prec_arg = arg_count++;
               format--;
             }
-            prec_value = (int)args[prec_arg];
+            prec_value = (intptr_t)args[prec_arg];
           } else if (isdigit(ch)) {
             prec_value = 0;
             while (isdigit(ch)) {
@@ -676,7 +676,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
         char *num_ptr;
         int use_caps = 1;
         int sign;
-        int val;
+        intptr_t val;
         // long long llval;
         if (field_arg == -1) {
           field_arg = arg_count++;
@@ -687,7 +687,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             int len;
             switch (length) {
               case LENGTH_H:
-                val = (short)(int)args[field_arg];
+                val = (short)(intptr_t)args[field_arg];
                 sign = val < 0;
                 if (sign) {
                   val = -val;
@@ -695,7 +695,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
                 num_ptr = r_utoa(val, num_buf);
                 break;
               case LENGTH_HH:
-                val = (char)(int)args[field_arg];
+                val = (char)(intptr_t)args[field_arg];
                 sign = val < 0;
                 if (sign) {
                   val = -val;
@@ -803,16 +803,16 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_otoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                num_ptr =
+                    r_otoa((unsigned short)(uintptr_t)args[field_arg], num_buf);
                 break;
               case LENGTH_HH:
-                num_ptr = r_otoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                num_ptr =
+                    r_otoa((unsigned char)(uintptr_t)args[field_arg], num_buf);
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_otoa((unsigned long)args[field_arg], num_buf);
+                num_ptr = r_otoa((uintptr_t)args[field_arg], num_buf);
                 break;
             }
             if (flags & FLAGS_HASH) {
@@ -878,16 +878,16 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_utoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                num_ptr =
+                    r_utoa((unsigned short)(uintptr_t)args[field_arg], num_buf);
                 break;
               case LENGTH_HH:
-                num_ptr = r_utoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                num_ptr =
+                    r_utoa((unsigned char)(uintptr_t)args[field_arg], num_buf);
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_utoa((unsigned long)args[field_arg], num_buf);
+                num_ptr = r_utoa((uintptr_t)args[field_arg], num_buf);
                 break;
             }
             len = num_ptr - num_buf + 1;
@@ -949,17 +949,16 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_xtoa((unsigned short)(unsigned int)args[field_arg],
+                num_ptr = r_xtoa((unsigned short)(uintptr_t)args[field_arg],
                                  num_buf, use_caps);
                 break;
               case LENGTH_HH:
-                num_ptr = r_xtoa((unsigned char)(unsigned int)args[field_arg],
+                num_ptr = r_xtoa((unsigned char)(uintptr_t)args[field_arg],
                                  num_buf, use_caps);
                 break;
               case LENGTH_L:
               default:
-                num_ptr =
-                    r_xtoa((unsigned long)args[field_arg], num_buf, use_caps);
+                num_ptr = r_xtoa((uintptr_t)args[field_arg], num_buf, use_caps);
                 break;
             }
             len = num_ptr - num_buf + 1;
@@ -1053,7 +1052,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
           case 'A':
             break;
           case 'c': {
-            unsigned char ch = (unsigned char)(unsigned int)args[field_arg];
+            unsigned char ch = (unsigned char)(uintptr_t)args[field_arg];
             if (width_value == -1) {
               width_value = 1;
             }
@@ -1113,7 +1112,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
           case 'p': {
             int len;
             flags |= FLAGS_HASH;
-            num_ptr = r_xtoa((unsigned int)args[field_arg], num_buf, 0);
+            num_ptr = r_xtoa((uintptr_t)args[field_arg], num_buf, 0);
             len = num_ptr - num_buf + 1;
             if (prec_value == -1) {
               // by default max is entire value

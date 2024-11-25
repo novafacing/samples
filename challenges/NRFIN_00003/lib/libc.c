@@ -22,6 +22,8 @@
 
 #include "libc.h"
 
+UINT8 *ptr_credits;
+
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: void

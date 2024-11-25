@@ -22,6 +22,7 @@
  */
 #ifndef GLD_H_
 #define GLD_H_
+#include <libcgc.h>
 
 #define MAX_HEIGHT 11
 #define QUAD_PIXELS_WIDTH 2

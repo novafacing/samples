@@ -76,13 +76,13 @@ typedef struct fileentry {
   char contents[FILE_BUF_SZ];
 } fileentry;
 
-UINT8 num_files;
-fileentry *files;
-char buf_recv[RECV_BUF_SZ];
-char *ptr_uri_tip;
-char *ptr_uri_gimme;
-char *ptr_uri_smore;
-char *ptr_uri_mooch;
-char *ptr_uri_auth;
+extern UINT8 num_files;
+extern fileentry *files;
+extern char buf_recv[RECV_BUF_SZ];
+extern char *ptr_uri_tip;
+extern char *ptr_uri_gimme;
+extern char *ptr_uri_smore;
+extern char *ptr_uri_mooch;
+extern char *ptr_uri_auth;
 
 #endif

@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "filesystem.h"
 #include "input.h"
@@ -78,8 +79,7 @@ int makeMemFile(int argcount, char **args) {
 
   bzero(memptr, memsize);
 
-  retcode =
-      makeMemoryFile(args[1], (unsigned int)memptr, memsize, 0, securityID);
+  retcode = makeMemoryFile(args[1], (uintptr_t)memptr, memsize, 0, securityID);
   if (retcode != 0) {
     printf("error\n");
     return retcode;

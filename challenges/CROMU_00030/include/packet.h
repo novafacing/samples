@@ -94,26 +94,26 @@ typedef struct {
   int enc_type;
 } Enc_Chal;
 
-int seed_crypt;
+extern int seed_crypt;
 
-int seed_length;
+extern int seed_length;
 
-Enc_Chal enc_chal;
+extern Enc_Chal enc_chal;
 
 // these count for DATA packets only
-int current_packet_count_recvd;  // last incoming packet number
-int current_packet_count_sent;   // last outgoing packet number
+extern int current_packet_count_recvd;  // last incoming packet number
+extern int current_packet_count_sent;   // last outgoing packet number
 
 // tracks which game connection this is
 // connections survive for 9 data packets, then need to be reestablished
 // incremented each time a new association is made
-int last_connection_number;
-int current_connection_number;
+extern int last_connection_number;
+extern int current_connection_number;
 
 // what type of encryption are we currently using?
-int current_encryption;
-int encryption_confirmed;  // set to TRUE after AUTHCHALRESP is correctly
-                           // received
+extern int current_encryption;
+extern int encryption_confirmed;  // set to TRUE after AUTHCHALRESP is correctly
+                                  // received
 
 int validate_packet(Packet *pkt);
 int populate_packet(Packet *pkt, char *data, int len);
