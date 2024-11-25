@@ -22,6 +22,7 @@
 
 #ifndef SERVICE_H
 #define SERVICE_H
+#include <stdint.h>
 
 #define REQ_SIZE 128
 int main(void);

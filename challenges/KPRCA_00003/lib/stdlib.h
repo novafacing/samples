@@ -4,10 +4,11 @@
 #include <libcgc.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 
-extern int writeall(int fd, const void *buf, size_t n);
+extern int writeall(intptr_t fd, const void *buf, size_t n);
 extern int debug_printf(const char *fmt, ...);
-extern int fdprintf(int fd, const char *fmt, ...);
+extern int fdprintf(intptr_t fd, const char *fmt, ...);
 extern int sprintf(char *s, const char *fmt, ...);
 extern int snprintf(char *s, size_t size, const char *fmt, ...);
 extern int vsnprintf(char *s, size_t size, const char *fmt, va_list ap);

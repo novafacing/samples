@@ -22,6 +22,7 @@
 
 #ifndef FISHYXML_H
 #define FISHYXML_H 1
+#include <stdint.h>
 
 /*
 ### FISHYXML Grammar ###
@@ -81,6 +82,8 @@ enum {
   TURN = 0x55,
   NAME = 0x56,
 };
+
+struct card;
 
 /**
  * Parse binary xml to extract the remote player's name.

@@ -437,7 +437,7 @@ void multiply_array(int **parray, size_t *array_size) {
     *parray = array;
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+int  main() {
     init();
     //int _G_FPTRS[] = { (int) &malloc, (int) &free, (int) &memcpy, (int) &memmove, (int) &print_array, (int) &swap,
     //                    (int) heapify, (int) heap_propagate, (int) merge_helper,

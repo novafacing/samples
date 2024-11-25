@@ -4,6 +4,7 @@
 #include <libcgc.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define isinf(x) __builtin_isinf(x)
 #define isnan(x) __builtin_isnan(x)

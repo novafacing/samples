@@ -22,6 +22,7 @@
 
 #ifndef HAND_H
 #define HAND_H 1
+#include <stdint.h>
 
 struct hand {
   uint8_t count;

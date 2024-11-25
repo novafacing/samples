@@ -35,4 +35,18 @@ typedef long long int64_t;
 typedef int int32_t;
 typedef short int16_t;
 typedef char int8_t;
+/* Types for `void *' pointers.  */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64)
+#ifndef __intptr_t_defined
+typedef long int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned long int uintptr_t;
+#else
+#ifndef __intptr_t_defined
+typedef int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned int uintptr_t;
+#endif
 #endif

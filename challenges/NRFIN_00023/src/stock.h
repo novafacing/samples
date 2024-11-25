@@ -54,7 +54,7 @@ struct order {
   int dummy;
 #endif
   void (*on_complete)(struct order *order);
-  unsigned int id, price, quantity;
+  uintptr_t id, price, quantity;
   LIST_ELEMS(struct order) global_list, stock_list;
   enum order_type type;
   struct stock *stock;
@@ -135,7 +135,7 @@ int cmd_place_order(struct stock_state *state, const char *name, int type,
  * @param id The id of the order
  * @return 0 on success, -1 on failure
  */
-int cmd_check_order(const struct stock_state *state, unsigned int id);
+int cmd_check_order(const struct stock_state *state, uintptr_t id);
 
 /**
  * Process a command to cancel an order.
@@ -144,6 +144,6 @@ int cmd_check_order(const struct stock_state *state, unsigned int id);
  * @param id The id of the order
  * @return 0 on success, -1 on failure
  */
-int cmd_cancel_order(struct stock_state *state, unsigned int id);
+int cmd_cancel_order(struct stock_state *state, uintptr_t id);
 
 #endif /* STOCK_H_ */

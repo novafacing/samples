@@ -22,6 +22,7 @@
 
 #ifndef CARD_H
 #define CARD_H 1
+#include <stdint.h>
 
 struct card {
   uint8_t suit;  // 1: Diamonds, 2: Clubs, 3: Hearts, 4: Spades

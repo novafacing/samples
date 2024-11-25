@@ -82,7 +82,7 @@ state *init_state(int fd, uint32_t flags) {
   return new;
 
 err:
-  if (free) free(new);
+  free(new);
   return NULL;
 }
 
@@ -259,8 +259,7 @@ int handle_inst(state *machine, inst *cur) {
 
 int read_inst(int fd, state *machine, inst *cur) {
   int ret = -1;
-  if (!read_n_bytes(fd, sizeof(inst), (uint8_t *)cur) == sizeof(inst))
-    return -1;
+  if (read_n_bytes(fd, sizeof(inst), (uint8_t *)cur) != sizeof(inst)) return -1;
 
   ret = handle_inst(machine, cur);
   return ret;

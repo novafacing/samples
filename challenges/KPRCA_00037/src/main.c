@@ -22,6 +22,7 @@
  */
 
 #include <ctype.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -193,7 +194,7 @@ int main() {
     if (shdr == NULL) goto error;
     if (cgcf_parse_section_header(file, size, i, shdr) != 0) goto error;
     if ((shdr->sh_name > 0) &&
-        ((unsigned int)shstrtab > 0xFFFFFFFF - shdr->sh_name))
+        ((uintptr_t)shstrtab > 0xFFFFFFFF - shdr->sh_name))
       goto error;
     if (shstrtab + shdr->sh_name >= file + size ||
         shstrtab + shdr->sh_name < file)
@@ -226,7 +227,7 @@ int main() {
         if (sym == NULL) goto error;
         memmove((char *)sym, (file + s->sh_offset + i * sz), sz);
         if ((sym->st_name > 0) &&
-            ((unsigned int)strtab > 0xFFFFFFFF - sym->st_name))
+            ((uintptr_t)strtab > 0xFFFFFFFF - sym->st_name))
           goto error;
         if (strtab + sym->st_name >= file + size ||
             strtab + sym->st_name < file)

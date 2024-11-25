@@ -22,6 +22,7 @@
 
 #ifndef XXPRINTF_H
 #define XXPRINTF_H 1
+#include <libcgc.h>
 
 // VA defs for xxprintf functions
 #ifndef _VA_LIST

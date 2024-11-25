@@ -120,7 +120,7 @@ static int insert_stock(struct stock_state *state, const char *name) {
 }
 
 static struct order *lookup_order(const struct stock_state *state,
-                                  unsigned int id) {
+                                  uintptr_t id) {
 // Dereference of untrusted pointer
 #ifdef PATCHED
   struct order *cur = NULL;
@@ -234,12 +234,11 @@ static int match_order(struct stock_state *state, struct stock *stock,
   return order->quantity == 0 ? 0 : -1;
 }
 
-static unsigned int get_next_id(struct stock_state *state,
-                                struct order *order) {
+static uintptr_t get_next_id(struct stock_state *state, struct order *order) {
   // Use pointer as value even in patched binary, should be unique once
   // allocated to an order and appears to be needed for the poller to work on
   // the patched binary
-  return (unsigned int)order;
+  return (uintptr_t)order;
 }
 
 static int insert_order(struct stock_state *state, const char *name,
@@ -408,7 +407,7 @@ int cmd_place_order(struct stock_state *state, const char *name, int type,
   return insert_order(state, name, type == BUY ? BUY : SELL, quantity, price);
 }
 
-int cmd_check_order(const struct stock_state *state, unsigned int id) {
+int cmd_check_order(const struct stock_state *state, uintptr_t id) {
   struct order *order = NULL;
   size_t len = 0;
   char buf[200] = {};
@@ -416,7 +415,7 @@ int cmd_check_order(const struct stock_state *state, unsigned int id) {
   if ((order = lookup_order(state, id)) == NULL) return -1;
 
   // Sanity checking for our insane address->id scheme
-  if (order->id != (unsigned int)order) return -1;
+  if (order->id != (uintptr_t)order) return -1;
 
   order_to_str(order, buf);
 
@@ -426,7 +425,7 @@ int cmd_check_order(const struct stock_state *state, unsigned int id) {
   return 0;
 }
 
-int cmd_cancel_order(struct stock_state *state, unsigned int id) {
+int cmd_cancel_order(struct stock_state *state, uintptr_t id) {
   struct order *cur = NULL;
 
   LIST_FOR_EACH(&state->orders_list, global_list, cur) {

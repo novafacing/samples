@@ -107,9 +107,8 @@ MsgSend1(metadata, (int)Metadata::Destructor);
 PROC_END()
 DEFINE_CLASS_END()
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
-  secret_page = (char *)secret_page_i;
+extern "C" int main() {
+  secret_page = (char *)FLAG_PAGE;
 
   MsgSend(ConnectionStatic, (int)Connection::Constructor, ServerStatic,
           (int)Server::Constructor);

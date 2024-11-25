@@ -373,11 +373,16 @@ void checkheap() {
    */
   heap_chunk_t *fchunk = freed;
   heap_chunk_t *achunk;
+
   while (fchunk->next != freed) {
     achunk = allocated;
     while (achunk->next != allocated) {
-      if ((uint32_t)fchunk < (uint32_t)(((uint8_t *)achunk) + achunk->size) &&
-          (uint32_t)achunk < (uint32_t)(((uint8_t *)fchunk) + fchunk->size)) {
+      uintptr_t fchunk_addr = (uintptr_t)fchunk;
+      uintptr_t achunk_addr = (uintptr_t)achunk;
+      uintptr_t achunk_end = (uintptr_t)((uint8_t *)achunk + achunk->size);
+      uintptr_t fchunk_end = (uintptr_t)((uint8_t *)fchunk + fchunk->size);
+
+      if (fchunk_addr < achunk_end && achunk_addr < fchunk_end) {
         LOG("corrupt");
         _terminate(283);
       }

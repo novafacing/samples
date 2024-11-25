@@ -21,6 +21,7 @@
  */
 #ifndef CABLEGRINDPROTOS_H
 #define CABLEGRINDPROTOS_H
+#include <stdint.h>
 void process_llamainutilely(uint8_t **, int *);
 void process_llamaantioxygen(uint8_t **, int *);
 void process_llamafucate(uint8_t **, int *);

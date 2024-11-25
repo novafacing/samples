@@ -307,14 +307,13 @@ int run_server(server_state* state) {
   return 0;
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char* unused[]) {
+extern "C" int main() {
 #ifndef DEBUG
   fxlat(stdin, "9an538n9av3;5");
   fxlat(stdout, "9an538n9av3;5");
 #endif
 
-  uint32_t volatile* secret_page = (uint32_t*)secret_page_i;
+  uint32_t volatile* secret_page = (uint32_t*)FLAG_PAGE;
   uint32_t sig = 0;
   for (size_t i = 0; i < 0x1000 / sizeof(uint32_t); i++) {
     sig ^= *(secret_page + i);

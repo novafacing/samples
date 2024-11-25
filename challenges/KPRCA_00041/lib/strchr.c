@@ -33,7 +33,7 @@ char *strchr(const char *s, int c) {
     p++;
   }
 
-  if (c == (int)NULL) return (char *)p;
+  if (c == 0) return (char *)p;
 
   return NULL;
 }

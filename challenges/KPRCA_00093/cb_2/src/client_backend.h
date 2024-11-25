@@ -26,7 +26,7 @@
 
 namespace Backend {
 
-void InitDataStores(int secret_page_i);
+void InitDataStores();
 
 bool CheckIfUserExists(const char *name, unsigned short length);
 bool AddUser(User *user);

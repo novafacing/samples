@@ -436,8 +436,8 @@ static int handle_service_request(server_t *server) {
   return 0;
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-  void *secret_page = (void *)secret_page_i;
+int main() {
+  void *secret_page = (void *)FLAG_PAGE;
   server_t server;
 
   memset(&server, 0, sizeof(server));

@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "malloc_private.h"
+malloc_t g_heap;
 
 #define ALIGNED(x, y) (((x) + (y) - 1) & ~((y) - 1))
 #define DBG_ASSERT(x) \

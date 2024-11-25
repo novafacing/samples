@@ -22,6 +22,8 @@
  */
 #ifndef READ_H_
 #define READ_H_
+#include <libcgc.h>
+
 #include "bool.h"
 
 #define MAX_TRIES 5

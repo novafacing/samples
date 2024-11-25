@@ -396,11 +396,13 @@ void do_random_action(ctf_t *ctf) {
   }
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-  void *secret_page = (void *)secret_page_i;
+int main() {
+  void *secret_page = (void *)FLAG_PAGE;
   char buf[256];
 
-  r = *(unsigned int *)secret_page ^ *(unsigned int *)&secret_page[20];
+  unsigned int *secret_ptr = (unsigned int *)secret_page;
+  unsigned int *secret_ptr_offset = (unsigned int *)((char *)secret_page + 20);
+  r = *secret_ptr ^ *secret_ptr_offset;
 
   fbuffered(stdin, 1);
   fbuffered(stdout, 1);

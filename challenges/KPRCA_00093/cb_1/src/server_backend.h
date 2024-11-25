@@ -26,7 +26,7 @@
 
 namespace Backend {
 
-void InitDataStores(int secret_page_i);
+void InitDataStores();
 
 char *AddUser(const char *name, unsigned short length,
               unsigned short *pass_length);

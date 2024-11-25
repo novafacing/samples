@@ -1002,8 +1002,7 @@ void check_seed() {
     fwrite((void*)0x4347c000, 0x1000, stdout);
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char* unused[]) {
+extern "C" int main() {
   VC VentureCalc(stdin, stdout);
 
   fbuffered(stdout, 1);

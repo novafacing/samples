@@ -96,9 +96,8 @@ void RecvBoard(unsigned int *pboard, unsigned int max_size) {
   fread(pboard, max_size, stdin);
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
-  unsigned char *secret_page = (unsigned char *)secret_page_i;
+extern "C" int main() {
+  unsigned char *secret_page = (unsigned char *)FLAG_PAGE;
 
   bool exited = false;
   bool initialized_grid = false;

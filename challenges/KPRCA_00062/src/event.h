@@ -22,6 +22,7 @@
  */
 #ifndef EVENT_H_
 #define EVENT_H_
+#include <libcgc.h>
 
 #include "datetime.h"
 #include "user.h"

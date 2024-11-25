@@ -4,6 +4,7 @@
 #include <libcgc.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define isinf(x) __builtin_isinf(x)
 #define isnan(x) __builtin_isnan(x)
@@ -11,7 +12,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-extern int fdprintf(int fd, const char *fmt, ...);
+extern int fdprintf(intptr_t fd, const char *fmt, ...);
 extern int sprintf(char *s, const char *fmt, ...);
 #define printf(...) fdprintf(STDOUT, __VA_ARGS__)
 

@@ -354,8 +354,7 @@ bool Reauthenticate() {
   return (BrcClient::VerifyPassword(g_cur_user, g_input, read_length));
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
+extern "C" int main() {
   bool is_running = true;
 
   FILE *cb_s_in = fopen(SERVER_FD, 0);
@@ -363,7 +362,7 @@ extern "C" int __attribute__((fastcall)) main(int secret_page_i,
   unsigned short client_cmd_id = 0;
   int session_timeout = SESSION_TIMEOUT_VAL;
 
-  char *secret_page = (char *)secret_page_i;
+  char *secret_page = (char *)FLAG_PAGE;
   (void)secret_page;
   BrcClient::InitServerFd(cb_s_in, cb_s_out);
 

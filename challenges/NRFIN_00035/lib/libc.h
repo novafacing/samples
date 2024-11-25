@@ -23,7 +23,6 @@
 #ifndef LIBC_H
 #define LIBC_H
 #include <errno.h>
-#include <libcgc.h> 1
 #include <libcgc.h>
 #include <stdint.h>
 

@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int fdprintf(int fd, const char *fmt, ...);
+int fdprintf(intptr_t fd, const char *fmt, ...);
 
 #ifndef DEBUG
 #define DBG(s, ...)

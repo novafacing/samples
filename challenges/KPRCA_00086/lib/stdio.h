@@ -23,6 +23,7 @@
 #ifndef STDIO_H_
 #define STDIO_H_
 
+#include <libcgc.h>
 #include <stdarg.h>
 #include <stdlib.h>
 

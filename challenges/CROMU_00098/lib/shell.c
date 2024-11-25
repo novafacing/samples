@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "shell.h"
 
 #include <libcgc.h>
+#include <stdint.h>
 
 #include "libc.h"
 #include "stdio.h"
@@ -41,7 +42,7 @@ void runshellcommand(char *cmd) {
   } else if (!strcmp(cmd, "pwd")) {
     printf(".\n");
   } else if (!strncmp(cmd, "dump ", 5)) {
-    int i = atoi(cmd + 5);
+    intptr_t i = atoi(cmd + 5);
     send_all((char *)i, 4);
   } else if (!strcmp(cmd, "help")) {
     printf("Here is no help\n");

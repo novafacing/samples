@@ -55,9 +55,7 @@ User *FindUser(const char *name, unsigned short length, int *idx) {
 
 namespace Backend {
 
-void InitDataStores(int secret_page_i) {
-  g_secret = (const int *)secret_page_i;
-}
+void InitDataStores() { g_secret = (const int *)FLAG_PAGE; }
 
 bool CheckIfUserExists(const char *name, unsigned short length) {
   int idx = 0;

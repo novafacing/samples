@@ -75,7 +75,7 @@ void handle_exp(int *results) {
   for (i = 0; i < g_num_calcs; ++i) {
     op_t op;
     op.type = OP_CMP;
-    op.arg1 = (unsigned int)&g_calcs[i];
+    op.arg1 = (intptr_t)&g_calcs[i];
     calc_compute(&op);
     g_calcs[i].result += g_rslr;
     results[i] = g_calcs[i].result;
@@ -132,7 +132,7 @@ void handle_cmp() {
   for (i = 0; i < g_num_calcs; ++i) {
     op_t op;
     op.type = OP_CMP;
-    op.arg1 = (int)&g_calcs[i];
+    op.arg1 = (intptr_t)&g_calcs[i];
     calc_compute(&op);
     g_calcs[i].result += g_rslr;
     printf("Slot #%02d\n", i + 1);
@@ -140,15 +140,18 @@ void handle_cmp() {
   }
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-  void *secret_page = (void *)secret_page_i;
+int main() {
+  void *secret_page = (void *)FLAG_PAGE;
 
   (void)secret_page;
 
   op_t *calcs = NULL;
   unsigned int cmd, i, sum = 0;
   int results[30] = {0};
-  for (i = 0; i < 4096 / 4; ++i) sum += *(unsigned int *)&secret_page[i * 4];
+  for (i = 0; i < 4096 / 4; ++i) {
+    uint32_t *ptr = (uint32_t *)((char *)secret_page + (i * 4));
+    sum += *ptr;
+  }
   sum %= 128;
   g_rslr = sum;
   if (((char *)secret_page)[0] & 1) g_rslr = -g_rslr;

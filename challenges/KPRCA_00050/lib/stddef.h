@@ -7,7 +7,6 @@ typedef long int ptrdiff_t;
 typedef long unsigned int size_t;
 typedef long int ssize_t;
 
-#define NULL 0
 #endif
 
 #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)

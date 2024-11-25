@@ -54,12 +54,12 @@ void check_seed() {
     fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+int main() {
   file_hdr_t *file;
   filter_t *filter;
   pkt_hdr_t *pkt;
   unsigned int length, value, i;
-  void *secret_page = (void *)secret_page_i;
+  void *secret_page = (void *)FLAG_PAGE;
 
   (void)secret_page;
 

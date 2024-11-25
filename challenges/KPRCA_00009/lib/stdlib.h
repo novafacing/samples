@@ -4,6 +4,7 @@
 #include <libcgc.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 
 extern int printf(const char *fmt, ...);
 

@@ -29,7 +29,7 @@
 #include "libcgc.h"
 
 #define MAX_SIZE (sizeof(uint8_t) * 1024 * 32)
-int fdprintf(int fd, const char *fmt, ...);
+int fdprintf(intptr_t fd, const char *fmt, ...);
 
 static int read_exactly(int fd, uint8_t *buf, size_t n) {
   size_t rx;

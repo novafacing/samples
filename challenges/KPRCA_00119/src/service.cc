@@ -188,9 +188,8 @@ static bool builtin_rand(void *arg, Evaluator &eval,
   return true;
 }
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
-  char *secret_page = (char *)secret_page_i;
+extern "C" int main() {
+  char *secret_page = (char *)FLAG_PAGE;
 
   Parser parser(program);
   if (parser.parse()) {

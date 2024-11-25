@@ -23,6 +23,7 @@
  *
  */
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -149,7 +150,7 @@ int vfdprintf(int fd, const char *fmt, va_list ap) {
   return n;
 }
 
-int fdprintf(int fd, const char *fmt, ...) {
+int fdprintf(intptr_t fd, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   int ret = vfdprintf(fd, fmt, ap);

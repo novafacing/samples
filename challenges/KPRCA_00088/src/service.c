@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  *
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,25 +50,25 @@
 #define DEALLOCATE(_FPTRS, _ADDR, _LEN) \
   ((*(int (*)(void *, size_t))(_FPTRS)[10])((_ADDR), (_LEN)))
 
-int (*insertion_sort_unpacked)(int *, size_t, int *);
+int (*insertion_sort_unpacked)(int *, size_t, intptr_t *);
 unsigned char *insertion_sort_memory;
 
-int (*selection_sort_unpacked)(int *, size_t, int *);
+int (*selection_sort_unpacked)(int *, size_t, intptr_t *);
 unsigned char *selection_sort_memory;
 
-int (*heap_propagate_unpacked)(int *, size_t, size_t, int *);
+int (*heap_propagate_unpacked)(int *, size_t, size_t, intptr_t *);
 unsigned char *heap_propagate_memory;
 
-int (*heapify_unpacked)(int *, size_t, int *);
+int (*heapify_unpacked)(int *, size_t, intptr_t *);
 unsigned char *heapify_memory;
 
-int (*heap_sort_unpacked)(int *, size_t, int *);
+int (*heap_sort_unpacked)(int *, size_t, intptr_t *);
 unsigned char *heap_sort_memory;
 
-int (*merge_helper_unpacked)(int *, int *, int, int, int *);
+int (*merge_helper_unpacked)(int *, int *, int, int, intptr_t *);
 unsigned char *merge_helper_memory;
 
-int (*merge_sort_unpacked)(int *, size_t, int *);
+int (*merge_sort_unpacked)(int *, size_t, intptr_t *);
 unsigned char *merge_sort_memory;
 
 void unpack(unsigned char *fn_bytes, size_t num_bytes) {
@@ -84,42 +85,42 @@ void init() {
          sizeof(selection_sort_bytes));
   unpack(selection_sort_memory, sizeof(selection_sort_bytes));
   selection_sort_unpacked =
-      (int (*)(int *, size_t, int *))selection_sort_memory;
+      (int (*)(int *, size_t, intptr_t *))selection_sort_memory;
 
   allocate(sizeof(heap_propagate_bytes), 1, (void **)&heap_propagate_memory);
   memcpy(heap_propagate_memory, heap_propagate_bytes,
          sizeof(heap_propagate_bytes));
   unpack(heap_propagate_memory, sizeof(heap_propagate_bytes));
   heap_propagate_unpacked =
-      (int (*)(int *, size_t, size_t, int *))heap_propagate_memory;
+      (int (*)(int *, size_t, size_t, intptr_t *))heap_propagate_memory;
 
   allocate(sizeof(heapify_bytes), 1, (void **)&heapify_memory);
   memcpy(heapify_memory, heapify_bytes, sizeof(heapify_bytes));
   unpack(heapify_memory, sizeof(heapify_bytes));
-  heapify_unpacked = (int (*)(int *, size_t, int *))heapify_memory;
+  heapify_unpacked = (int (*)(int *, size_t, intptr_t *))heapify_memory;
 
   allocate(sizeof(heap_sort_bytes), 1, (void **)&heap_sort_memory);
   memcpy(heap_sort_memory, heap_sort_bytes, sizeof(heap_sort_bytes));
   unpack(heap_sort_memory, sizeof(heap_sort_bytes));
-  heap_sort_unpacked = (int (*)(int *, size_t, int *))heap_sort_memory;
+  heap_sort_unpacked = (int (*)(int *, size_t, intptr_t *))heap_sort_memory;
 
   allocate(sizeof(merge_helper_bytes), 1, (void **)&merge_helper_memory);
   memcpy(merge_helper_memory, merge_helper_bytes, sizeof(merge_helper_bytes));
   unpack(merge_helper_memory, sizeof(merge_helper_bytes));
   merge_helper_unpacked =
-      (int (*)(int *, int *, int, int, int *))merge_helper_memory;
+      (int (*)(int *, int *, int, int, intptr_t *))merge_helper_memory;
 
   allocate(sizeof(merge_sort_bytes), 1, (void **)&merge_sort_memory);
   memcpy(merge_sort_memory, merge_sort_bytes, sizeof(merge_sort_bytes));
   unpack(merge_sort_memory, sizeof(merge_sort_bytes));
-  merge_sort_unpacked = (int (*)(int *, size_t, int *))merge_sort_memory;
+  merge_sort_unpacked = (int (*)(int *, size_t, intptr_t *))merge_sort_memory;
 
   allocate(sizeof(insertion_sort_bytes), 1, (void **)&insertion_sort_memory);
   memcpy(insertion_sort_memory, insertion_sort_bytes,
          sizeof(insertion_sort_bytes));
   unpack(insertion_sort_memory, sizeof(insertion_sort_bytes));
   insertion_sort_unpacked =
-      (int (*)(int *, size_t, int *))insertion_sort_memory;
+      (int (*)(int *, size_t, intptr_t *))insertion_sort_memory;
 }
 
 void swap(int *first, int *second) {
@@ -228,23 +229,23 @@ void check_seed() {
   fflush(stdout);
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+int main() {
   init();
   // int _G_FPTRS[] = { (int) &malloc, (int) &free, (int) &memcpy, (int)
   // &memmove, (int) &print_array, (int) &swap,
   //                     (int) heapify, (int) heap_propagate, (int)
   //                     merge_helper, (int) &allocate, (int) &deallocate };
-  int _G_FPTRS[] = {(int)&malloc,
-                    (int)&free,
-                    (int)&memcpy,
-                    (int)&memmove,
-                    (int)&print_array,
-                    (int)&swap,
-                    (int)heapify_unpacked,
-                    (int)heap_propagate_unpacked,
-                    (int)merge_helper_unpacked,
-                    (int)&allocate,
-                    (int)&deallocate};
+  intptr_t _G_FPTRS[] = {(intptr_t)&malloc,
+                         (intptr_t)&free,
+                         (intptr_t)&memcpy,
+                         (intptr_t)&memmove,
+                         (intptr_t)&print_array,
+                         (intptr_t)&swap,
+                         (intptr_t)heapify_unpacked,
+                         (intptr_t)heap_propagate_unpacked,
+                         (intptr_t)merge_helper_unpacked,
+                         (intptr_t)&allocate,
+                         (intptr_t)&deallocate};
 
   fbuffered(stdout, 1);
   fxlat(stdin, "2e0715f1709c");

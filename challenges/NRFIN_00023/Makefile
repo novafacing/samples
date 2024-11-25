@@ -3,5 +3,7 @@ POLLS_TESTING_SEED= 1934104925
 AUTHOR_ID  = NRFIN
 SERVICE_ID = 00023
 CFLAGS     = -O0 -g -Werror -Wno-overlength-strings -Wno-packed
+IFLAGS     = -Iinclude
+LIB_IFLAGS = -Iinclude
 
 include ../../make/challenge.mk

@@ -117,7 +117,7 @@ typedef __gnuc_va_list va_list;
 typedef long int ptrdiff_t;
 # 7 "lib/stdlib.h" 2
 
-extern int fdprintf(int fd, const char *fmt, ...);
+extern int fdprintf(intptr_t fd, const char *fmt, ...);
 extern int sprintf(char *s, const char *fmt, ...);
 
 long strtol(const char *str, char **endptr, int base);

@@ -528,8 +528,8 @@ void setBullets() {
   }
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char* unused[]) {
-  void* secret_page = (void*)secret_page_i;
+int main() {
+  void* secret_page = (void*)FLAG_PAGE;
 
   (void)secret_page;
 

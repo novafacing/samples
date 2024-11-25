@@ -36,12 +36,11 @@
 #define CLIENT_FD 3
 #define SERVER_FD 4
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
-  Backend::InitDataStores(secret_page_i);
+extern "C" int main() {
+  Backend::InitDataStores();
   FILE *cb_c_in = fopen(CLIENT_FD, 0);
   FILE *cb_c_out = fopen(CLIENT_FD, 1);
-  char *secret_page = (char *)secret_page_i;
+  char *secret_page = (char *)FLAG_PAGE;
   (void)secret_page;
 
   PRINTF("Running server code\n");

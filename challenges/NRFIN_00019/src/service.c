@@ -22,6 +22,8 @@
 
 #include "service.h"
 
+#include <stdint.h>
+
 // This calculation implements the challenge #1 from README.md:
 // Ignore / Throw Out Most Input
 int entanglement_razzmatazz(void) {
@@ -314,7 +316,8 @@ int heisenberg_hooey(void) {
   // deallocation would fail, resulting in a write of EINVAL into
   // rx_buf[1+CONST_SYSCALL_OFFSET], constifying it.
   // Failsafe: deallocate() of length 0 should cause EINVAL.
-  rx_buf[SYSCALL_CONST_OFF] = deallocate((void *)rx_buf[SYSCALL_CONST_OFF], 0);
+  rx_buf[SYSCALL_CONST_OFF] =
+      deallocate((void *)(intptr_t)rx_buf[SYSCALL_CONST_OFF], 0);
 
   // Propagate (reflect) via syscall: random()
   // We use a tainted value as the count argument to a random() syscall.

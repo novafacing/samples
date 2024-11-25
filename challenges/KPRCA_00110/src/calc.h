@@ -39,7 +39,7 @@ typedef enum {
 
 typedef struct {
   op_type type;
-  int arg1;
+  intptr_t arg1;
   int arg2;
   int result;
 } op_t;

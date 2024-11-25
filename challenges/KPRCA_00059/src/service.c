@@ -277,10 +277,10 @@ static unsigned int do_hash(const unsigned char *_data, unsigned int len) {
   return hash;
 }
 
-int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
+int main() {
   pkt_t pkt;
   state_t cur_state;
-  void *secret_page = (void *)secret_page_i;
+  void *secret_page = (void *)FLAG_PAGE;
   unsigned int secret_hash;
 
   secret_hash = do_hash(secret_page, 0x1000);

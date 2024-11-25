@@ -26,6 +26,9 @@
  * testing.*
  */
 
+#include <libc.h>
+#include <libcgc.h>
+#include <stdint.h>
 #define STRM "Str: "
 
 /*

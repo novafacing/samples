@@ -82,7 +82,7 @@ typedef struct malloc_free {
   };
 } malloc_free_t;
 
-malloc_t g_heap;
+extern malloc_t g_heap;
 
 void *malloc_alloc(malloc_t *heap, size_t n);
 void malloc_free(malloc_t *heap, void *ptr);

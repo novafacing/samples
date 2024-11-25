@@ -30,7 +30,7 @@ typedef struct {
   int top;
   int elementSize;
   int numElements;
-  void *elements;
+  void **elements;
 } Stack;
 
 void initStack(Stack *stack, int numElements, int elementSize);

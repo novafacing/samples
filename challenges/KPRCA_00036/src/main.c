@@ -92,7 +92,7 @@ static int create_text(int fd, unsigned char **text) {
   unsigned char *pend_seq = TEXT_END_SEQ;
   unsigned char *buf;
 
-  buf_size = resize_buf(text, buf_size);
+  buf_size = resize_buf((void **)text, buf_size);
   while (buf_size) {
     buf = *text;
     if (receive(fd, &buf[len], 1, &rx) != 0 || rx == 0) goto bad_text;
@@ -101,7 +101,7 @@ static int create_text(int fd, unsigned char **text) {
     } else {
       pend_seq = TEXT_END_SEQ;
     }
-    if (++len == buf_size) buf_size = resize_buf(text, buf_size);
+    if (++len == buf_size) buf_size = resize_buf((void **)text, buf_size);
   }
   if (len < 3 || !buf_size) goto bad_text;
 

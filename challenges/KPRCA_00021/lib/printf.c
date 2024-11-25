@@ -23,6 +23,7 @@
  *
  */
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -60,7 +61,7 @@ int output_number_printf(int fd, unsigned int x, int base, int min,
   return n + 1;
 }
 
-int fdprintf(int fd, const char *fmt, ...) {
+int fdprintf(intptr_t fd, const char *fmt, ...) {
   char *astring;
   int aint, i, n = 0, flags = 0, min = 0;
   unsigned int auint;

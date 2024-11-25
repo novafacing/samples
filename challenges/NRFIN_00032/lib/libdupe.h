@@ -22,6 +22,7 @@
 
 #ifndef LIBDUPE_H
 #define LIBDUPE_H
+#include <stdint.h>
 
 #define MAX_DUPE_SIZE 3 * 1024 * 1024
 

@@ -62,12 +62,10 @@ void dtors() {
 #ifdef CPLUSPLUS
 #undef main
 
-extern "C" int __attribute__((fastcall)) _main(int secret_page_i,
-                                               char *unused[]);
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
+extern "C" int _main();
+extern "C" int main() {
   ctors();
-  _main(secret_page_i, unused);
+  _main();
   dtors();
 }
 

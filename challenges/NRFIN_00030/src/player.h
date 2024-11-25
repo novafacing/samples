@@ -22,6 +22,9 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H 1
+#include <stdint.h>
+struct deck;
+struct card;
 
 struct player {
   uint8_t id;

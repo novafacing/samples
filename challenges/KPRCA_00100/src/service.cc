@@ -1044,9 +1044,8 @@ void send_resp(FILE* fd, Response* resp) {
   fwrite(&resp->Length, sizeof(resp->Length), stdout);
   fwrite(resp->Bytes, resp->Length, stdout);
 }
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char* unused[]) {
-  uint32_t volatile* secret_page = (uint32_t*)secret_page_i;
+extern "C" int main() {
+  uint32_t volatile* secret_page = (uint32_t*)FLAG_PAGE;
   uint64_t delim = 0x8442e492f255bf31;
   /* fxlat(stdin, "HASHTAGYOLOSWAG"); */
   /* fxlat(stdout, "HASHTAGYOLOSWAG"); */

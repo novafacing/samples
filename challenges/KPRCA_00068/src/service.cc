@@ -22,9 +22,8 @@
  */
 #include "interface.h"
 
-extern "C" int __attribute__((fastcall)) main(int secret_page_i,
-                                              char *unused[]) {
-  char *secret_page = (char *)secret_page_i;
+extern "C" int main() {
+  char *secret_page = (char *)FLAG_PAGE;
   (void)secret_page;
 
   Interface ui;
