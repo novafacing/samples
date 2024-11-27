@@ -1,8 +1,5 @@
 # Get all immediate subdirectories that contain a Makefile
-SUBDIRS := $(patsubst %/Makefile,%,$(wildcard */Makefile))
-
 BROKEN_CHALLENGES :=
-
 BROKEN_CHALLENGES += CROMU_00021 # C++
 BROKEN_CHALLENGES += CROMU_00023 # C++
 BROKEN_CHALLENGES += CROMU_00026 # C++
@@ -32,7 +29,8 @@ BROKEN_CHALLENGES += KPRCA_00102 # C++
 BROKEN_CHALLENGES += KPRCA_00112 # C++
 BROKEN_CHALLENGES += KPRCA_00119 # C++
 BROKEN_CHALLENGES += KPRCA_00120 # C++
-
+BROKEN_CHALLENGES += TNETS_00002 # C++
+BROKEN_CHALLENGES += YAN01_00007 # C++
 BROKEN_CHALLENGES += CROMU_00063 # Multi-cb
 BROKEN_CHALLENGES += CROMU_00093 # Multi-cb
 BROKEN_CHALLENGES += EAGLE_00004 # Multi-cb
@@ -48,21 +46,29 @@ BROKEN_CHALLENGES += NRFIN_00066 # Multi-cb
 BROKEN_CHALLENGES += NRFIN_00067 # Multi-cb
 BROKEN_CHALLENGES += NRFIN_00072 # Multi-cb
 BROKEN_CHALLENGES += YAN01_00009 # Multi-cb
-
 BROKEN_CHALLENGES += KPRCA_00025 # Wacky multiple definitions (weird OO)
-
 BROKEN_CHALLENGES += KPRCA_00026 # Wacky redefinitions/undefined references
-
 BROKEN_CHALLENGES += KPRCA_00044 # Invalid const indexing
-
 BROKEN_CHALLENGES += KPRCA_00049 # Unsure what the issue here is
 BROKEN_CHALLENGES += KPRCA_00087 # Unsure what the issue here is
+BROKEN_CHALLENGES += NRFIN_00074 # Unsure what the issue here is
+BROKEN_CHALLENGES += YAN01_00015 # Requires python2 in build to gen header
 
+MKDIR ?= mkdir
 
-SUBDIRS := $(filter-out $(BROKEN_CHALLENGES),$(SUBDIRS))
+SUBDIRS                := $(patsubst %/Makefile,%,$(wildcard */Makefile))
+SUBDIRS                := $(filter-out $(BROKEN_CHALLENGES),$(SUBDIRS))
+TOPLEVEL_BUILD_DIR     := build
+TOPLEVEL_BUILD_BIN_DIR := $(abspath $(TOPLEVEL_BUILD_DIR)/bin)
 
 # Default target
-all: $(SUBDIRS)
+all: build
+
+build: prep $(SUBDIRS)
+
+# Prepare build environment (directories)
+prep:
+	$(MKDIR) -p $(TOPLEVEL_BUILD_BIN_DIR)
 
 # Clean target
 clean:
@@ -70,11 +76,12 @@ clean:
 		echo "Cleaning $$dir..."; \
 		$(MAKE) -C $$dir clean; \
 	done
+	rm -rf $(TOPLEVEL_BUILD_BIN_DIR)
 
 # Pattern rule for building subdirectories
 $(SUBDIRS):
 	@echo "Building $@..."
-	@$(MAKE) -C $@ all
+	@$(MAKE) -C $@ all TOPLEVEL_BUILD_BIN_DIR=$(TOPLEVEL_BUILD_BIN_DIR)
 
 # Parallel build support (make -j N)
 .PHONY: $(SUBDIRS)
