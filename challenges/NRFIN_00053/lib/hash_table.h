@@ -23,6 +23,8 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H 1
 
+#include <stdint.h>
+
 #include "list.h"
 
 /***** Important *****
@@ -158,7 +160,7 @@ typedef struct uint_str_pair {
  * Example pair struct for unsigned int key and void * value
  */
 typedef struct uint_voidp_pair {
-  unsigned int key;
+  uintptr_t key;
   void *value;
 } uint_voidp_pair_t;
 

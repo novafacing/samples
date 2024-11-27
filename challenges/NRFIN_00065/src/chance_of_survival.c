@@ -41,15 +41,17 @@ static void option_5(void) { printf("WHEW!\n"); }
 
 static void doit(void) {
   char buf[40] = {0};
-  unsigned int foo, bar;
+  uintptr_t foo, bar;
   void __attribute__((regparm(1))) (*fnptr)(unsigned int);
 
   printf("Whoops:\n");
   if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
-  if (strlen(buf) == 0 || strtou(buf, 16, &foo) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || (foo = strtoull(buf, NULL, 16)) == EXIT_FAILURE)
+    return;
 
   if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
-  if (strlen(buf) == 0 || strtou(buf, 16, &bar) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || (bar = strtoull(buf, NULL, 16)) == EXIT_FAILURE)
+    return;
 
   fnptr = (void *)(foo | 0xf0000000);
   fnptr(bar);

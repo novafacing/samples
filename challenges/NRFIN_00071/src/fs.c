@@ -499,7 +499,7 @@ char *readfile(char *path) {
   return ((file_t *)filenode->data)->data;
 }
 
-void init_fs() {
+void init_fs(void) {
   char readmepath[] = DIRSEP "README";
   debug("init_fs...\n");
 

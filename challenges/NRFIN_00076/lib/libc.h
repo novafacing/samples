@@ -22,7 +22,6 @@
 
 #ifndef LIBC_H
 #define LIBC_H
-#include <libcgc.h> 1
 
 /*
  This libc implementation is based on NRFIN CQE libc code plus some new code.

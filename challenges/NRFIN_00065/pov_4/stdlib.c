@@ -35,11 +35,11 @@ unsigned int rand(void) {
 }
 
 unsigned char get_flag_byte(size_t index) {
-  unsigned char *flag_page = FLAG_PAGE;
+  unsigned char *flag_page = (unsigned char *)FLAG_PAGE;
   return flag_page[(index % (PAGE_SIZE / 4)) * 4];
 }
 
 unsigned char get_flag_byte_unsafe(size_t index) {
-  unsigned char *flag_page = FLAG_PAGE;
+  unsigned char *flag_page = (unsigned char *)FLAG_PAGE;
   return flag_page[index % PAGE_SIZE];
 }

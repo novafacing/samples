@@ -600,7 +600,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
   int value = 0;
   char ch;
   int arg_count = 0;
-  int width_value;
+  intptr_t width_value;
   int prec_value;
   int field_arg;
   int length;
@@ -779,7 +779,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             width_arg = arg_count++;
             format--;
           }
-          width_value = (int)args[width_arg];
+          width_value = (intptr_t)args[width_arg];
         } else if (isdigit(ch)) {
           width_value = 0;
           while (isdigit(ch)) {
@@ -813,7 +813,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               prec_arg = arg_count++;
               format--;
             }
-            prec_value = (int)args[prec_arg];
+            prec_value = (intptr_t)args[prec_arg];
           } else if (isdigit(ch)) {
             prec_value = 0;
             while (isdigit(ch)) {
@@ -870,54 +870,44 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
         char *num_ptr;
         int use_caps = 1;
         int sign;
-        int val;
+        uintptr_t uval;
+        intptr_t val;
+
         if (field_arg == -1) {
           field_arg = arg_count++;
         }
+
         switch (ch) {
           case 'd':
           case 'i': {
             int len;
             switch (length) {
               case LENGTH_H:
-                val = (short)(int)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (short)(intptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                val = (char)(int)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (char)(intptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                val = (long)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (intptr_t)args[field_arg];
                 break;
             }
+            sign = val < 0;
+            if (sign) {
+              val = -val;
+            }
+            num_ptr = r_utoa((uintptr_t)val, num_buf);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
               if (sign || (flags & FLAGS_SIGN)) {
                 width_value++;
               }
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 if (sign || (flags & FLAGS_SIGN)) {
                   prec_value = width_value - 1;
                 } else {
@@ -928,7 +918,6 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               if (prec_value < len) {
                 prec_value = len;
               }
-              // number won't need leading zeros
               flags &= ~FLAGS_ZERO;
             }
             if (flags & FLAGS_LEFT) {
@@ -992,22 +981,22 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'o': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_otoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_otoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_otoa((unsigned long)args[field_arg], num_buf);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_otoa(uval, num_buf);
             if (flags & FLAGS_HASH) {
               if (*num_ptr != '0') {
                 num_ptr++;
@@ -1016,14 +1005,11 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -1067,32 +1053,29 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'u': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_utoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_utoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_utoa((unsigned long)args[field_arg], num_buf);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_utoa(uval, num_buf);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -1136,35 +1119,31 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'x':
-            use_caps = 0;  // now fall into X case
+            use_caps = 0;
           case 'X': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_xtoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf, use_caps);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_xtoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf, use_caps);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr =
-                    r_xtoa((unsigned long)args[field_arg], num_buf, use_caps);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_xtoa(uval, num_buf, use_caps);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -1233,6 +1212,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'f':
           case 'F':
             break;
@@ -1245,13 +1225,14 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
           case 'a':
           case 'A':
             break;
+
           case 'c': {
-            unsigned char ch = (unsigned char)(unsigned int)args[field_arg];
+            unsigned char c = (unsigned char)(uintptr_t)args[field_arg];
             if (width_value == -1) {
               width_value = 1;
             }
             if (flags & FLAGS_LEFT) {
-              func((char)ch, user, 0);
+              func((char)c, user, 0);
               if (width_value > 0) {
                 width_value--;
               }
@@ -1264,19 +1245,18 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
                 func(' ', user, 0);
                 width_value--;
               }
-              func(ch, user, 0);
+              func(c, user, 0);
             }
             break;
           }
+
           case 's': {
             const char *s_arg = (const char *)args[field_arg];
             int len = strlen(s_arg);
             if (width_value == -1) {
-              // by default min length is the entire string
               width_value = len;
             }
             if (prec_value == -1 || prec_value > len) {
-              // by default max is entire string but no less than width
               prec_value = len;
             }
             if (flags & FLAGS_LEFT) {
@@ -1303,13 +1283,14 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'p': {
             int len;
             flags |= FLAGS_HASH;
-            num_ptr = r_xtoa((unsigned int)args[field_arg], num_buf, 0);
+            uval = (uintptr_t)args[field_arg];
+            num_ptr = r_xtoa(uval, num_buf, 0);
             len = num_ptr - num_buf + 1;
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
             } else {
               if (prec_value < len) {
@@ -1318,7 +1299,6 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               flags &= ~FLAGS_ZERO;
             }
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = prec_value + 2;
             }
             if (flags & FLAGS_LEFT) {
@@ -1372,8 +1352,9 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'n': {
-            void *np = (void *)args[field_arg];
+            void *np = args[field_arg];
             unsigned int len = func(0, user, 1);
             switch (length) {
               case LENGTH_HH:
@@ -1389,6 +1370,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'C':
             break;
           case 'S':
@@ -1401,6 +1383,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
       }
     }
   }
+  func(0, user, 2);
 }
 
 int vdprintf(int fd, const char *format, va_list ap) {
@@ -1424,13 +1407,13 @@ typedef __builtin_va_list va_list;
 
 #define va_start(ap, last) __builtin_va_start((ap), (last))
 
-struct _FILE {
+typedef struct _FILE {
   int fd;
   int state;
   size_t max;
   size_t curr;
   unsigned char buf[4096];
-};
+} FILE;
 
 static FILE std_files[3] = {
     {0, _FILE_STATE_OPEN}, {1, _FILE_STATE_OPEN}, {2, _FILE_STATE_OPEN}};
@@ -1794,7 +1777,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
   int value = 0;
   char ch;
   int arg_count = 0;
-  int width_value;
+  intptr_t width_value;
   int prec_value;
   int field_arg;
   int length;
@@ -1973,7 +1956,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             width_arg = arg_count++;
             format--;
           }
-          width_value = (int)args[width_arg];
+          width_value = (intptr_t)args[width_arg];
         } else if (isdigit(ch)) {
           width_value = 0;
           while (isdigit(ch)) {
@@ -2007,7 +1990,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               prec_arg = arg_count++;
               format--;
             }
-            prec_value = (int)args[prec_arg];
+            prec_value = (intptr_t)args[prec_arg];
           } else if (isdigit(ch)) {
             prec_value = 0;
             while (isdigit(ch)) {
@@ -2064,55 +2047,44 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
         char *num_ptr;
         int use_caps = 1;
         int sign;
-        int val;
-        // long long llval;
+        uintptr_t uval;
+        intptr_t val;
+
         if (field_arg == -1) {
           field_arg = arg_count++;
         }
+
         switch (ch) {
           case 'd':
           case 'i': {
             int len;
             switch (length) {
               case LENGTH_H:
-                val = (short)(int)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (short)(intptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                val = (char)(int)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (char)(intptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                val = (long)args[field_arg];
-                sign = val < 0;
-                if (sign) {
-                  val = -val;
-                }
-                num_ptr = r_utoa(val, num_buf);
+                val = (intptr_t)args[field_arg];
                 break;
             }
+            sign = val < 0;
+            if (sign) {
+              val = -val;
+            }
+            num_ptr = r_utoa((uintptr_t)val, num_buf);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
               if (sign || (flags & FLAGS_SIGN)) {
                 width_value++;
               }
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 if (sign || (flags & FLAGS_SIGN)) {
                   prec_value = width_value - 1;
                 } else {
@@ -2123,7 +2095,6 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               if (prec_value < len) {
                 prec_value = len;
               }
-              // number won't need leading zeros
               flags &= ~FLAGS_ZERO;
             }
             if (flags & FLAGS_LEFT) {
@@ -2187,22 +2158,22 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'o': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_otoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_otoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_otoa((unsigned long)args[field_arg], num_buf);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_otoa(uval, num_buf);
             if (flags & FLAGS_HASH) {
               if (*num_ptr != '0') {
                 num_ptr++;
@@ -2211,14 +2182,11 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -2262,32 +2230,29 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'u': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_utoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_utoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr = r_utoa((unsigned long)args[field_arg], num_buf);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_utoa(uval, num_buf);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -2331,35 +2296,31 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'x':
-            use_caps = 0;  // now fall into X case
+            use_caps = 0;
           case 'X': {
             int len;
             switch (length) {
               case LENGTH_H:
-                num_ptr = r_xtoa((unsigned short)(unsigned int)args[field_arg],
-                                 num_buf, use_caps);
+                uval = (unsigned short)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_HH:
-                num_ptr = r_xtoa((unsigned char)(unsigned int)args[field_arg],
-                                 num_buf, use_caps);
+                uval = (unsigned char)(uintptr_t)args[field_arg];
                 break;
               case LENGTH_L:
               default:
-                num_ptr =
-                    r_xtoa((unsigned long)args[field_arg], num_buf, use_caps);
+                uval = (uintptr_t)args[field_arg];
                 break;
             }
+            num_ptr = r_xtoa(uval, num_buf, use_caps);
             len = num_ptr - num_buf + 1;
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = len;
             }
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
               if ((flags & FLAGS_ZERO) != 0 && prec_value < width_value) {
-                // widen precision if necessary to pad to width with '0'
                 prec_value = width_value;
               }
             } else {
@@ -2428,6 +2389,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'f':
           case 'F':
             break;
@@ -2440,13 +2402,14 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
           case 'a':
           case 'A':
             break;
+
           case 'c': {
-            unsigned char ch = (unsigned char)(unsigned int)args[field_arg];
+            unsigned char c = (unsigned char)(uintptr_t)args[field_arg];
             if (width_value == -1) {
               width_value = 1;
             }
             if (flags & FLAGS_LEFT) {
-              func((char)ch, user, 0);
+              func((char)c, user, 0);
               if (width_value > 0) {
                 width_value--;
               }
@@ -2459,19 +2422,18 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
                 func(' ', user, 0);
                 width_value--;
               }
-              func(ch, user, 0);
+              func(c, user, 0);
             }
             break;
           }
+
           case 's': {
             const char *s_arg = (const char *)args[field_arg];
             int len = strlen(s_arg);
             if (width_value == -1) {
-              // by default min length is the entire string
               width_value = len;
             }
             if (prec_value == -1 || prec_value > len) {
-              // by default max is entire string but no less than width
               prec_value = len;
             }
             if (flags & FLAGS_LEFT) {
@@ -2498,13 +2460,14 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'p': {
             int len;
             flags |= FLAGS_HASH;
-            num_ptr = r_xtoa((unsigned int)args[field_arg], num_buf, 0);
+            uval = (uintptr_t)args[field_arg];
+            num_ptr = r_xtoa(uval, num_buf, 0);
             len = num_ptr - num_buf + 1;
             if (prec_value == -1) {
-              // by default max is entire value
               prec_value = len;
             } else {
               if (prec_value < len) {
@@ -2513,7 +2476,6 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
               flags &= ~FLAGS_ZERO;
             }
             if (width_value == -1) {
-              // by default min length is the entire value
               width_value = prec_value + 2;
             }
             if (flags & FLAGS_LEFT) {
@@ -2567,8 +2529,9 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'n': {
-            void *np = (void *)args[field_arg];
+            void *np = args[field_arg];
             unsigned int len = func(0, user, 1);
             switch (length) {
               case LENGTH_HH:
@@ -2584,6 +2547,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user,
             }
             break;
           }
+
           case 'C':
             break;
           case 'S':

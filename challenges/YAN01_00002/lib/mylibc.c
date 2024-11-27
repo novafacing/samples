@@ -33,7 +33,7 @@ ssize_t readLine(int fd, char* buf, size_t len) {
   // FD_ZERO is in libcgc.h, but just to make sure its not optimized, we will
   // implement our own loop
   for (i = 0; i < FD_SETSIZE / _NFDBITS; i++) {
-    fdsToWait._fd_bits[i] = 0;
+    fdsToWait.fds_bits[i] = 0;
   }
 
   // reset i to 0

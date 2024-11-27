@@ -62,8 +62,8 @@ typedef enum { OP2_IMM, OP2_MEM, OP2_LAST = INT_MAX } op2type_t;
 typedef struct __attribute__((packed)) {
   action_t action;    // 4
   op2type_t op2type;  // 8
-  uint32_t dst;       // 12
-  uint32_t src;       // 16
+  uintptr_t dst;      // 12
+  uintptr_t src;      // 16
 } instruction_t;
 
 typedef struct __attribute__((packed)) {

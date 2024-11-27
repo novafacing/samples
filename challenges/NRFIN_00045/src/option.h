@@ -64,7 +64,7 @@ typedef struct packet {
   OP_TYPE ot;
   uint32_t acct_id;
   uint32_t data_l;
-  uint32_t bank_id;
+  uintptr_t bank_id;
   void *op_data;
 
 } packet_t;
@@ -96,7 +96,7 @@ typedef struct orderbook_order {
 
 } orderbook_order_t;
 
-orderbook_order_t ORDERBOOK[NUM_ORDERS];
+extern orderbook_order_t ORDERBOOK[NUM_ORDERS];
 
 OP_ERR run_option_transaction(uint32_t acct_id, option_order_t *order,
                               OP_TYPE ot);

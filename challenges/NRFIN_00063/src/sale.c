@@ -625,8 +625,7 @@ float __attribute__((regparm(2))) sale_99(unsigned int model_num, float cost) {
   return cost * adjustment;
 }
 
-float __attribute__((regparm(2))) (*onsale_fn[101])(unsigned int model_num,
-                                                    float cost) = {
+float (*onsale_fn[101])(unsigned int model_num, float cost) = {
     sale_0,    sale_1,  sale_2,  sale_3,  sale_4,  sale_5,  sale_6,  sale_7,
     sale_8,    sale_9,  sale_10, sale_11, sale_12, sale_13, sale_14, sale_15,
     sale_16,   sale_17, sale_18, sale_19, sale_20, sale_21, sale_22, sale_23,
@@ -642,3 +641,5 @@ float __attribute__((regparm(2))) (*onsale_fn[101])(unsigned int model_num,
     sale_96,   sale_97, sale_98, sale_99,
 
     END_MARKER};
+
+sale_fn_t onsale_fn[101];

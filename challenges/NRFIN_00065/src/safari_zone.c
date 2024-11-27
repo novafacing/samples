@@ -28,10 +28,10 @@
 struct monster {
   char *name;
   unsigned char capture_chance, run_chance;
-  void (*set_nickname)(size_t, unsigned int);
+  void (*set_nickname)(size_t, uintptr_t);
 };
 
-static void set_nickname(size_t index, unsigned int name) {
+static void set_nickname(size_t index, uintptr_t name) {
   char name_[sizeof(unsigned int) + 1] = {0};
   int i;
 
@@ -55,7 +55,7 @@ static void set_nickname(size_t index, unsigned int name) {
   printf("%s was transferred to box 1 in your PC\n", name_);
 }
 
-static void glitch_items(size_t index, unsigned int name) {
+static void glitch_items(size_t index, uintptr_t name) {
   char buf[40] = {0};
   unsigned int item;
   void __attribute__((regparm(1))) (*fnptr)(unsigned int);

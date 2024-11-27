@@ -24,6 +24,7 @@
 #define PEOPLE_H 1
 
 #include <libcgc.h>
+#include <stdint.h>
 
 typedef struct person Person;
 typedef struct relation Relation;

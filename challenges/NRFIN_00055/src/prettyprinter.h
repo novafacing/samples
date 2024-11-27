@@ -27,6 +27,7 @@
 
 struct tokens;
 struct ast;
+struct token;
 
 /**
  * Print the tokens in a token buffer.

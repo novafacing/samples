@@ -212,7 +212,7 @@ void free(void* ptr) {
   LargeChunk *lc_ptr = NULL, *prev_ptr = NULL;
 
   // Check to see if ptr is a large chunk
-  if (((unsigned int)ptr & 0xfff) == 0 && largeChunks != NULL) {
+  if (((uintptr_t)ptr & 0xfff) == 0 && largeChunks != NULL) {
     for (lc_ptr = largeChunks; lc_ptr != NULL && lc_ptr->memory != ptr;
          prev_ptr = lc_ptr, lc_ptr = lc_ptr->next);
   }
@@ -236,7 +236,7 @@ void free(void* ptr) {
     int found = 0;
     for (run_ptr = pool[j], prev_run_ptr = NULL; run_ptr != NULL;
          prev_run_ptr = run_ptr, run_ptr = run_ptr->next) {
-      if (run_ptr->memory == ((void*)((unsigned int)ptr & 0xfffff000))) {
+      if (run_ptr->memory == ((void*)((uintptr_t)ptr & 0xfffff000))) {
         found = 1;
         break;
       }

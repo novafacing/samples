@@ -280,7 +280,7 @@ int main(void) {
     _terminate(-1);
   }
 
-  transmit_all(&stack[curTop], sizeof(uint32_t));
+  transmit_all((char*)&stack[curTop], sizeof(uint32_t));
 
   return (0);
 }

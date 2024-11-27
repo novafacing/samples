@@ -1,6 +1,6 @@
 #ifndef MY_LIB_C_H
 #define MY_LIB_C_H
-
+#include <libcgc.h>
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;

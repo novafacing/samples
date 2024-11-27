@@ -26,6 +26,21 @@ typedef int ssize_t;
 #define STD_SIZE_T unsigned int
 #endif
 
+/* Types for `void *' pointers.  */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64)
+#ifndef __intptr_t_defined
+typedef long int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned long int uintptr_t;
+#else
+#ifndef __intptr_t_defined
+typedef int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned int uintptr_t;
+#endif
+
 #define SIZE_MAX __SIZE_MAX__
 #define SSIZE_MAX (__SIZE_MAX__ >> 1)
 
@@ -34,34 +49,34 @@ typedef int ssize_t;
 #ifndef _FD_SET_DEFINED
 #define _FD_SET_DEFINED
 
+/* Number of bits in an unsigned long */
+#define _NFDBITS (8 * sizeof(unsigned long))
+
 /* Number of fds in an fd_set */
 #define FD_SETSIZE 1024
 
 #ifndef fd_set
 typedef struct {
-  unsigned long fds_bits[FD_SETSIZE / (8 * sizeof(unsigned long))];
+  unsigned long fds_bits[FD_SETSIZE / _NFDBITS];
 } fd_set;
 #endif
 
 /* Macro implementations for fd_set operations */
-#define FD_ZERO(set)                                                       \
-  do {                                                                     \
-    size_t __i;                                                            \
-    for (__i = 0; __i < (FD_SETSIZE / (8 * sizeof(unsigned long))); __i++) \
-      ((set)->fds_bits)[__i] = 0;                                          \
+#define FD_ZERO(set)                                    \
+  do {                                                  \
+    size_t __i;                                         \
+    for (__i = 0; __i < (FD_SETSIZE / _NFDBITS); __i++) \
+      ((set)->fds_bits)[__i] = 0;                       \
   } while (0)
 
-#define FD_SET(fd, set)                                          \
-  ((void)((set)->fds_bits[(fd) / (8 * sizeof(unsigned long))] |= \
-          (1UL << ((fd) % (8 * sizeof(unsigned long))))))
+#define FD_SET(fd, set) \
+  ((void)((set)->fds_bits[(fd) / _NFDBITS] |= (1UL << ((fd) % _NFDBITS))))
 
-#define FD_CLR(fd, set)                                          \
-  ((void)((set)->fds_bits[(fd) / (8 * sizeof(unsigned long))] &= \
-          ~(1UL << ((fd) % (8 * sizeof(unsigned long))))))
+#define FD_CLR(fd, set) \
+  ((void)((set)->fds_bits[(fd) / _NFDBITS] &= ~(1UL << ((fd) % _NFDBITS))))
 
-#define FD_ISSET(fd, set)                                \
-  ((set)->fds_bits[(fd) / (8 * sizeof(unsigned long))] & \
-   (1UL << ((fd) % (8 * sizeof(unsigned long)))))
+#define FD_ISSET(fd, set) \
+  ((set)->fds_bits[(fd) / _NFDBITS] & (1UL << ((fd) % _NFDBITS)))
 
 #endif /* _FD_SET_DEFINED */
 
@@ -99,6 +114,7 @@ typedef struct __jmp_buf_tag {
 #endif /* _JMP_BUF_DEFINED */
 #endif /* _NO_STD_DEFS */
 
+// #define FLAG_PAGE (uintptr_t)0x4347C000
 #define FLAG_PAGE (0x4347C000)
 #define PAGE_SIZE (0x1000)
 

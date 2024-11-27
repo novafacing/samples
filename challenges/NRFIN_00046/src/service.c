@@ -477,7 +477,7 @@ int do_exec(session_t *session) {
             __func__);
 #endif
 
-    tmp = (0xFFFFFF00 & (uint32_t)session->buf) >> 8;
+    tmp = (0xFFFFFF00 & (uintptr_t)session->buf) >> 8;
     memcpy(session->buf, &tmp, BASE_ADDR_SZ);
   }
 
@@ -534,9 +534,10 @@ int do_exec(session_t *session) {
   }
   // The address of the send needs to be derived from the BASE_ADDR for easy
   // pwnage.
-  uint32_t base_addr = ((*(uint32_t *)session->buf) & 0x00FFFFFF) << 8;
-  uint32_t scratch_base = (base_addr | ((uint32_t)session->buf & 0x000000FF)) +
-                          BASE_ADDR_SZ + session->sz;
+  uintptr_t base_addr = ((*(uint32_t *)session->buf) & 0x00FFFFFF) << 8;
+  uintptr_t scratch_base =
+      (base_addr | ((uintptr_t)session->buf & 0x000000FF)) + BASE_ADDR_SZ +
+      session->sz;
   if (SUCCESS !=
       (ret = send_bytes(STDOUT, (const char *)scratch_base, SCRATCH_SZ))) {
 #ifdef DEBUG

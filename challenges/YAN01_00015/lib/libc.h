@@ -3,8 +3,6 @@
 
 #include <libcgc.h>
 
-#define PAGE_SIZE 4096
-
 /**
  * Transmits all len bytes from the buffer buf to the file descriptor
  *   or terminates in error

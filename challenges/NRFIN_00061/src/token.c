@@ -32,6 +32,7 @@
 #include "strtok.h"
 #include "util.h"
 
+Token* tokenStore;
 unsigned int flag_index = 0;
 
 /**

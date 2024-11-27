@@ -279,9 +279,10 @@ int main(void) {
 
   if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE) return 9;
 
-  custom_prng = (unsigned int (*)(unsigned int, unsigned int))atoi(temp);
+  custom_prng =
+      (unsigned int (*)(unsigned int, unsigned int))strtoull(temp, NULL, 10);
 
-  if (custom_prng && (unsigned int)custom_prng < 0x08000000) return 10;
+  if (custom_prng && ((uintptr_t)custom_prng < 0x08000000)) return 10;
 
   if (!SENDSTR(SECUREMODE)) return 11;
 

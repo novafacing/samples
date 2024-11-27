@@ -94,4 +94,5 @@ unsigned char get_flag_byte(size_t index);
  * @return A byte from the flag page
  */
 unsigned char get_flag_byte_unsafe(size_t index);
+unsigned long long strtoull(const char *str, char **endptr, int base);
 #endif /* STDLIB_H_ */

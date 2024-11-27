@@ -22,6 +22,7 @@
 
 #ifndef BREAKFAST_OBJECTS_H
 #define BREAKFAST_OBJECTS_H 1
+#include <libcgc.h>
 
 // TODO: enable "other" types after the basic stuff is up and working.
 

@@ -21,6 +21,8 @@
  */
 #ifndef PRNG_H
 #define PRNG_H
+#include <libcgc.h>
+
 #include "stdint.h"
 
 uint32_t randint();

@@ -1,6 +1,6 @@
 #ifndef MY_LIB_C_H
 #define MY_LIB_C_H
-
+#include <libcgc.h>
 // reads in a new line and returns the number of characters read
 //  Returns the number of characters read otherwise it will return 0
 //  or an errno on error

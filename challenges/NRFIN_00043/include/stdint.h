@@ -28,4 +28,19 @@
 
 #define SUCCESS 0
 
+/* Types for `void *' pointers.  */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64)
+#ifndef __intptr_t_defined
+typedef long int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned long int uintptr_t;
+#else
+#ifndef __intptr_t_defined
+typedef int intptr_t;
+#define __intptr_t_defined
+#endif
+typedef unsigned int uintptr_t;
+#endif
+
 #endif

@@ -1,5 +1,6 @@
 #ifndef CGC_MALLOC_H
 #define CGC_MALLOC_H
+#include <libcgc.h>
 
 void *calloc(size_t nmemb, size_t size);
 void free(void *ptr);

@@ -22,6 +22,7 @@
 
 #ifndef READ_ALL_H
 #define READ_ALL_H 1
+#include <libcgc.h>
 
 /**
  * Receive bytes from file descriptor and writes into buffer.

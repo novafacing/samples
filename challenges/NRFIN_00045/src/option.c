@@ -26,6 +26,8 @@
 
 #include "account.h"
 
+orderbook_order_t ORDERBOOK[NUM_ORDERS];
+
 uint32_t ORDER_ID = 1;
 
 option_holding_t *match_holding(uint32_t acct_id, option_order_t *order) {

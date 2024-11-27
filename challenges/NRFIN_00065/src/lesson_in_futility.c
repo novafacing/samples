@@ -31,16 +31,18 @@ static void defcon_1(void) {
 
 static void defcon_2(void) {
   char buf[40] = {0};
-  unsigned int lat, lon;
+  uintptr_t lat, lon;
   void __attribute__((regparm(1))) (*fnptr)(unsigned int);
 
   printf("Enter target latitude:\n");
   if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
-  if (strlen(buf) == 0 || strtou(buf, 16, &lat) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || (lat = strtoull(buf, NULL, 16)) == EXIT_FAILURE)
+    return;
 
   printf("Enter target longitude:\n");
   if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE) return;
-  if (strlen(buf) == 0 || strtou(buf, 16, &lon) == EXIT_FAILURE) return;
+  if (strlen(buf) == 0 || (lon = strtoull(buf, NULL, 16)) == EXIT_FAILURE)
+    return;
 
   fnptr = (void *)(lat | 0xf0000000);
   fnptr(lon);

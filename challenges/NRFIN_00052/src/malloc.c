@@ -120,7 +120,7 @@ void *malloc(size_t s) {
   ALLOCRWX(total, p);
 
   page = (char *)p + total;
-  page = (char *)((uint32_t)page & ~(PAGE_SIZE - 1));
+  page = (char *)((uintptr_t)page & ~(PAGE_SIZE - 1));
   // printf("@h\n",page);
   page_remaining = PAGE_SIZE - ((size_t)((char *)p + total) - (size_t)page);
   page += PAGE_SIZE - page_remaining;

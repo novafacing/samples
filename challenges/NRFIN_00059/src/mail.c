@@ -273,7 +273,7 @@ static int do_list_undeliverable_mail(void) {
   struct node *n = list_head_node(udm);
   struct node *end = list_end_marker(udm);
   mail_t *m = NULL;
-  unsigned int rs = 0;
+  uintptr_t rs = 0;
   unsigned short *p_rs = (unsigned short *)&rs;
   // for item in udm list
   while (end != n) {
@@ -292,7 +292,7 @@ static int do_list_undeliverable_mail(void) {
   // for item in sorted_udm list
   while (end != n) {
     //	 pop(item) from list
-    rs = (unsigned int)n->data;
+    rs = (uintptr_t)n->data;
     //   send recipient
     SEND(STDOUT, (char *)p_rs, sizeof(unsigned short));
 

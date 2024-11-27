@@ -22,6 +22,8 @@
 
 #include "bytecode.h"
 
+#include <stdint.h>
+
 #ifdef DEBUG
 #define DEBUG_BYTECODE 1
 #endif
@@ -34,19 +36,17 @@ int bytecode_exec(uint8_t *buf, uint16_t sz) {
   uint8_t imm = 0;
   uint16_t off = 0;
 
-  // NOTE: this is suuuuper hacky due to some poor design decisions :(
-  // Basically, we need to:
-  // 1) Take a look at where buf *actually* is.
-  // 2) Nuke *only* the most significant 3 bytes and replace with what's in
-  // BASE_ADDR, keeping the least significant byte. 3) Add BASE_ADDR_SZ and sz
-  // to the result of #2 to determine where the scratch area starts. 4) For each
-  // instruction, add off(set) to this sum to determine absolute value of
-  // operation. This will make it more difficult to code PoVs (1 additional
-  // slide), but should still be deterministic.
-  uint32_t base_addr = ((*(uint32_t *)buf) & 0x00FFFFFF)
-                       << 8;  // base addr as stored in memory
-  uint32_t scratch_base =
-      (base_addr | ((uint32_t)buf & 0x000000FF)) + BASE_ADDR_SZ + sz;
+  // Get the base address from the buffer (first 4 bytes)
+  uint32_t stored_base = *(uint32_t *)buf & 0x00FFFFFF;
+
+  // Create full address keeping lowest byte from buf pointer and using
+  // stored_base for upper bytes
+  uintptr_t actual_ptr = (uintptr_t)buf;
+  uintptr_t base_addr = ((uintptr_t)stored_base << 8) & ((uintptr_t)-1 << 8);
+  uintptr_t merged_addr = base_addr | (actual_ptr & 0xFF);
+
+  // Calculate scratch base address
+  uintptr_t scratch_base = merged_addr + BASE_ADDR_SZ + sz;
 
 #ifdef DEBUG
   fprintf(stderr,

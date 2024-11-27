@@ -25,6 +25,7 @@
 
 struct ast;
 struct namespace;
+struct variable;
 
 /**
  * Evaluate an AST and return a variable representing the result.

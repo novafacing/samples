@@ -91,6 +91,6 @@ char *ls_dir(char *path);
 /**
  * Initialize the filesystem
  */
-void init_fs();
+void init_fs(void);
 
 #endif

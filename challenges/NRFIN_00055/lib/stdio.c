@@ -142,7 +142,7 @@ void fclose(FILE *stream) {
 int fflush(FILE *stream) {
   ssize_t written;
 
-  if (!stream || !stream->mode == WRITE) return EXIT_FAILURE;
+  if (!stream || !(stream->mode == WRITE)) return EXIT_FAILURE;
 
   if (!stream->buf || stream->bufsize == 0) return EXIT_SUCCESS;
 

@@ -355,7 +355,9 @@ int random(void *buf, size_t count, size_t *rnd_bytes) {
     return -1;
   }
 
-  *rnd_bytes = res;
+  if (rnd_bytes != NULL) {
+    *rnd_bytes = res;
+  }
 
   return 0;
 }

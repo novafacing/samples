@@ -107,8 +107,8 @@ int main(void) {
     if (result.type == VAR_INTEGER)
       printf("_ = %d\n%x\n", last->val.i, calculate_csum(last->val.i));
     else
-      printf("_ = %d\n%x\n", (unsigned int)last->val.p,
-             calculate_csum((unsigned int)last->val.p));
+      printf("_ = %d\n%x\n", (uintptr_t)last->val.p,
+             calculate_csum((uintptr_t)last->val.p));
 
     ast_destroy(&ast);
   }

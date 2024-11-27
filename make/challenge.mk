@@ -1,6 +1,8 @@
-check_vars := AUTHOR_ID SERVICE_ID LIBCGC_INC_DIR LIBCGC_LIB
+ifeq ($(filter clean,$(MAKECMDGOALS)),)
+check_vars := AUTHOR_ID SERVICE_ID LIBCGC_INC_DIR LIBCGC_LIB TOPLEVEL_BUILD_BIN_DIR
 $(foreach var,$(check_vars),\
     $(if $($(var)),,$(error $(var) is not set)))
+endif
 
 # Build tools
 CC    ?= clang
@@ -23,12 +25,13 @@ BUILD_OBJ_LIB_DIR := $(BUILD_OBJ_DIR)/lib
 BUILD_OBJ_SRC_DIR := $(BUILD_OBJ_DIR)/src
 
 # Build targets
-NAME        := $(AUTHOR_ID)_$(SERVICE_ID)
-STATIC_LIB  := $(BUILD_LIB_DIR)/$(NAME).a
-LIB_OBJ     := $(patsubst $(LIB_DIR)/%.c,$(BUILD_OBJ_LIB_DIR)/%.o,$(LIB_SRC))
-BIN         := $(BUILD_BIN_DIR)/$(NAME)
-BIN_OBJ     := $(patsubst $(SRC_DIR)/%.c,$(BUILD_OBJ_SRC_DIR)/%.o,$(SRC))
-LIB_INCLUDE := $(patsubst $(INC_DIR)/%.h,$(BUILD_INC_DIR)/%.h,$(INC))
+NAME         := $(AUTHOR_ID)_$(SERVICE_ID)
+STATIC_LIB   := $(BUILD_LIB_DIR)/$(NAME).a
+LIB_OBJ      := $(patsubst $(LIB_DIR)/%.c,$(BUILD_OBJ_LIB_DIR)/%.o,$(LIB_SRC))
+BIN          := $(BUILD_BIN_DIR)/$(NAME)
+BIN_OBJ      := $(patsubst $(SRC_DIR)/%.c,$(BUILD_OBJ_SRC_DIR)/%.o,$(SRC))
+LIB_INCLUDE  := $(patsubst $(INC_DIR)/%.h,$(BUILD_INC_DIR)/%.h,$(INC))
+TOPLEVEL_BIN := $(TOPLEVEL_BUILD_BIN_DIR)/$(NAME)
 
 # Build configuration
 LIB_IFLAGS  += -nostdinc -I$(LIB_DIR) -I$(LIBCGC_INC_DIR)
@@ -44,7 +47,7 @@ WFLAGS      += -Wno-error=pointer-compare
 all: build
 
 # Prepare first, then build the targets
-build: prep $(STATIC_LIB) $(BIN)
+build: prep $(TOPLEVEL_BIN)
 
 # Prepare build environment (directories)
 prep:
@@ -57,6 +60,9 @@ $(STATIC_LIB): $(LIB_OBJ)
 # Build binary from objects and static library
 $(BIN): $(BIN_OBJ) $(STATIC_LIB)
 	$(CC) -o $@ $^ $(CFLAGS) $(IFLAGS) $(LDFLAGS) $(WFLAGS)
+
+$(TOPLEVEL_BIN): $(BIN)
+	$(CP) $^ $@
 
 # Build library objects from C files
 $(BUILD_OBJ_LIB_DIR)/%.o: $(LIB_DIR)/%.c

@@ -22,6 +22,7 @@
 
 #ifndef SERIALIZE_H
 #define SERIALIZE_H 1
+#include <libcgc.h>
 
 typedef struct {
   char type[4];         // type of content (Plain or Serialized)

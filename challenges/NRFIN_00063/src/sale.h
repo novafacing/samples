@@ -23,7 +23,8 @@
 #ifndef SALE_H
 #define SALE_H 1
 
-float __attribute__((regparm(2))) (*onsale_fn[101])(unsigned int model_num,
-                                                    float cost);
+typedef __attribute__((regparm(2))) float (*sale_fn_t)(unsigned int model_num,
+                                                       float cost);
+extern sale_fn_t onsale_fn[101];
 
 #endif

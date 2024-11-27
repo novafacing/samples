@@ -381,8 +381,6 @@ int printf(const char *format, ...);
 
 // Taken from EAGLE_00005
 
-#ifndef LIBC_H
-#define LIBC_H
 #include <libcgc.h>
 
 int transmit_all(int fd, const void *buf, const size_t size);
@@ -417,7 +415,5 @@ int feof(FILE *stream);
 
 int printf(const char *format, ...);
 int fprintf(FILE *stream, const char *format, ...);
-
-#endif
 
 #endif /* LIBC_H_ */

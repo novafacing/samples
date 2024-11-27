@@ -1,5 +1,6 @@
 #ifndef MY_LIB_C_H
 #define MY_LIB_C_H
+#include <libcgc.h>
 
 #include "inttypes.h"
 #include "printf.h"

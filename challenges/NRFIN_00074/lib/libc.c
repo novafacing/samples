@@ -1424,13 +1424,13 @@ typedef __builtin_va_list va_list;
 
 #define va_start(ap, last) __builtin_va_start((ap), (last))
 
-struct _FILE {
+typedef struct _FILE {
   int fd;
   int state;
   size_t max;
   size_t curr;
   unsigned char buf[4096];
-};
+} FILE;
 
 static FILE std_files[3] = {
     {0, _FILE_STATE_OPEN}, {1, _FILE_STATE_OPEN}, {2, _FILE_STATE_OPEN}};

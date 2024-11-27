@@ -43,7 +43,7 @@ typedef struct {
   void* next;
 } Token;
 
-Token* tokenStore;
+extern Token* tokenStore;
 
 Token* parseToken(char* body);
 int validateToken(Token* token, unsigned int* expiration_date);

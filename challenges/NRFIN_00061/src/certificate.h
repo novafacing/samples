@@ -58,7 +58,7 @@ typedef struct {
 
 static char private_key[1024];
 static char* issuer;
-Certificate* CRL;
+extern Certificate* CRL;
 
 void enroll(int id, char* body, unsigned int* expiration_date);
 void crls(int id, char* body, unsigned int* expiration_date);

@@ -21,6 +21,7 @@
  */
 
 #pragma once
+#include <libcgc.h>
 
 /**
  * Receive delimiter terminated bytes from file descriptor and write into

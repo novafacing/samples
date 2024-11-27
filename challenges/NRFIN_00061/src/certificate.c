@@ -31,6 +31,8 @@
 #include "strtok.h"
 #include "util.h"
 
+Certificate* CRL;
+
 /**
  * Is the command a valud Certificate command
  *

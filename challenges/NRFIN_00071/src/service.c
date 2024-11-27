@@ -394,7 +394,7 @@ resp_t *do_rmdir(msg_t *msg) {
  *
  * @return status response
  */
-status_t process_req() {
+status_t process_req(void) {
   msg_t *msg = malloc(sizeof(msg_t));
   resp_t *resp = NULL;
 
@@ -566,7 +566,7 @@ int go(void) {
  *
  * @return csum of the .text section
  */
-uint32_t get_text_checksum() {
+uint32_t get_text_checksum(void) {
 #if !(defined(PATCHED_1) || defined(DEBUG))
   char *cur = (char *)go;
   uint32_t csum = 0;
@@ -588,7 +588,7 @@ uint32_t get_text_checksum() {
 #endif
 }
 
-bool verify_integrity() {
+bool verify_integrity(void) {
   /* Ensure our client is running a valid binary!
    * Send to server for validation! */
 
@@ -606,7 +606,7 @@ bool verify_integrity() {
   return res;
 }
 
-int main() {
+int main(void) {
   if (verify_integrity())
     return go();
   else

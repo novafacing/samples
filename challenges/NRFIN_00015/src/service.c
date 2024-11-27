@@ -61,7 +61,8 @@ int main(void) {
         if (ret != 0) _terminate(13);
       } else {
         Program **program_ptr;
-        program_ptr = programStack.elements + (program_num * sizeof(Program *));
+        program_ptr = (Program **)programStack.elements +
+                      (program_num * sizeof(Program *));
         executeProgram(*program_ptr);
       }
     }

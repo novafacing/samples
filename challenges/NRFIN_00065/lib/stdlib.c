@@ -35,11 +35,72 @@ unsigned int rand(void) {
 }
 
 unsigned char get_flag_byte(size_t index) {
-  unsigned char *flag_page = FLAG_PAGE;
+  unsigned char *flag_page = (unsigned char *)FLAG_PAGE;
   return flag_page[(index % (PAGE_SIZE / 4)) * 4];
 }
 
 unsigned char get_flag_byte_unsafe(size_t index) {
-  unsigned char *flag_page = FLAG_PAGE;
+  unsigned char *flag_page = (unsigned char *)FLAG_PAGE;
   return flag_page[index % PAGE_SIZE];
+}
+
+unsigned long long strtoull(const char *str, char **endptr, int base) {
+  unsigned long long result = 0;
+  int negative = 0;
+
+  // Skip whitespace
+  while (*str == ' ' || *str == '\t' || *str == '\n' || *str == '\r') {
+    str++;
+  }
+
+  // Handle optional sign
+  if (*str == '-' || *str == '+') {
+    negative = (*str == '-');
+    str++;
+  }
+
+  // Handle base prefix
+  if (base == 0 || base == 16) {
+    if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+      str += 2;
+      base = 16;
+    }
+  }
+  if (base == 0) {
+    base = str[0] == '0' ? 8 : 10;
+  }
+
+  // Process digits
+  while (*str) {
+    int digit;
+
+    if (*str >= '0' && *str <= '9') {
+      digit = *str - '0';
+    } else if (*str >= 'a' && *str <= 'f') {
+      digit = *str - 'a' + 10;
+    } else if (*str >= 'A' && *str <= 'F') {
+      digit = *str - 'A' + 10;
+    } else {
+      break;
+    }
+
+    if (digit >= base) {
+      break;
+    }
+
+    // Check for overflow
+    if (result > (SIZE_MAX - digit) / base) {
+      result = SIZE_MAX;
+      break;
+    }
+
+    result = result * base + digit;
+    str++;
+  }
+
+  if (endptr) {
+    *endptr = (char *)str;
+  }
+
+  return negative ? -result : result;
 }

@@ -40,7 +40,7 @@ void srand(uint32_t *seed) {
   initialized = 1;
 }
 
-unsigned int getshifty() {
+unsigned int getshifty(void) {
   uint32_t tmp;
 
   if (!initialized) {

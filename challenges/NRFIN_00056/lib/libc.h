@@ -300,6 +300,8 @@ void strcpy(char *s1, const char *s2);
  */
 unsigned int atoi(char *s);
 
+unsigned long long strtoull(const char *str, char **endptr, int base);
+
 /**
  * String cat
  *

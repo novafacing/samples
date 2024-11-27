@@ -355,7 +355,7 @@ void *ht_value(ht_t *h, void *key) {
 void *ht_value_as_voidp(ht_t *h, void *key) {
   void *v = ht_value(h, key);
   if (NULL == v) return NULL;
-  return (void *)*(int *)v;
+  return (void *)*(intptr_t *)v;
 }
 
 unsigned int ht_value_as_uint(ht_t *h, void *key) {
